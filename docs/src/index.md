@@ -4,11 +4,11 @@
 DocTestFilters = [r"[0-9\.]+ seconds \(.*\)"]
 ```
 
-`Systems` is a [Julia](http://julialang.org) package for calculus with convex
-sets.
+`Systems` is a [Julia](http://julialang.org) package for mathematical systems interfaces.
 
 ## Features
 
+Types for mathematical systems modeling.
 
 ## Library Outline
 

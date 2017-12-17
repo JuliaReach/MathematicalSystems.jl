@@ -16,7 +16,7 @@ documentation, or propose new features.
 Below some conventions that we follow when contributing to this package are
 detailed.
 For specific guidelines on documentation, see the
-[Documentations Guidelines wiki](https://github.com/JuliaReach/Systems.jl/wiki/Documentation-Guidelines).
+[Documentations Guidelines wiki](https://github.com/JuliaReach/LazySets.jl/wiki/Documentation-Guidelines).
 
 ### Branches and pull requests (PR)
 
@@ -67,11 +67,11 @@ directly in the source code.
 
 You can view the source code documentation from inside the REPL by typing `?`
 followed by the name of the type or function.
-For example, the following command will print the documentation of the `LazySet`
+For example, the following command will print the documentation of the `AbstractSystem`
 type:
 
 ```julia
-julia> ?LazySet
+julia> ?LazyAbstractSystemSet
 ```
 
 This documentation you are currently reading is written in Markdown, and it
@@ -94,12 +94,12 @@ Note that this also runs all doctests which will take some time.
 
 ## Related projects
 
-- Hybrid Systems
+- [Hybrid Systems](https://github.com/blegat/HybridSystems.jl)
 
 ## Credits
 
 These persons have contributed to `Systems.jl` (in alphabetic order):
 
 - [Marcelo Forets](http://marcelo-forets.fr)
-- Benoit Legat
+- [Benoît Legat](https://perso.uclouvain.be/benoit.legat/)
 - [Christian Schilling](http://swt.informatik.uni-freiburg.de/staff/christian_schilling/)

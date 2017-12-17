@@ -17,14 +17,14 @@ export AbstractSystem,
 include("abstract.jl")
 
 #====================================
-Concrete Types for Continuous Systems 
+Concrete Types for Continuous Systems
 ====================================#
 export ContinuousLinearSystem
 
 include("continuous.jl")
 
 #==================================
-Concrete Types for Discrete Systems 
+Concrete Types for Discrete Systems
 ===================================#
 export DiscreteLinearSystem
 

@@ -25,7 +25,7 @@ AbstractDiscreteSystem
 ## Continuous Systems
 
 ```@docs
-ContinuousLinearSystem
+LinearContinuousSystem
 ```
 
 ## Discrete Systems

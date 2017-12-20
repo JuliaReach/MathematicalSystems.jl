@@ -19,7 +19,7 @@ include("abstract.jl")
 #====================================
 Concrete Types for Continuous Systems
 ====================================#
-export ContinuousLinearSystem
+export LinearContinuousSystem
 
 include("continuous.jl")
 

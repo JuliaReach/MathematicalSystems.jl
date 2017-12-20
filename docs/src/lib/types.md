@@ -26,6 +26,9 @@ AbstractDiscreteSystem
 
 ```@docs
 LinearContinuousSystem
+LinearControlContinuousSystem
+ConstrainedLinearContinuousSystem
+ConstrainedLinearControlContinuousSystem
 ```
 
 ## Discrete Systems

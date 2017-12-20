@@ -6,6 +6,7 @@ os:
 julia:
   - 0.6
   - 0.6.1
+  - 0.6.2
   - nightly
 notifications:
   email: false
@@ -31,6 +32,7 @@ matrix:
 #  - julia -e 'Pkg.clone(pwd()); Pkg.build("Systems"); Pkg.test("Systems"; coverage=true)'
 after_success:
   - julia -e 'Pkg.add("Documenter"); Pkg.add("GR")'
+  - julia -e 'Pkg.clone("https://github.com/JuliaReach/LazySets.jl")'
   - julia -e 'cd(Pkg.dir("Systems")); include(joinpath("docs", "make.jl"))'
   # push coverage results to Coveralls
   - julia -e 'cd(Pkg.dir("Systems")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'

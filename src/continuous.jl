@@ -77,15 +77,15 @@ x' = A x + B u, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U} \\text{ for all
 - `X` -- state constraints
 - `U` -- input constraints
 """
-struct ConstrainedLinearControlContinuousSystem{T, MT <: AbstractMatrix{T}, ST} <: AbstractContinuousSystem
+struct ConstrainedLinearControlContinuousSystem{T, MT <: AbstractMatrix{T}, ST, UT} <: AbstractContinuousSystem
     A::MT
     B::MT
     X::ST
-    U::ST
+    U::UT
 end
-function ConstrainedLinearControlContinuousSystem{T, MT <: AbstractMatrix{T}, ST}(A::MT, B::MT, X::ST, U::ST)
+function ConstrainedLinearControlContinuousSystem{T, MT <: AbstractMatrix{T}, ST, UT}(A::MT, B::MT, X::ST, U::UT)
     @assert size(A, 1) == size(B, 1)
-    return ConstrainedLinearControlContinuousSystem{T, MT, ST}(A, B, X, U)
+    return ConstrainedLinearControlContinuousSystem{T, MT, ST, UT}(A, B, X, U)
 end
 statedim(s::ConstrainedLinearControlContinuousSystem) = Base.LinAlg.checksquare(s.A)
 inputdim(s::ConstrainedLinearControlContinuousSystem) = size(s.B, 2)

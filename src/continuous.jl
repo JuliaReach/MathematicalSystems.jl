@@ -35,7 +35,7 @@ struct LinearControlContinuousSystem{T, MT <: AbstractMatrix{T}} <: AbstractCont
     B::MT
 end
 function LinearControlContinuousSystem{T, MT <: AbstractMatrix{T}}(A::MT, B::MT)
-    @assert size(A, 1) == size(B, 1)
+    @assert Base.LinAlg.checksquare(s.A) == size(B, 1)
     return LinearControlContinuousSystem{T, MT}(A, B)
 end
 statedim(s::LinearControlContinuousSystem) = Base.LinAlg.checksquare(s.A)
@@ -84,7 +84,7 @@ struct ConstrainedLinearControlContinuousSystem{T, MT <: AbstractMatrix{T}, ST, 
     U::UT
 end
 function ConstrainedLinearControlContinuousSystem{T, MT <: AbstractMatrix{T}, ST, UT}(A::MT, B::MT, X::ST, U::UT)
-    @assert size(A, 1) == size(B, 1)
+    @assert Base.LinAlg.checksquare(A, 1) == size(B, 1)
     return ConstrainedLinearControlContinuousSystem{T, MT, ST, UT}(A, B, X, U)
 end
 statedim(s::ConstrainedLinearControlContinuousSystem) = Base.LinAlg.checksquare(s.A)

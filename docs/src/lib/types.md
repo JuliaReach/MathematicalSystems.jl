@@ -25,11 +25,17 @@ AbstractDiscreteSystem
 ## Continuous Systems
 
 ```@docs
-ContinuousLinearSystem
+LinearContinuousSystem
+LinearControlContinuousSystem
+ConstrainedLinearContinuousSystem
+ConstrainedLinearControlContinuousSystem
 ```
 
 ## Discrete Systems
 
 ```@docs
-DiscreteLinearSystem
+LinearDiscreteSystem
+LinearControlDiscreteSystem
+ConstrainedLinearDiscreteSystem
+ConstrainedLinearControlDiscreteSystem
 ```

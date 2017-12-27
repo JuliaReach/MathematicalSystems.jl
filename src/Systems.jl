@@ -29,7 +29,10 @@ include("continuous.jl")
 #==================================
 Concrete Types for Discrete Systems
 ===================================#
-export DiscreteLinearSystem
+export LinearDiscreteSystem,
+       LinearControlDiscreteSystem,
+       ConstrainedLinearDiscreteSystem,
+       ConstrainedLinearControlDiscreteSystem
 
 include("discrete.jl")
 

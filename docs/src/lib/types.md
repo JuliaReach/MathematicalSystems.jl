@@ -34,5 +34,8 @@ ConstrainedLinearControlContinuousSystem
 ## Discrete Systems
 
 ```@docs
-DiscreteLinearSystem
+LinearDiscreteSystem
+LinearControlDiscreteSystem
+ConstrainedLinearDiscreteSystem
+ConstrainedLinearControlDiscreteSystem
 ```

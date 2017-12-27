@@ -31,3 +31,20 @@ end
     @test statedim(s) == 2
     @test inputdim(s) == 1
 end
+
+@testset "Continuous linear algebraic system" begin
+    for sd in 1:3
+        s = LinearAlgebraicContinuousSystem(zeros(sd, sd), zeros(sd, sd))
+        @test statedim(s) == sd
+        @test inputdim(s) == 0
+    end
+end
+
+@testset "Continuous constrained linear algebraic system" begin
+    A = [1. 1; 1 -1]
+    E = [0. 1; 1 0]
+    X = LinearConstraint([0, -1.], 0.) # the set y ≥ 0
+    s = ConstrainedLinearAlgebraicContinuousSystem(A, E, X)
+    @test statedim(s) == 2
+    @test inputdim(s) == 0
+end

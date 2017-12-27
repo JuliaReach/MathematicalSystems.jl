@@ -108,7 +108,7 @@ struct LinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}} <: AbstractCo
     E::MT
 end
 function LinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}}(A::MT, E::MT)
-    @assert Base.LinAlg.checksquare(A) && Base.LinAlg.checksquare(E)
+    @assert Base.LinAlg.checksquare(A) == Base.LinAlg.checksquare(E)
     return LinearAlgebraicContinuousSystem{T, MT}(A, E)
 end
 statedim(s::LinearAlgebraicContinuousSystem) = Base.LinAlg.checksquare(s.A)
@@ -134,7 +134,7 @@ struct ConstrainedLinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}, ST
     X::ST
 end
 function ConstrainedLinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}, ST}(A::MT, E::MT, X::ST)
-    @assert Base.LinAlg.checksquare(A) && Base.LinAlg.checksquare(E)
+    @assert Base.LinAlg.checksquare(A) == Base.LinAlg.checksquare(E)
     return ConstrainedLinearAlgebraicContinuousSystem{T, MT, ST}(A, E, X)
 end
 statedim(s::ConstrainedLinearAlgebraicContinuousSystem) = Base.LinAlg.checksquare(s.A)

@@ -29,6 +29,8 @@ LinearContinuousSystem
 LinearControlContinuousSystem
 ConstrainedLinearContinuousSystem
 ConstrainedLinearControlContinuousSystem
+LinearAlgebraicContinuousSystem
+ConstrainedLinearAlgebraicContinuousSystem
 ```
 
 ## Discrete Systems

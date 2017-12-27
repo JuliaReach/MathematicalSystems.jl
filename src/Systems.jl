@@ -32,7 +32,9 @@ Concrete Types for Discrete Systems
 export LinearDiscreteSystem,
        LinearControlDiscreteSystem,
        ConstrainedLinearDiscreteSystem,
-       ConstrainedLinearControlDiscreteSystem
+       ConstrainedLinearControlDiscreteSystem,
+       LinearAlgebraicContinuousSystem,
+       ConstrainedLinearAlgebraicContinuousSystem
 
 include("discrete.jl")
 

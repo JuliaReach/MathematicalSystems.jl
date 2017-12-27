@@ -22,7 +22,9 @@ Concrete Types for Continuous Systems
 export LinearContinuousSystem,
        LinearControlContinuousSystem,
        ConstrainedLinearContinuousSystem,
-       ConstrainedLinearControlContinuousSystem
+       ConstrainedLinearControlContinuousSystem,
+       LinearAlgebraicContinuousSystem,
+       ConstrainedLinearAlgebraicContinuousSystem
 
 include("continuous.jl")
 
@@ -33,8 +35,8 @@ export LinearDiscreteSystem,
        LinearControlDiscreteSystem,
        ConstrainedLinearDiscreteSystem,
        ConstrainedLinearControlDiscreteSystem,
-       LinearAlgebraicContinuousSystem,
-       ConstrainedLinearAlgebraicContinuousSystem
+       LinearAlgebraicDiscreteSystem,
+       ConstrainedLinearAlgebraicDiscreteSystem
 
 include("discrete.jl")
 

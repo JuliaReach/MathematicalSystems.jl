@@ -40,4 +40,6 @@ LinearDiscreteSystem
 LinearControlDiscreteSystem
 ConstrainedLinearDiscreteSystem
 ConstrainedLinearControlDiscreteSystem
+LinearAlgebraicDiscreteSystem
+ConstrainedLinearAlgebraicDiscreteSystem
 ```

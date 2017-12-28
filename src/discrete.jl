@@ -111,7 +111,7 @@ function LinearAlgebraicDiscreteSystem{T, MT <: AbstractMatrix{T}}(A::MT, E::MT)
     @assert Base.LinAlg.checksquare(A) == Base.LinAlg.checksquare(E)
     return LinearAlgebraicDiscreteSystem{T, MT}(A, E)
 end
-statedim(s::LinearAlgebraicDiscreteSystem) = Base.LinAlg.checksquare(s.A)
+statedim(s::LinearAlgebraicDiscreteSystem) = size(s.A, 1)
 inputdim(s::LinearAlgebraicDiscreteSystem) = 0
 
 """
@@ -137,5 +137,5 @@ function ConstrainedLinearAlgebraicDiscreteSystem{T, MT <: AbstractMatrix{T}, ST
     @assert Base.LinAlg.checksquare(A) == Base.LinAlg.checksquare(E)
     return ConstrainedLinearAlgebraicDiscreteSystem{T, MT, ST}(A, E, X)
 end
-statedim(s::ConstrainedLinearAlgebraicDiscreteSystem) = Base.LinAlg.checksquare(s.A)
+statedim(s::ConstrainedLinearAlgebraicDiscreteSystem) = size(s.A, 1)
 inputdim(s::ConstrainedLinearAlgebraicDiscreteSystem) = 0

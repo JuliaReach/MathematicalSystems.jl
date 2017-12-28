@@ -111,7 +111,7 @@ function LinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}}(A::MT, E::M
     @assert Base.LinAlg.checksquare(A) == Base.LinAlg.checksquare(E)
     return LinearAlgebraicContinuousSystem{T, MT}(A, E)
 end
-statedim(s::LinearAlgebraicContinuousSystem) = Base.LinAlg.checksquare(s.A)
+statedim(s::LinearAlgebraicContinuousSystem) = size(A, 1)
 inputdim(s::LinearAlgebraicContinuousSystem) = 0
 
 """
@@ -137,5 +137,5 @@ function ConstrainedLinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}, 
     @assert Base.LinAlg.checksquare(A) == Base.LinAlg.checksquare(E)
     return ConstrainedLinearAlgebraicContinuousSystem{T, MT, ST}(A, E, X)
 end
-statedim(s::ConstrainedLinearAlgebraicContinuousSystem) = Base.LinAlg.checksquare(s.A)
+statedim(s::ConstrainedLinearAlgebraicContinuousSystem) = size(A, 1)
 inputdim(s::ConstrainedLinearAlgebraicContinuousSystem) = 0

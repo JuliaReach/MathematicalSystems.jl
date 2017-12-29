@@ -90,3 +90,52 @@ end
 statedim(s::ConstrainedLinearControlContinuousSystem) = Base.LinAlg.checksquare(s.A)
 inputdim(s::ConstrainedLinearControlContinuousSystem) = size(s.B, 2)
 
+"""
+    LinearAlgebraicContinuousSystem
+
+Continuous-time linear algebraic system of the form
+```math
+E x' = A x.
+```
+
+### Fields
+
+- `A` -- matrix
+- `E` -- matrix, same size as `A`
+"""
+struct LinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}} <: AbstractContinuousSystem
+    A::MT
+    E::MT
+end
+function LinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}}(A::MT, E::MT)
+    @assert size(A) == size(E)
+    return LinearAlgebraicContinuousSystem{T, MT}(A, E)
+end
+statedim(s::LinearAlgebraicContinuousSystem) = size(s.A, 1)
+inputdim(s::LinearAlgebraicContinuousSystem) = 0
+
+"""
+    ConstrainedLinearAlgebraicContinuousSystem
+
+Continuous-time linear system with state constraints of the form
+```math
+E x' = A x, x(t) ∈ \\mathcal{X}.
+```
+
+### Fields
+
+- `A` -- matrix
+- `E` -- matrix, same size as `A`
+- `X` -- state constraints
+"""
+struct ConstrainedLinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}, ST} <: AbstractContinuousSystem
+    A::MT
+    E::MT
+    X::ST
+end
+function ConstrainedLinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}, ST}(A::MT, E::MT, X::ST)
+    @assert size(A) == size(E)
+    return ConstrainedLinearAlgebraicContinuousSystem{T, MT, ST}(A, E, X)
+end
+statedim(s::ConstrainedLinearAlgebraicContinuousSystem) = size(s.A, 1)
+inputdim(s::ConstrainedLinearAlgebraicContinuousSystem) = 0

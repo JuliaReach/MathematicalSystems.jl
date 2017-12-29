@@ -100,15 +100,15 @@ E x' = A x.
 
 ### Fields
 
-- `A` -- square matrix
-- `E` -- square matrix
+- `A` -- matrix
+- `E` -- matrix, same size as `A`
 """
 struct LinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}} <: AbstractContinuousSystem
     A::MT
     E::MT
 end
 function LinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}}(A::MT, E::MT)
-    @assert Base.LinAlg.checksquare(A) == Base.LinAlg.checksquare(E)
+    @assert size(A) == size(E)
     return LinearAlgebraicContinuousSystem{T, MT}(A, E)
 end
 statedim(s::LinearAlgebraicContinuousSystem) = size(s.A, 1)
@@ -124,8 +124,8 @@ E x' = A x, x(t) ∈ \\mathcal{X}.
 
 ### Fields
 
-- `A` -- square matrix
-- `E` -- square matrix
+- `A` -- matrix
+- `E` -- matrix, same size as `A`
 - `X` -- state constraints
 """
 struct ConstrainedLinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}, ST} <: AbstractContinuousSystem
@@ -134,7 +134,7 @@ struct ConstrainedLinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}, ST
     X::ST
 end
 function ConstrainedLinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}, ST}(A::MT, E::MT, X::ST)
-    @assert Base.LinAlg.checksquare(A) == Base.LinAlg.checksquare(E)
+    @assert size(A) == size(E)
     return ConstrainedLinearAlgebraicContinuousSystem{T, MT, ST}(A, E, X)
 end
 statedim(s::ConstrainedLinearAlgebraicContinuousSystem) = size(s.A, 1)

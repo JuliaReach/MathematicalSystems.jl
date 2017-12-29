@@ -100,15 +100,15 @@ E x_{k+1} = A x_k.
 
 ### Fields
 
-- `A` -- square matrix
-- `E` -- square matrix
+- `A` -- matrix
+- `E` -- matrix, same size as `A`
 """
 struct LinearAlgebraicDiscreteSystem{T, MT <: AbstractMatrix{T}} <: AbstractDiscreteSystem
     A::MT
     E::MT
 end
 function LinearAlgebraicDiscreteSystem{T, MT <: AbstractMatrix{T}}(A::MT, E::MT)
-    @assert Base.LinAlg.checksquare(A) == Base.LinAlg.checksquare(E)
+    @assert size(A) == size(E)
     return LinearAlgebraicDiscreteSystem{T, MT}(A, E)
 end
 statedim(s::LinearAlgebraicDiscreteSystem) = size(s.A, 1)
@@ -124,8 +124,8 @@ E x_{k+1} = A x_k, x_k ∈ \\mathcal{X}.
 
 ### Fields
 
-- `A` -- square matrix
-- `E` -- square matrix
+- `A` -- matrix
+- `E` -- matrix, same size as `A`
 - `X` -- state constraints
 """
 struct ConstrainedLinearAlgebraicDiscreteSystem{T, MT <: AbstractMatrix{T}, ST} <: AbstractDiscreteSystem
@@ -134,7 +134,7 @@ struct ConstrainedLinearAlgebraicDiscreteSystem{T, MT <: AbstractMatrix{T}, ST} 
     X::ST
 end
 function ConstrainedLinearAlgebraicDiscreteSystem{T, MT <: AbstractMatrix{T}, ST}(A::MT, E::MT, X::ST)
-    @assert Base.LinAlg.checksquare(A) == Base.LinAlg.checksquare(E)
+    @assert size(A) == size(E)
     return ConstrainedLinearAlgebraicDiscreteSystem{T, MT, ST}(A, E, X)
 end
 statedim(s::ConstrainedLinearAlgebraicDiscreteSystem) = size(s.A, 1)

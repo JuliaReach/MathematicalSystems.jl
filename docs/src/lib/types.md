@@ -43,3 +43,10 @@ ConstrainedLinearControlDiscreteSystem
 LinearAlgebraicDiscreteSystem
 ConstrainedLinearAlgebraicDiscreteSystem
 ```
+
+## Initial Value Problems
+
+```@docs
+InitialValueProblem
+IVP
+```

@@ -8,6 +8,7 @@ system's type.
 
 ```jldoctest
 julia> p = InitialValueProblem(LinearContinuousSystem(eye(2)), [-1/2., 1/2]);
+
 julia> p.x0
 2-element Array{Float64,1}:
  -0.5

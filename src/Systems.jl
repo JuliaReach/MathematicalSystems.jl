@@ -40,4 +40,11 @@ export LinearDiscreteSystem,
 
 include("discrete.jl")
 
+#==========================================
+Concrete Types for an Initial Value Problem
+===========================================#
+export InitialValueProblem, IVP
+
+include("ivp.jl")
+
 end # module

@@ -48,3 +48,14 @@ end
     @test statedim(s) == 2
     @test inputdim(s) == 0
 end
+
+@testset "Initial value problem for a continuous constrained linear algebraic system" begin
+    A = [1. 1; 1 -1]
+    E = [0. 1; 1 0]
+    X = LinearConstraint([0, -1.], 0.) # the set y ≥ 0
+    s = ConstrainedLinearAlgebraicContinuousSystem(A, E, X)
+    x0 = Singleton([1.5, 2.0])
+    p = IVP(s, x0)
+    @test statedim(p) == 2
+    @test inputdim(p) == 0
+end

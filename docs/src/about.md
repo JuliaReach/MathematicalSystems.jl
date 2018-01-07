@@ -58,9 +58,6 @@ long-term support of your contributions.
 
 ### Contributing to the documentation
 
-
-[Documenter.jl](https://github.com/JuliaDocs/Documenter.jl) :
-
 New functions and types should be documented according to our
 [guidelines](https://github.com/JuliaReach/LazySets.jl/wiki/Documentation-Guidelines)
 directly in the source code.
@@ -71,7 +68,7 @@ For example, the following command will print the documentation of the `Abstract
 type:
 
 ```julia
-julia> ?LazyAbstractSystemSet
+julia> ?LinearContinuousSystem
 ```
 
 This documentation you are currently reading is written in Markdown, and it

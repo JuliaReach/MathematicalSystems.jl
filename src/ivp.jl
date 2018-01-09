@@ -4,10 +4,17 @@
 Parametric composite type for initial value problems. It is parameterized in the
 system's type.
 
+### Fields
+
+- `s`  -- system
+- `x0` -- initial state
+
 ### Examples
 
+The linear system ``x' = -x`` with initial condition ``x_0 = [-1/2, 1/2]``:
+
 ```jldoctest
-julia> p = InitialValueProblem(LinearContinuousSystem(eye(2)), [-1/2., 1/2]);
+julia> p = InitialValueProblem(LinearContinuousSystem(-eye(2)), [-1/2., 1/2]);
 
 julia> p.x0
 2-element Array{Float64,1}:

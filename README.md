@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/JuliaReach/Systems.jl.svg?branch=master)](https://travis-ci.org/JuliaReach/Systems.jl)
 [![Docs latest](https://img.shields.io/badge/docs-latest-blue.svg)](http://juliareach.github.io/Systems.jl/latest/)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/JuliaReach/Systems.jl/blob/master/LICENSE.md)
+[![Code coverage](http://codecov.io/github/JuliaReach/Systems.jl/coverage.svg?branch=master)](https://codecov.io/github/JuliaReach/Systems.jl?branch=master)
 [![Join the chat at https://gitter.im/JuliaReach/Lobby](https://badges.gitter.im/JuliaReach/Lobby.svg)](https://gitter.im/JuliaReach/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 `Systems` is a [Julia](http://julialang.org) package for mathematical systems interfaces.

@@ -91,7 +91,19 @@ Note that this also runs all doctests which will take some time.
 
 ## Related projects
 
-- [Hybrid Systems](https://github.com/blegat/HybridSystems.jl)
+This package originated from [Hybrid Systems](https://github.com/blegat/HybridSystems.jl)
+and systems definitions for reachability problems within [JuliaReach](https://github.com/JuliaReach/).
+
+Below we list more related projects.
+
+|Package name|Description|
+|----|------|
+|[HybridSystems.jl](https://github.com/blegat/HybridSystems.jl)|Hybrid Systems definitions in Julia.|
+|[LTISystems.jl](https://github.com/JuliaSystems/LTISystems.jl)|Julia package for representing linear time-invariant system models and operations defined on them.|
+|[ControlToolbox.jl](https://github.com/JuliaSystems/ControlToolbox.jl)|Analysis and design tools for control systems.|
+|[ronisbr/ControlToolbox.jl](https://github.com/ronisbr/ControlToolbox.jl)|A Control Toolbox for Julia language.|
+|[DynamicalSystemsBase.jl](https://github.com/JuliaDynamics/DynamicalSystemsBase.jl)|Definitions of core system and data types used in the ecosystem of DynamicalSystems.jl.|
+|[ControlSystems.jl](https://github.com/JuliaControl/ControlSystems.jl)|A Control Systems Toolbox for Julia|
 
 ## Credits
 

@@ -25,6 +25,8 @@ AbstractDiscreteSystem
 ## Continuous Systems
 
 ```@docs
+ContinuousIdentitySystem
+ConstrainedContinuousIdentitySystem
 LinearContinuousSystem
 LinearControlContinuousSystem
 ConstrainedLinearContinuousSystem
@@ -36,6 +38,8 @@ ConstrainedLinearAlgebraicContinuousSystem
 ## Discrete Systems
 
 ```@docs
+DiscreteIdentitySystem
+ConstrainedDiscreteIdentitySystem
 LinearDiscreteSystem
 LinearControlDiscreteSystem
 ConstrainedLinearDiscreteSystem

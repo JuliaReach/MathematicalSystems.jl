@@ -7,12 +7,10 @@
 end
 
 @testset "Continuous constrained identity system" begin
-    for sd in 1:3
-        X = Line(ones(sd), 0.)
-        s = ConstrainedContinuousIdentitySystem(sd, X)
-        @test statedim(s) == sd
-        @test inputdim(s) == 0
-    end
+    X = Line([1., -1], 0.) # line x = y
+    s = ConstrainedContinuousIdentitySystem(2, X)
+    @test statedim(s) == 2
+    @test inputdim(s) == 0
 end
 
 @testset "Continuous linear system" begin

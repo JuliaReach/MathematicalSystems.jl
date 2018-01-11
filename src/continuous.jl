@@ -1,4 +1,33 @@
 """
+    ContinuousIdentitySystem <: AbstractContinuousSystem
+
+Trivial identity continuous-time system of the form
+```math
+x' = 0.
+```
+"""
+struct ContinuousIdentitySystem <: AbstractContinuousSystem
+    statedim::Int
+end
+statedim(s::ContinuousIdentitySystem) = s.statedim
+inputdim(s::ContinuousIdentitySystem) = 0
+
+"""
+    ConstrainedContinuousIdentitySystem <: AbstractContinuousSystem
+
+Trivial identity continuous-time system of the form
+```math
+x' = 0.
+```
+"""
+struct ConstrainedContinuousIdentitySystem{ST} <: AbstractContinuousSystem
+    statedim::Int
+    X::ST
+end
+statedim(s::ConstrainedContinuousIdentitySystem) = s.statedim
+inputdim(s::ConstrainedContinuousIdentitySystem) = 0
+
+"""
     LinearContinuousSystem
 
 Continuous-time linear system of the form

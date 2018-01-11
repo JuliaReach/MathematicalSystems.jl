@@ -1,3 +1,20 @@
+@testset "Discrete identity system" begin
+    for sd in 1:3
+        s = DiscreteIdentitySystem(sd)
+        @test statedim(s) == sd
+        @test inputdim(s) == 0
+    end
+end
+
+@testset "Discrete constrained identity system" begin
+    for sd in 1:3
+        X = Line([1., -1], 0.) # line x = y
+        s = ConstrainedDiscreteIdentitySystem(sd, X)
+        @test statedim(s) == sd
+        @test inputdim(s) == 0
+    end
+end
+
 @testset "Discrete linear system" begin
     for sd in 1:3
         s = LinearDiscreteSystem(zeros(sd, sd))

@@ -15,9 +15,9 @@ inputdim(s::ContinuousIdentitySystem) = 0
 """
     ConstrainedContinuousIdentitySystem <: AbstractContinuousSystem
 
-Trivial identity continuous-time system of the form
+Trivial identity continuous-time system with state constraints of the form
 ```math
-x' = 0.
+x' = 0, x(t) ∈ \\mathcal{X}.
 ```
 """
 struct ConstrainedContinuousIdentitySystem{ST} <: AbstractContinuousSystem

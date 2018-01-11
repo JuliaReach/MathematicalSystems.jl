@@ -15,9 +15,9 @@ inputdim(s::DiscreteIdentitySystem) = 0
 """
     ConstrainedDiscreteIdentitySystem <: AbstractDiscreteSystem
 
-Trivial identity discrete-time system of the form
+Trivial identity discrete-time system with state constraints of the form
 ```math
-x_{k+1} = x_k.
+x_{k+1} = x_k, x_k ∈ \\mathcal{X}.
 ```
 """
 struct ConstrainedDiscreteIdentitySystem{ST} <: AbstractDiscreteSystem

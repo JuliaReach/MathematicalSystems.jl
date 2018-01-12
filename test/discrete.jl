@@ -7,10 +7,12 @@
 end
 
 @testset "Discrete constrained identity system" begin
-    X = Line([1., -1], 0.) # line x = y
-    s = ConstrainedDiscreteIdentitySystem(2, X)
-    @test statedim(s) == 2
-    @test inputdim(s) == 0
+    for sd in 1:3
+        X = Singleton(ones(sd))
+        s = ConstrainedDiscreteIdentitySystem(sd, X)
+        @test statedim(s) == sd
+        @test inputdim(s) == 0
+    end
 end
 
 @testset "Discrete linear system" begin

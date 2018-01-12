@@ -1,4 +1,33 @@
 """
+    DiscreteIdentitySystem <: AbstractDiscreteSystem
+
+Trivial identity discrete-time system of the form
+```math
+x_{k+1} = x_k.
+```
+"""
+struct DiscreteIdentitySystem <: AbstractDiscreteSystem
+    statedim::Int
+end
+statedim(s::DiscreteIdentitySystem) = s.statedim
+inputdim(s::DiscreteIdentitySystem) = 0
+
+"""
+    ConstrainedDiscreteIdentitySystem <: AbstractDiscreteSystem
+
+Trivial identity discrete-time system with state constraints of the form
+```math
+x_{k+1} = x_k, x_k ∈ \\mathcal{X}.
+```
+"""
+struct ConstrainedDiscreteIdentitySystem{ST} <: AbstractDiscreteSystem
+    statedim::Int
+    X::ST
+end
+statedim(s::ConstrainedDiscreteIdentitySystem) = s.statedim
+inputdim(s::ConstrainedDiscreteIdentitySystem) = 0
+
+"""
     LinearDiscreteSystem
 
 Discrete-time linear system of the form

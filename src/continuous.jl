@@ -25,6 +25,7 @@ struct ConstrainedContinuousIdentitySystem{ST} <: AbstractContinuousSystem
     X::ST
 end
 statedim(s::ConstrainedContinuousIdentitySystem) = s.statedim
+stateset(s::ConstrainedContinuousIdentitySystem) = s.X
 inputdim(s::ConstrainedContinuousIdentitySystem) = 0
 
 """
@@ -89,6 +90,7 @@ struct ConstrainedLinearContinuousSystem{T, MT <: AbstractMatrix{T}, ST} <: Abst
 end
 ConstrainedLinearContinuousSystem{T, MT <: AbstractMatrix{T}, ST}(A::MT, X::ST) = ConstrainedLinearContinuousSystem{T, MT, ST}(A, X)
 statedim(s::ConstrainedLinearContinuousSystem) = Base.LinAlg.checksquare(s.A)
+stateset(s::ConstrainedLinearContinuousSystem) = s.X
 inputdim(s::ConstrainedLinearContinuousSystem) = 0
 
 """
@@ -117,7 +119,9 @@ function ConstrainedLinearControlContinuousSystem{T, MT <: AbstractMatrix{T}, ST
     return ConstrainedLinearControlContinuousSystem{T, MT, ST, UT}(A, B, X, U)
 end
 statedim(s::ConstrainedLinearControlContinuousSystem) = Base.LinAlg.checksquare(s.A)
+stateset(s::ConstrainedLinearControlContinuousSystem) = s.X
 inputdim(s::ConstrainedLinearControlContinuousSystem) = size(s.B, 2)
+inputset(s::ConstrainedLinearControlContinuousSystem) = s.U
 
 """
     LinearAlgebraicContinuousSystem
@@ -167,4 +171,6 @@ function ConstrainedLinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}, 
     return ConstrainedLinearAlgebraicContinuousSystem{T, MT, ST}(A, E, X)
 end
 statedim(s::ConstrainedLinearAlgebraicContinuousSystem) = size(s.A, 1)
+stateset(s::ConstrainedLinearAlgebraicContinuousSystem) = s.X
 inputdim(s::ConstrainedLinearAlgebraicContinuousSystem) = 0
+inputset(s::ConstrainedLinearAlgebraicContinuousSystem) = s.U

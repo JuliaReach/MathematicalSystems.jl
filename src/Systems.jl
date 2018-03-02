@@ -11,8 +11,10 @@ Abstract Types for Systems
 export AbstractSystem,
        AbstractDiscreteSystem,
        AbstractContinuousSystem,
+       statedim,
+       stateset,
        inputdim,
-       statedim
+       inputset
 
 include("abstract.jl")
 

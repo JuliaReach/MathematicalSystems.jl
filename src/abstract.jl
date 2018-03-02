@@ -13,11 +13,25 @@ Returns the dimension of the state space of system `s`.
 function statedim end
 
 """
+    stateset(s::AbstractSystem)
+
+Returns the set of allowed states of system `s`.
+"""
+function stateset end
+
+"""
     inputdim(s::AbstractSystem)
 
 Returns the dimension of the input space of system `s`.
 """
 function inputdim end
+
+"""
+    inputset(s::AbstractSystem)
+
+Returns the set of allowed inputs of system `s`.
+"""
+function inputset end
 
 """
     AbstractDiscreteSystem

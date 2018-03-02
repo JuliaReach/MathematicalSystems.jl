@@ -16,5 +16,7 @@ end
 
 ```@docs
 statedim
+stateset
 inputdim
+inputset
 ```

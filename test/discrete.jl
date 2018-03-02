@@ -11,6 +11,7 @@ end
         X = Singleton(ones(sd))
         s = ConstrainedDiscreteIdentitySystem(sd, X)
         @test statedim(s) == sd
+        @test stateset(s) == X
         @test inputdim(s) == 0
     end
 end
@@ -36,6 +37,7 @@ end
     X = Line([1., -1], 0.) # line x = y
     s = ConstrainedLinearDiscreteSystem(A, X)
     @test statedim(s) == 2
+    @test stateset(s) == X
     @test inputdim(s) == 0
 end
 
@@ -46,7 +48,9 @@ end
     U = Hyperrectangle(low=[0.9, 0.9], high=[1.1, 1.2])
     s = ConstrainedLinearControlDiscreteSystem(A, B, X, U)
     @test statedim(s) == 2
+    @test stateset(s) == X
     @test inputdim(s) == 1
+    @test inputset(s) == U
 end
 
 @testset "Discrete linear algebraic system" begin
@@ -63,5 +67,6 @@ end
     X = LinearConstraint([0, -1.], 0.) # the set y ≥ 0
     s = ConstrainedLinearAlgebraicDiscreteSystem(A, E, X)
     @test statedim(s) == 2
+    @test stateset(s) == X
     @test inputdim(s) == 0
 end

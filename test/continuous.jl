@@ -11,6 +11,7 @@ end
         X = Singleton(ones(sd))
         s = ConstrainedContinuousIdentitySystem(sd, X)
         @test statedim(s) == sd
+        @test stateset(s) == X
         @test inputdim(s) == 0
     end
 end
@@ -36,6 +37,7 @@ end
     X = Line([1., -1], 0.) # line x = y
     s = ConstrainedLinearContinuousSystem(A, X)
     @test statedim(s) == 2
+    @test stateset(s) == X
     @test inputdim(s) == 0
 end
 
@@ -46,7 +48,9 @@ end
     U = Hyperrectangle(low=[0.9, 0.9], high=[1.1, 1.2])
     s = ConstrainedLinearControlContinuousSystem(A, B, X, U)
     @test statedim(s) == 2
+    @test stateset(s) == X
     @test inputdim(s) == 1
+    @test inputset(s) == U
 end
 
 @testset "Continuous linear algebraic system" begin
@@ -63,6 +67,7 @@ end
     X = LinearConstraint([0, -1.], 0.) # the set y ≥ 0
     s = ConstrainedLinearAlgebraicContinuousSystem(A, E, X)
     @test statedim(s) == 2
+    @test stateset(s) == X
     @test inputdim(s) == 0
 end
 

@@ -53,4 +53,13 @@ export InitialValueProblem, IVP
 
 include("ivp.jl")
 
+
+#=====================
+Input related methods
+=====================#
+export AbstractInput, ConstantInput, VaryingInput,
+       next_input
+
+include("inputs.jl")
+
 end # module

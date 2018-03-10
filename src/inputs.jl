@@ -23,8 +23,8 @@ Type representing an input that remains constant in time.
 
 ### Examples
 
-The constant input holds a single element and the input being constant, its
-length is infinite. To access the field `U`, you can use the method `next_input`,
+The constant input holds a single element and its length is infinite.
+To access the field `U`, you can use the method `next_input`,
 and a `for` loop as well:
 
 ```jldoctest constant_input

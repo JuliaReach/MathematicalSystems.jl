@@ -144,8 +144,8 @@ Returns the input field given a state.
 
 ### Input
 
-- `inputs` -- a varying input
-- `state`  -- the state of the iterator
+- `input` -- a varying input
+- `state` -- the state of the iterator
 
 ### Output
 

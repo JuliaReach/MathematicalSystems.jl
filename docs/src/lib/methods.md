@@ -26,5 +26,5 @@ stateset
 ```@docs
 inputdim
 inputset
-next_input
+nextinput
 ```

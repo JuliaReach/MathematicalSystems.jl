@@ -57,8 +57,7 @@ include("ivp.jl")
 #=====================
 Input related methods
 =====================#
-export AbstractInput, ConstantInput, VaryingInput,
-       next_input
+export AbstractInput, ConstantInput, VaryingInput, nextinput
 
 include("inputs.jl")
 

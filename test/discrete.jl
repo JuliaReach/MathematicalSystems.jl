@@ -77,10 +77,9 @@ end
     X = Line([1., -1], 0.)
     U = ConstantInput(Hyperrectangle(low=[0.9, 0.9], high=[1.1, 1.2]))
     s = ConstrainedLinearControlDiscreteSystem(A, B, X, U)
-    @test statedim(s) == 2
-    @test stateset(s) == X
-    @test inputdim(s) == 1
-    @test inputset(s) == U
+    s = ConstrainedLinearControlDiscreteSystem(A, B, X, U)
+    @test length(s.U) == 1
+    @test nextinput(s.U) isa Hyperrectangle
 end
 
 @testset "Varying input in a discrete constrained linear control system" begin
@@ -90,8 +89,8 @@ end
     U = VaryingInput([Hyperrectangle(low=[0.9, 0.9], high=[1.1, 1.2]),
                       Hyperrectangle(low=[0.99, 0.99], high=[1.0, 1.1])])
     s = ConstrainedLinearControlDiscreteSystem(A, B, X, U)
-    @test statedim(s) == 2
-    @test stateset(s) == X
-    @test inputdim(s) == 1
-    @test inputset(s) == U
+    @test length(s.U) == 2
+    for ui in s.U
+        @test ui isa Hyperrectangle
+    end
 end

@@ -41,9 +41,6 @@ julia> nextinput(c)
 julia> nextinput(c)
 -1//2
 
-julia> length(c)
-Base.IsInfinite()
-
 julia> for ci in c print(2*ci) end
 -1//1
 ```
@@ -60,8 +57,8 @@ struct ConstantInput{UT} <: AbstractInput
 end
 
 Base.next(input::ConstantInput, state) = (input.U, state + 1)
-Base.done(input::ConstantInput, state) = state > 1
-Base.length(input::ConstantInput) = Base.IsInfinite()
+Base.done(::ConstantInput, state) = state > 1
+Base.iteratorsize(::Type{ConstantInput}) = Base.IsInfinite()
 Base.eltype(::Type{ConstantInput{UT}}) where {UT} = UT
 
 """
@@ -121,7 +118,7 @@ You can collect the inputs in an array, or equivalently use list comprehension,
 
 ```jldoctest varying_input
 julia> collect(v)
-2-element Array{Any,1}:
+2-element Array{Rational{Int64},1}:
  -1//2
   1//2
 

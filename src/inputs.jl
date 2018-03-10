@@ -47,6 +47,13 @@ Base.IsInfinite()
 julia> for ci in c print(2*ci) end
 -1//1
 ```
+
+The elements of this input are rational numbers:
+
+```jldoctest constant_input
+julia> eltype(c)
+Rational{Int64}
+```
 """
 struct ConstantInput{UT} <: AbstractInput
     U::UT
@@ -55,6 +62,7 @@ end
 Base.next(input::ConstantInput, state) = (input.U, state + 1)
 Base.done(input::ConstantInput, state) = state > 1
 Base.length(input::ConstantInput) = Base.IsInfinite()
+Base.eltype(::Type{ConstantInput{UT}}) where {UT} = UT
 
 """
     nextinput(input::ConstantInput, state::Int)
@@ -84,7 +92,7 @@ Type representing an input that may vary with time.
 ### Examples
 
 The varying input holds a vector of elements and its length equals the number
-of elements in the vector.
+of elements in the vector. Consider an input given by a vector of rational numbers:
 
 ```jldoctest varying_input
 julia> v = VaryingInput([-1//2, 1//2])
@@ -92,6 +100,9 @@ Systems.VaryingInput{Rational{Int64}}(Rational{Int64}[-1//2, 1//2])
 
 julia> length(v)
 2
+
+julia> eltype(v)
+Rational{Int64}
 ```
 
 The method `nextinput` receives a varying input and an index representing the state
@@ -127,6 +138,7 @@ end
 Base.next(input::VaryingInput, state) = (input.U[state], state + 1)
 Base.done(input::VaryingInput, state) = state > length(input.U)
 Base.length(input::VaryingInput) = length(input.U)
+Base.eltype(::Type{VaryingInput{UT}}) where {UT} = UT
 
 """
     nextinput(input::VaryingInput, state::Int)

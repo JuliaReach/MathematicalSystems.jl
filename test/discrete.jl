@@ -70,3 +70,28 @@ end
     @test stateset(s) == X
     @test inputdim(s) == 0
 end
+
+@testset "Constant input in a discrete constrained linear control system" begin
+    A = [1. 1; 1 -1]
+    B = [0.5 1.5]'
+    X = Line([1., -1], 0.)
+    U = ConstantInput(Hyperrectangle(low=[0.9, 0.9], high=[1.1, 1.2]))
+    s = ConstrainedLinearControlDiscreteSystem(A, B, X, U)
+    @test statedim(s) == 2
+    @test stateset(s) == X
+    @test inputdim(s) == 1
+    @test inputset(s) == U
+end
+
+@testset "Varying input in a discrete constrained linear control system" begin
+    A = [1. 1; 1 -1]
+    B = [0.5 1.5]'
+    X = Line([1., -1], 0.)
+    U = VaryingInput([Hyperrectangle(low=[0.9, 0.9], high=[1.1, 1.2]),
+                      Hyperrectangle(low=[0.99, 0.99], high=[1.0, 1.1])])
+    s = ConstrainedLinearControlDiscreteSystem(A, B, X, U)
+    @test statedim(s) == 2
+    @test stateset(s) == X
+    @test inputdim(s) == 1
+    @test inputset(s) == U
+end

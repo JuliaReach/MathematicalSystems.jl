@@ -8,7 +8,10 @@ DocTestFilters = [r"[0-9\.]+ seconds \(.*\)"]
 
 ## Features
 
-Types for mathematical systems modeling.
+- Generic and flexible systems definitions, while being fast and type stable.
+- Types for mathematical systems modeling: continuous, discrete, controlled systems,
+linear algebraic, etc.
+- Iterator interfaces to handle constant or time-varying inputs. 
 
 ## Library Outline
 

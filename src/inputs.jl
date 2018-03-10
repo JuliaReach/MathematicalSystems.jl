@@ -106,22 +106,18 @@ julia> length(v)
 ```
 
 You can collect the inputs in an array, or equivalently use list comprehension,
-or use a `for` loop as well:
+(or use a `for` loop):
 
 ```jldoctest varying_input
 julia> collect(v)
 2-element Array{Any,1}:
--1//2
-1//2
+ -1//2
+  1//2
 
-julia> [vi for vi in v]
+julia> [2*vi for vi in v]
 2-element Array{Rational{Int64},1}:
--1//2
-1//2
-
-julia> for vi in v print(2*vi, "\n") end
--1//1
-1//1
+ -1//1
+  1//1
 ```
 """
 struct VaryingInput{UT} <: AbstractInput

@@ -14,10 +14,16 @@ DocTestSetup = quote
 end
 ```
 
+## States
 
 ```@docs
 statedim
 stateset
+```
+
+## Inputs
+
+```@docs
 inputdim
 inputset
 next_input

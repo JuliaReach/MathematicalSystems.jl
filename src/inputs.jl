@@ -12,10 +12,11 @@ Iteration is supported with an index number called *iterator state*.
 The iteration function `Base.next` takes and returns a tuple (`input`, `state`),
 where `input` represents the value of the input, and `state` is an index which
 counts the number of times this iterator was called.
+
+A convenience function `nextinput(input, n)` is also provided and it returns the
+first `n` elements of `input`.
 """
 abstract type AbstractInput end
-
-Base.start(::AbstractInput) = 1
 
 """
     ConstantInput{UT} <: AbstractInput
@@ -29,20 +30,25 @@ Type representing an input that remains constant in time.
 ### Examples
 
 The constant input holds a single element and its length is infinite.
-To access the field `U`, you can use the method `nextinput`, or a `for` loop:
+To access the field `U`, you can use Base's `next` given a state, or the metho
+ `nextinput` given the number of desired input elements:
 
 ```jldoctest constant_input
 julia> c = ConstantInput(-1//2)
 Systems.ConstantInput{Rational{Int64}}(-1//2)
 
-julia> nextinput(c)
--1//2
+julia> next(c, 1)
+(-1//2, nothing)
 
-julia> nextinput(c)
--1//2
+julia> next(c, 2)
+(-1//2, nothing)
 
-julia> for ci in c print(2*ci) end
--1//1
+julia> collect(nextinput(c, 4))
+4-element Array{Systems.ConstantInput{Rational{Int64}},1}:
+ Systems.ConstantInput{Rational{Int64}}(-1//2)
+ Systems.ConstantInput{Rational{Int64}}(-1//2)
+ Systems.ConstantInput{Rational{Int64}}(-1//2)
+ Systems.ConstantInput{Rational{Int64}}(-1//2)
 ```
 
 The elements of this input are rational numbers:
@@ -56,26 +62,31 @@ struct ConstantInput{UT} <: AbstractInput
     U::UT
 end
 
-Base.next(input::ConstantInput, state) = (input.U, state + 1)
-Base.done(::ConstantInput, state) = state > 1
-Base.iteratorsize(::Type{ConstantInput}) = Base.IsInfinite()
 Base.eltype(::Type{ConstantInput{UT}}) where {UT} = UT
 
-"""
-    nextinput(input::ConstantInput, state::Int)
+Base.start(::ConstantInput) = nothing
+Base.next(input::ConstantInput, state) = (input.U, nothing)
+Base.done(::ConstantInput, state) = false
 
-Returns the input.
+Base.IteratorSize(::Type{<:ConstantInput}) = Base.IsInfinite()
+Base.IteratorEltype(::Type{<:ConstantInput}) = Base.HasEltype()
+
+"""
+    nextinput(input::ConstantInput, n::Int=1)
+
+Returns the first `n` elements of this input.
 
 ### Input
 
-- `input`  -- a constant input
-- `state`  -- (optional, default: `1`) the state of the iterator
+- `input` -- a constant input
+- `n`     -- (optional, default: `1`) the number of desired elements
 
 ### Output
 
-The input representation in `input`.
+An iterator of type `Base.Iterators.Take` that represents the first `n` elements
+of this input.
 """
-nextinput(input::ConstantInput, state::Int=1) = input.U
+nextinput(input::ConstantInput, n::Int=1) = Base.Iterators.repeated(input, n)
 
 """
     VaryingInput{UT} <: AbstractInput
@@ -102,15 +113,18 @@ julia> eltype(v)
 Rational{Int64}
 ```
 
-The method `nextinput` receives a varying input and an index representing the state
-and returns the next input corresponding to the given state:
+The method `nextinput` receives a varying input and an integer `n` and returns
+the first `n` elements of this input:
 
 ```jldoctest varying_input
-julia> nextinput(v, 1)
--1//2
+julia> collect(nextinput(v, 1))
+1-element Array{Rational{Int64},1}:
+ -1//2
 
-julia> nextinput(v, 2)
-1//2
+julia> collect(nextinput(v, 2))
+2-element Array{Rational{Int64},1}:
+ -1//2
+  1//2
 ```
 
 You can collect the inputs in an array, or equivalently use list comprehension,
@@ -127,28 +141,45 @@ julia> [2*vi for vi in v]
  -1//1
   1//1
 ```
+
+Since this input type is finite, querying more elements than its length returns
+the full vector:
+
+```jldoctest varying_input
+julia> collect(nextinput(v, 4))
+2-element Array{Rational{Int64},1}:
+ -1//2
+  1//2
+```
 """
 struct VaryingInput{UT} <: AbstractInput
     U::AbstractVector{<:UT}  # input sequence
 end
 
-Base.next(input::VaryingInput, state) = (input.U[state], state + 1)
-Base.done(input::VaryingInput, state) = state > length(input.U)
-Base.length(input::VaryingInput) = length(input.U)
 Base.eltype(::Type{VaryingInput{UT}}) where {UT} = UT
 
-"""
-    nextinput(input::VaryingInput, state::Int)
+Base.start(::VaryingInput) = 1
+Base.next(input::VaryingInput, state) = (input.U[state], state + 1)
+Base.done(input::VaryingInput, state) = state > length(input.U)
 
-Returns the input field given a state.
+Base.length(input::VaryingInput) = length(input.U)
+
+Base.IteratorSize(::Type{<:VaryingInput}) = Base.HasLength()
+Base.IteratorEltype(::Type{<:VaryingInput}) = Base.HasEltype()
+
+"""
+    nextinput(input::VaryingInput, n::Int=1)
+
+Returns the first `n` elements of this input.
 
 ### Input
 
-- `input` -- a varying input
-- `state` -- the state of the iterator
+- `input` -- varying input
+- `n`     -- (optional, default: `1`) number of desired elements
 
 ### Output
 
-The input representation of `input` corresponding to `state`.
+An iterator of type `Base.Iterators.Take` that represents the first `n` elements
+of this input.
 """
-nextinput(input::VaryingInput, state::Int) = input.U[state]
+nextinput(input::VaryingInput, n::Int=1) = Base.Iterators.take(input, n)

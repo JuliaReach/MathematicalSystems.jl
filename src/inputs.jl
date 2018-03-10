@@ -24,8 +24,7 @@ Type representing an input that remains constant in time.
 ### Examples
 
 The constant input holds a single element and its length is infinite.
-To access the field `U`, you can use the method `next_input`,
-and a `for` loop as well:
+To access the field `U`, you can use the method `next_input`, or a `for` loop:
 
 ```jldoctest constant_input
 julia> c = ConstantInput(-1//2)

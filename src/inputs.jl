@@ -98,7 +98,7 @@ Type representing an input that may vary with time.
 
 ### Examples
 
-The varying input holds a vector of elements and its length equals the number
+The varying input holds a vector and its length equals the number
 of elements in the vector. Consider an input given by a vector of rational numbers:
 
 ```jldoctest varying_input
@@ -112,10 +112,24 @@ julia> eltype(v)
 Rational{Int64}
 ```
 
-The method `nextinput` receives a varying input and an integer `n` and returns
-the first `n` elements of this input:
+Base's `next` method receives the input and an integer state and returns the
+input element and the next iteration state:
 
 ```jldoctest varying_input
+julia> next(v, 1)
+(-1//2, 2)
+
+julia> next(v, 2)
+(1//2, 3)
+```
+
+The method `nextinput` receives a varying input and an integer `n` and returns
+an iterator over the first `n` elements of this input (where `n=1` by default):
+
+```jldoctest varying_input
+julia> typeof(nextinput(v))
+Base.Iterators.Take{Systems.VaryingInput{Rational{Int64}}}
+
 julia> collect(nextinput(v, 1))
 1-element Array{Rational{Int64},1}:
  -1//2

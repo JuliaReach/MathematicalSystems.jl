@@ -30,7 +30,7 @@ Type representing an input that remains constant in time.
 ### Examples
 
 The constant input holds a single element and its length is infinite.
-To access the field `U`, you can use Base's `next` given a state, or the metho
+To access the field `U`, you can use Base's `next` given a state, or the method
  `nextinput` given the number of desired input elements:
 
 ```jldoctest constant_input
@@ -44,11 +44,11 @@ julia> next(c, 2)
 (-1//2, nothing)
 
 julia> collect(nextinput(c, 4))
-4-element Array{Systems.ConstantInput{Rational{Int64}},1}:
- Systems.ConstantInput{Rational{Int64}}(-1//2)
- Systems.ConstantInput{Rational{Int64}}(-1//2)
- Systems.ConstantInput{Rational{Int64}}(-1//2)
- Systems.ConstantInput{Rational{Int64}}(-1//2)
+4-element Array{Rational{Int64},1}:
+ -1//2
+ -1//2
+ -1//2
+ -1//2
 ```
 
 The elements of this input are rational numbers:
@@ -83,10 +83,9 @@ Returns the first `n` elements of this input.
 
 ### Output
 
-An iterator of type `Base.Iterators.Take` that represents the first `n` elements
-of this input.
+A repeated iterator that generates `n` equal samples of this input.
 """
-nextinput(input::ConstantInput, n::Int=1) = Base.Iterators.repeated(input, n)
+nextinput(input::ConstantInput, n::Int=1) = Base.Iterators.repeated(input.U, n)
 
 """
     VaryingInput{UT} <: AbstractInput
@@ -179,7 +178,7 @@ Returns the first `n` elements of this input.
 
 ### Output
 
-An iterator of type `Base.Iterators.Take` that represents the first `n` elements
-of this input.
+An iterator of type `Base.Iterators.Take` that represents at most the first
+`n` elements of this input.
 """
 nextinput(input::VaryingInput, n::Int=1) = Base.Iterators.take(input, n)

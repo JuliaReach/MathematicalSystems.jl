@@ -1,6 +1,6 @@
 # Methods
 
-This section describes systems methods implemented in `Systems.jl`. 
+This section describes systems methods implemented in `Systems.jl`.
 
 ```@contents
 Pages = ["methods.md"]
@@ -14,9 +14,17 @@ DocTestSetup = quote
 end
 ```
 
+## States
+
 ```@docs
 statedim
 stateset
+```
+
+## Inputs
+
+```@docs
 inputdim
 inputset
+nextinput
 ```

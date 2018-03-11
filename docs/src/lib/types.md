@@ -1,6 +1,6 @@
 # Types
 
-This section describes systems types implemented in `Systems.jl`. 
+This section describes systems types implemented in `Systems.jl`.
 
 ```@contents
 Pages = ["types.md"]
@@ -53,4 +53,12 @@ ConstrainedLinearAlgebraicDiscreteSystem
 ```@docs
 InitialValueProblem
 IVP
+```
+
+## Input Types
+
+```@docs
+AbstractInput
+ConstantInput
+VaryingInput
 ```

@@ -173,4 +173,3 @@ end
 statedim(s::ConstrainedLinearAlgebraicContinuousSystem) = size(s.A, 1)
 stateset(s::ConstrainedLinearAlgebraicContinuousSystem) = s.X
 inputdim(s::ConstrainedLinearAlgebraicContinuousSystem) = 0
-inputset(s::ConstrainedLinearAlgebraicContinuousSystem) = s.U

@@ -32,6 +32,7 @@ struct InitialValueProblem{S <: AbstractSystem, XT} <: AbstractSystem
 end
 statedim(ivp::InitialValueProblem) = statedim(ivp.s)
 inputdim(ivp::InitialValueProblem) = inputdim(ivp.s)
+inputset(ivp::InitialValueProblem) = inputset(ivp.s)
 
 """
     IVP

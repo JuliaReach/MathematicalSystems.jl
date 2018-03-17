@@ -51,6 +51,13 @@ end
     @test stateset(s) == X
     @test inputdim(s) == 1
     @test inputset(s) == U
+
+    # initial value problem composite type
+    x0 = Singleton([1.5, 2.0])
+    p = InitialValueProblem(s, x0)
+    @test inputset(p) == U
+    @test statedim(p) == 2
+    @test inputdim(p) == 0
 end
 
 @testset "Continuous linear algebraic system" begin

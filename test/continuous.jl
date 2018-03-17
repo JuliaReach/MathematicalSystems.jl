@@ -57,7 +57,7 @@ end
     p = InitialValueProblem(s, x0)
     @test inputset(p) == U
     @test statedim(p) == 2
-    @test inputdim(p) == 0
+    @test inputdim(p) == 1
 end
 
 @testset "Continuous linear algebraic system" begin

@@ -57,6 +57,13 @@ The elements of this input are rational numbers:
 julia> eltype(c)
 Rational{Int64}
 ```
+
+To transform a constant input, you can use `map` as in:
+
+```jldoctest constant_input
+julia> map(x->2*x, c)
+Systems.ConstantInput{Rational{Int64}}(-1//1)
+```
 """
 struct ConstantInput{UT} <: AbstractInput
     U::UT
@@ -70,6 +77,8 @@ Base.done(::ConstantInput, state) = false
 
 Base.IteratorSize(::Type{<:ConstantInput}) = Base.IsInfinite()
 Base.IteratorEltype(::Type{<:ConstantInput}) = Base.HasEltype()
+
+Base.map(f::Function, c::ConstantInput) = ConstantInput(f(c.U))
 
 """
     nextinput(input::ConstantInput, n::Int=1)
@@ -164,6 +173,13 @@ julia> collect(nextinput(v, 4))
  -1//2
   1//2
 ```
+
+To transform a varying input, you can use `map` as in:
+
+```jldoctest varying_input
+julia> map(x->2*x, v)
+Systems.VaryingInput{Rational{Int64}}(Rational{Int64}[-1//1, 1//1])
+```
 """
 struct VaryingInput{UT} <: AbstractInput
     U::AbstractVector{<:UT}  # input sequence
@@ -179,6 +195,8 @@ Base.length(input::VaryingInput) = length(input.U)
 
 Base.IteratorSize(::Type{<:VaryingInput}) = Base.HasLength()
 Base.IteratorEltype(::Type{<:VaryingInput}) = Base.HasEltype()
+
+Base.map(f::Function, v::VaryingInput) = VaryingInput(f(v.U))
 
 """
     nextinput(input::VaryingInput, n::Int=1)

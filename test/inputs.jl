@@ -19,6 +19,9 @@
         @test i <= 2 && val == 1.0
         i += 1
     end
+
+    c2 = map(x->x^2, c)
+    @test c2.U == (c.U)^2
  end
 
 @testset "Varying input" begin
@@ -37,4 +40,7 @@
         @test i <= 2 && val == v.U[i]
         i += 1
     end
+
+    v2 = map(x->x.^2, v)
+    @test all([v2.U[i] == vi^2 for (i, vi) in enumerate(v)])
  end

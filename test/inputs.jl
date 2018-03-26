@@ -43,4 +43,8 @@
 
     v2 = map(x->x.^2, v)
     @test all([v2.U[i] == vi^2 for (i, vi) in enumerate(v)])
+
+    v = VaryingInput([1:3., 4:6.])
+    v3 = map(x->norm(x, Inf), v)
+    @test all([v3.U[i] == maximum(vi) for (i, vi) in enumerate(v)])
  end

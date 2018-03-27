@@ -196,7 +196,7 @@ Base.length(input::VaryingInput) = length(input.U)
 Base.IteratorSize(::Type{<:VaryingInput}) = Base.HasLength()
 Base.IteratorEltype(::Type{<:VaryingInput}) = Base.HasEltype()
 
-Base.map(f::Function, v::VaryingInput) = VaryingInput(f(v.U))
+Base.map(f::Function, v::VaryingInput) = VaryingInput(f.(v.U))
 
 """
     nextinput(input::VaryingInput, n::Int=1)

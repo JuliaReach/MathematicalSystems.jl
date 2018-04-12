@@ -104,6 +104,8 @@ Below we list more related projects.
 |[ronisbr/ControlToolbox.jl](https://github.com/ronisbr/ControlToolbox.jl)|A Control Toolbox for Julia language.|
 |[DynamicalSystemsBase.jl](https://github.com/JuliaDynamics/DynamicalSystemsBase.jl)|Definitions of core system and data types used in the ecosystem of DynamicalSystems.jl.|
 |[ControlSystems.jl](https://github.com/JuliaControl/ControlSystems.jl)|A Control Systems Toolbox for Julia|
+|[ModelingToolkit.jl](https://github.com/JuliaDiffEq/ModelingToolkit.jl)|A toolkit for modeling and creating DSLs for Scientific Computing in Julia|
+
 
 ## Credits
 

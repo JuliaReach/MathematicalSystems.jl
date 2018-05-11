@@ -109,7 +109,7 @@ Below we list more related projects.
 
 ## Credits
 
-These persons have contributed to `Systems.jl` (in alphabetic order):
+These persons have contributed to `MathematicalSystems.jl` (in alphabetic order):
 
 - [Marcelo Forets](http://marcelo-forets.fr)
 - [Benoît Legat](https://perso.uclouvain.be/benoit.legat/)

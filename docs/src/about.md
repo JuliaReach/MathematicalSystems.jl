@@ -50,7 +50,7 @@ Alternatively, you can achieve the same from inside the REPL using the following
 command:
 
 ```julia
-julia> Pkg.test("Systems")
+julia> Pkg.test("MathematicalSystems")
 ```
 
 We also advise adding new unit tests when adding new features to ensure

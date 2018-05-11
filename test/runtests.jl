@@ -1,4 +1,4 @@
-using Systems, LazySets
+using MathematicalSystems, LazySets
 using Base.Test
 
 include("continuous.jl")

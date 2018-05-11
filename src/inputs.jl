@@ -35,7 +35,7 @@ To access the field `U`, you can use Base's `next` given a state, or the method
 
 ```jldoctest constant_input
 julia> c = ConstantInput(-1//2)
-Systems.ConstantInput{Rational{Int64}}(-1//2)
+MathematicalSystems.ConstantInput{Rational{Int64}}(-1//2)
 
 julia> next(c, 1)
 (-1//2, nothing)
@@ -62,7 +62,7 @@ To transform a constant input, you can use `map` as in:
 
 ```jldoctest constant_input
 julia> map(x->2*x, c)
-Systems.ConstantInput{Rational{Int64}}(-1//1)
+MathematicalSystems.ConstantInput{Rational{Int64}}(-1//1)
 ```
 """
 struct ConstantInput{UT} <: AbstractInput
@@ -112,7 +112,7 @@ of elements in the vector. Consider an input given by a vector of rational numbe
 
 ```jldoctest varying_input
 julia> v = VaryingInput([-1//2, 1//2])
-Systems.VaryingInput{Rational{Int64}}(Rational{Int64}[-1//2, 1//2])
+MathematicalSystems.VaryingInput{Rational{Int64}}(Rational{Int64}[-1//2, 1//2])
 
 julia> length(v)
 2
@@ -137,7 +137,7 @@ an iterator over the first `n` elements of this input (where `n=1` by default):
 
 ```jldoctest varying_input
 julia> typeof(nextinput(v))
-Base.Iterators.Take{Systems.VaryingInput{Rational{Int64}}}
+Base.Iterators.Take{MathematicalSystems.VaryingInput{Rational{Int64}}}
 
 julia> collect(nextinput(v, 1))
 1-element Array{Rational{Int64},1}:
@@ -178,7 +178,7 @@ To transform a varying input, you can use `map` as in:
 
 ```jldoctest varying_input
 julia> map(x->2*x, v)
-Systems.VaryingInput{Rational{Int64}}(Rational{Int64}[-1//1, 1//1])
+MathematicalSystems.VaryingInput{Rational{Int64}}(Rational{Int64}[-1//1, 1//1])
 ```
 """
 struct VaryingInput{UT} <: AbstractInput

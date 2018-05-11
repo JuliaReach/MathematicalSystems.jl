@@ -28,14 +28,14 @@ matrix:
 
 ## uncomment the following lines to override the default test script
 script:
-  - julia -e 'Pkg.clone(pwd()); Pkg.build("Systems"); Pkg.clone("https://github.com/JuliaReach/LazySets.jl"); Pkg.test("Systems"; coverage=true)'
+  - julia -e 'Pkg.clone(pwd()); Pkg.build("MathematicalSystems"); Pkg.clone("https://github.com/JuliaReach/LazySets.jl"); Pkg.test("MathematicalSystems"; coverage=true)'
 
 after_success:
   - julia -e 'Pkg.add("Documenter"); Pkg.add("GR")'
-  - julia -e 'cd(Pkg.dir("Systems")); include(joinpath("docs", "make.jl"))'
+  - julia -e 'cd(Pkg.dir("MathematicalSystems")); include(joinpath("docs", "make.jl"))'
   # code coverage (for both Coveralls and Codecov)
   - julia -e 'Pkg.add("Coverage")'
   # push coverage results to Coveralls
-  - julia -e 'cd(Pkg.dir("Systems")); using Coverage; Coveralls.submit(Coveralls.process_folder())'
+  - julia -e 'cd(Pkg.dir("MathematicalSystems")); using Coverage; Coveralls.submit(Coveralls.process_folder())'
   # push coverage results to Codecov
-  - julia -e 'cd(Pkg.dir("Systems")); using Coverage; Codecov.submit(Codecov.process_folder())'
+  - julia -e 'cd(Pkg.dir("MathematicalSystems")); using Coverage; Codecov.submit(Codecov.process_folder())'

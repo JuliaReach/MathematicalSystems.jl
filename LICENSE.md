@@ -1,4 +1,4 @@
-The Systems.jl package is licensed under the MIT "Expat" License:
+The MathematicalSystems.jl package is licensed under the MIT "Expat" License:
 
 > Copyright (c) 2017: mforets.
 >

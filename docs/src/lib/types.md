@@ -1,6 +1,6 @@
 # Types
 
-This section describes systems types implemented in `Systems.jl`.
+This section describes systems types implemented in `MathematicalSystems.jl`.
 
 ```@contents
 Pages = ["types.md"]
@@ -8,9 +8,9 @@ Depth = 3
 ```
 
 ```@meta
-CurrentModule = Systems
+CurrentModule = MathematicalSystems
 DocTestSetup = quote
-    using Systems
+    using MathematicalSystems
 end
 ```
 

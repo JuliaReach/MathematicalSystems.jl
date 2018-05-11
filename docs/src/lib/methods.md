@@ -1,6 +1,6 @@
 # Methods
 
-This section describes systems methods implemented in `Systems.jl`.
+This section describes systems methods implemented in `MathematicalSystems.jl`.
 
 ```@contents
 Pages = ["methods.md"]
@@ -8,9 +8,9 @@ Depth = 3
 ```
 
 ```@meta
-CurrentModule = Systems
+CurrentModule = MathematicalSystems
 DocTestSetup = quote
-    using Systems
+    using MathematicalSystems
 end
 ```
 

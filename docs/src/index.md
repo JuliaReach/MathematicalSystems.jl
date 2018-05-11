@@ -1,10 +1,10 @@
-# Systems.jl
+# MathematicalSystems.jl
 
 ```@meta
 DocTestFilters = [r"[0-9\.]+ seconds \(.*\)"]
 ```
 
-`Systems` is a [Julia](http://julialang.org) package for mathematical systems interfaces.
+`MathematicalSystems` is a [Julia](http://julialang.org) package for mathematical systems interfaces.
 
 ## Features
 

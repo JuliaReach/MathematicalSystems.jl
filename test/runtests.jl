@@ -1,4 +1,4 @@
-using MathematicalSystems, LazySets
+using MathematicalSystems, LazySets, TypedPolynomials
 using Base.Test
 
 include("continuous.jl")

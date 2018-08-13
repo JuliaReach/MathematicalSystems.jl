@@ -28,7 +28,9 @@ export ContinuousIdentitySystem,
        ConstrainedLinearContinuousSystem,
        ConstrainedLinearControlContinuousSystem,
        LinearAlgebraicContinuousSystem,
-       ConstrainedLinearAlgebraicContinuousSystem
+       ConstrainedLinearAlgebraicContinuousSystem,
+       PolynomialContinuousSystem,
+       ConstrainedPolynomialContinuousSystem
 
 include("continuous.jl")
 
@@ -42,7 +44,9 @@ export DiscreteIdentitySystem,
        ConstrainedLinearDiscreteSystem,
        ConstrainedLinearControlDiscreteSystem,
        LinearAlgebraicDiscreteSystem,
-       ConstrainedLinearAlgebraicDiscreteSystem
+       ConstrainedLinearAlgebraicDiscreteSystem,
+       PolynomialDiscreteSystem,
+       ConstrainedPolynomialDiscreteSystem
 
 include("discrete.jl")
 

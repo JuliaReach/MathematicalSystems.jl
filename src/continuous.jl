@@ -173,3 +173,46 @@ end
 statedim(s::ConstrainedLinearAlgebraicContinuousSystem) = size(s.A, 1)
 stateset(s::ConstrainedLinearAlgebraicContinuousSystem) = s.X
 inputdim(s::ConstrainedLinearAlgebraicContinuousSystem) = 0
+
+"""
+    PolynomialContinuousSystem
+
+Continuous-time polynomial system of the form
+```math
+x' = p(x).
+```
+
+### Fields
+
+- `p`        -- polynomial
+- `statedim` -- number of state variables
+"""
+struct PolynomialContinuousSystem{T} <: AbstractContinuousSystem
+    p::T
+    statedim::Int
+end
+statedim(s::PolynomialContinuousSystem) = s.statedim
+inputdim(s::PolynomialContinuousSystem) = 0
+
+"""
+    ConstrainedPolynomialContinuousSystem
+
+Continuous-time polynomial system with a constraint set,
+```math
+x' = p(x), x(t) ∈ \\mathcal{X}
+```
+
+### Fields
+
+- `p`        -- polynomial
+- `X`        -- constraint set
+- `statedim` -- number of state variables
+"""
+struct ConstrainedPolynomialContinuousSystem{T, ST} <: AbstractContinuousSystem
+    p::T
+    statedim::Int
+    X::ST
+end
+statedim(s::ConstrainedPolynomialContinuousSystem) = s.statedim
+stateset(s::ConstrainedPolynomialContinuousSystem) = s.X
+inputdim(s::ConstrainedPolynomialContinuousSystem) = 0

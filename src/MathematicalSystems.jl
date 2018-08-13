@@ -1,6 +1,10 @@
 __precompile__(true)
 module MathematicalSystems
 
+using Compat
+using Compat.LinearAlgebra
+import Compat.LinearAlgebra: checksquare
+
 #=========================
 Abstract Types for Systems
 ==========================#

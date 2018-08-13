@@ -3,9 +3,8 @@ language: julia
 os:
   - linux
 julia:
-  - 0.6
-  - 0.6.1
-  - 0.6.2
+  - 0.6.4
+  - 0.7.0
   - nightly
 notifications:
   email: false
@@ -31,7 +30,7 @@ script:
   - julia -e 'Pkg.clone(pwd()); Pkg.build("MathematicalSystems"); Pkg.clone("https://github.com/JuliaReach/LazySets.jl"); Pkg.test("MathematicalSystems"; coverage=true)'
 
 after_success:
-  - julia -e 'Pkg.add("Documenter"); Pkg.add("GR")'
+  - julia -e 'Pkg.add("Documenter")'
   - julia -e 'cd(Pkg.dir("MathematicalSystems")); include(joinpath("docs", "make.jl"))'
   # code coverage (for both Coveralls and Codecov)
   - julia -e 'Pkg.add("Coverage")'

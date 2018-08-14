@@ -102,7 +102,7 @@ end
     @test inputdim(s) == 0
 end
 
-@testset "Polynomial system in continuous time with state constraints" begin
+@testset "Polynomial system in discrete time with state constraints" begin
     @polyvar x y
     p = 2x^2 - 3x + y
     X = BallInf(zeros(2), 0.1)

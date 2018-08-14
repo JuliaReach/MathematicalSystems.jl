@@ -20,10 +20,12 @@ julia> p.x0
 2-element Array{Float64,1}:
  -0.5
   0.5
+
 julia> statedim(p)
-  2
+2
+
 julia> inputdim(p)
-  0
+0
 ```
 """
 struct InitialValueProblem{S <: AbstractSystem, XT} <: AbstractSystem

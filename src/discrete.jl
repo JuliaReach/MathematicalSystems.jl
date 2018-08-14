@@ -173,3 +173,46 @@ end
 statedim(s::ConstrainedLinearAlgebraicDiscreteSystem) = size(s.A, 1)
 stateset(s::ConstrainedLinearAlgebraicDiscreteSystem) = s.X
 inputdim(s::ConstrainedLinearAlgebraicDiscreteSystem) = 0
+
+"""
+    PolynomialDiscreteSystem
+
+Discrete-time polynomial system of the form
+```math
+x_{k+1} = p(x_k), x_k ∈ \\mathcal{X}.
+```
+
+### Fields
+
+- `p`        -- polynomial
+- `statedim` -- number of state variables
+"""
+struct PolynomialDiscreteSystem{PT} <: AbstractDiscreteSystem
+    p::PT
+    statedim::Int
+end
+statedim(s::PolynomialDiscreteSystem) = s.statedim
+inputdim(s::PolynomialDiscreteSystem) = 0
+
+"""
+    ConstrainedPolynomialDiscreteSystem
+
+Discrete-time polynomial system with state constraints,
+```math
+x_{k+1} = p(x_k), x_k ∈ \\mathcal{X}.
+```
+
+### Fields
+
+- `p`        -- polynomial
+- `X`        -- constraint set
+- `statedim` -- number of state variables
+"""
+struct ConstrainedPolynomialDiscreteSystem{PT, ST} <: AbstractDiscreteSystem
+    p::PT
+    statedim::Int
+    X::ST
+end
+statedim(s::ConstrainedPolynomialDiscreteSystem) = s.statedim
+stateset(s::ConstrainedPolynomialDiscreteSystem) = s.X
+inputdim(s::ConstrainedPolynomialDiscreteSystem) = 0

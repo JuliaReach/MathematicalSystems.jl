@@ -93,3 +93,21 @@ end
         @test ui isa Hyperrectangle
     end
 end
+
+@testset "Polynomial system in discrete time" begin
+    @polyvar x y
+    p = 2x^2 - 3x + y
+    s = PolynomialDiscreteSystem(p, TypedPolynomials.nvariables(p))
+    @test statedim(s) == 2
+    @test inputdim(s) == 0
+end
+
+@testset "Polynomial system in discrete time with state constraints" begin
+    @polyvar x y
+    p = 2x^2 - 3x + y
+    X = BallInf(zeros(2), 0.1)
+    s = ConstrainedPolynomialDiscreteSystem(p, TypedPolynomials.nvariables(p), X)
+    @test statedim(s) == 2
+    @test inputdim(s) == 0
+    @test dim(stateset(s)) == dim(X)
+end

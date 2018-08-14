@@ -1,8 +1,4 @@
 __precompile__(true)
-
-"""
-Main module for `MathematicalSystems.jl` -- a Julia package for mathematical systems interfaces.
-"""
 module MathematicalSystems
 
 #=========================
@@ -28,7 +24,9 @@ export ContinuousIdentitySystem,
        ConstrainedLinearContinuousSystem,
        ConstrainedLinearControlContinuousSystem,
        LinearAlgebraicContinuousSystem,
-       ConstrainedLinearAlgebraicContinuousSystem
+       ConstrainedLinearAlgebraicContinuousSystem,
+       PolynomialContinuousSystem,
+       ConstrainedPolynomialContinuousSystem
 
 include("continuous.jl")
 
@@ -42,7 +40,9 @@ export DiscreteIdentitySystem,
        ConstrainedLinearDiscreteSystem,
        ConstrainedLinearControlDiscreteSystem,
        LinearAlgebraicDiscreteSystem,
-       ConstrainedLinearAlgebraicDiscreteSystem
+       ConstrainedLinearAlgebraicDiscreteSystem,
+       PolynomialDiscreteSystem,
+       ConstrainedPolynomialDiscreteSystem
 
 include("discrete.jl")
 

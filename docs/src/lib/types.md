@@ -33,6 +33,8 @@ ConstrainedLinearContinuousSystem
 ConstrainedLinearControlContinuousSystem
 LinearAlgebraicContinuousSystem
 ConstrainedLinearAlgebraicContinuousSystem
+PolynomialContinuousSystem
+ConstrainedPolynomialContinuousSystem
 ```
 
 ## Discrete Systems
@@ -46,6 +48,8 @@ ConstrainedLinearDiscreteSystem
 ConstrainedLinearControlDiscreteSystem
 LinearAlgebraicDiscreteSystem
 ConstrainedLinearAlgebraicDiscreteSystem
+PolynomialDiscreteSystem
+ConstrainedPolynomialDiscreteSystem
 ```
 
 ## Initial Value Problems

@@ -197,7 +197,7 @@ inputdim(s::PolynomialContinuousSystem) = 0
 """
     ConstrainedPolynomialContinuousSystem
 
-Continuous-time polynomial system with a constraint set,
+Continuous-time polynomial system with state constraints,
 ```math
 x' = p(x), x(t) ∈ \\mathcal{X}
 ```

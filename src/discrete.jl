@@ -197,7 +197,7 @@ inputdim(s::PolynomialDiscreteSystem) = 0
 """
     ConstrainedPolynomialDiscreteSystem
 
-Discrete-time polynomial system with a constraint set,
+Discrete-time polynomial system with state constraints,
 ```math
 x_{k+1} = p(x_k), x_k ∈ \\mathcal{X}.
 ```

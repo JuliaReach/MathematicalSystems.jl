@@ -1,8 +1,4 @@
 __precompile__(true)
-
-"""
-Main module for `MathematicalSystems.jl` -- a Julia package for mathematical systems interfaces.
-"""
 module MathematicalSystems
 
 #=========================

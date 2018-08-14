@@ -187,8 +187,8 @@ x' = p(x).
 - `p`        -- polynomial
 - `statedim` -- number of state variables
 """
-struct PolynomialContinuousSystem{T} <: AbstractContinuousSystem
-    p::T
+struct PolynomialContinuousSystem{PT} <: AbstractContinuousSystem
+    p::PT
     statedim::Int
 end
 statedim(s::PolynomialContinuousSystem) = s.statedim
@@ -208,8 +208,8 @@ x' = p(x), x(t) ∈ \\mathcal{X}
 - `X`        -- constraint set
 - `statedim` -- number of state variables
 """
-struct ConstrainedPolynomialContinuousSystem{T, ST} <: AbstractContinuousSystem
-    p::T
+struct ConstrainedPolynomialContinuousSystem{PT, ST} <: AbstractContinuousSystem
+    p::PT
     statedim::Int
     X::ST
 end

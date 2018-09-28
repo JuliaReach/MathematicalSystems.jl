@@ -43,6 +43,9 @@ x_{k+1} = A x_k.
 struct LinearDiscreteSystem{T, MT <: AbstractMatrix{T}} <: AbstractDiscreteSystem
     A::MT
 end
+@static if VERSION < v"0.7-"
+    LinearDiscreteSystem{T, MT <: AbstractMatrix{T}}(A::MT) = LinearDiscreteSystem{T, MT}(A)
+end
 statedim(s::LinearDiscreteSystem) = checksquare(s.A)
 inputdim(s::LinearDiscreteSystem) = 0
 
@@ -86,6 +89,9 @@ x_{k+1} = A x_k, x_k ∈ \\mathcal{X}.
 struct ConstrainedLinearDiscreteSystem{T, MT <: AbstractMatrix{T}, ST} <: AbstractDiscreteSystem
     A::MT
     X::ST
+end
+@static if VERSION < v"0.7-"
+    ConstrainedLinearDiscreteSystem{T, MT <: AbstractMatrix{T}, ST}(A::MT, X::ST) = ConstrainedLinearDiscreteSystem{T, MT, ST}(A, X)
 end
 statedim(s::ConstrainedLinearDiscreteSystem) = checksquare(s.A)
 stateset(s::ConstrainedLinearDiscreteSystem) = s.X

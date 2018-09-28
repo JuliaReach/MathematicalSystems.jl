@@ -90,6 +90,9 @@ struct ConstrainedLinearContinuousSystem{T, MT <: AbstractMatrix{T}, ST} <: Abst
     A::MT
     X::ST
 end
+@static if VERSION < v"0.7-"
+    ConstrainedLinearContinuousSystem{T, MT <: AbstractMatrix{T}, ST}(A::MT, X::ST) = ConstrainedLinearContinuousSystem{T, MT, ST}(A, X)
+end
 statedim(s::ConstrainedLinearContinuousSystem) = checksquare(s.A)
 stateset(s::ConstrainedLinearContinuousSystem) = s.X
 inputdim(s::ConstrainedLinearContinuousSystem) = 0

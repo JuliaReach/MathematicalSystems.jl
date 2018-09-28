@@ -43,6 +43,9 @@ x' = A x.
 struct LinearContinuousSystem{T, MT <: AbstractMatrix{T}} <: AbstractContinuousSystem
     A::MT
 end
+@static if VERSION < v"0.7-"
+    LinearContinuousSystem{T, MT <: AbstractMatrix{T}}(A::MT) = LinearContinuousSystem{T, MT}(A)
+end
 statedim(s::LinearContinuousSystem) = checksquare(s.A)
 inputdim(s::LinearContinuousSystem) = 0
 

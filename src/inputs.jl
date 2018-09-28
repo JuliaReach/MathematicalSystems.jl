@@ -73,13 +73,13 @@ Base.eltype(::Type{ConstantInput{UT}}) where {UT} = UT
 
 @static if VERSION < v"0.7-"
     @eval begin
-            Base.start(::ConstantInput) = nothing
-            Base.next(input::ConstantInput, state) = (input.U, nothing)
-            Base.done(::ConstantInput, state) = false
-           end
+        Base.start(::ConstantInput) = nothing
+        Base.next(input::ConstantInput, state) = (input.U, nothing)
+        Base.done(::ConstantInput, state) = false
+    end
 else
     @eval begin
-            Base.iterate(input::ConstantInput, state::Void=nothing) = (input.U, state)
+        Base.iterate(input::ConstantInput, state::Nothing=nothing) = (input.U, state)
     end
 end
 

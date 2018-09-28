@@ -78,7 +78,11 @@ end
     U = ConstantInput(Hyperrectangle(low=[0.9, 0.9], high=[1.1, 1.2]))
     s = ConstrainedLinearControlDiscreteSystem(A, B, X, U)
     s = ConstrainedLinearControlDiscreteSystem(A, B, X, U)
-    @test next(s.U, 1)[1] isa Hyperrectangle
+    if VERSION < v"0.7-"
+        @test next(s.U, 1)[1] isa Hyperrectangle
+    else
+        @test iterate(s.U)[1] isa Hyperrectangle
+    end
 end
 
 @testset "Varying input in a discrete constrained linear control system" begin

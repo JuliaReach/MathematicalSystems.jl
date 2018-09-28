@@ -4,9 +4,8 @@ os:
   - linux
 julia:
   - 0.6
-  - 0.6.1
-  - 0.6.2
-  - nightly
+  - 0.7
+  - 1.0
 notifications:
   email: false
 git:
@@ -18,20 +17,8 @@ matrix:
   allow_failures:
   - julia: nightly
 
-## uncomment and modify the following lines to manually install system packages
-#addons:
-#  apt: # apt-get for linux
-#    packages:
-#    - gfortran
-#before_script: # homebrew for mac
-#  - if [ $TRAVIS_OS_NAME = osx ]; then brew install gcc; fi
-
-## uncomment the following lines to override the default test script
-script:
-  - julia -e 'Pkg.clone(pwd()); Pkg.build("MathematicalSystems"); Pkg.clone("https://github.com/JuliaReach/LazySets.jl"); Pkg.test("MathematicalSystems"; coverage=true)'
-
 after_success:
-  - julia -e 'Pkg.add("Documenter"); Pkg.add("GR")'
+  - julia -e 'Pkg.add("Documenter")'
   - julia -e 'cd(Pkg.dir("MathematicalSystems")); include(joinpath("docs", "make.jl"))'
   # code coverage (for both Coveralls and Codecov)
   - julia -e 'Pkg.add("Coverage")'

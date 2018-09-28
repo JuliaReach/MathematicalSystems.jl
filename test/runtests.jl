@@ -1,5 +1,5 @@
 using MathematicalSystems, LazySets, TypedPolynomials
-using Base.Test
+using Compat, Compat.Test
 
 include("continuous.jl")
 include("discrete.jl")

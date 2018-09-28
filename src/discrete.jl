@@ -43,8 +43,10 @@ x_{k+1} = A x_k.
 struct LinearDiscreteSystem{T, MT <: AbstractMatrix{T}} <: AbstractDiscreteSystem
     A::MT
 end
-LinearDiscreteSystem{T, MT <: AbstractMatrix{T}}(A::MT) = LinearDiscreteSystem{T, MT}(A)
-statedim(s::LinearDiscreteSystem) = Base.LinAlg.checksquare(s.A)
+@static if VERSION < v"0.7-"
+    LinearDiscreteSystem{T, MT <: AbstractMatrix{T}}(A::MT) = LinearDiscreteSystem{T, MT}(A)
+end
+statedim(s::LinearDiscreteSystem) = checksquare(s.A)
 inputdim(s::LinearDiscreteSystem) = 0
 
 """
@@ -63,12 +65,12 @@ x_{k+1} = A x_k + B u_k.
 struct LinearControlDiscreteSystem{T, MT <: AbstractMatrix{T}} <: AbstractDiscreteSystem
     A::MT
     B::MT
+    function LinearControlDiscreteSystem(A::MT, B::MT) where {T, MT <: AbstractMatrix{T}}
+        @assert checksquare(A) == size(B, 1)
+        return new{T, MT}(A, B)
+    end
 end
-function LinearControlDiscreteSystem{T, MT <: AbstractMatrix{T}}(A::MT, B::MT)
-    @assert Base.LinAlg.checksquare(A) == size(B, 1)
-    return LinearControlDiscreteSystem{T, MT}(A, B)
-end
-statedim(s::LinearControlDiscreteSystem) = Base.LinAlg.checksquare(s.A)
+statedim(s::LinearControlDiscreteSystem) = checksquare(s.A)
 inputdim(s::LinearControlDiscreteSystem) = size(s.B, 2)
 
 """
@@ -88,8 +90,10 @@ struct ConstrainedLinearDiscreteSystem{T, MT <: AbstractMatrix{T}, ST} <: Abstra
     A::MT
     X::ST
 end
-ConstrainedLinearDiscreteSystem{T, MT <: AbstractMatrix{T}, ST}(A::MT, X::ST) = ConstrainedLinearDiscreteSystem{T, MT, ST}(A, X)
-statedim(s::ConstrainedLinearDiscreteSystem) = Base.LinAlg.checksquare(s.A)
+@static if VERSION < v"0.7-"
+    ConstrainedLinearDiscreteSystem{T, MT <: AbstractMatrix{T}, ST}(A::MT, X::ST) = ConstrainedLinearDiscreteSystem{T, MT, ST}(A, X)
+end
+statedim(s::ConstrainedLinearDiscreteSystem) = checksquare(s.A)
 stateset(s::ConstrainedLinearDiscreteSystem) = s.X
 inputdim(s::ConstrainedLinearDiscreteSystem) = 0
 
@@ -113,12 +117,12 @@ struct ConstrainedLinearControlDiscreteSystem{T, MT <: AbstractMatrix{T}, ST, UT
     B::MT
     X::ST
     U::UT
+    function ConstrainedLinearControlDiscreteSystem(A::MT, B::MT, X::ST, U::UT) where {T, MT <: AbstractMatrix{T}, ST, UT}
+        @assert checksquare(A) == size(B, 1)
+        return new{T, MT, ST, UT}(A, B, X, U)
+    end
 end
-function ConstrainedLinearControlDiscreteSystem{T, MT <: AbstractMatrix{T}, ST, UT}(A::MT, B::MT, X::ST, U::UT)
-    @assert Base.LinAlg.checksquare(A) == size(B, 1)
-    return ConstrainedLinearControlDiscreteSystem{T, MT, ST, UT}(A, B, X, U)
-end
-statedim(s::ConstrainedLinearControlDiscreteSystem) = Base.LinAlg.checksquare(s.A)
+statedim(s::ConstrainedLinearControlDiscreteSystem) = checksquare(s.A)
 stateset(s::ConstrainedLinearControlDiscreteSystem) = s.X
 inputdim(s::ConstrainedLinearControlDiscreteSystem) = size(s.B, 2)
 inputset(s::ConstrainedLinearControlDiscreteSystem) = s.U
@@ -139,10 +143,10 @@ E x_{k+1} = A x_k.
 struct LinearAlgebraicDiscreteSystem{T, MT <: AbstractMatrix{T}} <: AbstractDiscreteSystem
     A::MT
     E::MT
-end
-function LinearAlgebraicDiscreteSystem{T, MT <: AbstractMatrix{T}}(A::MT, E::MT)
-    @assert size(A) == size(E)
-    return LinearAlgebraicDiscreteSystem{T, MT}(A, E)
+    function LinearAlgebraicDiscreteSystem(A::MT, E::MT) where {T, MT <: AbstractMatrix{T}}
+        @assert size(A) == size(E)
+        return new{T, MT}(A, E)
+    end
 end
 statedim(s::LinearAlgebraicDiscreteSystem) = size(s.A, 1)
 inputdim(s::LinearAlgebraicDiscreteSystem) = 0
@@ -165,10 +169,10 @@ struct ConstrainedLinearAlgebraicDiscreteSystem{T, MT <: AbstractMatrix{T}, ST} 
     A::MT
     E::MT
     X::ST
-end
-function ConstrainedLinearAlgebraicDiscreteSystem{T, MT <: AbstractMatrix{T}, ST}(A::MT, E::MT, X::ST)
-    @assert size(A) == size(E)
-    return ConstrainedLinearAlgebraicDiscreteSystem{T, MT, ST}(A, E, X)
+    function ConstrainedLinearAlgebraicDiscreteSystem(A::MT, E::MT, X::ST) where {T, MT <: AbstractMatrix{T}, ST}
+        @assert size(A) == size(E)
+        return new{T, MT, ST}(A, E, X)
+    end
 end
 statedim(s::ConstrainedLinearAlgebraicDiscreteSystem) = size(s.A, 1)
 stateset(s::ConstrainedLinearAlgebraicDiscreteSystem) = s.X

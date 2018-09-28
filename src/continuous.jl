@@ -43,8 +43,10 @@ x' = A x.
 struct LinearContinuousSystem{T, MT <: AbstractMatrix{T}} <: AbstractContinuousSystem
     A::MT
 end
-LinearContinuousSystem{T, MT <: AbstractMatrix{T}}(A::MT) = LinearContinuousSystem{T, MT}(A)
-statedim(s::LinearContinuousSystem) = Base.LinAlg.checksquare(s.A)
+@static if VERSION < v"0.7-"
+    LinearContinuousSystem{T, MT <: AbstractMatrix{T}}(A::MT) = LinearContinuousSystem{T, MT}(A)
+end
+statedim(s::LinearContinuousSystem) = checksquare(s.A)
 inputdim(s::LinearContinuousSystem) = 0
 
 """
@@ -63,12 +65,12 @@ x' = A x + B u.
 struct LinearControlContinuousSystem{T, MT <: AbstractMatrix{T}} <: AbstractContinuousSystem
     A::MT
     B::MT
+    function LinearControlContinuousSystem(A::MT, B::MT) where {T, MT <: AbstractMatrix{T}}
+        @assert checksquare(A) == size(B, 1)
+        return new{T, MT}(A, B)
+    end
 end
-function LinearControlContinuousSystem{T, MT <: AbstractMatrix{T}}(A::MT, B::MT)
-    @assert Base.LinAlg.checksquare(A) == size(B, 1)
-    return LinearControlContinuousSystem{T, MT}(A, B)
-end
-statedim(s::LinearControlContinuousSystem) = Base.LinAlg.checksquare(s.A)
+statedim(s::LinearControlContinuousSystem) = checksquare(s.A)
 inputdim(s::LinearControlContinuousSystem) = size(s.B, 2)
 
 """
@@ -88,8 +90,10 @@ struct ConstrainedLinearContinuousSystem{T, MT <: AbstractMatrix{T}, ST} <: Abst
     A::MT
     X::ST
 end
-ConstrainedLinearContinuousSystem{T, MT <: AbstractMatrix{T}, ST}(A::MT, X::ST) = ConstrainedLinearContinuousSystem{T, MT, ST}(A, X)
-statedim(s::ConstrainedLinearContinuousSystem) = Base.LinAlg.checksquare(s.A)
+@static if VERSION < v"0.7-"
+    ConstrainedLinearContinuousSystem{T, MT <: AbstractMatrix{T}, ST}(A::MT, X::ST) = ConstrainedLinearContinuousSystem{T, MT, ST}(A, X)
+end
+statedim(s::ConstrainedLinearContinuousSystem) = checksquare(s.A)
 stateset(s::ConstrainedLinearContinuousSystem) = s.X
 inputdim(s::ConstrainedLinearContinuousSystem) = 0
 
@@ -113,12 +117,12 @@ struct ConstrainedLinearControlContinuousSystem{T, MT <: AbstractMatrix{T}, ST, 
     B::MT
     X::ST
     U::UT
+    function ConstrainedLinearControlContinuousSystem(A::MT, B::MT, X::ST, U::UT) where {T, MT <: AbstractMatrix{T}, ST, UT}
+        @assert checksquare(A) == size(B, 1)
+        return new{T, MT, ST, UT}(A, B, X, U)
+    end
 end
-function ConstrainedLinearControlContinuousSystem{T, MT <: AbstractMatrix{T}, ST, UT}(A::MT, B::MT, X::ST, U::UT)
-    @assert Base.LinAlg.checksquare(A) == size(B, 1)
-    return ConstrainedLinearControlContinuousSystem{T, MT, ST, UT}(A, B, X, U)
-end
-statedim(s::ConstrainedLinearControlContinuousSystem) = Base.LinAlg.checksquare(s.A)
+statedim(s::ConstrainedLinearControlContinuousSystem) = checksquare(s.A)
 stateset(s::ConstrainedLinearControlContinuousSystem) = s.X
 inputdim(s::ConstrainedLinearControlContinuousSystem) = size(s.B, 2)
 inputset(s::ConstrainedLinearControlContinuousSystem) = s.U
@@ -139,10 +143,10 @@ E x' = A x.
 struct LinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}} <: AbstractContinuousSystem
     A::MT
     E::MT
-end
-function LinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}}(A::MT, E::MT)
-    @assert size(A) == size(E)
-    return LinearAlgebraicContinuousSystem{T, MT}(A, E)
+    function LinearAlgebraicContinuousSystem(A::MT, E::MT) where {T, MT <: AbstractMatrix{T}}
+        @assert size(A) == size(E)
+        return new{T, MT}(A, E)
+    end
 end
 statedim(s::LinearAlgebraicContinuousSystem) = size(s.A, 1)
 inputdim(s::LinearAlgebraicContinuousSystem) = 0
@@ -165,10 +169,10 @@ struct ConstrainedLinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}, ST
     A::MT
     E::MT
     X::ST
-end
-function ConstrainedLinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}, ST}(A::MT, E::MT, X::ST)
-    @assert size(A) == size(E)
-    return ConstrainedLinearAlgebraicContinuousSystem{T, MT, ST}(A, E, X)
+    function ConstrainedLinearAlgebraicContinuousSystem(A::MT, E::MT, X::ST) where {T, MT <: AbstractMatrix{T}, ST}
+        @assert size(A) == size(E)
+        return new{T, MT, ST}(A, E, X)
+    end
 end
 statedim(s::ConstrainedLinearAlgebraicContinuousSystem) = size(s.A, 1)
 stateset(s::ConstrainedLinearAlgebraicContinuousSystem) = s.X

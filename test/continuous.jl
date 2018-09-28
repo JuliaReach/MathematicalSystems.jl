@@ -43,7 +43,7 @@ end
 
 @testset "Continuous constrained linear control system" begin
     A = [1. 1; 1 -1]
-    B = [0.5 1.5]'
+    B = Matrix([0.5 1.5]')
     X = Line([1., -1], 0.)
     U = Hyperrectangle(low=[0.9, 0.9], high=[1.1, 1.2])
     s = ConstrainedLinearControlContinuousSystem(A, B, X, U)

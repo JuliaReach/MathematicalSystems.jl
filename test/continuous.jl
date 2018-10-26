@@ -26,7 +26,7 @@ end
 
 @testset "Continuous affine system" begin
     for sd in 1:3
-        s = LinearContinuousSystem(zeros(sd, sd), zeros(sd))
+        s = AffineContinuousSystem(zeros(sd, sd), zeros(sd))
         @test statedim(s) == sd
         @test inputdim(s) == 0
     end

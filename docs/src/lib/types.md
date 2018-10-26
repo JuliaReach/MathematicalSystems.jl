@@ -28,6 +28,7 @@ AbstractDiscreteSystem
 ContinuousIdentitySystem
 ConstrainedContinuousIdentitySystem
 LinearContinuousSystem
+AffineContinuousSystem
 LinearControlContinuousSystem
 ConstrainedLinearContinuousSystem
 ConstrainedLinearControlContinuousSystem

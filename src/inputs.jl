@@ -9,7 +9,7 @@ The input types defined here implement an iterator interface, such that other me
 can build upon the behavior of inputs which are either constant or varying.
 
 Iteration is supported with an index number called *iterator state*.
-The iteration function `Base.next` takes and returns a tuple (`input`, `state`),
+The iteration function `Base.iterate` takes and returns a tuple (`input`, `state`),
 where `input` represents the value of the input, and `state` is an index which
 counts the number of times this iterator was called.
 
@@ -30,17 +30,17 @@ Type representing an input that remains constant in time.
 ### Examples
 
 The constant input holds a single element and its length is infinite.
-To access the field `U`, you can use Base's `next` given a state, or the method
+To access the field `U`, you can use Base's `iterate` given a state, or the method
  `nextinput` given the number of desired input elements:
 
 ```jldoctest constant_input
 julia> c = ConstantInput(-1//2)
-MathematicalSystems.ConstantInput{Rational{Int64}}(-1//2)
+ConstantInput{Rational{Int64}}(-1//2)
 
-julia> next(c, 1)
+julia> iterate(c, 1)
 (-1//2, nothing)
 
-julia> next(c, 2)
+julia> iterate(c, 2)
 (-1//2, nothing)
 
 julia> collect(nextinput(c, 4))
@@ -62,7 +62,7 @@ To transform a constant input, you can use `map` as in:
 
 ```jldoctest constant_input
 julia> map(x->2*x, c)
-MathematicalSystems.ConstantInput{Rational{Int64}}(-1//1)
+ConstantInput{Rational{Int64}}(-1//1)
 ```
 """
 struct ConstantInput{UT} <: AbstractInput
@@ -79,7 +79,7 @@ Base.eltype(::Type{ConstantInput{UT}}) where {UT} = UT
     end
 else
     @eval begin
-        Base.iterate(input::ConstantInput, state::Nothing=nothing) = (input.U, state)
+        Base.iterate(input::ConstantInput, state::Union{Int, Nothing}=nothing) = (input.U, nothing)
     end
 end
 
@@ -120,7 +120,7 @@ of elements in the vector. Consider an input given by a vector of rational numbe
 
 ```jldoctest varying_input
 julia> v = VaryingInput([-1//2, 1//2])
-MathematicalSystems.VaryingInput{Rational{Int64}}(Rational{Int64}[-1//2, 1//2])
+VaryingInput{Rational{Int64}}(Rational{Int64}[-1//2, 1//2])
 
 julia> length(v)
 2
@@ -129,14 +129,14 @@ julia> eltype(v)
 Rational{Int64}
 ```
 
-Base's `next` method receives the input and an integer state and returns the
+Base's `iterate` method receives the input and an integer state and returns the
 input element and the next iteration state:
 
 ```jldoctest varying_input
-julia> next(v, 1)
+julia> iterate(v, 1)
 (-1//2, 2)
 
-julia> next(v, 2)
+julia> iterate(v, 2)
 (1//2, 3)
 ```
 
@@ -145,7 +145,7 @@ an iterator over the first `n` elements of this input (where `n=1` by default):
 
 ```jldoctest varying_input
 julia> typeof(nextinput(v))
-Base.Iterators.Take{MathematicalSystems.VaryingInput{Rational{Int64}}}
+Base.Iterators.Take{VaryingInput{Rational{Int64}}}
 
 julia> collect(nextinput(v, 1))
 1-element Array{Rational{Int64},1}:
@@ -186,7 +186,7 @@ To transform a varying input, you can use `map` as in:
 
 ```jldoctest varying_input
 julia> map(x->2*x, v)
-MathematicalSystems.VaryingInput{Rational{Int64}}(Rational{Int64}[-1//1, 1//1])
+VaryingInput{Rational{Int64}}(Rational{Int64}[-1//1, 1//1])
 ```
 """
 struct VaryingInput{UT} <: AbstractInput

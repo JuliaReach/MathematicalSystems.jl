@@ -24,6 +24,7 @@ Concrete Types for Continuous Systems
 export ContinuousIdentitySystem,
        ConstrainedContinuousIdentitySystem,
        LinearContinuousSystem,
+       AffineContinuousSystem,
        LinearControlContinuousSystem,
        ConstrainedLinearContinuousSystem,
        ConstrainedLinearControlContinuousSystem,

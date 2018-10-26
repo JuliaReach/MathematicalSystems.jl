@@ -24,6 +24,14 @@ end
     end
 end
 
+@testset "Continuous affine system" begin
+    for sd in 1:3
+        s = AffineContinuousSystem(zeros(sd, sd), zeros(sd))
+        @test statedim(s) == sd
+        @test inputdim(s) == 0
+    end
+end
+
 @testset "Continuous linear control system" begin
     for sd in 1:3
         s = LinearControlContinuousSystem(zeros(sd, sd), ones(sd, sd))

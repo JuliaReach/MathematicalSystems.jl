@@ -50,6 +50,30 @@ statedim(s::LinearContinuousSystem) = checksquare(s.A)
 inputdim(s::LinearContinuousSystem) = 0
 
 """
+    AffineContinuousSystem
+
+Continuous-time affine system of the form
+```math
+x' = A x + b.
+```
+
+### Fields
+
+- `A` -- square matrix
+- `b` -- vector
+"""
+struct AffineContinuousSystem{T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}} <: AbstractContinuousSystem
+    A::MT
+    b::VT
+    function AffineContinuousSystem(A::MT, b::VT) where {T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}}
+        @assert checksquare(A) == length(b)
+        return new{T, MT, VT}(A, b)
+    end
+end
+statedim(s::AffineContinuousSystem) = length(s.b)
+inputdim(s::AffineContinuousSystem) = 0
+
+"""
     LinearControlContinuousSystem
 
 Continuous-time linear control system of the form

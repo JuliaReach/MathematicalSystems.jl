@@ -61,7 +61,7 @@ end
     A = [1. 1; 1 -1]
     B = Matrix([0.5 1.5]')
     X = Line([1., -1], 0.)
-    U = Hyperrectangle(low=[0.9, 0.9], high=[1.1, 1.2])
+    U = Interval(0.9, 1.1)
     s = ConstrainedLinearControlContinuousSystem(A, B, X, U)
     @test statedim(s) == 2
     @test stateset(s) == X

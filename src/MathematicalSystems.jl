@@ -67,4 +67,9 @@ export AbstractInput, ConstantInput, VaryingInput, nextinput
 
 include("inputs.jl")
 
+#==================================
+Systems with outputs
+===================================#
+include("maps.jl")
+
 end # module

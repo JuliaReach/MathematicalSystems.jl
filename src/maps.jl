@@ -3,7 +3,7 @@
 
 A linear map
 ```math
-x \mapsto Ax
+x ↦ Ax
 ```
 
 ### Fields
@@ -19,7 +19,7 @@ end
 
 An affine map
 ```math
-x \mapsto Ax + b
+x ↦ Ax + b
 ```
 
 ### Fields
@@ -37,7 +37,7 @@ end
 
 An affine map
 ```math
-x \mapsto Ax + Bu, u ∈ \\mathcal{U}.
+x ↦ Ax + Bu, u ∈ \\mathcal{U}.
 ```
 
 ### Fields
@@ -57,7 +57,7 @@ end
 
 An affine map
 ```math
-x \mapsto Ax + Bu + c, u ∈ \\mathcal{U}.
+x ↦ Ax + Bu + c, u ∈ \\mathcal{U}.
 ```
 
 ### Fields

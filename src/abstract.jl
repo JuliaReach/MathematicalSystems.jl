@@ -46,3 +46,10 @@ abstract type AbstractDiscreteSystem <: AbstractSystem end
 Abstract supertype for all continuous system types.
 """
 abstract type AbstractContinuousSystem <: AbstractSystem end
+
+"""
+    AbstractMap
+
+Abstract supertype for all map types.
+"""
+abstract type AbstractMap end

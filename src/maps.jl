@@ -35,7 +35,7 @@ end
 """
     LinearControlMap
 
-An affine map
+A liner control map
 ```math
 x ↦ Ax + Bu, u ∈ \\mathcal{U}.
 ```
@@ -53,9 +53,9 @@ struct LinearControlMap{MT<:AbstractMatrix, UT} <: AbstractMap
 end
 
 """
-    AffineMap
+    AffineControlMap
 
-An affine map
+An affine control map
 ```math
 x ↦ Ax + Bu + c, u ∈ \\mathcal{U}.
 ```

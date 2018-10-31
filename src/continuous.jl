@@ -172,7 +172,7 @@ struct ConstrainedAffineControlContinuousSystem{T, MT <: AbstractMatrix{T}, VT <
     X::ST
     U::UT
     function ConstrainedAffineControlContinuousSystem(A::MT, B::MT, c::VT, X::ST, U::UT) where {T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST, UT}
-        @assert checksquare(A) == length(c)
+        @assert checksquare(A) == length(c) == size(B, 1) 
         return new{T, MT, VT, ST, UT}(A, B, c, X, U)
     end
 end

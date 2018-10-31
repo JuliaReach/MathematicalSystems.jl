@@ -32,6 +32,19 @@ end
     end
 end
 
+@testset "Continuous affine control system with state constraints" begin
+    A = zeros(2, 2)
+    B = Matrix([0.5 1.5]')
+    c = [0.0, 1.0]
+    X = Line([1., -1], 0.) # line x = y
+    U = Interval(-1.0, 1.0)  # -1 <= u <= 1
+    s = ConstrainedAffineControlContinuousSystem(A, B, c, X, U)
+    @test statedim(s) == 2
+    @test stateset(s) == X
+    @test inputdim(s) == 1
+    @test inputset(s) == U
+end
+
 @testset "Continuous linear control system" begin
     for sd in 1:3
         s = LinearControlContinuousSystem(zeros(sd, sd), ones(sd, sd))

@@ -148,6 +148,38 @@ statedim(s::ConstrainedAffineContinuousSystem) = length(s.b)
 stateset(s::ConstrainedAffineContinuousSystem) = s.X
 inputdim(s::ConstrainedAffineContinuousSystem) = 0
 
+"""
+    ConstrainedAffineControlContinuousSystem
+
+Continuous-time affine control system with state constraints of the form
+```math
+x' = A x + B u + c, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U} \\text{ for all } t,
+```
+and ``c`` a vector.
+
+### Fields
+
+- `A` -- square matrix
+- `B` -- matrix
+- `c` -- vector
+- `X` -- state constraints
+- `U` -- input constraints
+"""
+struct ConstrainedAffineControlContinuousSystem{T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST, UT} <: AbstractContinuousSystem
+    A::MT
+    B::MT
+    c::VT
+    X::ST
+    U::UT
+    function ConstrainedAffineControlContinuousSystem(A::MT, B::MT, c::VT, X::ST, U::UT) where {T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST, UT}
+        @assert checksquare(A) == length(c) == size(B, 1) 
+        return new{T, MT, VT, ST, UT}(A, B, c, X, U)
+    end
+end
+statedim(s::ConstrainedAffineControlContinuousSystem) = length(s.c)
+stateset(s::ConstrainedAffineControlContinuousSystem) = s.X
+inputdim(s::ConstrainedAffineControlContinuousSystem) = size(s.B, 2)
+inputset(s::ConstrainedAffineControlContinuousSystem) = s.U
 
 """
     ConstrainedLinearControlContinuousSystem

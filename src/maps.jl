@@ -35,7 +35,7 @@ end
 """
     LinearControlMap
 
-A liner control map
+A linear control map
 ```math
 x ↦ Ax + Bu, u ∈ \\mathcal{U}.
 ```

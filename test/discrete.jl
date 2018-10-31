@@ -45,7 +45,7 @@ end
     A = [1. 1; 1 -1]
     B = Matrix([0.5 1.5]')
     X = Line([1., -1], 0.)
-    U = Hyperrectangle(low=[0.9, 0.9], high=[1.1, 1.2])
+    U = Interval(0.9, 1.1)
     s = ConstrainedLinearControlDiscreteSystem(A, B, X, U)
     @test statedim(s) == 2
     @test stateset(s) == X
@@ -75,7 +75,7 @@ end
     A = [1. 1; 1 -1]
     B = Matrix([0.5 1.5]')
     X = Line([1., -1], 0.)
-    U = ConstantInput(Hyperrectangle(low=[0.9, 0.9], high=[1.1, 1.2]))
+    U = ConstantInput(Hyperrectangle(low=[0.9], high=[1.1]))
     s = ConstrainedLinearControlDiscreteSystem(A, B, X, U)
     s = ConstrainedLinearControlDiscreteSystem(A, B, X, U)
     if VERSION < v"0.7-"
@@ -89,8 +89,8 @@ end
     A = [1. 1; 1 -1]
     B = Matrix([0.5 1.5]')
     X = Line([1., -1], 0.)
-    U = VaryingInput([Hyperrectangle(low=[0.9, 0.9], high=[1.1, 1.2]),
-                      Hyperrectangle(low=[0.99, 0.99], high=[1.0, 1.1])])
+    U = VaryingInput([Hyperrectangle(low=[0.9], high=[1.1]),
+                      Hyperrectangle(low=[0.99], high=[1.0])])
     s = ConstrainedLinearControlDiscreteSystem(A, B, X, U)
     @test length(s.U) == 2
     for ui in s.U

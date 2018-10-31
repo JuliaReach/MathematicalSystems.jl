@@ -75,15 +75,15 @@ struct AffineControlMap{MT<:AbstractMatrix, VT<:AbstractVector, UT} <: AbstractM
 end
 
 """
-    SystemWithOutput
+    SystemWithOutput{ST<:AbstractSystem, MT<:AbstractMap}
 
 Parametric composite type for systems with outputs. It is parameterized in the
-system's type and in the map's type.
+system's type (`ST`) and in the map's type (`MT`).
 
 ### Fields
 
-- `system`    -- system
-- `outputmap` -- output map
+- `system`    -- system of type `ST`
+- `outputmap` -- output map of type `MT`
 """
 struct SystemWithOutput{ST<:AbstractSystem, MT<:AbstractMap}
     system::ST

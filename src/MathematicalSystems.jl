@@ -63,13 +63,28 @@ include("ivp.jl")
 #=====================
 Input related methods
 =====================#
-export AbstractInput, ConstantInput, VaryingInput, nextinput
+export AbstractInput,
+       ConstantInput,
+       VaryingInput,
+       nextinput
 
 include("inputs.jl")
 
 #==================================
-Systems with outputs
+Maps
 ===================================#
+export LinearMap,
+       AffineMap,
+       LinearControlMap,
+       AffineControlMap
+
+include("maps.jl")
+
+#=========================
+Systems with outputs
+==========================#
+export SystemWithOutput
+
 include("maps.jl")
 
 end # module

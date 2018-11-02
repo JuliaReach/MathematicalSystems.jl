@@ -10,7 +10,7 @@ x ↦ Ax
 
 - `A` -- matrix
 """
-struct LinearMap{MT<:AbstractMatrix} <: AbstractMap
+struct LinearMap{T, MT<:AbstractMatrix{T}} <: AbstractMap
     A::MT
 end
 
@@ -27,9 +27,13 @@ x ↦ Ax + b
 - `A` -- matrix
 - `b` -- vector
 """
-struct AffineMap{MT<:AbstractMatrix, VT<:AbstractVector} <: AbstractMap
+struct AffineMap{T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}} <: AbstractMap
     A::MT
     b::VT
+    function AffineMap(A::MT, b::VT) where {T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}}
+        @assert size(A, 1) == length(b)
+        return new{T, MT, VT}(A, b)
+    end
 end
 
 """
@@ -46,10 +50,14 @@ x ↦ Ax + Bu, u ∈ \\mathcal{U}.
 - `B` -- matrix
 - `U` -- input constraints
 """
-struct LinearControlMap{MT<:AbstractMatrix, UT} <: AbstractMap
+struct LinearControlMap{T, MT<:AbstractMatrix{T}, UT} <: AbstractMap
     A::MT
     B::MT
     U::UT
+    function LinearControlMap(A::MT, B::MT, U::UT) where {T, MT<:AbstractMatrix{T}, UT}
+        @assert size(A, 1) == size(B, 1)
+        return new{T, MT, MT, UT}(A, B, U)
+    end
 end
 
 """
@@ -67,25 +75,13 @@ x ↦ Ax + Bu + c, u ∈ \\mathcal{U}.
 - `c` -- vector
 - `U` -- input constraints
 """
-struct AffineControlMap{MT<:AbstractMatrix, VT<:AbstractVector, UT} <: AbstractMap
+struct AffineControlMap{T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}, UT} <: AbstractMap
     A::MT
     B::MT
     c::VT
     U::UT
-end
-
-"""
-    SystemWithOutput{ST<:AbstractSystem, MT<:AbstractMap}
-
-Parametric composite type for systems with outputs. It is parameterized in the
-system's type (`ST`) and in the map's type (`MT`).
-
-### Fields
-
-- `system`    -- system of type `ST`
-- `outputmap` -- output map of type `MT`
-"""
-struct SystemWithOutput{ST<:AbstractSystem, MT<:AbstractMap}
-    system::ST
-    outputmap::MT
+    function AffineControlMap(A::MT, B::MT, c::VT, U::UT) where {T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}, UT}
+        @assert size(A, 1) == size(B, 1) == length(c)
+        return new{T, MT, MT, VT, UT}(A, B, c, U)
+    end
 end

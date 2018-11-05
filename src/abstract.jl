@@ -53,3 +53,10 @@ abstract type AbstractContinuousSystem <: AbstractSystem end
 Abstract supertype for all map types.
 """
 abstract type AbstractMap end
+
+"""
+    outputdim(m::AbstractMap)
+
+Returns the dimension of the output space of the map `m`.
+"""
+function outputdim end

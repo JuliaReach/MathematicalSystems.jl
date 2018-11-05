@@ -6,13 +6,18 @@ system's type (`ST`) and in the map's type (`MT`).
 
 ### Fields
 
-- `system`    -- system of type `ST`
+- `s`         -- system of type `ST`
 - `outputmap` -- output map of type `MT`
 """
 struct SystemWithOutput{ST<:AbstractSystem, MT<:AbstractMap}
-    system::ST
+    s::ST
     outputmap::MT
 end
+statedim(swo::SystemWithOutput) = statedim(swo.s)
+inputdim(swo::SystemWithOutput) = inputdim(swo.s)
+inputset(swo::SystemWithOutput) = inputset(swo.s)
+outputdim(swo::SystemWithOutput) = outputdim(swo.outputmap)
+outputmap(swo::SystemWithOutput) = swo.outputmap
 
 """
     LinearTimeInvariantSystem
@@ -26,13 +31,19 @@ y = Cx + Du.
 """
 function LinearTimeInvariantSystem(A, B, C, D, X, U)
     system = ConstrainedLinearControlContinuousSystem(A, B, X, U)
-    outputmap = LinearControlMap(A, B, U)
+    outputmap = ConstrainedLinearControlMap(A, B, U)
+    return SystemWithOutput(system, outputmap)
+end
+
+function LinearTimeInvariantSystem(A, B, C, D)
+    system = LinearControlContinuousSystem(A, B)
+    outputmap = LinearControlMap(A, B)
     return SystemWithOutput(system, outputmap)
 end
 
 """
-    LTI
+    LTISystem
 
-`LTI` is an alias for `LinearTimeInvariantSystem`.
+`LTISystem` is an alias for `LinearTimeInvariantSystem`.
 """
-const LTI = LinearTimeInvariantSystem
+const LTISystem = LinearTimeInvariantSystem

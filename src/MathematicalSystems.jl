@@ -14,7 +14,8 @@ export AbstractSystem,
        statedim,
        stateset,
        inputdim,
-       inputset
+       inputset,
+       outputdim
 
 include("abstract.jl")
 
@@ -73,7 +74,8 @@ include("inputs.jl")
 #==================================
 Maps
 ===================================#
-export LinearMap,
+export outputmap,
+       LinearMap,
        AffineMap,
        LinearControlMap,
        AffineControlMap
@@ -83,8 +85,10 @@ include("maps.jl")
 #=========================
 Systems with outputs
 ==========================#
-export SystemWithOutput
+export SystemWithOutput,
+       LinearTimeInvariantSystem,
+       LTISystem
 
-include("maps.jl")
+include("outputs.jl")
 
 end # module

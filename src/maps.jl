@@ -15,6 +15,10 @@ struct LinearMap{T, MT<:AbstractMatrix{T}} <: AbstractMap
 end
 outputdim(m::LinearMap) = size(m.A, 1)
 
+@static if VERSION < v"0.7-"
+    LinearMap{T, MT <: AbstractMatrix{T}}(A::MT) = LinearMap{T, MT}(A)
+end
+
 """
     AffineMap
 

@@ -43,7 +43,7 @@ continuous system and the output map is a linear control map.
 """
 function LinearTimeInvariantSystem(A, B, C, D)
     system = LinearControlContinuousSystem(A, B)
-    outputmap = LinearControlMap(A, B)
+    outputmap = LinearControlMap(C, D)
     return SystemWithOutput(system, outputmap)
 end
 
@@ -75,7 +75,7 @@ continuous system and the output map is a constrained linear control map.
 """
 function LinearTimeInvariantSystem(A, B, C, D, X, U)
     system = ConstrainedLinearControlContinuousSystem(A, B, X, U)
-    outputmap = ConstrainedLinearControlMap(A, B, U)
+    outputmap = ConstrainedLinearControlMap(C, D, U)
     return SystemWithOutput(system, outputmap)
 end
 

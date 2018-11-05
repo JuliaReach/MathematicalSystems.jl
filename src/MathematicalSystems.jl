@@ -14,8 +14,7 @@ export AbstractSystem,
        statedim,
        stateset,
        inputdim,
-       inputset,
-       outputdim
+       inputset
 
 include("abstract.jl")
 
@@ -75,6 +74,7 @@ include("inputs.jl")
 Maps
 ===================================#
 export outputmap,
+       outputdim,
        LinearMap,
        AffineMap,
        LinearControlMap,

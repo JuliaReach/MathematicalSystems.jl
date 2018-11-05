@@ -60,3 +60,10 @@ abstract type AbstractMap end
 Returns the dimension of the output space of the map `m`.
 """
 function outputdim end
+
+"""
+    outputmap(s::SystemWithOutput)
+
+Returns the output map of a system with output.
+"""
+function outputmap end

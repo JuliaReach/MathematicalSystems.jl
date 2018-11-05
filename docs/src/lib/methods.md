@@ -28,3 +28,10 @@ inputdim
 inputset
 nextinput
 ```
+
+## Output
+
+```@docs
+outputdim
+outputmap
+```

@@ -73,4 +73,18 @@ VaryingInput
 
 ```@docs
 AbstractMap
+LinearMap
+AffineMap
+LinearControlMap
+ConstrainedLinearControlMap
+AffineControlMap
+ConstrainedAffineControlMap
+```
+
+## Systems with output
+
+```@docs
+SystemWithOutput
+LinearTimeInvariantSystem
+LTISystem
 ```

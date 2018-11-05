@@ -78,7 +78,9 @@ export outputmap,
        LinearMap,
        AffineMap,
        LinearControlMap,
-       AffineControlMap
+       ConstrainedLinearControlMap,
+       AffineControlMap,
+       ConstrainedAffineControlMap
 
 include("maps.jl")
 

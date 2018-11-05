@@ -4,3 +4,5 @@ using Compat, Compat.Test
 include("continuous.jl")
 include("discrete.jl")
 include("inputs.jl")
+include("maps.jl")
+include("outputs.jl")

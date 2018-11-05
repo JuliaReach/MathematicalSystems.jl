@@ -20,24 +20,62 @@ outputdim(swo::SystemWithOutput) = outputdim(swo.outputmap)
 outputmap(swo::SystemWithOutput) = swo.outputmap
 
 """
-    LinearTimeInvariantSystem
+    LinearTimeInvariantSystem(A, B, C, D)
+
+A linear time-invariant system with of the form
 
 ```math
 x' = Ax + Bu,\\
 y = Cx + Du.
 ```
 
-`LTI` is an alias for `LinearTimeInvariantSystem`.
+### Input
+
+- `A` -- matrix
+- `B` -- matrix
+- `C` -- matrix
+- `D` -- matrix
+
+### Output
+
+A system with output such that the system is a linear control
+continuous system and the output map is a linear control map.
+"""
+function LinearTimeInvariantSystem(A, B, C, D)
+    system = LinearControlContinuousSystem(A, B)
+    outputmap = LinearControlMap(A, B)
+    return SystemWithOutput(system, outputmap)
+end
+
+"""
+    LinearTimeInvariantSystem(A, B, C, D, X, U)
+
+A linear time-invariant system with state and input constraints
+of the form
+
+```math
+x' = Ax + Bu,\\
+y = Cx + Du,
+```
+where ``x(t) ∈ X`` and ``u(t) ∈ U`` for all ``t``.
+
+### Input
+
+- `A` -- matrix
+- `B` -- matrix
+- `C` -- matrix
+- `D` -- matrix
+- `X` -- state constraints
+- `U` -- input constraints
+
+### Output
+
+A system with output such that the system is a constrained linear control
+continuous system and the output map is a constrained linear control map.
 """
 function LinearTimeInvariantSystem(A, B, C, D, X, U)
     system = ConstrainedLinearControlContinuousSystem(A, B, X, U)
     outputmap = ConstrainedLinearControlMap(A, B, U)
-    return SystemWithOutput(system, outputmap)
-end
-
-function LinearTimeInvariantSystem(A, B, C, D)
-    system = LinearControlContinuousSystem(A, B)
-    outputmap = LinearControlMap(A, B)
     return SystemWithOutput(system, outputmap)
 end
 

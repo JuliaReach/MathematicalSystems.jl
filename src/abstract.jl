@@ -46,3 +46,24 @@ abstract type AbstractDiscreteSystem <: AbstractSystem end
 Abstract supertype for all continuous system types.
 """
 abstract type AbstractContinuousSystem <: AbstractSystem end
+
+"""
+    AbstractMap
+
+Abstract supertype for all map types.
+"""
+abstract type AbstractMap end
+
+"""
+    outputdim(m::AbstractMap)
+
+Returns the dimension of the output space of the map `m`.
+"""
+function outputdim end
+
+"""
+    outputmap(s::SystemWithOutput)
+
+Returns the output map of a system with output.
+"""
+function outputmap end

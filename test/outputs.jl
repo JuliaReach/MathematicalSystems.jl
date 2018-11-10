@@ -14,6 +14,10 @@
     # check the LTI system's outputmap fields 
     @test outputmap(s).A == C
     @test outputmap(s).B == D
+
+    # check the LTI system's system (s) field
+    @test s.s.A == A
+    @test s.s.B == B
 end
 
 @testset "Constrained LTI system" begin

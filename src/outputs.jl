@@ -25,7 +25,7 @@ outputmap(swo::SystemWithOutput) = swo.outputmap
 A linear time-invariant system with of the form
 
 ```math
-x' = Ax + Bu,\\
+x' = Ax + Bu,\\\\
 y = Cx + Du.
 ```
 
@@ -54,7 +54,7 @@ A linear time-invariant system with state and input constraints
 of the form
 
 ```math
-x' = Ax + Bu,\\
+x' = Ax + Bu,\\\\
 y = Cx + Du,
 ```
 where ``x(t) ∈ X`` and ``u(t) ∈ U`` for all ``t``.

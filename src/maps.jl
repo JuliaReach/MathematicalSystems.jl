@@ -55,12 +55,12 @@ x ↦ Ax + Bu.
 - `A` -- matrix
 - `B` -- matrix
 """
-struct LinearControlMap{T, MT<:AbstractMatrix{T}} <: AbstractMap
-    A::MT
-    B::MT
-    function LinearControlMap(A::MT, B::MT) where {T, MT<:AbstractMatrix{T}}
+struct LinearControlMap{T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatrix{T}} <: AbstractMap
+    A::MTA
+    B::MTB
+    function LinearControlMap(A::MTA, B::MTB) where {T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatrix{T}}
         @assert size(A, 1) == size(B, 1)
-        return new{T, MT}(A, B)
+        return new{T, MTA, MTB}(A, B)
     end
 end
 outputdim(m::LinearControlMap) = size(m.A, 1)
@@ -79,13 +79,13 @@ x ↦ Ax + Bu, u ∈ \\mathcal{U}.
 - `B` -- matrix
 - `U` -- input constraints
 """
-struct ConstrainedLinearControlMap{T, MT<:AbstractMatrix{T}, UT} <: AbstractMap
-    A::MT
-    B::MT
+struct ConstrainedLinearControlMap{T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, UT} <: AbstractMap
+    A::MTA
+    B::MTB
     U::UT
-    function ConstrainedLinearControlMap(A::MT, B::MT, U::UT) where {T, MT<:AbstractMatrix{T}, UT}
+    function ConstrainedLinearControlMap(A::MTA, B::MTB, U::UT) where {T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatrix{T}, UT}
         @assert size(A, 1) == size(B, 1)
-        return new{T, MT, UT}(A, B, U)
+        return new{T, MTA, MTB, UT}(A, B, U)
     end
 end
 outputdim(m::ConstrainedLinearControlMap) = size(m.A, 1)
@@ -104,13 +104,13 @@ x ↦ Ax + Bu + c.
 - `B` -- matrix
 - `c` -- vector
 """
-struct AffineControlMap{T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}} <: AbstractMap
-    A::MT
-    B::MT
+struct AffineControlMap{T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT<:AbstractVector{T}} <: AbstractMap
+    A::MTA
+    B::MTB
     c::VT
-    function AffineControlMap(A::MT, B::MT, c::VT) where {T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}}
+    function AffineControlMap(A::MTA, B::MTB, c::VT) where {T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatrix{T}, VT<:AbstractVector{T}}
         @assert size(A, 1) == size(B, 1) == length(c)
-        return new{T, MT, VT}(A, B, c)
+        return new{T, MTA, MTB, VT}(A, B, c)
     end
 end
 outputdim(m::AffineControlMap) = size(m.A, 1)
@@ -130,14 +130,14 @@ x ↦ Ax + Bu + c, u ∈ \\mathcal{U}.
 - `c` -- vector
 - `U` -- input constraints
 """
-struct ConstrainedAffineControlMap{T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}, UT} <: AbstractMap
-    A::MT
-    B::MT
+struct ConstrainedAffineControlMap{T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatrix{T}, VT<:AbstractVector{T}, UT} <: AbstractMap
+    A::MTA
+    B::MTB
     c::VT
     U::UT
-    function ConstrainedAffineControlMap(A::MT, B::MT, c::VT, U::UT) where {T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}, UT}
+    function ConstrainedAffineControlMap(A::MTA, B::MTB, c::VT, U::UT) where {T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatrix{T}, VT<:AbstractVector{T}, UT}
         @assert size(A, 1) == size(B, 1) == length(c)
-        return new{T, MT, VT, UT}(A, B, c, U)
+        return new{T, MTA, MTB, VT, UT}(A, B, c, U)
     end
 end
 outputdim(m::ConstrainedAffineControlMap) = size(m.A, 1)

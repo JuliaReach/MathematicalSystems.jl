@@ -86,12 +86,12 @@ x' = A x + B u.
 - `A` -- square matrix
 - `B` -- matrix
 """
-struct LinearControlContinuousSystem{T, MT <: AbstractMatrix{T}} <: AbstractContinuousSystem
-    A::MT
-    B::MT
-    function LinearControlContinuousSystem(A::MT, B::MT) where {T, MT <: AbstractMatrix{T}}
+struct LinearControlContinuousSystem{T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}} <: AbstractContinuousSystem
+    A::MTA
+    B::MTB
+    function LinearControlContinuousSystem(A::MTA, B::MTB) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}}
         @assert checksquare(A) == size(B, 1)
-        return new{T, MT}(A, B)
+        return new{T, MTA, MTB}(A, B)
     end
 end
 statedim(s::LinearControlContinuousSystem) = checksquare(s.A)
@@ -165,15 +165,15 @@ and ``c`` a vector.
 - `X` -- state constraints
 - `U` -- input constraints
 """
-struct ConstrainedAffineControlContinuousSystem{T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST, UT} <: AbstractContinuousSystem
-    A::MT
-    B::MT
+struct ConstrainedAffineControlContinuousSystem{T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST, UT} <: AbstractContinuousSystem
+    A::MTA
+    B::MTB
     c::VT
     X::ST
     U::UT
-    function ConstrainedAffineControlContinuousSystem(A::MT, B::MT, c::VT, X::ST, U::UT) where {T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST, UT}
+    function ConstrainedAffineControlContinuousSystem(A::MTA, B::MTB, c::VT, X::ST, U::UT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST, UT}
         @assert checksquare(A) == length(c) == size(B, 1) 
-        return new{T, MT, VT, ST, UT}(A, B, c, X, U)
+        return new{T, MTA, MTB, VT, ST, UT}(A, B, c, X, U)
     end
 end
 statedim(s::ConstrainedAffineControlContinuousSystem) = length(s.c)
@@ -196,14 +196,14 @@ x' = A x + B u, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U} \\text{ for all
 - `X` -- state constraints
 - `U` -- input constraints
 """
-struct ConstrainedLinearControlContinuousSystem{T, MT <: AbstractMatrix{T}, ST, UT} <: AbstractContinuousSystem
-    A::MT
-    B::MT
+struct ConstrainedLinearControlContinuousSystem{T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, ST, UT} <: AbstractContinuousSystem
+    A::MTA
+    B::MTB
     X::ST
     U::UT
-    function ConstrainedLinearControlContinuousSystem(A::MT, B::MT, X::ST, U::UT) where {T, MT <: AbstractMatrix{T}, ST, UT}
+    function ConstrainedLinearControlContinuousSystem(A::MTA, B::MTB, X::ST, U::UT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, ST, UT}
         @assert checksquare(A) == size(B, 1)
-        return new{T, MT, ST, UT}(A, B, X, U)
+        return new{T, MTA, MTB, ST, UT}(A, B, X, U)
     end
 end
 statedim(s::ConstrainedLinearControlContinuousSystem) = checksquare(s.A)
@@ -224,12 +224,12 @@ E x' = A x.
 - `A` -- matrix
 - `E` -- matrix, same size as `A`
 """
-struct LinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}} <: AbstractContinuousSystem
-    A::MT
-    E::MT
-    function LinearAlgebraicContinuousSystem(A::MT, E::MT) where {T, MT <: AbstractMatrix{T}}
+struct LinearAlgebraicContinuousSystem{T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}} <: AbstractContinuousSystem
+    A::MTA
+    E::MTE
+    function LinearAlgebraicContinuousSystem(A::MTA, E::MTE) where {T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}}
         @assert size(A) == size(E)
-        return new{T, MT}(A, E)
+        return new{T, MTA, MTE}(A, E)
     end
 end
 statedim(s::LinearAlgebraicContinuousSystem) = size(s.A, 1)
@@ -249,13 +249,13 @@ E x' = A x, x(t) ∈ \\mathcal{X}.
 - `E` -- matrix, same size as `A`
 - `X` -- state constraints
 """
-struct ConstrainedLinearAlgebraicContinuousSystem{T, MT <: AbstractMatrix{T}, ST} <: AbstractContinuousSystem
-    A::MT
-    E::MT
+struct ConstrainedLinearAlgebraicContinuousSystem{T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}, ST} <: AbstractContinuousSystem
+    A::MTA
+    E::MTE
     X::ST
-    function ConstrainedLinearAlgebraicContinuousSystem(A::MT, E::MT, X::ST) where {T, MT <: AbstractMatrix{T}, ST}
+    function ConstrainedLinearAlgebraicContinuousSystem(A::MTA, E::MTE, X::ST) where {T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}, ST}
         @assert size(A) == size(E)
-        return new{T, MT, ST}(A, E, X)
+        return new{T, MTA, MTE, ST}(A, E, X)
     end
 end
 statedim(s::ConstrainedLinearAlgebraicContinuousSystem) = size(s.A, 1)

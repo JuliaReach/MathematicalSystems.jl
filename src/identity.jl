@@ -10,10 +10,11 @@ A scalar multiple of the identity matrix of given order and numeric type.
 
 ### Notes
 
-This is wrapper type around Julia's lazy multiple of the identity operator,
-`UniformScaling`, such that `IdentityMultiple` can be used as an abstract matrix.
-The difference between `IdentityMultiple` and a `UniformScaling` is that while the
-size of the former is generic, the size of the latter is fixed.
+This is a wrapper type around Julia's lazy multiple of the identity operator,
+`UniformScaling`, such that `IdentityMultiple` can be used where abstract matrix
+is needed for dispatch. The difference between `UniformScaling` and a
+`IdentityMultiple` is that while the size of the former is generic, the size of
+the latter is fixed.
 """
 struct IdentityMultiple{T} <: AbstractMatrix{T}
     M::UniformScaling{T}

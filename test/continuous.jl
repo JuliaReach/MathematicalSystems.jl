@@ -87,6 +87,16 @@ end
     @test inputset(p) == U
     @test statedim(p) == 2
     @test inputdim(p) == 1
+
+    # check that the matrices A and B need not be of the same type
+    # with A dense and B a lazy adjoint
+    B = [0.5 1.5]'
+    s = ConstrainedLinearControlContinuousSystem(A, B, X, U)
+
+    # check that the matrices A and B need not be of the same type
+    # with A sparse and B a lazy adjoint
+    A = sparse([1], [2], [1.0], 2, 2) # sparse matrix
+    s = ConstrainedLinearControlContinuousSystem(A, B, X, U)
 end
 
 @testset "Continuous linear algebraic system" begin

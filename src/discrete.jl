@@ -62,12 +62,12 @@ x_{k+1} = A x_k + B u_k.
 - `A` -- square matrix
 - `B` -- matrix
 """
-struct LinearControlDiscreteSystem{T, MT <: AbstractMatrix{T}} <: AbstractDiscreteSystem
-    A::MT
-    B::MT
-    function LinearControlDiscreteSystem(A::MT, B::MT) where {T, MT <: AbstractMatrix{T}}
+struct LinearControlDiscreteSystem{T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}} <: AbstractDiscreteSystem
+    A::MTA
+    B::MTB
+    function LinearControlDiscreteSystem(A::MTA, B::MTB) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}}
         @assert checksquare(A) == size(B, 1)
-        return new{T, MT}(A, B)
+        return new{T, MTA, MTB}(A, B)
     end
 end
 statedim(s::LinearControlDiscreteSystem) = checksquare(s.A)
@@ -112,14 +112,14 @@ x_{k+1} = A x_k + B u_k, x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U} \\text{ 
 - `X` -- state constraints
 - `U` -- input constraints
 """
-struct ConstrainedLinearControlDiscreteSystem{T, MT <: AbstractMatrix{T}, ST, UT} <: AbstractDiscreteSystem
-    A::MT
-    B::MT
+struct ConstrainedLinearControlDiscreteSystem{T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, ST, UT} <: AbstractDiscreteSystem
+    A::MTA
+    B::MTB
     X::ST
     U::UT
-    function ConstrainedLinearControlDiscreteSystem(A::MT, B::MT, X::ST, U::UT) where {T, MT <: AbstractMatrix{T}, ST, UT}
+    function ConstrainedLinearControlDiscreteSystem(A::MTA, B::MTB, X::ST, U::UT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, ST, UT}
         @assert checksquare(A) == size(B, 1)
-        return new{T, MT, ST, UT}(A, B, X, U)
+        return new{T, MTA, MTB, ST, UT}(A, B, X, U)
     end
 end
 statedim(s::ConstrainedLinearControlDiscreteSystem) = checksquare(s.A)
@@ -140,12 +140,12 @@ E x_{k+1} = A x_k.
 - `A` -- matrix
 - `E` -- matrix, same size as `A`
 """
-struct LinearAlgebraicDiscreteSystem{T, MT <: AbstractMatrix{T}} <: AbstractDiscreteSystem
-    A::MT
-    E::MT
-    function LinearAlgebraicDiscreteSystem(A::MT, E::MT) where {T, MT <: AbstractMatrix{T}}
+struct LinearAlgebraicDiscreteSystem{T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}} <: AbstractDiscreteSystem
+    A::MTA
+    E::MTE
+    function LinearAlgebraicDiscreteSystem(A::MTA, E::MTE) where {T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}}
         @assert size(A) == size(E)
-        return new{T, MT}(A, E)
+        return new{T, MTA, MTE}(A, E)
     end
 end
 statedim(s::LinearAlgebraicDiscreteSystem) = size(s.A, 1)
@@ -165,13 +165,13 @@ E x_{k+1} = A x_k, x_k ∈ \\mathcal{X}.
 - `E` -- matrix, same size as `A`
 - `X` -- state constraints
 """
-struct ConstrainedLinearAlgebraicDiscreteSystem{T, MT <: AbstractMatrix{T}, ST} <: AbstractDiscreteSystem
-    A::MT
-    E::MT
+struct ConstrainedLinearAlgebraicDiscreteSystem{T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}, ST} <: AbstractDiscreteSystem
+    A::MTA
+    E::MTE
     X::ST
-    function ConstrainedLinearAlgebraicDiscreteSystem(A::MT, E::MT, X::ST) where {T, MT <: AbstractMatrix{T}, ST}
+    function ConstrainedLinearAlgebraicDiscreteSystem(A::MTA, E::MTE, X::ST) where {T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}, ST}
         @assert size(A) == size(E)
-        return new{T, MT, ST}(A, E, X)
+        return new{T, MTA, MTE, ST}(A, E, X)
     end
 end
 statedim(s::ConstrainedLinearAlgebraicDiscreteSystem) = size(s.A, 1)

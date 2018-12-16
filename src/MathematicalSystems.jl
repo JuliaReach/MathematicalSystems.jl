@@ -5,6 +5,11 @@ using Compat
 using Compat.LinearAlgebra
 import Compat.LinearAlgebra: checksquare
 
+#=======================
+Identity operator
+=======================#
+include("identity.jl")
+
 #=========================
 Abstract Types for Systems
 ==========================#

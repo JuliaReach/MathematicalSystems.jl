@@ -18,7 +18,6 @@ makedocs(
 deploydocs(
     repo = "github.com/JuliaReach/MathematicalSystems.jl.git",
     target = "build",
-    osname = "linux",
     deps = nothing,
     make = nothing
 )

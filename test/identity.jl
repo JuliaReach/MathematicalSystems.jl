@@ -1,9 +1,13 @@
 import MathematicalSystems.IdentityMultiple
 using LazySets
 
+@static if VERSION >= v"0.7-"
+    using LinearAlgebra # needed for UniformScaling
+end
+
 @testset "Creation of an identity multiple" begin
     for n in [1, 2, 1000]
-        In = IdentityMultiple(UniformScaling(1.0), n)
+        In = IdentityMultiple(1.0I, n) # same as IdentityMultiple(UniformScaling(1.0), n))
         @test size(In) == n
         @test In[1, 1] == 1.0 && In[1, 2] == 0.0
     end

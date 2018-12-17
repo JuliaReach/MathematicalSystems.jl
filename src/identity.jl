@@ -1,3 +1,7 @@
+@static if VERSION >= v"0.7-"
+    using LinearAlgebra # needed for UniformScaling
+end
+
 """
     IdentityMultiple{T} < AbstractMatrix{T} where T
 

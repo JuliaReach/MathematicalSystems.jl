@@ -55,6 +55,12 @@ PolynomialDiscreteSystem
 ConstrainedPolynomialDiscreteSystem
 ```
 
+## Identity operator
+
+```@docs
+IdentityMultiple
+```
+
 ## Initial Value Problems
 
 ```@docs

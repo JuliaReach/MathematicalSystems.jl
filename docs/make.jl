@@ -3,7 +3,7 @@ using Documenter, MathematicalSystems
 makedocs(
     doctest = true,  # use this flag to skip doctests (saves time!)
     modules = [MathematicalSystems],
-    format = Documenter.HTML(),
+    format = :html,
     assets = ["assets/juliareach.css"],
     sitename = "MathematicalSystems.jl",
     pages = [

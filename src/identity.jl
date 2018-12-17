@@ -5,8 +5,8 @@ A scalar multiple of the identity matrix of given order and numeric type.
 
 ### Fields
 
-`M` -- uniform scaling operator of type `T`
-`n` -- size of the identity matrix
+- `M` -- uniform scaling operator of type `T`
+- `n` -- size of the identity matrix
 
 ### Notes
 
@@ -15,6 +15,27 @@ This is a wrapper type around Julia's lazy multiple of the identity operator,
 is needed for dispatch. The difference between `UniformScaling` and a
 `IdentityMultiple` is that while the size of the former is generic, the size of
 the latter is fixed.
+
+### Examples
+
+```julia
+julia> import MathematicalSystems.IdentityMultiple
+
+julia> I2 = IdentityMultiple(1.0*I, 2)
+Scalar multiple of the identity matrix of order 2:
+   UniformScaling{Float64}
+1.0*I
+
+julia> I2 + I2
+Scalar multiple of the identity matrix of order 2:
+   UniformScaling{Float64}
+2.0*I
+
+julia> 10.0 * I2
+Scalar multiple of the identity matrix of order 2:
+   UniformScaling{Float64}
+10.0*I
+```
 """
 struct IdentityMultiple{T} <: AbstractMatrix{T}
     M::UniformScaling{T}

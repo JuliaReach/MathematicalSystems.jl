@@ -1,3 +1,5 @@
+import MultivariatePolynomials
+
 """
     ContinuousIdentitySystem <: AbstractContinuousSystem
 
@@ -272,15 +274,22 @@ x' = p(x).
 
 ### Fields
 
-- `p`        -- polynomial
+- `p`        -- polynomial vector field
 - `statedim` -- number of state variables
 """
-struct PolynomialContinuousSystem{PT} <: AbstractContinuousSystem
-    p::PT
+struct PolynomialContinuousSystem{T, PT <: MultivariatePolynomials.AbstractPolynomialLike{T}, VPT <: AbstractVector{PT}} <: AbstractContinuousSystem
+    p::VPT
     statedim::Int
 end
 statedim(s::PolynomialContinuousSystem) = s.statedim
 inputdim(s::PolynomialContinuousSystem) = 0
+
+MultivariatePolynomials.variables(s::PolynomialContinuousSystem) = MultivariatePolynomials.variables(s.p)
+MultivariatePolynomials.nvariables(s::PolynomialContinuousSystem) = MultivariatePolynomials.nvariables(s.p)
+
+PolynomialContinuousSystem(p::PT, statedim::Int) where {PT <: MultivariatePolynomials.AbstractPolynomialLike} = PolynomialContinuousSystem([p], statedim)
+PolynomialContinuousSystem(p::VPT) where {PT <: MultivariatePolynomials.AbstractPolynomialLike, VPT <: AbstractVector{PT}} = PolynomialContinuousSystem(p, MultivariatePolynomials.nvariables(p))
+PolynomialContinuousSystem(p::PT) where {PT <: MultivariatePolynomials.AbstractPolynomialLike} = PolynomialContinuousSystem([p])
 
 """
     ConstrainedPolynomialContinuousSystem
@@ -292,15 +301,22 @@ x' = p(x), x(t) ∈ \\mathcal{X}
 
 ### Fields
 
-- `p`        -- polynomial
+- `p`        -- polynomial vector field
 - `X`        -- constraint set
 - `statedim` -- number of state variables
 """
-struct ConstrainedPolynomialContinuousSystem{PT, ST} <: AbstractContinuousSystem
-    p::PT
+struct ConstrainedPolynomialContinuousSystem{T, PT <: MultivariatePolynomials.AbstractPolynomialLike{T}, VPT <: AbstractVector{PT}, ST} <: AbstractContinuousSystem
+    p::VPT
     statedim::Int
     X::ST
 end
 statedim(s::ConstrainedPolynomialContinuousSystem) = s.statedim
 stateset(s::ConstrainedPolynomialContinuousSystem) = s.X
 inputdim(s::ConstrainedPolynomialContinuousSystem) = 0
+
+MultivariatePolynomials.nvariables(s::ConstrainedPolynomialContinuousSystem) = MultivariatePolynomials.nvariables(s.p)
+MultivariatePolynomials.variables(s::ConstrainedPolynomialContinuousSystem) = MultivariatePolynomials.variables(s.p)
+
+ConstrainedPolynomialContinuousSystem(p::VPT, X::ST) where {PT <: MultivariatePolynomials.AbstractPolynomialLike, VPT <: AbstractVector{PT}, ST} = ConstrainedPolynomialContinuousSystem(p, MultivariatePolynomials.nvariables(p), X)
+ConstrainedPolynomialContinuousSystem(p::PT, X::ST) where {PT <: MultivariatePolynomials.AbstractPolynomialLike, ST} = ConstrainedPolynomialContinuousSystem([p], X)
+ConstrainedPolynomialContinuousSystem(p::PT, statedim::Int, X::ST) where {PT <: MultivariatePolynomials.AbstractPolynomialLike, ST} = ConstrainedPolynomialContinuousSystem([p], statedim, X)

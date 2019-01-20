@@ -136,21 +136,23 @@ end
     s = PolynomialContinuousSystem(p)
     @test statedim(s) == 2
     @test inputdim(s) == 0
-    @test nvariables(s) == 2
-    @test variables(s) == [x, y]
+    @test TypedPolynomials.nvariables(s) == 2
+    @test TypedPolynomials.variables(s) == (x, y)
 
     # constructor for scalar p and given number of variables
-    s = PolynomialContinuousSystem(p, TypedPolynomials.nvariables(p))
-    @test nvariables(s) == 2
-    @test variables(s) == [x, y]
+    s = PolynomialContinuousSystem([p], 2)
 end
 
 @testset "Polynomial system in continuous time with state constraints" begin
     @polyvar x y
     p = 2x^2 - 3x + y
     X = BallInf(zeros(2), 0.1)
+
+    # default constructor for scalar p and 
     s = ConstrainedPolynomialContinuousSystem(p, X)
     @test statedim(s) == 2
     @test inputdim(s) == 0
     @test dim(stateset(s)) == dim(X)
+    @test TypedPolynomials.nvariables(s) == 2
+    @test TypedPolynomials.variables(s) == (x, y)
 end

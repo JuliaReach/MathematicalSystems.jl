@@ -21,7 +21,7 @@ on how to install and run Julia in your system.
 To install this package, use the following command inside Julia's REPL:
 
 ```julia
-using Pkg  # only in Julia v0.7 or later
+using Pkg
 Pkg.add("MathematicalSystems")
 ```
 

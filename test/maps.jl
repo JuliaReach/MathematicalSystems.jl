@@ -4,12 +4,14 @@ import MathematicalSystems.LinearMap
 @testset "Identity map" begin
     m = IdentityMap(5)
     @test outputdim(m) == 5
+    @test islinear(m)
 end
 
 @testset "Linear map" begin
     A = [1. 1; 1 -1]
     m = LinearMap(A)
     @test outputdim(m) == 2
+    @test islinear(m)
 end
 
 @testset "Affine map" begin
@@ -22,6 +24,7 @@ end
     b = [0.5]
     m = AffineMap(A, b)
     @test outputdim(m) == 1
+    @test islinear(m)
 end
 
 @testset "Linear control map" begin
@@ -29,6 +32,7 @@ end
     B = Matrix([0.5 1.5]')
     m = LinearControlMap(A, B)
     @test outputdim(m) == 2
+    @test islinear(m)
 end
 
 @testset "Constrained linear control map" begin
@@ -37,6 +41,7 @@ end
     U = Interval(-1, 1)
     m = ConstrainedLinearControlMap(A, B, U)
     @test outputdim(m) == 2
+    @test islinear(m)
 end
 
 @testset "Affine control map" begin
@@ -45,6 +50,7 @@ end
     c = [0.5, 0.5]
     m = AffineControlMap(A, B, c)
     @test outputdim(m) == 2
+    @test islinear(m)
 end
 
 @testset "Constrained affine control map" begin
@@ -54,6 +60,7 @@ end
     U = Interval(-1, 1)
     m = ConstrainedAffineControlMap(A, B, c, U)
     @test outputdim(m) == 2
+    @test islinear(m)
 end
 
 @testset "Reset map" begin
@@ -62,4 +69,5 @@ end
 
     m = ResetMap(10, 2 => -1., 5 => 1.)
     @test outputdim(m) == 10
+    @test islinear(m)
 end

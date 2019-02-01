@@ -19,7 +19,8 @@ export AbstractSystem,
        statedim,
        stateset,
        inputdim,
-       inputset
+       inputset,
+       islinear
 
 include("abstract.jl")
 

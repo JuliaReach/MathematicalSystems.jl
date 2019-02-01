@@ -136,7 +136,7 @@ struct AffineControlMap{T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, V
     end
 end
 outputdim(m::AffineControlMap) = size(m.A, 1)
-apply(m::AffineControlMap, x, u) = m.A * x + m.B * u + m.C
+apply(m::AffineControlMap, x, u) = m.A * x + m.B * u + m.c
 
 """
     ConstrainedAffineControlMap
@@ -164,7 +164,7 @@ struct ConstrainedAffineControlMap{T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatri
     end
 end
 outputdim(m::ConstrainedAffineControlMap) = size(m.A, 1)
-apply(m::ConstrainedAffineControlMap, x, u) = m.A * x + m.B * u + m.C
+apply(m::ConstrainedAffineControlMap, x, u) = m.A * x + m.B * u + m.c
 
 """
     ResetMap
@@ -192,8 +192,8 @@ ResetMap(dim::Int, args::Pair{Int, <:N}...) where {N} = ResetMap(dim, Dict{Int, 
 
 function apply(m::ResetMap, x)
     y = copy(x)
-    for index in keys(m.dict)
-        y[index] = m.dict[index]
+    for (index, value) in pairs(m.dict)
+        y[index] = value
     end
     return y
 end

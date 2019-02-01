@@ -158,3 +158,27 @@ struct ConstrainedAffineControlMap{T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatri
     end
 end
 outputdim(m::ConstrainedAffineControlMap) = size(m.A, 1)
+
+"""
+    ResetMap
+
+A reset map 
+```math
+x ↦ R(x)
+```
+such that a subset of the variables is given a specified value, and the rest
+are unchanged.
+
+### Fields
+
+- `dim`  -- dimension
+- `dict` -- dictionary whose keys are the indices of the variables that are reset,
+            and whose values are the new values
+"""
+struct ResetMap{N} <: AbstractMap
+    dim::Int
+    dict::Dict{Int, N}
+end
+outputdim(m::ResetMap) = m.dim
+
+ResetMap(dim::Int, args::Pair{Int, <:N}...) where {N} = ResetMap(dim, Dict{Int, N}(args))

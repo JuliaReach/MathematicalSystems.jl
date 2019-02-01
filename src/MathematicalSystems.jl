@@ -81,6 +81,7 @@ Maps
 ===================================#
 export outputmap,
        outputdim,
+       IdentityMap,
        LinearMap,
        AffineMap,
        LinearControlMap,

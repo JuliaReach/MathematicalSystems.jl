@@ -80,6 +80,7 @@ VaryingInput
 
 ```@docs
 AbstractMap
+IdentityMap
 LinearMap
 AffineMap
 LinearControlMap

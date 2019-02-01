@@ -1,6 +1,11 @@
 # fix namespace conflicts with LazySets
 import MathematicalSystems.LinearMap
 
+@testset "Identity map" begin
+    m = IdentityMap(5)
+    @test outputdim(m) == 5
+end
+
 @testset "Linear map" begin
     A = [1. 1; 1 -1]
     m = LinearMap(A)

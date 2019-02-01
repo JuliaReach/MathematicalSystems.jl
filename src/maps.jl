@@ -1,4 +1,21 @@
 """
+    IdentityMap
+
+An identity map
+```math
+x ↦ x
+```
+
+### Fields
+
+- `dim` -- dimension
+"""
+struct IdentityMap <: AbstractMap
+    dim::Int
+end
+outputdim(m::IdentityMap) = m.dim
+
+"""
     LinearMap
 
 A linear map

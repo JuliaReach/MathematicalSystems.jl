@@ -57,7 +57,7 @@ end
 end
 
 @testset "Reset map" begin
-    m = ResetMap(10, 9 => 0.)
+    m = ResetMap(10, Dict(9 => 0.))
     @test outputdim(m) == 10
 
     m = ResetMap(10, 2 => -1., 5 => 1.)

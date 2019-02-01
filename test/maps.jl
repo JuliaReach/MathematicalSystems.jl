@@ -55,3 +55,11 @@ end
     m = ConstrainedAffineControlMap(A, B, c, U)
     @test outputdim(m) == 2
 end
+
+@testset "Reset map" begin
+    m = ResetMap(10, 9 => 0.)
+    @test outputdim(m) == 10
+
+    m = ResetMap(10, 2 => -1., 5 => 1.)
+    @test outputdim(m) == 10
+end

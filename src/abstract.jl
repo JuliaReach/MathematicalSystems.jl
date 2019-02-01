@@ -48,6 +48,14 @@ Abstract supertype for all continuous system types.
 abstract type AbstractContinuousSystem <: AbstractSystem end
 
 """
+    islinear(s::AbstractSystem)
+
+Specifies if the rhs of system `s` are linear or not; this class also includes
+affine systems.
+"""
+function islinear(::AbstractSystem) end
+
+"""
     AbstractMap
 
 Abstract supertype for all map types.
@@ -67,3 +75,10 @@ function outputdim end
 Returns the output map of a system with output.
 """
 function outputmap end
+
+"""
+    islinear(m::AbstractMap)
+
+Specifies if `m` is linear or not; this class also includes affine maps.
+"""
+function islinear(::AbstractMap) end

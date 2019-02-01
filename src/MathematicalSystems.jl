@@ -65,7 +65,6 @@ export InitialValueProblem, IVP
 
 include("ivp.jl")
 
-
 #=====================
 Input related methods
 =====================#

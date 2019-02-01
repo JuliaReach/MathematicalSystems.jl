@@ -35,3 +35,9 @@ nextinput
 outputdim
 outputmap
 ```
+
+## Traits
+
+```@docs
+islinear
+```

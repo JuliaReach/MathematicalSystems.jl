@@ -82,3 +82,11 @@ function outputmap end
 Specifies if the map `m` is linear or not; this class also includes affine maps.
 """
 function islinear(::AbstractMap) end
+
+"""
+    apply(m::AbstractMap, args...)
+
+Apply the rule specified by the map to the given arguments.
+"""
+function apply end
+

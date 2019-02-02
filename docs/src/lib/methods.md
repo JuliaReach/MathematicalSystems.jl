@@ -42,3 +42,9 @@ outputmap
 islinear(::AbstractSystem)
 islinear(::AbstractMap)
 ```
+
+## Maps
+
+```@docs
+apply
+```

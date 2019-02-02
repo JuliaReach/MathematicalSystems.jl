@@ -88,7 +88,8 @@ export outputmap,
        ConstrainedLinearControlMap,
        AffineControlMap,
        ConstrainedAffineControlMap,
-       ResetMap
+       ResetMap,
+       apply
 
 include("maps.jl")
 

@@ -15,6 +15,7 @@ struct IdentityMap <: AbstractMap
 end
 outputdim(m::IdentityMap) = m.dim
 islinear(::IdentityMap) = true
+apply(m::IdentityMap, x) = x
 
 """
     LinearMap
@@ -33,6 +34,7 @@ struct LinearMap{T, MT<:AbstractMatrix{T}} <: AbstractMap
 end
 outputdim(m::LinearMap) = size(m.A, 1)
 islinear(::LinearMap) = true
+apply(m::LinearMap, x) = m.A * x
 
 @static if VERSION < v"0.7-"
     LinearMap{T, MT <: AbstractMatrix{T}}(A::MT) = LinearMap{T, MT}(A)
@@ -61,6 +63,7 @@ struct AffineMap{T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}} <: AbstractMap
 end
 outputdim(m::AffineMap) = length(m.b)
 islinear(::AffineMap) = true
+apply(m::AffineMap, x) = m.A * x + m.b
 
 """
     LinearControlMap
@@ -85,6 +88,7 @@ struct LinearControlMap{T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatrix{T}} <: Ab
 end
 outputdim(m::LinearControlMap) = size(m.A, 1)
 islinear(::LinearControlMap) = true
+apply(m::LinearControlMap, x, u) = m.A * x + m.B * u
 
 """
     ConstrainedLinearControlMap
@@ -111,6 +115,7 @@ struct ConstrainedLinearControlMap{T, MTA <: AbstractMatrix{T}, MTB <: AbstractM
 end
 outputdim(m::ConstrainedLinearControlMap) = size(m.A, 1)
 islinear(::ConstrainedLinearControlMap) = true
+apply(m::ConstrainedLinearControlMap, x, u) = m.A * x + m.B * u
 
 """
     AffineControlMap
@@ -137,6 +142,7 @@ struct AffineControlMap{T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, V
 end
 outputdim(m::AffineControlMap) = size(m.A, 1)
 islinear(::AffineControlMap) = true
+apply(m::AffineControlMap, x, u) = m.A * x + m.B * u + m.c
 
 """
     ConstrainedAffineControlMap
@@ -165,6 +171,7 @@ struct ConstrainedAffineControlMap{T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatri
 end
 outputdim(m::ConstrainedAffineControlMap) = size(m.A, 1)
 islinear(::ConstrainedAffineControlMap) = true
+apply(m::ConstrainedAffineControlMap, x, u) = m.A * x + m.B * u + m.c
 
 """
     ResetMap
@@ -190,3 +197,11 @@ outputdim(m::ResetMap) = m.dim
 islinear(::ResetMap) = true
 
 ResetMap(dim::Int, args::Pair{Int, <:N}...) where {N} = ResetMap(dim, Dict{Int, N}(args))
+
+function apply(m::ResetMap, x)
+    y = copy(x)
+    for (index, value) in pairs(m.dict)
+        y[index] = value
+    end
+    return y
+end

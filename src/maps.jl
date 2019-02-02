@@ -14,6 +14,7 @@ struct IdentityMap <: AbstractMap
     dim::Int
 end
 outputdim(m::IdentityMap) = m.dim
+apply(m::IdentityMap, x) = x
 
 """
     LinearMap
@@ -31,6 +32,7 @@ struct LinearMap{T, MT<:AbstractMatrix{T}} <: AbstractMap
     A::MT
 end
 outputdim(m::LinearMap) = size(m.A, 1)
+apply(m::LinearMap, x) = m.A * x
 
 @static if VERSION < v"0.7-"
     LinearMap{T, MT <: AbstractMatrix{T}}(A::MT) = LinearMap{T, MT}(A)
@@ -58,6 +60,7 @@ struct AffineMap{T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}} <: AbstractMap
     end
 end
 outputdim(m::AffineMap) = length(m.b)
+apply(m::AffineMap, x) = m.A * x + m.b
 
 """
     LinearControlMap
@@ -81,6 +84,7 @@ struct LinearControlMap{T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatrix{T}} <: Ab
     end
 end
 outputdim(m::LinearControlMap) = size(m.A, 1)
+apply(m::LinearControlMap, x, u) = m.A * x + m.B * u
 
 """
     ConstrainedLinearControlMap
@@ -106,6 +110,7 @@ struct ConstrainedLinearControlMap{T, MTA <: AbstractMatrix{T}, MTB <: AbstractM
     end
 end
 outputdim(m::ConstrainedLinearControlMap) = size(m.A, 1)
+apply(m::ConstrainedLinearControlMap, x, u) = m.A * x + m.B * u
 
 """
     AffineControlMap
@@ -131,6 +136,7 @@ struct AffineControlMap{T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, V
     end
 end
 outputdim(m::AffineControlMap) = size(m.A, 1)
+apply(m::AffineControlMap, x, u) = m.A * x + m.B * u + m.c
 
 """
     ConstrainedAffineControlMap
@@ -158,6 +164,7 @@ struct ConstrainedAffineControlMap{T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatri
     end
 end
 outputdim(m::ConstrainedAffineControlMap) = size(m.A, 1)
+apply(m::ConstrainedAffineControlMap, x, u) = m.A * x + m.B * u + m.c
 
 """
     ResetMap
@@ -182,3 +189,11 @@ end
 outputdim(m::ResetMap) = m.dim
 
 ResetMap(dim::Int, args::Pair{Int, <:N}...) where {N} = ResetMap(dim, Dict{Int, N}(args))
+
+function apply(m::ResetMap, x)
+    y = copy(x)
+    for (index, value) in pairs(m.dict)
+        y[index] = value
+    end
+    return y
+end

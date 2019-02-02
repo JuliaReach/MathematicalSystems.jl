@@ -20,7 +20,6 @@ end
 AbstractSystem
 AbstractContinuousSystem
 AbstractDiscreteSystem
-islinear(::AbstractSystem)
 ```
 
 ## Continuous Systems
@@ -89,7 +88,6 @@ ConstrainedLinearControlMap
 AffineControlMap
 ConstrainedAffineControlMap
 ResetMap
-islinear(::AbstractMap)
 ```
 
 ## Systems with output

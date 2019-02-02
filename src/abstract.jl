@@ -50,8 +50,8 @@ abstract type AbstractContinuousSystem <: AbstractSystem end
 """
     islinear(s::AbstractSystem)
 
-Specifies if the rhs of system `s` are linear or not; this class also includes
-affine systems.
+Specifies if the dynamics of system `s` is specified by linear equations; this
+class also includes affine systems.
 """
 function islinear(::AbstractSystem) end
 
@@ -79,6 +79,6 @@ function outputmap end
 """
     islinear(m::AbstractMap)
 
-Specifies if `m` is linear or not; this class also includes affine maps.
+Specifies if the map `m` is linear or not; this class also includes affine maps.
 """
 function islinear(::AbstractMap) end

@@ -39,5 +39,6 @@ outputmap
 ## Traits
 
 ```@docs
-islinear
+islinear(::AbstractSystem)
+islinear(::AbstractMap)
 ```

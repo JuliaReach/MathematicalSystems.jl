@@ -141,7 +141,7 @@ struct AffineControlMap{T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, V
     end
 end
 outputdim(m::AffineControlMap) = size(m.A, 1)
-islinear(::AffineControlMap) = true
+islinear(::AffineControlMap) = false
 apply(m::AffineControlMap, x, u) = m.A * x + m.B * u + m.c
 
 """

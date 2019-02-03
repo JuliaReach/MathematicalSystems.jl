@@ -32,7 +32,7 @@ end
         s = AffineContinuousSystem(zeros(sd, sd), zeros(sd))
         @test statedim(s) == sd
         @test inputdim(s) == 0
-        @test islinear(s)
+        @test !islinear(s)
     end
 end
 
@@ -47,7 +47,7 @@ end
     @test stateset(s) == X
     @test inputdim(s) == 1
     @test inputset(s) == U
-    @test islinear(s)
+    @test !islinear(s)
 end
 
 @testset "Continuous linear control system" begin
@@ -75,7 +75,7 @@ end
     @test statedim(s) == 2
     @test stateset(s) == X
     @test inputdim(s) == 0
-    @test islinear(s)
+    @test !islinear(s)
 end
 
 @testset "Continuous constrained linear control system" begin

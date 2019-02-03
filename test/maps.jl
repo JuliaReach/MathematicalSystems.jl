@@ -35,7 +35,7 @@ end
     b = [0.5]
     m = AffineMap(A, b)
     @test outputdim(m) == 1
-    @test islinear(m)
+    @test !islinear(m)
 end
 
 @testset "Linear control map" begin
@@ -71,7 +71,7 @@ end
     c = [0.5, 0.5]
     m = AffineControlMap(A, B, c)
     @test outputdim(m) == 2
-    @test islinear(m)
+    @test !islinear(m)
 
     # applying the affine map on a vector
     x = ones(2)
@@ -86,7 +86,7 @@ end
     U = Interval(-1, 1)
     m = ConstrainedAffineControlMap(A, B, c, U)
     @test outputdim(m) == 2
-    @test islinear(m)
+    @test !islinear(m)
 
     # applying the affine map on a vector
     x = ones(2)
@@ -100,7 +100,7 @@ end
 
     m = ResetMap(10, 2 => -1., 5 => 1.)
     @test outputdim(m) == 10
-    @test islinear(m)
+    @test !islinear(m)
 
     # applying the affine map on a vector
     x = zeros(10)

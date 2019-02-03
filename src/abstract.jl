@@ -62,7 +62,7 @@ linear in ``(x, u)``.
 
 This function uses the information of the type, not the value. So, if a system
 type allows an instance that is not linear, it returns `false` by default.
-For example, polynomial systems can be linear not, hence `islinear`
+For example, polynomial systems can be nonlinear; hence `islinear`
 returns `false`.
 
 [1] Sontag, Eduardo D. *Mathematical control theory: deterministic finite dimensional

@@ -62,7 +62,7 @@ struct AffineMap{T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}} <: AbstractMap
     end
 end
 outputdim(m::AffineMap) = length(m.b)
-islinear(::AffineMap) = true
+islinear(::AffineMap) = false
 apply(m::AffineMap, x) = m.A * x + m.b
 
 """
@@ -70,7 +70,7 @@ apply(m::AffineMap, x) = m.A * x + m.b
 
 A linear control map
 ```math
-x ↦ Ax + Bu.
+(x, u) ↦ Ax + Bu.
 ```
 
 ### Fields
@@ -95,7 +95,7 @@ apply(m::LinearControlMap, x, u) = m.A * x + m.B * u
 
 A linear control map with input constraints,
 ```math
-x ↦ Ax + Bu, u ∈ \\mathcal{U}.
+(x, u) ↦ Ax + Bu, u ∈ \\mathcal{U}.
 ```
 
 ### Fields
@@ -122,7 +122,7 @@ apply(m::ConstrainedLinearControlMap, x, u) = m.A * x + m.B * u
 
 An affine control map
 ```math
-x ↦ Ax + Bu + c.
+(x, u) ↦ Ax + Bu + c.
 ```
 
 ### Fields
@@ -149,7 +149,7 @@ apply(m::AffineControlMap, x, u) = m.A * x + m.B * u + m.c
 
 An affine control map with input constraints,
 ```math
-x ↦ Ax + Bu + c, u ∈ \\mathcal{U}.
+(x, u) ↦ Ax + Bu + c, u ∈ \\mathcal{U}.
 ```
 
 ### Fields
@@ -170,7 +170,7 @@ struct ConstrainedAffineControlMap{T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatri
     end
 end
 outputdim(m::ConstrainedAffineControlMap) = size(m.A, 1)
-islinear(::ConstrainedAffineControlMap) = true
+islinear(::ConstrainedAffineControlMap) = false
 apply(m::ConstrainedAffineControlMap, x, u) = m.A * x + m.B * u + m.c
 
 """
@@ -194,7 +194,7 @@ struct ResetMap{N} <: AbstractMap
     dict::Dict{Int, N}
 end
 outputdim(m::ResetMap) = m.dim
-islinear(::ResetMap) = true
+islinear(::ResetMap) = false
 
 ResetMap(dim::Int, args::Pair{Int, <:N}...) where {N} = ResetMap(dim, Dict{Int, N}(args))
 

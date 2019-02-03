@@ -59,7 +59,12 @@ We adopt the notion from [Section 2.7, 1]. For example, the system with inputs
 linear in ``(x, u)`` for each ``t ∈ \\mathbb{R}``. On the other hand,
 ``x' = f(t, x, u) = A x + B u + c`` is affine but not linear, since it is not
 linear in ``(x, u)``.
- 
+
+This function uses the information of the type, not the value. So, if a system
+type allows an instance that is not linear, it returns `false` by default.
+For example, polynomial systems can be linear not, hence `islinear`
+returns `false`.
+
 [1] Sontag, Eduardo D. *Mathematical control theory: deterministic finite dimensional
 systems.* Vol. 6. Springer Science & Business Media, 2013.
 """

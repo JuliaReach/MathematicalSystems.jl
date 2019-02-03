@@ -78,7 +78,7 @@ struct AffineContinuousSystem{T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T
 end
 statedim(s::AffineContinuousSystem) = length(s.b)
 inputdim(s::AffineContinuousSystem) = 0
-islinear(::AffineContinuousSystem) = true
+islinear(::AffineContinuousSystem) = false
 
 """
     LinearControlContinuousSystem
@@ -156,7 +156,7 @@ end
 statedim(s::ConstrainedAffineContinuousSystem) = length(s.b)
 stateset(s::ConstrainedAffineContinuousSystem) = s.X
 inputdim(s::ConstrainedAffineContinuousSystem) = 0
-islinear(::ConstrainedAffineContinuousSystem) = true
+islinear(::ConstrainedAffineContinuousSystem) = false
 
 """
     ConstrainedAffineControlContinuousSystem
@@ -190,7 +190,7 @@ statedim(s::ConstrainedAffineControlContinuousSystem) = length(s.c)
 stateset(s::ConstrainedAffineControlContinuousSystem) = s.X
 inputdim(s::ConstrainedAffineControlContinuousSystem) = size(s.B, 2)
 inputset(s::ConstrainedAffineControlContinuousSystem) = s.U
-islinear(::ConstrainedAffineControlContinuousSystem) = true
+islinear(::ConstrainedAffineControlContinuousSystem) = false
 
 """
     ConstrainedLinearControlContinuousSystem

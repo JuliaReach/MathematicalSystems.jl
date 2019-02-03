@@ -50,8 +50,18 @@ abstract type AbstractContinuousSystem <: AbstractSystem end
 """
     islinear(s::AbstractSystem)
 
-Specifies if the dynamics of system `s` is specified by linear equations; this
-class also includes affine systems.
+Specifies if the dynamics of system `s` is specified by linear equations.
+
+### Notes
+
+We adopt the notion from [Section 2.7, 1]. For example, the system with inputs
+``x' = f(t, x, u) = A x + B u`` is linear, since the function ``f(t, ⋅, ⋅)`` is
+linear in ``(x, u)`` for each ``t ∈ \\mathbb{R}``. On the other hand,
+``x' = f(t, x, u) = A x + B u + c`` is affine but not linear, since it is not
+linear in ``(x, u)``.
+ 
+[1] Sontag, Eduardo D. *Mathematical control theory: deterministic finite dimensional
+systems.* Vol. 6. Springer Science & Business Media, 2013.
 """
 function islinear(::AbstractSystem) end
 
@@ -79,7 +89,12 @@ function outputmap end
 """
     islinear(m::AbstractMap)
 
-Specifies if the map `m` is linear or not; this class also includes affine maps.
+Specifies if the map `m` is linear or not.
+
+### Notes
+
+A map is *linear* if it preserves the operations of scalar multiplication and
+vector addition.
 """
 function islinear(::AbstractMap) end
 

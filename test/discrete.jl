@@ -3,7 +3,7 @@
         s = DiscreteIdentitySystem(sd)
         @test statedim(s) == sd
         @test inputdim(s) == 0
-        @test islinear(s)
+        @test islinear(s) && isaffine(s)
     end
 end
 
@@ -14,7 +14,7 @@ end
         @test statedim(s) == sd
         @test stateset(s) == X
         @test inputdim(s) == 0
-        @test islinear(s)
+        @test islinear(s) && isaffine(s)
     end
 end
 
@@ -23,7 +23,7 @@ end
         s = LinearDiscreteSystem(zeros(sd, sd))
         @test statedim(s) == sd
         @test inputdim(s) == 0
-        @test islinear(s)
+        @test islinear(s) && isaffine(s)
     end
 end
 
@@ -32,7 +32,7 @@ end
         s = LinearControlDiscreteSystem(zeros(sd, sd), ones(sd, sd))
         @test statedim(s) == sd
         @test inputdim(s) == sd
-        @test islinear(s)
+        @test islinear(s) && isaffine(s)
     end
 end
 
@@ -43,7 +43,7 @@ end
     @test statedim(s) == 2
     @test stateset(s) == X
     @test inputdim(s) == 0
-    @test islinear(s)
+    @test islinear(s) && isaffine(s)
 end
 
 @testset "Discrete constrained linear control system" begin
@@ -56,7 +56,7 @@ end
     @test stateset(s) == X
     @test inputdim(s) == 1
     @test inputset(s) == U
-    @test islinear(s)
+    @test islinear(s) && isaffine(s)
 end
 
 @testset "Discrete linear algebraic system" begin
@@ -64,7 +64,7 @@ end
         s = LinearAlgebraicDiscreteSystem(zeros(sd, sd), zeros(sd, sd))
         @test statedim(s) == sd
         @test inputdim(s) == 0
-        @test islinear(s)
+        @test islinear(s) && isaffine(s)
     end
 end
 
@@ -76,7 +76,7 @@ end
     @test statedim(s) == 2
     @test stateset(s) == X
     @test inputdim(s) == 0
-    @test islinear(s)
+    @test islinear(s) && isaffine(s)
 end
 
 @testset "Constant input in a discrete constrained linear control system" begin
@@ -86,7 +86,7 @@ end
     U = ConstantInput(Hyperrectangle(low=[0.9], high=[1.1]))
     s = ConstrainedLinearControlDiscreteSystem(A, B, X, U)
     s = ConstrainedLinearControlDiscreteSystem(A, B, X, U)
-    @test islinear(s)
+    @test islinear(s) && isaffine(s)
     if VERSION < v"0.7-"
         @test next(s.U, 1)[1] isa Hyperrectangle
     else
@@ -105,7 +105,7 @@ end
     for ui in s.U
         @test ui isa Hyperrectangle
     end
-    @test islinear(s)
+    @test islinear(s) && isaffine(s)
 end
 
 @testset "Polynomial system in discrete time" begin
@@ -114,7 +114,7 @@ end
     s = PolynomialDiscreteSystem(p, TypedPolynomials.nvariables(p))
     @test statedim(s) == 2
     @test inputdim(s) == 0
-    @test !islinear(s)
+    @test !islinear(s) && !isaffine(s)
 end
 
 @testset "Polynomial system in discrete time with state constraints" begin
@@ -125,5 +125,5 @@ end
     @test statedim(s) == 2
     @test inputdim(s) == 0
     @test dim(stateset(s)) == dim(X)
-    @test !islinear(s)
+    @test !islinear(s) && !isaffine(s)
 end

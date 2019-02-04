@@ -20,7 +20,7 @@
     @test s.s.B == B
 
     # check that the system is linear
-    @test islinear(s)
+    @test islinear(s) && isaffine(s)
 end
 
 @testset "Constrained LTI system" begin
@@ -39,5 +39,5 @@ end
     s = LTISystem(A, B, C, D, X, U)
 
     # check that the system is linear
-    @test islinear(s)
+    @test islinear(s) && isaffine(s)
 end

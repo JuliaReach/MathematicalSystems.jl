@@ -71,6 +71,23 @@ systems.* Vol. 6. Springer Science & Business Media, 2013.
 function islinear(::AbstractSystem) end
 
 """
+    isaffine(s::AbstractSystem)
+
+Specifies if the dynamics of system `s` is specified by affine equations.
+
+### Notes
+
+An affine system is the composition of a linear system and a translation.
+See [`islinear(::AbstractSystem)`](@ref) for the notion of linear system adopted
+in this library.
+
+This function uses the information of the type, not the value. So, if a system
+type allows an instance that is not affine, it returns `false` by default.
+For example, polynomial systems can be nonlinear; hence `isaffine` is `false`.
+"""
+function isaffine(::AbstractSystem) end
+
+"""
     AbstractMap
 
 Abstract supertype for all map types.
@@ -102,6 +119,18 @@ A map is *linear* if it preserves the operations of scalar multiplication and
 vector addition.
 """
 function islinear(::AbstractMap) end
+
+"""
+    isaffine(m::AbstractMap)
+
+Specifies if the map `m` is affine or not.
+
+### Notes
+
+An affine map is the composition of a linear map and a translation.
+See also [`islinear(::AbstractMap)`](@ref).
+"""
+function isaffine(::AbstractMap) end
 
 """
     apply(m::AbstractMap, args...)

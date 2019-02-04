@@ -36,6 +36,7 @@ statedim(ivp::InitialValueProblem) = statedim(ivp.s)
 inputdim(ivp::InitialValueProblem) = inputdim(ivp.s)
 inputset(ivp::InitialValueProblem) = inputset(ivp.s)
 islinear(ivp::InitialValueProblem) = islinear(ivp.s)
+isaffine(ivp::InitialValueProblem) = isaffine(ivp.s)
 
 """
     IVP

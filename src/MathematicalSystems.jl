@@ -40,8 +40,6 @@ export ContinuousIdentitySystem,
        PolynomialContinuousSystem,
        ConstrainedPolynomialContinuousSystem
 
-include("continuous.jl")
-
 #==================================
 Concrete Types for Discrete Systems
 ===================================#
@@ -56,7 +54,7 @@ export DiscreteIdentitySystem,
        PolynomialDiscreteSystem,
        ConstrainedPolynomialDiscreteSystem
 
-#include("discrete.jl")
+include("systems.jl")
 
 #==========================================
 Concrete Types for an Initial Value Problem

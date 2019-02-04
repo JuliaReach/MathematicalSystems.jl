@@ -80,6 +80,10 @@ Specifies if the dynamics of system `s` is specified by affine equations.
 An affine system is the composition of a linear system and a translation.
 See [`islinear(::AbstractSystem)`](@ref) for the notion of linear system adopted
 in this library.
+
+This function uses the information of the type, not the value. So, if a system
+type allows an instance that is not affine, it returns `false` by default.
+For example, polynomial systems can be nonlinear; hence `isaffine` is `false`.
 """
 function isaffine(::AbstractSystem) end
 

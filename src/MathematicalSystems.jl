@@ -56,7 +56,7 @@ export DiscreteIdentitySystem,
        PolynomialDiscreteSystem,
        ConstrainedPolynomialDiscreteSystem
 
-include("discrete.jl")
+#include("discrete.jl")
 
 #==========================================
 Concrete Types for an Initial Value Problem

@@ -1,63 +1,137 @@
 import MultivariatePolynomials
 import MultivariatePolynomials: AbstractPolynomialLike
 
-"""
+for (Z, AZ) in ((:ContinuousIdentitySystem, :AbstractContinuousSystem),
+                (:DiscreteIdentitySystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z) <: $(AZ)
+            statedim::Int
+        end
+        statedim(s::$Z) = s.statedim
+        inputdim(s::$Z) = 0
+    end
+end
+
+@doc """
     ContinuousIdentitySystem <: AbstractContinuousSystem
 
-Trivial identity continuous-time system of the form
+Trivial identity continuous-time system of the form:
+
 ```math
-x' = 0.
+    x' = 0.
 ```
 """
-struct ContinuousIdentitySystem <: AbstractContinuousSystem
-    statedim::Int
-end
-statedim(s::ContinuousIdentitySystem) = s.statedim
-inputdim(s::ContinuousIdentitySystem) = 0
+ContinuousIdentitySystem
 
+@doc """
+    DiscreteIdentitySystem <: AbstractDiscreteSystem
+
+Trivial identity discrete-time system of the form:
+```math
+    x_{k+1} = x_k.
+```
 """
+DiscreteIdentitySystem
+
+for (Z, AZ) in ((:ConstrainedContinuousIdentitySystem, :AbstractContinuousSystem),
+                (:ConstrainedDiscreteIdentitySystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){ST} <: $(AZ)
+            statedim::Int
+            X::ST
+        end
+        statedim(s::$Z) = s.statedim
+        stateset(s::$Z) = s.X
+        inputdim(s::$Z) = 0
+    end
+end
+
+@doc """
     ConstrainedContinuousIdentitySystem <: AbstractContinuousSystem
 
-Trivial identity continuous-time system with state constraints of the form
+Trivial identity continuous-time system with state constraints of the form:
+
 ```math
-x' = 0, x(t) ∈ \\mathcal{X}.
+    x' = 0, x(t) ∈ \\mathcal{X}.
 ```
 """
-struct ConstrainedContinuousIdentitySystem{ST} <: AbstractContinuousSystem
-    statedim::Int
-    X::ST
-end
-statedim(s::ConstrainedContinuousIdentitySystem) = s.statedim
-stateset(s::ConstrainedContinuousIdentitySystem) = s.X
-inputdim(s::ConstrainedContinuousIdentitySystem) = 0
+ConstrainedContinuousIdentitySystem
 
+@doc """
+    ConstrainedDiscreteIdentitySystem <: AbstractDiscreteSystem
+
+Trivial identity discrete-time system with state constraints of the form:
+
+```math
+    x_{k+1} = x_k, x_k ∈ \\mathcal{X}.
+```
 """
+ConstrainedDiscreteIdentitySystem
+
+for (Z, AZ) in ((:LinearContinuousSystem, :AbstractContinuousSystem),
+                (:LinearDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MT <: AbstractMatrix{T}} <: $(AZ)
+            A::MT
+        end
+        statedim(s::$Z) = checksquare(s.A)
+        inputdim(s::$Z) = 0
+    end
+end
+
+@doc """
     LinearContinuousSystem
 
-Continuous-time linear system of the form
+Continuous-time linear system of the form:
+
 ```math
-x' = A x.
+    x' = A x.
 ```
 
 ### Fields
 
 - `A` -- square matrix
 """
-struct LinearContinuousSystem{T, MT <: AbstractMatrix{T}} <: AbstractContinuousSystem
-    A::MT
-end
-@static if VERSION < v"0.7-"
-    LinearContinuousSystem{T, MT <: AbstractMatrix{T}}(A::MT) = LinearContinuousSystem{T, MT}(A)
-end
-statedim(s::LinearContinuousSystem) = checksquare(s.A)
-inputdim(s::LinearContinuousSystem) = 0
+LinearContinuousSystem
 
+@doc """
+    LinearDiscreteSystem
+
+Discrete-time linear system of the form:
+
+```math
+    x_{k+1} = A x_k.
+```
+
+### Fields
+
+- `A` -- square matrix
 """
+LinearDiscreteSystem
+
+for (Z, AZ) in ((:AffineContinuousSystem, :AbstractContinuousSystem),
+                (:AffineDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}} <: $(AZ)
+            A::MT
+            b::VT
+            function $(Z)(A::MT, b::VT) where {T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}}
+                @assert checksquare(A) == length(b)
+                return new{T, MT, VT}(A, b)
+            end
+        end
+        statedim(s::$(Z)) = length(s.b)
+        inputdim(s::$(Z)) = 0
+    end
+end
+
+@doc """
     AffineContinuousSystem
 
-Continuous-time affine system of the form
+Continuous-time affine system of the form:
+
 ```math
-x' = A x + b.
+    x' = A x + b.
 ```
 
 ### Fields
@@ -65,23 +139,47 @@ x' = A x + b.
 - `A` -- square matrix
 - `b` -- vector
 """
-struct AffineContinuousSystem{T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}} <: AbstractContinuousSystem
-    A::MT
-    b::VT
-    function AffineContinuousSystem(A::MT, b::VT) where {T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}}
-        @assert checksquare(A) == length(b)
-        return new{T, MT, VT}(A, b)
+AffineContinuousSystem
+
+@doc """
+    AffineDiscreteSystem
+
+Discrete-time affine system of the form:
+
+```math
+    x_{k+1} = A x_k + b.
+```
+
+### Fields
+
+- `A` -- square matrix
+- `b` -- vector
+"""
+AffineDiscreteSystem
+
+for (Z, AZ) in ((:LinearControlContinuousSystem, :AbstractContinuousSystem),
+                (:LinearControlDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}} <: $(AZ)
+            A::MTA
+            B::MTB
+            function $(Z)(A::MTA, B::MTB) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}}
+                @assert checksquare(A) == size(B, 1)
+                return new{T, MTA, MTB}(A, B)
+            end
+        end
+        statedim(s::$(Z)) = checksquare(s.A)
+        inputdim(s::$(Z)) = size(s.B, 2)
     end
 end
-statedim(s::AffineContinuousSystem) = length(s.b)
-inputdim(s::AffineContinuousSystem) = 0
 
-"""
+@doc """
     LinearControlContinuousSystem
 
-Continuous-time linear control system of the form
+Continuous-time linear control system of the form:
+
 ```math
-x' = A x + B u.
+    x' = A x + B u.
 ```
 
 ### Fields
@@ -89,23 +187,44 @@ x' = A x + B u.
 - `A` -- square matrix
 - `B` -- matrix
 """
-struct LinearControlContinuousSystem{T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}} <: AbstractContinuousSystem
-    A::MTA
-    B::MTB
-    function LinearControlContinuousSystem(A::MTA, B::MTB) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}}
-        @assert checksquare(A) == size(B, 1)
-        return new{T, MTA, MTB}(A, B)
+LinearControlContinuousSystem
+
+@doc """
+    LinearControlDiscreteSystem
+
+Discrete-time linear control system of the form:
+
+```math
+    x_{k+1} = A x_k + B u_k.
+```
+
+### Fields
+
+- `A` -- square matrix
+- `B` -- matrix
+"""
+LinearControlDiscreteSystem
+
+for (Z, AZ) in ((:ConstrainedLinearContinuousSystem, :AbstractContinuousSystem),
+                (:ConstrainedLinearDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MT <: AbstractMatrix{T}, ST} <: $(AZ)
+            A::MT
+            X::ST
+        end
+        statedim(s::$Z) = checksquare(s.A)
+        stateset(s::$Z) = s.X
+        inputdim(s::$Z) = 0
     end
 end
-statedim(s::LinearControlContinuousSystem) = checksquare(s.A)
-inputdim(s::LinearControlContinuousSystem) = size(s.B, 2)
 
-"""
+@doc """
     ConstrainedLinearContinuousSystem
 
-Continuous-time linear system with state constraints of the form
+Continuous-time linear system with state constraints of the form:
+
 ```math
-x' = A x, x(t) ∈ \\mathcal{X}.
+    x' = A x, x(t) ∈ \\mathcal{X}.
 ```
 
 ### Fields
@@ -113,23 +232,49 @@ x' = A x, x(t) ∈ \\mathcal{X}.
 - `A` -- square matrix
 - `X` -- state constraints
 """
-struct ConstrainedLinearContinuousSystem{T, MT <: AbstractMatrix{T}, ST} <: AbstractContinuousSystem
-    A::MT
-    X::ST
-end
-@static if VERSION < v"0.7-"
-    ConstrainedLinearContinuousSystem{T, MT <: AbstractMatrix{T}, ST}(A::MT, X::ST) = ConstrainedLinearContinuousSystem{T, MT, ST}(A, X)
-end
-statedim(s::ConstrainedLinearContinuousSystem) = checksquare(s.A)
-stateset(s::ConstrainedLinearContinuousSystem) = s.X
-inputdim(s::ConstrainedLinearContinuousSystem) = 0
+ConstrainedLinearContinuousSystem
 
+@doc """
+    ConstrainedLinearDiscreteSystem
+
+Discrete-time linear system with state constraints of the form:
+
+```math
+    x_{k+1} = A x_k, x_k ∈ \\mathcal{X}.
+```
+
+### Fields
+
+- `A` -- square matrix
+- `X` -- state constraints
 """
+ConstrainedLinearDiscreteSystem
+
+for (Z, AZ) in ((:ConstrainedAffineContinuousSystem, :AbstractContinuousSystem),
+                (:ConstrainedAffineDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST} <: $(AZ)
+            A::MT
+            b::VT
+            X::ST
+            function $(Z)(A::MT, b::VT, X::ST) where {T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST}
+                @assert checksquare(A) == length(b)
+                return new{T, MT, VT, ST}(A, b, X)
+            end
+        end
+        statedim(s::$Z) = length(s.b)
+        stateset(s::$Z) = s.X
+        inputdim(s::$Z) = 0
+    end
+end
+
+@doc """
     ConstrainedAffineContinuousSystem
 
-Continuous-time affine system with state constraints of the form
+Continuous-time affine system with state constraints of the form:
+
 ```math
-x' = A x + b, x(t) ∈ \\mathcal{X}.
+    x' = A x + b, x(t) ∈ \\mathcal{X}.
 ```
 
 ### Fields
@@ -138,25 +283,52 @@ x' = A x + b, x(t) ∈ \\mathcal{X}.
 - `b` -- vector
 - `X` -- state constraints
 """
-struct ConstrainedAffineContinuousSystem{T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST} <: AbstractContinuousSystem
-    A::MT
-    b::VT
-    X::ST
-    function ConstrainedAffineContinuousSystem(A::MT, b::VT, X::ST) where {T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST}
-        @assert checksquare(A) == length(b)
-        return new{T, MT, VT, ST}(A, b, X)
+ConstrainedAffineContinuousSystem
+
+@doc """
+    ConstrainedAffineDiscreteSystem
+
+Discrete-time affine system with state constraints of the form:
+
+```math
+    x_{k+1} = A x_k + b, x_k ∈ \\mathcal{X} \\text{ for all } k.
+```
+
+### Fields
+
+- `A` -- square matrix
+- `b` -- vector
+- `X` -- state constraints
+"""
+ConstrainedAffineDiscreteSystem
+
+for (Z, AZ) in ((:ConstrainedAffineControlContinuousSystem, :AbstractContinuousSystem),
+                (:ConstrainedAffineControlDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST, UT} <: $(AZ)
+            A::MTA
+            B::MTB
+            c::VT
+            X::ST
+            U::UT
+            function $(Z)(A::MTA, B::MTB, c::VT, X::ST, U::UT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST, UT}
+                @assert checksquare(A) == length(c) == size(B, 1) 
+                return new{T, MTA, MTB, VT, ST, UT}(A, B, c, X, U)
+            end
+        end
+        statedim(s::$Z) = length(s.c)
+        stateset(s::$Z) = s.X
+        inputdim(s::$Z) = size(s.B, 2)
+        inputset(s::$Z) = s.U
     end
 end
-statedim(s::ConstrainedAffineContinuousSystem) = length(s.b)
-stateset(s::ConstrainedAffineContinuousSystem) = s.X
-inputdim(s::ConstrainedAffineContinuousSystem) = 0
 
-"""
+@doc """
     ConstrainedAffineControlContinuousSystem
 
-Continuous-time affine control system with state constraints of the form
+Continuous-time affine control system with state constraints of the form:
 ```math
-x' = A x + B u + c, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U} \\text{ for all } t,
+    x' = A x + B u + c, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U} \\text{ for all } t,
 ```
 and ``c`` a vector.
 
@@ -168,28 +340,54 @@ and ``c`` a vector.
 - `X` -- state constraints
 - `U` -- input constraints
 """
-struct ConstrainedAffineControlContinuousSystem{T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST, UT} <: AbstractContinuousSystem
-    A::MTA
-    B::MTB
-    c::VT
-    X::ST
-    U::UT
-    function ConstrainedAffineControlContinuousSystem(A::MTA, B::MTB, c::VT, X::ST, U::UT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST, UT}
-        @assert checksquare(A) == length(c) == size(B, 1) 
-        return new{T, MTA, MTB, VT, ST, UT}(A, B, c, X, U)
+ConstrainedAffineControlContinuousSystem
+
+@doc """
+    ConstrainedAffineControlDiscreteSystem
+
+Continuous-time affine control system with state constraints of the form:
+
+```math
+    x_{k+1} = A x+k + B u_k + c, x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U} \\text{ for all } k,
+```
+and ``c`` a vector.
+
+### Fields
+
+- `A` -- square matrix
+- `B` -- matrix
+- `c` -- vector
+- `X` -- state constraints
+- `U` -- input constraints
+"""
+ConstrainedAffineControlDiscreteSystem
+
+for (Z, AZ) in ((:ConstrainedLinearControlContinuousSystem, :AbstractContinuousSystem),
+                (:ConstrainedLinearControlDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, ST, UT} <: $(AZ)
+            A::MTA
+            B::MTB
+            X::ST
+            U::UT
+            function $(Z)(A::MTA, B::MTB, X::ST, U::UT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, ST, UT}
+                @assert checksquare(A) == size(B, 1)
+                return new{T, MTA, MTB, ST, UT}(A, B, X, U)
+            end
+        end
+        statedim(s::$Z) = checksquare(s.A)
+        stateset(s::$Z) = s.X
+        inputdim(s::$Z) = size(s.B, 2)
+        inputset(s::$Z) = s.U
     end
 end
-statedim(s::ConstrainedAffineControlContinuousSystem) = length(s.c)
-stateset(s::ConstrainedAffineControlContinuousSystem) = s.X
-inputdim(s::ConstrainedAffineControlContinuousSystem) = size(s.B, 2)
-inputset(s::ConstrainedAffineControlContinuousSystem) = s.U
 
-"""
+@doc """
     ConstrainedLinearControlContinuousSystem
 
-Continuous-time linear control system with state constraints of the form
+Continuous-time linear control system with state constraints of the form:
 ```math
-x' = A x + B u, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U} \\text{ for all } t.
+    x' = A x + B u, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U} \\text{ for all } t.
 ```
 
 ### Fields
@@ -199,27 +397,49 @@ x' = A x + B u, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U} \\text{ for all
 - `X` -- state constraints
 - `U` -- input constraints
 """
-struct ConstrainedLinearControlContinuousSystem{T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, ST, UT} <: AbstractContinuousSystem
-    A::MTA
-    B::MTB
-    X::ST
-    U::UT
-    function ConstrainedLinearControlContinuousSystem(A::MTA, B::MTB, X::ST, U::UT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, ST, UT}
-        @assert checksquare(A) == size(B, 1)
-        return new{T, MTA, MTB, ST, UT}(A, B, X, U)
+ConstrainedLinearControlContinuousSystem
+
+@doc """
+    ConstrainedLinearControlDiscreteSystem
+
+Discrete-time linear control system with state constraints of the form:
+
+```math
+    x_{k+1} = A x_k + B u_k, x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U} \\text{ for all } k.
+```
+
+### Fields
+
+- `A` -- square matrix
+- `B` -- matrix
+- `X` -- state constraints
+- `U` -- input constraints
+"""
+ConstrainedLinearControlDiscreteSystem
+
+for (Z, AZ) in ((:LinearAlgebraicContinuousSystem, :AbstractContinuousSystem),
+                (:LinearAlgebraicDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}} <: $(AZ)
+            A::MTA
+            E::MTE
+            function $(Z)(A::MTA, E::MTE) where {T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}}
+                @assert size(A) == size(E)
+                return new{T, MTA, MTE}(A, E)
+            end
+        end
+        statedim(s::$Z) = size(s.A, 1)
+        inputdim(s::$Z) = 0
     end
 end
-statedim(s::ConstrainedLinearControlContinuousSystem) = checksquare(s.A)
-stateset(s::ConstrainedLinearControlContinuousSystem) = s.X
-inputdim(s::ConstrainedLinearControlContinuousSystem) = size(s.B, 2)
-inputset(s::ConstrainedLinearControlContinuousSystem) = s.U
 
-"""
+@doc """
     LinearAlgebraicContinuousSystem
 
-Continuous-time linear algebraic system of the form
+Continuous-time linear algebraic system of the form:
+
 ```math
-E x' = A x.
+    E x' = A x.
 ```
 
 ### Fields
@@ -227,23 +447,49 @@ E x' = A x.
 - `A` -- matrix
 - `E` -- matrix, same size as `A`
 """
-struct LinearAlgebraicContinuousSystem{T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}} <: AbstractContinuousSystem
-    A::MTA
-    E::MTE
-    function LinearAlgebraicContinuousSystem(A::MTA, E::MTE) where {T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}}
-        @assert size(A) == size(E)
-        return new{T, MTA, MTE}(A, E)
+LinearAlgebraicContinuousSystem
+
+@doc """
+    LinearAlgebraicDiscreteSystem
+
+Discrete-time linear algebraic system of the form:
+
+```math
+    E x_{k+1} = A x_k.
+```
+
+### Fields
+
+- `A` -- matrix
+- `E` -- matrix, same size as `A`
+"""
+LinearAlgebraicDiscreteSystem
+
+for (Z, AZ) in ((:ConstrainedLinearAlgebraicContinuousSystem, :AbstractContinuousSystem),
+                (:ConstrainedLinearAlgebraicDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}, ST} <: $(AZ)
+            A::MTA
+            E::MTE
+            X::ST
+            function $(Z)(A::MTA, E::MTE, X::ST) where {T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}, ST}
+                @assert size(A) == size(E)
+                return new{T, MTA, MTE, ST}(A, E, X)
+            end
+        end
+        statedim(s::$Z) = size(s.A, 1)
+        stateset(s::$Z) = s.X
+        inputdim(s::$Z) = 0
     end
 end
-statedim(s::LinearAlgebraicContinuousSystem) = size(s.A, 1)
-inputdim(s::LinearAlgebraicContinuousSystem) = 0
 
-"""
+@doc """
     ConstrainedLinearAlgebraicContinuousSystem
 
-Continuous-time linear system with state constraints of the form
+Continuous-time linear system with state constraints of the form:
+
 ```math
-E x' = A x, x(t) ∈ \\mathcal{X}.
+    E x' = A x, x(t) ∈ \\mathcal{X}.
 ```
 
 ### Fields
@@ -252,25 +498,54 @@ E x' = A x, x(t) ∈ \\mathcal{X}.
 - `E` -- matrix, same size as `A`
 - `X` -- state constraints
 """
-struct ConstrainedLinearAlgebraicContinuousSystem{T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}, ST} <: AbstractContinuousSystem
-    A::MTA
-    E::MTE
-    X::ST
-    function ConstrainedLinearAlgebraicContinuousSystem(A::MTA, E::MTE, X::ST) where {T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}, ST}
-        @assert size(A) == size(E)
-        return new{T, MTA, MTE, ST}(A, E, X)
+ConstrainedLinearAlgebraicContinuousSystem
+
+@doc """
+    ConstrainedLinearAlgebraicDiscreteSystem
+
+Discrete-time linear system with state constraints of the form:
+
+```math
+    E x_{k+1} = A x_k, x_k ∈ \\mathcal{X}.
+```
+
+### Fields
+
+- `A` -- matrix
+- `E` -- matrix, same size as `A`
+- `X` -- state constraints
+"""
+ConstrainedLinearAlgebraicDiscreteSystem
+
+for (Z, AZ) in ((:PolynomialContinuousSystem, :AbstractContinuousSystem),
+                (:PolynomialDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, PT <: AbstractPolynomialLike{T}, VPT <: AbstractVector{PT}} <: $(AZ)
+            p::VPT
+            statedim::Int
+            function $(Z)(p::VPT, statedim::Int) where {T, PT <: AbstractPolynomialLike{T}, VPT <: AbstractVector{PT}}
+                @assert statedim == MultivariatePolynomials.nvariables(p) "the state dimension $(statedim) does not match the number of state variables"
+                return new{T, PT, VPT}(p, statedim)
+            end
+        end
+        statedim(s::$Z) = s.statedim
+        inputdim(s::$Z) = 0
+
+        MultivariatePolynomials.variables(s::$Z) = MultivariatePolynomials.variables(s.p)
+        MultivariatePolynomials.nvariables(s::$Z) = s.statedim
+
+        $(Z)(p::AbstractVector{<:AbstractPolynomialLike}) = $(Z)(p, MultivariatePolynomials.nvariables(p))
+        $(Z)(p::AbstractPolynomialLike) = $(Z)([p])
     end
 end
-statedim(s::ConstrainedLinearAlgebraicContinuousSystem) = size(s.A, 1)
-stateset(s::ConstrainedLinearAlgebraicContinuousSystem) = s.X
-inputdim(s::ConstrainedLinearAlgebraicContinuousSystem) = 0
 
-"""
+@doc """
     PolynomialContinuousSystem
 
-Continuous-time polynomial system of the form
+Continuous-time polynomial system of the form:
+
 ```math
-x' = p(x).
+    x' = p(x).
 ```
 
 ### Fields
@@ -278,29 +553,55 @@ x' = p(x).
 - `p`        -- polynomial vector field
 - `statedim` -- number of state variables
 """
-struct PolynomialContinuousSystem{T, PT <: AbstractPolynomialLike{T}, VPT <: AbstractVector{PT}} <: AbstractContinuousSystem
-    p::VPT
-    statedim::Int
-    function PolynomialContinuousSystem(p::VPT, statedim::Int) where {T, PT <: AbstractPolynomialLike{T}, VPT <: AbstractVector{PT}}
-        @assert statedim == MultivariatePolynomials.nvariables(p) "the state dimension $(statedim) does not match the number of state variables"
-        return new{T, PT, VPT}(p, statedim)
+PolynomialContinuousSystem
+
+@doc """
+    PolynomialDiscreteSystem
+
+Discrete-time polynomial system of the form:
+
+```math
+    x_{k+1} = p(x_k), x_k ∈ \\mathcal{X}.
+```
+
+### Fields
+
+- `p`        -- polynomial vector field
+- `statedim` -- number of state variables
+"""
+PolynomialDiscreteSystem
+
+for (Z, AZ) in ((:ConstrainedPolynomialContinuousSystem, :AbstractContinuousSystem),
+                (:ConstrainedPolynomialDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, PT <: AbstractPolynomialLike{T}, VPT <: AbstractVector{PT}, ST} <: $(AZ)
+            p::VPT
+            statedim::Int
+            X::ST
+            function $(Z)(p::VPT, statedim::Int, X::ST) where {T, PT <: AbstractPolynomialLike{T}, VPT <: AbstractVector{PT}, ST}
+                @assert statedim == MultivariatePolynomials.nvariables(p) "the state dimension $(statedim) does not match the number of state variables"
+                return new{T, PT, VPT, ST}(p, statedim, X)
+            end
+        end
+        statedim(s::$Z) = s.statedim
+        stateset(s::$Z) = s.X
+        inputdim(s::$Z) = 0
+
+        MultivariatePolynomials.variables(s::$Z) = MultivariatePolynomials.variables(s.p)
+        MultivariatePolynomials.nvariables(s::$Z) = s.statedim
+
+        $Z(p::AbstractVector{<:AbstractPolynomialLike}, X::ST) where {ST} = $(Z)(p, MultivariatePolynomials.nvariables(p), X)
+        $Z(p::AbstractPolynomialLike, X::ST) where {ST} = $(Z)([p], X)
     end
 end
-statedim(s::PolynomialContinuousSystem) = s.statedim
-inputdim(s::PolynomialContinuousSystem) = 0
 
-MultivariatePolynomials.variables(s::PolynomialContinuousSystem) = MultivariatePolynomials.variables(s.p)
-MultivariatePolynomials.nvariables(s::PolynomialContinuousSystem) = s.statedim
-
-PolynomialContinuousSystem(p::AbstractVector{<:AbstractPolynomialLike}) = PolynomialContinuousSystem(p, MultivariatePolynomials.nvariables(p))
-PolynomialContinuousSystem(p::AbstractPolynomialLike) = PolynomialContinuousSystem([p])
-
-"""
+@doc """
     ConstrainedPolynomialContinuousSystem
 
-Continuous-time polynomial system with state constraints,
+Continuous-time polynomial system with state constraints:
+
 ```math
-x' = p(x), x(t) ∈ \\mathcal{X}
+    x' = p(x), x(t) ∈ \\mathcal{X}
 ```
 
 ### Fields
@@ -309,21 +610,21 @@ x' = p(x), x(t) ∈ \\mathcal{X}
 - `X`        -- constraint set
 - `statedim` -- number of state variables
 """
-struct ConstrainedPolynomialContinuousSystem{T, PT <: AbstractPolynomialLike{T}, VPT <: AbstractVector{PT}, ST} <: AbstractContinuousSystem
-    p::VPT
-    statedim::Int
-    X::ST
-    function ConstrainedPolynomialContinuousSystem(p::VPT, statedim::Int, X::ST) where {T, PT <: AbstractPolynomialLike{T}, VPT <: AbstractVector{PT}, ST}
-        @assert statedim == MultivariatePolynomials.nvariables(p) "the state dimension $(statedim) does not match the number of state variables"
-        return new{T, PT, VPT, ST}(p, statedim, X)
-    end
-end
-statedim(s::ConstrainedPolynomialContinuousSystem) = s.statedim
-stateset(s::ConstrainedPolynomialContinuousSystem) = s.X
-inputdim(s::ConstrainedPolynomialContinuousSystem) = 0
+ConstrainedPolynomialContinuousSystem
 
-MultivariatePolynomials.variables(s::ConstrainedPolynomialContinuousSystem) = MultivariatePolynomials.variables(s.p)
-MultivariatePolynomials.nvariables(s::ConstrainedPolynomialContinuousSystem) = s.statedim
+@doc """
+    ConstrainedPolynomialDiscreteSystem
 
-ConstrainedPolynomialContinuousSystem(p::AbstractVector{<:AbstractPolynomialLike}, X::ST) where {ST} = ConstrainedPolynomialContinuousSystem(p, MultivariatePolynomials.nvariables(p), X)
-ConstrainedPolynomialContinuousSystem(p::AbstractPolynomialLike, X::ST) where {ST} = ConstrainedPolynomialContinuousSystem([p], X)
+Discrete-time polynomial system with state constraints:
+
+```math
+    x_{k+1} = p(x_k), x_k ∈ \\mathcal{X}.
+```
+
+### Fields
+
+- `p`        -- polynomial
+- `X`        -- constraint set
+- `statedim` -- number of state variables
+"""
+ConstrainedPolynomialDiscreteSystem

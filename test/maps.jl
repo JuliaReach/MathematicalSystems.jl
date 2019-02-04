@@ -4,6 +4,7 @@ import MathematicalSystems.LinearMap
 @testset "Identity map" begin
     m = IdentityMap(5)
     @test outputdim(m) == 5
+    @test islinear(m)
     @test apply(m, ones(2)) == ones(2)
 end
 
@@ -11,6 +12,7 @@ end
     A = [1. 1; 1 -1]
     m = LinearMap(A)
     @test outputdim(m) == 2
+    @test islinear(m)
 
     # applying the linear map on a vector
     @test apply(m, ones(2)) == [2.0, 0.0]
@@ -33,6 +35,7 @@ end
     b = [0.5]
     m = AffineMap(A, b)
     @test outputdim(m) == 1
+    @test !islinear(m)
 end
 
 @testset "Linear control map" begin
@@ -40,6 +43,7 @@ end
     B = Matrix([0.5 1.5]')
     m = LinearControlMap(A, B)
     @test outputdim(m) == 2
+    @test islinear(m)
 
     # applying the affine map on a vector
     x = ones(2)
@@ -53,6 +57,7 @@ end
     U = Interval(-1, 1)
     m = ConstrainedLinearControlMap(A, B, U)
     @test outputdim(m) == 2
+    @test islinear(m)
 
     # applying the affine map on a vector
     x = ones(2)
@@ -66,6 +71,7 @@ end
     c = [0.5, 0.5]
     m = AffineControlMap(A, B, c)
     @test outputdim(m) == 2
+    @test !islinear(m)
 
     # applying the affine map on a vector
     x = ones(2)
@@ -80,6 +86,7 @@ end
     U = Interval(-1, 1)
     m = ConstrainedAffineControlMap(A, B, c, U)
     @test outputdim(m) == 2
+    @test !islinear(m)
 
     # applying the affine map on a vector
     x = ones(2)
@@ -93,6 +100,7 @@ end
 
     m = ResetMap(10, 2 => -1., 5 => 1.)
     @test outputdim(m) == 10
+    @test !islinear(m)
 
     # applying the affine map on a vector
     x = zeros(10)

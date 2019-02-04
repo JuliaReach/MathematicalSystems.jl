@@ -11,6 +11,7 @@ struct DiscreteIdentitySystem <: AbstractDiscreteSystem
 end
 statedim(s::DiscreteIdentitySystem) = s.statedim
 inputdim(s::DiscreteIdentitySystem) = 0
+islinear(::DiscreteIdentitySystem) = true
 
 """
     ConstrainedDiscreteIdentitySystem <: AbstractDiscreteSystem
@@ -27,6 +28,7 @@ end
 statedim(s::ConstrainedDiscreteIdentitySystem) = s.statedim
 stateset(s::ConstrainedDiscreteIdentitySystem) = s.X
 inputdim(s::ConstrainedDiscreteIdentitySystem) = 0
+islinear(::ConstrainedDiscreteIdentitySystem) = true
 
 """
     LinearDiscreteSystem
@@ -48,6 +50,7 @@ end
 end
 statedim(s::LinearDiscreteSystem) = checksquare(s.A)
 inputdim(s::LinearDiscreteSystem) = 0
+islinear(::LinearDiscreteSystem) = true
 
 """
     LinearControlDiscreteSystem
@@ -72,6 +75,7 @@ struct LinearControlDiscreteSystem{T, MTA <: AbstractMatrix{T}, MTB <: AbstractM
 end
 statedim(s::LinearControlDiscreteSystem) = checksquare(s.A)
 inputdim(s::LinearControlDiscreteSystem) = size(s.B, 2)
+islinear(::LinearControlDiscreteSystem) = true
 
 """
     ConstrainedLinearDiscreteSystem
@@ -96,6 +100,7 @@ end
 statedim(s::ConstrainedLinearDiscreteSystem) = checksquare(s.A)
 stateset(s::ConstrainedLinearDiscreteSystem) = s.X
 inputdim(s::ConstrainedLinearDiscreteSystem) = 0
+islinear(::ConstrainedLinearDiscreteSystem) = true
 
 """
     ConstrainedLinearControlDiscreteSystem
@@ -126,6 +131,7 @@ statedim(s::ConstrainedLinearControlDiscreteSystem) = checksquare(s.A)
 stateset(s::ConstrainedLinearControlDiscreteSystem) = s.X
 inputdim(s::ConstrainedLinearControlDiscreteSystem) = size(s.B, 2)
 inputset(s::ConstrainedLinearControlDiscreteSystem) = s.U
+islinear(::ConstrainedLinearControlDiscreteSystem) = true
 
 """
     LinearAlgebraicDiscreteSystem
@@ -150,6 +156,7 @@ struct LinearAlgebraicDiscreteSystem{T, MTA <: AbstractMatrix{T}, MTE <: Abstrac
 end
 statedim(s::LinearAlgebraicDiscreteSystem) = size(s.A, 1)
 inputdim(s::LinearAlgebraicDiscreteSystem) = 0
+islinear(::LinearAlgebraicDiscreteSystem) = true
 
 """
     ConstrainedLinearAlgebraicDiscreteSystem
@@ -177,6 +184,7 @@ end
 statedim(s::ConstrainedLinearAlgebraicDiscreteSystem) = size(s.A, 1)
 stateset(s::ConstrainedLinearAlgebraicDiscreteSystem) = s.X
 inputdim(s::ConstrainedLinearAlgebraicDiscreteSystem) = 0
+islinear(::ConstrainedLinearAlgebraicDiscreteSystem) = true
 
 """
     PolynomialDiscreteSystem
@@ -197,6 +205,7 @@ struct PolynomialDiscreteSystem{PT} <: AbstractDiscreteSystem
 end
 statedim(s::PolynomialDiscreteSystem) = s.statedim
 inputdim(s::PolynomialDiscreteSystem) = 0
+islinear(::PolynomialDiscreteSystem) = false
 
 """
     ConstrainedPolynomialDiscreteSystem
@@ -220,3 +229,4 @@ end
 statedim(s::ConstrainedPolynomialDiscreteSystem) = s.statedim
 stateset(s::ConstrainedPolynomialDiscreteSystem) = s.X
 inputdim(s::ConstrainedPolynomialDiscreteSystem) = 0
+islinear(::ConstrainedPolynomialDiscreteSystem) = false

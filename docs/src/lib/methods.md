@@ -36,6 +36,13 @@ outputdim
 outputmap
 ```
 
+## Traits
+
+```@docs
+islinear(::AbstractSystem)
+islinear(::AbstractMap)
+```
+
 ## Maps
 
 ```@docs

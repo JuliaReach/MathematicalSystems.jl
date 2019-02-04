@@ -3,6 +3,7 @@
         s = ContinuousIdentitySystem(sd)
         @test statedim(s) == sd
         @test inputdim(s) == 0
+        @test islinear(s)
     end
 end
 
@@ -13,6 +14,7 @@ end
         @test statedim(s) == sd
         @test stateset(s) == X
         @test inputdim(s) == 0
+        @test islinear(s)
     end
 end
 
@@ -21,6 +23,7 @@ end
         s = LinearContinuousSystem(zeros(sd, sd))
         @test statedim(s) == sd
         @test inputdim(s) == 0
+        @test islinear(s)
     end
 end
 
@@ -29,6 +32,7 @@ end
         s = AffineContinuousSystem(zeros(sd, sd), zeros(sd))
         @test statedim(s) == sd
         @test inputdim(s) == 0
+        @test !islinear(s)
     end
 end
 
@@ -43,6 +47,7 @@ end
     @test stateset(s) == X
     @test inputdim(s) == 1
     @test inputset(s) == U
+    @test !islinear(s)
 end
 
 @testset "Continuous linear control system" begin
@@ -50,6 +55,7 @@ end
         s = LinearControlContinuousSystem(zeros(sd, sd), ones(sd, sd))
         @test statedim(s) == sd
         @test inputdim(s) == sd
+        @test islinear(s)
     end
 end
 
@@ -60,6 +66,7 @@ end
     @test statedim(s) == 2
     @test stateset(s) == X
     @test inputdim(s) == 0
+    @test islinear(s)
 end
 
 @testset "Continuous constrained affine system" begin
@@ -68,6 +75,7 @@ end
     @test statedim(s) == 2
     @test stateset(s) == X
     @test inputdim(s) == 0
+    @test !islinear(s)
 end
 
 @testset "Continuous constrained linear control system" begin
@@ -80,6 +88,7 @@ end
     @test stateset(s) == X
     @test inputdim(s) == 1
     @test inputset(s) == U
+    @test islinear(s)
 
     # initial value problem composite type
     x0 = Singleton([1.5, 2.0])
@@ -102,6 +111,7 @@ end
 @testset "Continuous linear algebraic system" begin
     for sd in 1:3
         s = LinearAlgebraicContinuousSystem(zeros(sd, sd), zeros(sd, sd))
+        @test islinear(s)
         @test statedim(s) == sd
         @test inputdim(s) == 0
     end
@@ -112,6 +122,7 @@ end
     E = [0. 1; 1 0]
     X = LinearConstraint([0, -1.], 0.) # the set y ≥ 0
     s = ConstrainedLinearAlgebraicContinuousSystem(A, E, X)
+    @test islinear(s)
     @test statedim(s) == 2
     @test stateset(s) == X
     @test inputdim(s) == 0
@@ -122,6 +133,7 @@ end
     E = [0. 1; 1 0]
     X = LinearConstraint([0, -1.], 0.) # the set y ≥ 0
     s = ConstrainedLinearAlgebraicContinuousSystem(A, E, X)
+    @test islinear(s)
     x0 = Singleton([1.5, 2.0])
     p = IVP(s, x0)
     @test statedim(p) == 2
@@ -134,6 +146,7 @@ end
 
     # default constructor for scalar p and 
     s = PolynomialContinuousSystem(p)
+    @test !islinear(s)
     @test statedim(s) == 2
     @test inputdim(s) == 0
     @test TypedPolynomials.nvariables(s) == 2
@@ -150,6 +163,7 @@ end
 
     # default constructor for scalar p and 
     s = ConstrainedPolynomialContinuousSystem(p, X)
+    @test !islinear(s)
     @test statedim(s) == 2
     @test inputdim(s) == 0
     @test dim(stateset(s)) == dim(X)

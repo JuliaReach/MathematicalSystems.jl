@@ -19,7 +19,8 @@ export AbstractSystem,
        statedim,
        stateset,
        inputdim,
-       inputset
+       inputset,
+       islinear
 
 include("abstract.jl")
 
@@ -64,7 +65,6 @@ Concrete Types for an Initial Value Problem
 export InitialValueProblem, IVP
 
 include("ivp.jl")
-
 
 #=====================
 Input related methods

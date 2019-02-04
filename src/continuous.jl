@@ -14,6 +14,7 @@ struct ContinuousIdentitySystem <: AbstractContinuousSystem
 end
 statedim(s::ContinuousIdentitySystem) = s.statedim
 inputdim(s::ContinuousIdentitySystem) = 0
+islinear(::ContinuousIdentitySystem) = true
 
 """
     ConstrainedContinuousIdentitySystem <: AbstractContinuousSystem
@@ -30,6 +31,7 @@ end
 statedim(s::ConstrainedContinuousIdentitySystem) = s.statedim
 stateset(s::ConstrainedContinuousIdentitySystem) = s.X
 inputdim(s::ConstrainedContinuousIdentitySystem) = 0
+islinear(::ConstrainedContinuousIdentitySystem) = true
 
 """
     LinearContinuousSystem
@@ -51,6 +53,7 @@ end
 end
 statedim(s::LinearContinuousSystem) = checksquare(s.A)
 inputdim(s::LinearContinuousSystem) = 0
+islinear(::LinearContinuousSystem) = true
 
 """
     AffineContinuousSystem
@@ -75,6 +78,7 @@ struct AffineContinuousSystem{T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T
 end
 statedim(s::AffineContinuousSystem) = length(s.b)
 inputdim(s::AffineContinuousSystem) = 0
+islinear(::AffineContinuousSystem) = false
 
 """
     LinearControlContinuousSystem
@@ -99,6 +103,7 @@ struct LinearControlContinuousSystem{T, MTA <: AbstractMatrix{T}, MTB <: Abstrac
 end
 statedim(s::LinearControlContinuousSystem) = checksquare(s.A)
 inputdim(s::LinearControlContinuousSystem) = size(s.B, 2)
+islinear(::LinearControlContinuousSystem) = true
 
 """
     ConstrainedLinearContinuousSystem
@@ -123,6 +128,7 @@ end
 statedim(s::ConstrainedLinearContinuousSystem) = checksquare(s.A)
 stateset(s::ConstrainedLinearContinuousSystem) = s.X
 inputdim(s::ConstrainedLinearContinuousSystem) = 0
+islinear(::ConstrainedLinearContinuousSystem) = true
 
 """
     ConstrainedAffineContinuousSystem
@@ -150,6 +156,7 @@ end
 statedim(s::ConstrainedAffineContinuousSystem) = length(s.b)
 stateset(s::ConstrainedAffineContinuousSystem) = s.X
 inputdim(s::ConstrainedAffineContinuousSystem) = 0
+islinear(::ConstrainedAffineContinuousSystem) = false
 
 """
     ConstrainedAffineControlContinuousSystem
@@ -183,6 +190,7 @@ statedim(s::ConstrainedAffineControlContinuousSystem) = length(s.c)
 stateset(s::ConstrainedAffineControlContinuousSystem) = s.X
 inputdim(s::ConstrainedAffineControlContinuousSystem) = size(s.B, 2)
 inputset(s::ConstrainedAffineControlContinuousSystem) = s.U
+islinear(::ConstrainedAffineControlContinuousSystem) = false
 
 """
     ConstrainedLinearControlContinuousSystem
@@ -213,6 +221,7 @@ statedim(s::ConstrainedLinearControlContinuousSystem) = checksquare(s.A)
 stateset(s::ConstrainedLinearControlContinuousSystem) = s.X
 inputdim(s::ConstrainedLinearControlContinuousSystem) = size(s.B, 2)
 inputset(s::ConstrainedLinearControlContinuousSystem) = s.U
+islinear(::ConstrainedLinearControlContinuousSystem) = true
 
 """
     LinearAlgebraicContinuousSystem
@@ -237,6 +246,7 @@ struct LinearAlgebraicContinuousSystem{T, MTA <: AbstractMatrix{T}, MTE <: Abstr
 end
 statedim(s::LinearAlgebraicContinuousSystem) = size(s.A, 1)
 inputdim(s::LinearAlgebraicContinuousSystem) = 0
+islinear(::LinearAlgebraicContinuousSystem) = true
 
 """
     ConstrainedLinearAlgebraicContinuousSystem
@@ -264,6 +274,7 @@ end
 statedim(s::ConstrainedLinearAlgebraicContinuousSystem) = size(s.A, 1)
 stateset(s::ConstrainedLinearAlgebraicContinuousSystem) = s.X
 inputdim(s::ConstrainedLinearAlgebraicContinuousSystem) = 0
+islinear(::ConstrainedLinearAlgebraicContinuousSystem) = true
 
 """
     PolynomialContinuousSystem
@@ -288,6 +299,7 @@ struct PolynomialContinuousSystem{T, PT <: AbstractPolynomialLike{T}, VPT <: Abs
 end
 statedim(s::PolynomialContinuousSystem) = s.statedim
 inputdim(s::PolynomialContinuousSystem) = 0
+islinear(::PolynomialContinuousSystem) = false
 
 MultivariatePolynomials.variables(s::PolynomialContinuousSystem) = MultivariatePolynomials.variables(s.p)
 MultivariatePolynomials.nvariables(s::PolynomialContinuousSystem) = s.statedim
@@ -321,6 +333,7 @@ end
 statedim(s::ConstrainedPolynomialContinuousSystem) = s.statedim
 stateset(s::ConstrainedPolynomialContinuousSystem) = s.X
 inputdim(s::ConstrainedPolynomialContinuousSystem) = 0
+islinear(::ConstrainedPolynomialContinuousSystem) = false
 
 MultivariatePolynomials.variables(s::ConstrainedPolynomialContinuousSystem) = MultivariatePolynomials.variables(s.p)
 MultivariatePolynomials.nvariables(s::ConstrainedPolynomialContinuousSystem) = s.statedim

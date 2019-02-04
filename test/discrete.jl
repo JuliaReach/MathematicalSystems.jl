@@ -111,7 +111,7 @@ end
 @testset "Polynomial system in discrete time" begin
     @polyvar x y
     p = 2x^2 - 3x + y
-    s = PolynomialDiscreteSystem(p, TypedPolynomials.nvariables(p))
+    s = PolynomialDiscreteSystem(p)
     @test statedim(s) == 2
     @test inputdim(s) == 0
     @test !islinear(s) && !isaffine(s)
@@ -121,7 +121,7 @@ end
     @polyvar x y
     p = 2x^2 - 3x + y
     X = BallInf(zeros(2), 0.1)
-    s = ConstrainedPolynomialDiscreteSystem(p, TypedPolynomials.nvariables(p), X)
+    s = ConstrainedPolynomialDiscreteSystem(p, X)
     @test statedim(s) == 2
     @test inputdim(s) == 0
     @test dim(stateset(s)) == dim(X)

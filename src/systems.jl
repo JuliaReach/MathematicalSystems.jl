@@ -9,6 +9,8 @@ for (Z, AZ) in ((:ContinuousIdentitySystem, :AbstractContinuousSystem),
         end
         statedim(s::$Z) = s.statedim
         inputdim(s::$Z) = 0
+        islinear(::$Z) = true
+        isaffine(::$Z) = true
     end
 end
 
@@ -42,7 +44,9 @@ for (Z, AZ) in ((:ConstrainedContinuousIdentitySystem, :AbstractContinuousSystem
         end
         statedim(s::$Z) = s.statedim
         stateset(s::$Z) = s.X
-        inputdim(s::$Z) = 0
+        inputdim(::$Z) = 0
+        islinear(::$Z) = true
+        isaffine(::$Z) = true
     end
 end
 
@@ -75,7 +79,9 @@ for (Z, AZ) in ((:LinearContinuousSystem, :AbstractContinuousSystem),
             A::MT
         end
         statedim(s::$Z) = checksquare(s.A)
-        inputdim(s::$Z) = 0
+        inputdim(::$Z) = 0
+        islinear(::$Z) = true
+        isaffine(::$Z) = true
     end
 end
 
@@ -120,8 +126,10 @@ for (Z, AZ) in ((:AffineContinuousSystem, :AbstractContinuousSystem),
                 return new{T, MT, VT}(A, b)
             end
         end
-        statedim(s::$(Z)) = length(s.b)
-        inputdim(s::$(Z)) = 0
+        statedim(s::$Z) = length(s.b)
+        inputdim(::$Z) = 0
+        islinear(::$Z) = false
+        isaffine(::$Z) = true
     end
 end
 
@@ -168,8 +176,10 @@ for (Z, AZ) in ((:LinearControlContinuousSystem, :AbstractContinuousSystem),
                 return new{T, MTA, MTB}(A, B)
             end
         end
-        statedim(s::$(Z)) = checksquare(s.A)
-        inputdim(s::$(Z)) = size(s.B, 2)
+        statedim(s::$Z) = checksquare(s.A)
+        inputdim(s::$Z) = size(s.B, 2)
+        islinear(::$Z) = true
+        isaffine(::$Z) = true
     end
 end
 
@@ -214,7 +224,9 @@ for (Z, AZ) in ((:ConstrainedLinearContinuousSystem, :AbstractContinuousSystem),
         end
         statedim(s::$Z) = checksquare(s.A)
         stateset(s::$Z) = s.X
-        inputdim(s::$Z) = 0
+        inputdim(::$Z) = 0
+        islinear(::$Z) = true
+        isaffine(::$Z) = true
     end
 end
 
@@ -264,7 +276,9 @@ for (Z, AZ) in ((:ConstrainedAffineContinuousSystem, :AbstractContinuousSystem),
         end
         statedim(s::$Z) = length(s.b)
         stateset(s::$Z) = s.X
-        inputdim(s::$Z) = 0
+        inputdim(::$Z) = 0
+        islinear(::$Z) = false
+        isaffine(::$Z) = true
     end
 end
 
@@ -320,6 +334,8 @@ for (Z, AZ) in ((:ConstrainedAffineControlContinuousSystem, :AbstractContinuousS
         stateset(s::$Z) = s.X
         inputdim(s::$Z) = size(s.B, 2)
         inputset(s::$Z) = s.U
+        islinear(::$Z) = false
+        isaffine(::$Z) = true
     end
 end
 
@@ -379,6 +395,8 @@ for (Z, AZ) in ((:ConstrainedLinearControlContinuousSystem, :AbstractContinuousS
         stateset(s::$Z) = s.X
         inputdim(s::$Z) = size(s.B, 2)
         inputset(s::$Z) = s.U
+        islinear(::$Z) = true
+        isaffine(::$Z) = true
     end
 end
 
@@ -429,7 +447,9 @@ for (Z, AZ) in ((:LinearAlgebraicContinuousSystem, :AbstractContinuousSystem),
             end
         end
         statedim(s::$Z) = size(s.A, 1)
-        inputdim(s::$Z) = 0
+        inputdim(::$Z) = 0
+        islinear(::$Z) = true
+        isaffine(::$Z) = true
     end
 end
 
@@ -479,7 +499,9 @@ for (Z, AZ) in ((:ConstrainedLinearAlgebraicContinuousSystem, :AbstractContinuou
         end
         statedim(s::$Z) = size(s.A, 1)
         stateset(s::$Z) = s.X
-        inputdim(s::$Z) = 0
+        inputdim(::$Z) = 0
+        islinear(::$Z) = true
+        isaffine(::$Z) = true
     end
 end
 
@@ -529,7 +551,9 @@ for (Z, AZ) in ((:PolynomialContinuousSystem, :AbstractContinuousSystem),
             end
         end
         statedim(s::$Z) = s.statedim
-        inputdim(s::$Z) = 0
+        inputdim(::$Z) = 0
+        islinear(::$Z) = false
+        isaffine(::$Z) = false
 
         MultivariatePolynomials.variables(s::$Z) = MultivariatePolynomials.variables(s.p)
         MultivariatePolynomials.nvariables(s::$Z) = s.statedim
@@ -585,7 +609,9 @@ for (Z, AZ) in ((:ConstrainedPolynomialContinuousSystem, :AbstractContinuousSyst
         end
         statedim(s::$Z) = s.statedim
         stateset(s::$Z) = s.X
-        inputdim(s::$Z) = 0
+        inputdim(::$Z) = 0
+        islinear(::$Z) = false
+        isaffine(::$Z) = false
 
         MultivariatePolynomials.variables(s::$Z) = MultivariatePolynomials.variables(s.p)
         MultivariatePolynomials.nvariables(s::$Z) = s.statedim

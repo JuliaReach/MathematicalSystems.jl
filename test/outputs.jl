@@ -18,6 +18,9 @@
     # check the LTI system's system (s) field
     @test s.s.A == A
     @test s.s.B == B
+
+    # check that the system is linear
+    @test islinear(s) && isaffine(s)
 end
 
 @testset "Constrained LTI system" begin
@@ -34,4 +37,7 @@ end
 
     # check alias
     s = LTISystem(A, B, C, D, X, U)
+
+    # check that the system is linear
+    @test islinear(s) && isaffine(s)
 end

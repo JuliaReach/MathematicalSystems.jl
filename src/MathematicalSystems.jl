@@ -19,7 +19,9 @@ export AbstractSystem,
        statedim,
        stateset,
        inputdim,
-       inputset
+       inputset,
+       islinear,
+       isaffine
 
 include("abstract.jl")
 
@@ -46,9 +48,12 @@ Concrete Types for Discrete Systems
 export DiscreteIdentitySystem,
        ConstrainedDiscreteIdentitySystem,
        LinearDiscreteSystem,
+       AffineDiscreteSystem,
        LinearControlDiscreteSystem,
        ConstrainedLinearDiscreteSystem,
+       ConstrainedAffineDiscreteSystem,
        ConstrainedLinearControlDiscreteSystem,
+       ConstrainedAffineControlDiscreteSystem,
        LinearAlgebraicDiscreteSystem,
        ConstrainedLinearAlgebraicDiscreteSystem,
        PolynomialDiscreteSystem,
@@ -62,7 +67,6 @@ Concrete Types for an Initial Value Problem
 export InitialValueProblem, IVP
 
 include("ivp.jl")
-
 
 #=====================
 Input related methods
@@ -86,7 +90,8 @@ export outputmap,
        ConstrainedLinearControlMap,
        AffineControlMap,
        ConstrainedAffineControlMap,
-       ResetMap
+       ResetMap,
+       apply
 
 include("maps.jl")
 

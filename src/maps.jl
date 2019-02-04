@@ -15,6 +15,7 @@ struct IdentityMap <: AbstractMap
 end
 outputdim(m::IdentityMap) = m.dim
 islinear(::IdentityMap) = true
+isaffine(::IdentityMap) = true
 apply(m::IdentityMap, x) = x
 
 """
@@ -34,6 +35,7 @@ struct LinearMap{T, MT<:AbstractMatrix{T}} <: AbstractMap
 end
 outputdim(m::LinearMap) = size(m.A, 1)
 islinear(::LinearMap) = true
+isaffine(::LinearMap) = true
 apply(m::LinearMap, x) = m.A * x
 
 @static if VERSION < v"0.7-"
@@ -63,6 +65,7 @@ struct AffineMap{T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}} <: AbstractMap
 end
 outputdim(m::AffineMap) = length(m.b)
 islinear(::AffineMap) = false
+isaffine(::AffineMap) = true
 apply(m::AffineMap, x) = m.A * x + m.b
 
 """
@@ -88,6 +91,7 @@ struct LinearControlMap{T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatrix{T}} <: Ab
 end
 outputdim(m::LinearControlMap) = size(m.A, 1)
 islinear(::LinearControlMap) = true
+isaffine(::LinearControlMap) = true
 apply(m::LinearControlMap, x, u) = m.A * x + m.B * u
 
 """
@@ -115,6 +119,7 @@ struct ConstrainedLinearControlMap{T, MTA <: AbstractMatrix{T}, MTB <: AbstractM
 end
 outputdim(m::ConstrainedLinearControlMap) = size(m.A, 1)
 islinear(::ConstrainedLinearControlMap) = true
+isaffine(::ConstrainedLinearControlMap) = true
 apply(m::ConstrainedLinearControlMap, x, u) = m.A * x + m.B * u
 
 """
@@ -142,6 +147,7 @@ struct AffineControlMap{T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, V
 end
 outputdim(m::AffineControlMap) = size(m.A, 1)
 islinear(::AffineControlMap) = false
+isaffine(::AffineControlMap) = true
 apply(m::AffineControlMap, x, u) = m.A * x + m.B * u + m.c
 
 """
@@ -171,6 +177,7 @@ struct ConstrainedAffineControlMap{T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatri
 end
 outputdim(m::ConstrainedAffineControlMap) = size(m.A, 1)
 islinear(::ConstrainedAffineControlMap) = false
+isaffine(::ConstrainedAffineControlMap) = true
 apply(m::ConstrainedAffineControlMap, x, u) = m.A * x + m.B * u + m.c
 
 """
@@ -195,6 +202,7 @@ struct ResetMap{N} <: AbstractMap
 end
 outputdim(m::ResetMap) = m.dim
 islinear(::ResetMap) = false
+isaffine(::ResetMap) = true
 
 ResetMap(dim::Int, args::Pair{Int, <:N}...) where {N} = ResetMap(dim, Dict{Int, N}(args))
 

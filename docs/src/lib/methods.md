@@ -41,6 +41,8 @@ outputmap
 ```@docs
 islinear(::AbstractSystem)
 islinear(::AbstractMap)
+isaffine(::AbstractSystem)
+isaffine(::AbstractMap)
 ```
 
 ## Maps

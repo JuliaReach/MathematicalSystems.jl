@@ -20,7 +20,8 @@ export AbstractSystem,
        stateset,
        inputdim,
        inputset,
-       islinear
+       islinear,
+       isaffine
 
 include("abstract.jl")
 

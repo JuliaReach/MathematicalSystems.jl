@@ -19,6 +19,7 @@ inputset(swo::SystemWithOutput) = inputset(swo.s)
 outputdim(swo::SystemWithOutput) = outputdim(swo.outputmap)
 outputmap(swo::SystemWithOutput) = swo.outputmap
 islinear(swo::SystemWithOutput) = islinear(swo.s) && islinear(swo.outputmap)
+isaffine(swo::SystemWithOutput) = isaffine(swo.s) && isaffine(swo.outputmap)
 
 """
     LinearTimeInvariantSystem(A, B, C, D)

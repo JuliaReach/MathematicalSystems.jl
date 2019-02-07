@@ -269,7 +269,7 @@ An affine control map with state and input constraints,
 - `A` -- matrix
 - `B` -- matrix
 - `c` -- vector
-- `X` -- input constraints
+- `X` -- state constraints
 - `U` -- input constraints
 """
 struct ConstrainedAffineControlMap{T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatrix{T}, VT<:AbstractVector{T}, ST, UT} <: AbstractMap
@@ -286,6 +286,7 @@ end
 statedim(m::ConstrainedAffineControlMap) = size(m.A, 2)
 stateset(m::ConstrainedAffineControlMap) = m.X
 inputdim(m::ConstrainedAffineControlMap) = size(m.B, 2)
+inputset(m::ConstrainedAffineControlMap) = m.U
 outputdim(m::ConstrainedAffineControlMap) = size(m.A, 1)
 islinear(::ConstrainedAffineControlMap) = false
 isaffine(::ConstrainedAffineControlMap) = true

@@ -1,9 +1,6 @@
 using MathematicalSystems, LazySets, TypedPolynomials
 using Compat, Compat.Test
-
-@static if VERSION >= v"0.7-"
-    using SparseArrays
-end
+using SparseArrays
 
 include("continuous.jl")
 include("discrete.jl")

@@ -81,7 +81,8 @@ include("inputs.jl")
 #==================================
 Maps
 ===================================#
-export outputmap,
+export AbstractMap,
+       outputmap,
        outputdim,
        IdentityMap,
        LinearMap,

@@ -70,19 +70,7 @@ struct ConstantInput{UT} <: AbstractInput
 end
 
 Base.eltype(::Type{ConstantInput{UT}}) where {UT} = UT
-
-@static if VERSION < v"0.7-"
-    @eval begin
-        Base.start(::ConstantInput) = nothing
-        Base.next(input::ConstantInput, state) = (input.U, nothing)
-        Base.done(::ConstantInput, state) = false
-    end
-else
-    @eval begin
-        Base.iterate(input::ConstantInput, state::Union{Int, Nothing}=nothing) = (input.U, nothing)
-    end
-end
-
+Base.iterate(input::ConstantInput, state::Union{Int, Nothing}=nothing) = (input.U, nothing)
 Base.IteratorSize(::Type{<:ConstantInput}) = Base.IsInfinite()
 Base.IteratorEltype(::Type{<:ConstantInput}) = Base.HasEltype()
 
@@ -195,19 +183,13 @@ end
 
 Base.eltype(::Type{VaryingInput{UT}}) where {UT} = UT
 
-@static if VERSION < v"0.7-"
-    @eval begin
-            Base.start(::VaryingInput) = 1
-            Base.next(input::VaryingInput, state) = (input.U[state], state + 1)
-            Base.done(input::VaryingInput, state) = state > length(input.U)
-    end
-else
-    @eval begin
-            Base.iterate(input::VaryingInput, state::Int=1) =
-                state > length(input.U) ? nothing : (input.U[state], state + 1)
+function Base.iterate(input::VaryingInput, state::Int=1)
+    if state > length(input.U)
+        return nothing
+    else
+        return (input.U[state], state + 1)
     end
 end
-
 
 Base.length(input::VaryingInput) = length(input.U)
 

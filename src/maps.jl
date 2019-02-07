@@ -38,10 +38,6 @@ islinear(::LinearMap) = true
 isaffine(::LinearMap) = true
 apply(m::LinearMap, x) = m.A * x
 
-@static if VERSION < v"0.7-"
-    LinearMap{T, MT <: AbstractMatrix{T}}(A::MT) = LinearMap{T, MT}(A)
-end
-
 """
     AffineMap
 

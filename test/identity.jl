@@ -1,9 +1,6 @@
 import MathematicalSystems.IdentityMultiple
 using LazySets
-
-@static if VERSION >= v"0.7-"
-    using LinearAlgebra # needed for UniformScaling
-end
+using LinearAlgebra
 
 @testset "Creation of an identity multiple" begin
     for n in [1, 2, 1000]

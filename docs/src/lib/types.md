@@ -84,8 +84,11 @@ VaryingInput
 ```@docs
 AbstractMap
 IdentityMap
+ConstrainedIdentityMap
 LinearMap
+ConstrainedLinearMap
 AffineMap
+ConstrainedAffineMap
 LinearControlMap
 ConstrainedLinearControlMap
 AffineControlMap

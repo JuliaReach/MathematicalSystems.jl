@@ -250,7 +250,7 @@ struct AffineControlMap{T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, V
 end
 statedim(m::AffineControlMap) = size(m.A, 2)
 outputdim(m::AffineControlMap) = size(m.A, 1)
-inputdim(m::LinearControlMap) = size(m.B, 1)
+inputdim(m::AffineControlMap) = size(m.B, 1)
 islinear(::AffineControlMap) = false
 isaffine(::AffineControlMap) = true
 apply(m::AffineControlMap, x, u) = m.A * x + m.B * u + m.c

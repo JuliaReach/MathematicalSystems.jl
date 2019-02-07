@@ -22,6 +22,10 @@ Trivial identity continuous-time system of the form:
 ```math
     x' = 0.
 ```
+
+### Fields
+
+- `statedim` -- number of state variables
 """
 ContinuousIdentitySystem
 
@@ -32,6 +36,10 @@ Trivial identity discrete-time system of the form:
 ```math
     x_{k+1} = x_k.
 ```
+
+### Fields
+
+- `statedim` -- number of state variables
 """
 DiscreteIdentitySystem
 
@@ -58,6 +66,11 @@ Trivial identity continuous-time system with state constraints of the form:
 ```math
     x' = 0, x(t) ∈ \\mathcal{X}.
 ```
+
+### Fields
+
+- `statedim` -- number of state variables
+- `X`        -- state constraints
 """
 ConstrainedContinuousIdentitySystem
 
@@ -69,6 +82,11 @@ Trivial identity discrete-time system with state constraints of the form:
 ```math
     x_{k+1} = x_k, x_k ∈ \\mathcal{X}.
 ```
+
+### Fields
+
+- `statedim` -- number of state variables
+- `X`        -- state constraints
 """
 ConstrainedDiscreteIdentitySystem
 
@@ -343,6 +361,7 @@ end
     ConstrainedAffineControlContinuousSystem
 
 Continuous-time affine control system with state constraints of the form:
+
 ```math
     x' = A x + B u + c, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U} \\text{ for all } t,
 ```

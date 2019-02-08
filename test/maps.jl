@@ -54,14 +54,15 @@ end
 @testset "Constrained linear control map" begin
     A = [1. 1; 1 -1]
     B = Matrix([0.5 1.5]')
+    X = Line([1., -1], 0.)
     U = Interval(-1, 1)
-    m = ConstrainedLinearControlMap(A, B, U)
+    m = ConstrainedLinearControlMap(A, B, X, U)
     @test outputdim(m) == 2
     @test islinear(m) && isaffine(m)
 
     # applying the affine map on a vector
-    x = ones(2)
-    u = [1/2]
+    x = ones(2) # (it is not checked that x ∈ X in this library)
+    u = [1/2]   # same for u ∈ U
     @test apply(m, x, u) == A*x + B*u
 end
 
@@ -82,9 +83,10 @@ end
 @testset "Constrained affine control map" begin
     A = [1. 1; 1 -1]
     B = Matrix([0.5 1.5]')
+    X = Line([1., -1], 0.) # line x = y
     c = [0.5, 0.5]
     U = Interval(-1, 1)
-    m = ConstrainedAffineControlMap(A, B, c, U)
+    m = ConstrainedAffineControlMap(A, B, c, X, U)
     @test outputdim(m) == 2
     @test !islinear(m) && isaffine(m)
 

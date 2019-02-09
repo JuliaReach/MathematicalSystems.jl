@@ -10,6 +10,8 @@ Identity operator
 =======================#
 include("identity.jl")
 
+export IdentityMultiple
+
 #=========================
 Abstract Types for Systems
 ==========================#
@@ -82,16 +84,20 @@ include("inputs.jl")
 Maps
 ===================================#
 export AbstractMap,
-       outputmap,
-       outputdim,
        IdentityMap,
+       ConstrainedIdentityMap,
        LinearMap,
+       ConstrainedLinearMap,
        AffineMap,
+       ConstrainedAffineMap,
        LinearControlMap,
        ConstrainedLinearControlMap,
        AffineControlMap,
        ConstrainedAffineControlMap,
-       ResetMap,
+       ResetMap
+
+export outputmap,
+       outputdim,
        apply
 
 include("maps.jl")

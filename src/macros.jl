@@ -1,4 +1,4 @@
-using Espresso
+using Espresso: matchex
 
 """
     map(ex)

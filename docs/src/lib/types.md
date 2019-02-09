@@ -96,6 +96,12 @@ ConstrainedAffineControlMap
 ResetMap
 ```
 
+### Macros
+
+```@docs
+@map
+```
+
 ## Systems with output
 
 ```@docs

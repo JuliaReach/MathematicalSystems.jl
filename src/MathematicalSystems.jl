@@ -111,4 +111,12 @@ export SystemWithOutput,
 
 include("outputs.jl")
 
+#=========================
+Macros
+==========================#
+export @map
+
+include("macros.jl")
+
+
 end # module

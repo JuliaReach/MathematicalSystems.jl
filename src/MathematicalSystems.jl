@@ -10,6 +10,8 @@ Identity operator
 =======================#
 include("identity.jl")
 
+export IdentityMultiple
+
 #=========================
 Abstract Types for Systems
 ==========================#

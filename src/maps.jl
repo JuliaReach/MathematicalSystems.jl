@@ -330,7 +330,7 @@ end
 """
     ConstrainedResetMap
 
-A reset mapwith state constraints of the form:
+A reset map with state constraints of the form:
 
 ```math
     x ↦ R(x), x ∈ \\mathcal{X},

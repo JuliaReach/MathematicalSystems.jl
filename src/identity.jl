@@ -64,3 +64,6 @@ end
 function Base.show(io::IO, ::MIME"text/plain", 𝐼::IdentityMultiple{T}) where T
     print(io, "Scalar multiple of the identity matrix of order $(𝐼.n):\n   ", 𝐼.M)
 end
+
+# callable identity matrix
+LinearAlgebra.I(n::Int, N=Float64) = IdentityMultiple(one(N)*I, n)

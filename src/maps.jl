@@ -319,14 +319,6 @@ isaffine(::ResetMap) = true
 # convenience constructor for a list of pairs instead of a dictionary
 ResetMap(dim::Int, args::Pair{Int, <:N}...) where {N} = ResetMap(dim, Dict{Int, N}(args))
 
-function apply(m::ResetMap, x)
-    y = copy(x)
-    for (index, value) in pairs(m.dict)
-        y[index] = value
-    end
-    return y
-end
-
 """
     ConstrainedResetMap
 
@@ -361,4 +353,10 @@ isaffine(::ConstrainedResetMap) = true
 ConstrainedResetMap(dim::Int, X::ST, args::Pair{Int, <:N}...) where {N, ST} =
     ConstrainedResetMap(dim, X, Dict{Int, N}(args))
 
-apply(m::ConstrainedResetMap, x) = apply(ResetMap(m.dim, m.dict), x)
+function apply(m::Union{ResetMap, ConstrainedResetMap}, x)
+    y = copy(x)
+    for (index, value) in pairs(m.dict)
+        y[index] = value
+    end
+    return y
+end

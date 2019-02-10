@@ -97,6 +97,12 @@ ResetMap
 ConstrainedResetMap
 ```
 
+### Macros
+
+```@docs
+@map
+```
+
 ## Systems with output
 
 ```@docs

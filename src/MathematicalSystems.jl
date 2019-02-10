@@ -10,7 +10,7 @@ Identity operator
 =======================#
 include("identity.jl")
 
-export IdentityMultiple
+export IdentityMultiple, I
 
 #=========================
 Abstract Types for Systems
@@ -111,5 +111,13 @@ export SystemWithOutput,
        LTISystem
 
 include("outputs.jl")
+
+#=========================
+Macros
+==========================#
+export @map
+
+include("macros.jl")
+
 
 end # module

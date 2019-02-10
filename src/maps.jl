@@ -40,6 +40,7 @@ struct ConstrainedIdentityMap{ST} <: AbstractMap
     X::ST
 end
 statedim(m::ConstrainedIdentityMap) = m.dim
+stateset(m::ConstrainedIdentityMap) = m.X
 outputdim(m::ConstrainedIdentityMap) = m.dim
 inputdim(::ConstrainedIdentityMap) = 0
 islinear(::ConstrainedIdentityMap) = true

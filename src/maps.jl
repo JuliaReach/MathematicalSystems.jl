@@ -310,7 +310,8 @@ struct ResetMap{N} <: AbstractMap
     dim::Int
     dict::Dict{Int, N}
 end
-inputdim(m::ResetMap) = m.dim
+statedim(m::ResetMap) = m.dim
+inputdim(::ResetMap) = 0
 outputdim(m::ResetMap) = m.dim
 islinear(::ResetMap) = false
 isaffine(::ResetMap) = true
@@ -325,3 +326,39 @@ function apply(m::ResetMap, x)
     end
     return y
 end
+
+"""
+    ConstrainedResetMap
+
+A reset mapwith state constraints of the form:
+
+```math
+    x ↦ R(x), x ∈ \\mathcal{X},
+```
+such that the specified variables are assigned a given value, and the remaining
+variables are unchanged.
+
+### Fields
+
+- `dim`  -- dimension
+- `X`    -- state constraints
+- `dict` -- dictionary whose keys are the indices of the variables that are
+            reset, and whose values are the new values
+"""
+struct ConstrainedResetMap{N, ST} <: AbstractMap
+    dim::Int
+    X::ST
+    dict::Dict{Int, N}
+end
+statedim(m::ConstrainedResetMap) = m.dim
+stateset(m::ConstrainedResetMap) = m.X
+inputdim(::ConstrainedResetMap) = 0
+outputdim(m::ConstrainedResetMap) = m.dim
+islinear(::ConstrainedResetMap) = false
+isaffine(::ConstrainedResetMap) = true
+
+# convenience constructor for a list of pairs instead of a dictionary
+ConstrainedResetMap(dim::Int, X::ST, args::Pair{Int, <:N}...) where {N, ST} =
+    ConstrainedResetMap(dim, X, Dict{Int, N}(args))
+
+apply(m::ConstrainedResetMap, x) = apply(ResetMap(m.dim, m.dict), x)

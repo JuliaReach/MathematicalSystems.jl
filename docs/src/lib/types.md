@@ -94,6 +94,7 @@ ConstrainedLinearControlMap
 AffineControlMap
 ConstrainedAffineControlMap
 ResetMap
+ConstrainedResetMap
 ```
 
 ## Systems with output

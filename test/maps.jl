@@ -153,3 +153,21 @@ end
     x = zeros(10)
     @test apply(m, x) == [0, -1., 0, 0, 1., 0, 0, 0, 0, 0]
 end
+
+
+@testset "Constrained reset map" begin
+    X = BallInf(zeros(10), 1.)
+
+    m = ConstrainedResetMap(10, X, Dict(9 => 0.))
+    @test outputdim(m) == 10
+    @test stateset(m) == X
+
+    m = ConstrainedResetMap(10, X, 2 => -1., 5 => 1.)
+    @test outputdim(m) == 10
+    @test stateset(m) == X
+    @test !islinear(m) && isaffine(m)
+
+    # applying the affine map on a vector
+    x = zeros(10)
+    @test apply(m, x) == [0, -1., 0, 0, 1., 0, 0, 0, 0, 0]
+end

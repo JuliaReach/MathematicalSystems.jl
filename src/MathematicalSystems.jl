@@ -94,7 +94,8 @@ export AbstractMap,
        ConstrainedLinearControlMap,
        AffineControlMap,
        ConstrainedAffineControlMap,
-       ResetMap
+       ResetMap,
+       ConstrainedResetMap
 
 export outputmap,
        outputdim,

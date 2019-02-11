@@ -146,7 +146,7 @@ end
 
     # default constructor for scalar p and 
     s = PolynomialContinuousSystem(p)
-    @test !islinear(s) && !isaffine(s)
+    @test !islinear(s) && !isaffine(s) && ispolynomial(s)
     @test statedim(s) == 2
     @test inputdim(s) == 0
     @test TypedPolynomials.nvariables(s) == 2
@@ -163,7 +163,7 @@ end
 
     # default constructor for scalar p and 
     s = ConstrainedPolynomialContinuousSystem(p, X)
-    @test !islinear(s) && !isaffine(s)
+    @test !islinear(s) && !isaffine(s) && ispolynomial(s)
     @test statedim(s) == 2
     @test inputdim(s) == 0
     @test dim(stateset(s)) == dim(X)

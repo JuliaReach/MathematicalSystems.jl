@@ -114,7 +114,7 @@ end
     s = PolynomialDiscreteSystem(p)
     @test statedim(s) == 2
     @test inputdim(s) == 0
-    @test !islinear(s) && !isaffine(s)
+    @test !islinear(s) && !isaffine(s) && ispolynomial(s)
 end
 
 @testset "Polynomial system in discrete time with state constraints" begin
@@ -125,7 +125,7 @@ end
     @test statedim(s) == 2
     @test inputdim(s) == 0
     @test dim(stateset(s)) == dim(X)
-    @test !islinear(s) && !isaffine(s)
+    @test !islinear(s) && !isaffine(s) && ispolynomial(s)
 end
 
 @testset "Implicit discrete system" begin

@@ -88,6 +88,13 @@ For example, polynomial systems can be nonlinear; hence `isaffine` is `false`.
 function isaffine(::AbstractSystem) end
 
 """
+    ispolynomial(s::AbstractSystem)
+
+Specifies if the dynamics of system `s` is specified by polynomial equations.
+"""
+function ispolynomial(::AbstractSystem) end
+
+"""
     AbstractMap
 
 Abstract supertype for all map types.

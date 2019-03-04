@@ -1,5 +1,5 @@
 # fix namespace conflicts with LazySets
-import MathematicalSystems.LinearMap
+using MathematicalSystems: LinearMap, ResetMap
 
 @testset "Identity map" begin
     m = IdentityMap(2)

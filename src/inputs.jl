@@ -93,7 +93,7 @@ A repeated iterator that generates `n` equal samples of this input.
 nextinput(input::ConstantInput, n::Int=1) = Base.Iterators.repeated(input.U, n)
 
 """
-    VaryingInput{UT} <: AbstractInput
+    VaryingInput{UT, VUT<:AbstractVector{UT}} <: AbstractInput
 
 Type representing an input that may vary with time.
 
@@ -108,7 +108,7 @@ of elements in the vector. Consider an input given by a vector of rational numbe
 
 ```jldoctest varying_input
 julia> v = VaryingInput([-1//2, 1//2])
-VaryingInput{Rational{Int64}}(Rational{Int64}[-1//2, 1//2])
+VaryingInput{Rational{Int64},Array{Rational{Int64},1}}(Rational{Int64}[-1//2, 1//2])
 
 julia> length(v)
 2
@@ -133,7 +133,7 @@ an iterator over the first `n` elements of this input (where `n=1` by default):
 
 ```jldoctest varying_input
 julia> typeof(nextinput(v))
-Base.Iterators.Take{VaryingInput{Rational{Int64}}}
+Base.Iterators.Take{VaryingInput{Rational{Int64},Array{Rational{Int64},1}}}
 
 julia> collect(nextinput(v, 1))
 1-element Array{Rational{Int64},1}:
@@ -174,14 +174,14 @@ To transform a varying input, you can use `map` as in:
 
 ```jldoctest varying_input
 julia> map(x->2*x, v)
-VaryingInput{Rational{Int64}}(Rational{Int64}[-1//1, 1//1])
+VaryingInput{Rational{Int64},Array{Rational{Int64},1}}(Rational{Int64}[-1//1, 1//1])
 ```
 """
-struct VaryingInput{UT} <: AbstractInput
-    U::AbstractVector{<:UT}  # input sequence
+struct VaryingInput{UT, VUT<:AbstractVector{UT}} <: AbstractInput
+    U::VUT  # input sequence
 end
 
-Base.eltype(::Type{VaryingInput{UT}}) where {UT} = UT
+Base.eltype(::Type{VaryingInput{UT, VUT}}) where {UT, VUT} = UT
 
 function Base.iterate(input::VaryingInput, state::Int=1)
     if state > length(input.U)

@@ -1,6 +1,9 @@
 using MathematicalSystems, LazySets, TypedPolynomials
-using Compat, Compat.Test
-using SparseArrays
+using SparseArrays, LinearAlgebra
+using Test
+
+# fix namespace conflicts with LazySets
+using MathematicalSystems: LinearMap, ResetMap
 
 include("continuous.jl")
 include("discrete.jl")

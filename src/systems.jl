@@ -1,5 +1,5 @@
-import MultivariatePolynomials
-import MultivariatePolynomials: AbstractPolynomialLike
+using MultivariatePolynomials
+using MultivariatePolynomials: AbstractPolynomialLike
 
 for (Z, AZ) in ((:ContinuousIdentitySystem, :AbstractContinuousSystem),
                 (:DiscreteIdentitySystem, :AbstractDiscreteSystem))

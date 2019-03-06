@@ -1,6 +1,3 @@
-# fix namespace conflicts with LazySets
-using MathematicalSystems: LinearMap, ResetMap
-
 @testset "Identity map" begin
     m = IdentityMap(2)
     @test outputdim(m) == 2

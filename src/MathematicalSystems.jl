@@ -1,9 +1,8 @@
 __precompile__(true)
 module MathematicalSystems
 
-using Compat
-using Compat.LinearAlgebra
-import Compat.LinearAlgebra: checksquare
+using LinearAlgebra
+using LinearAlgebra: checksquare
 
 #=======================
 Identity operator

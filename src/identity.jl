@@ -1,5 +1,3 @@
-using LinearAlgebra
-
 """
     IdentityMultiple{T} < AbstractMatrix{T} where T
 

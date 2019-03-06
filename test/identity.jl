@@ -1,7 +1,3 @@
-import MathematicalSystems.IdentityMultiple
-using LazySets
-using LinearAlgebra
-
 @testset "Creation of an identity multiple" begin
     for n in [1, 2, 1000]
         In = IdentityMultiple(1.0I, n) # same as IdentityMultiple(UniformScaling(1.0), n))

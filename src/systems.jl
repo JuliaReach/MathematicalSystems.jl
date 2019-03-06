@@ -11,7 +11,7 @@ for (Z, AZ) in ((:ContinuousIdentitySystem, :AbstractContinuousSystem),
         inputdim(s::$Z) = 0
         islinear(::$Z) = true
         isaffine(::$Z) = true
-        ispolynomial(::$Z) = false
+        isalgebraic(::$Z) = false
     end
 end
 
@@ -56,7 +56,7 @@ for (Z, AZ) in ((:ConstrainedContinuousIdentitySystem, :AbstractContinuousSystem
         inputdim(::$Z) = 0
         islinear(::$Z) = true
         isaffine(::$Z) = true
-        ispolynomial(::$Z) = false
+        isalgebraic(::$Z) = false
     end
 end
 
@@ -102,7 +102,7 @@ for (Z, AZ) in ((:LinearContinuousSystem, :AbstractContinuousSystem),
         inputdim(::$Z) = 0
         islinear(::$Z) = true
         isaffine(::$Z) = true
-        ispolynomial(::$Z) = false
+        isalgebraic(::$Z) = false
     end
 end
 
@@ -151,7 +151,7 @@ for (Z, AZ) in ((:AffineContinuousSystem, :AbstractContinuousSystem),
         inputdim(::$Z) = 0
         islinear(::$Z) = false
         isaffine(::$Z) = true
-        ispolynomial(::$Z) = false
+        isalgebraic(::$Z) = false
     end
 end
 
@@ -202,7 +202,7 @@ for (Z, AZ) in ((:LinearControlContinuousSystem, :AbstractContinuousSystem),
         inputdim(s::$Z) = size(s.B, 2)
         islinear(::$Z) = true
         isaffine(::$Z) = true
-        ispolynomial(::$Z) = false
+        isalgebraic(::$Z) = false
     end
 end
 
@@ -250,7 +250,7 @@ for (Z, AZ) in ((:ConstrainedLinearContinuousSystem, :AbstractContinuousSystem),
         inputdim(::$Z) = 0
         islinear(::$Z) = true
         isaffine(::$Z) = true
-        ispolynomial(::$Z) = false
+        isalgebraic(::$Z) = false
     end
 end
 
@@ -303,7 +303,7 @@ for (Z, AZ) in ((:ConstrainedAffineContinuousSystem, :AbstractContinuousSystem),
         inputdim(::$Z) = 0
         islinear(::$Z) = false
         isaffine(::$Z) = true
-        ispolynomial(::$Z) = false
+        isalgebraic(::$Z) = false
     end
 end
 
@@ -361,7 +361,7 @@ for (Z, AZ) in ((:ConstrainedAffineControlContinuousSystem, :AbstractContinuousS
         inputset(s::$Z) = s.U
         islinear(::$Z) = false
         isaffine(::$Z) = true
-        ispolynomial(::$Z) = false
+        isalgebraic(::$Z) = false
     end
 end
 
@@ -424,7 +424,7 @@ for (Z, AZ) in ((:ConstrainedLinearControlContinuousSystem, :AbstractContinuousS
         inputset(s::$Z) = s.U
         islinear(::$Z) = true
         isaffine(::$Z) = true
-        ispolynomial(::$Z) = false
+        isalgebraic(::$Z) = false
     end
 end
 
@@ -478,7 +478,7 @@ for (Z, AZ) in ((:LinearAlgebraicContinuousSystem, :AbstractContinuousSystem),
         inputdim(::$Z) = 0
         islinear(::$Z) = true
         isaffine(::$Z) = true
-        ispolynomial(::$Z) = false
+        isalgebraic(::$Z) = false
     end
 end
 
@@ -531,7 +531,7 @@ for (Z, AZ) in ((:ConstrainedLinearAlgebraicContinuousSystem, :AbstractContinuou
         inputdim(::$Z) = 0
         islinear(::$Z) = true
         isaffine(::$Z) = true
-        ispolynomial(::$Z) = false
+        isalgebraic(::$Z) = false
     end
 end
 
@@ -584,7 +584,7 @@ for (Z, AZ) in ((:PolynomialContinuousSystem, :AbstractContinuousSystem),
         inputdim(::$Z) = 0
         islinear(::$Z) = false
         isaffine(::$Z) = false
-        ispolynomial(::$Z) = true
+        isalgebraic(::$Z) = true
 
         MultivariatePolynomials.variables(s::$Z) = MultivariatePolynomials.variables(s.p)
         MultivariatePolynomials.nvariables(s::$Z) = s.statedim
@@ -643,7 +643,7 @@ for (Z, AZ) in ((:ConstrainedPolynomialContinuousSystem, :AbstractContinuousSyst
         inputdim(::$Z) = 0
         islinear(::$Z) = false
         isaffine(::$Z) = false
-        ispolynomial(::$Z) = true
+        isalgebraic(::$Z) = true
 
         MultivariatePolynomials.variables(s::$Z) = MultivariatePolynomials.variables(s.p)
         MultivariatePolynomials.nvariables(s::$Z) = s.statedim

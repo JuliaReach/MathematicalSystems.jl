@@ -1,7 +1,7 @@
 using Documenter, MathematicalSystems
 
 makedocs(
-    doctest = true,  # use this flag to skip doctests (saves time!)
+    doctest = true,
     modules = [MathematicalSystems],
     format = :html,
     assets = ["assets/juliareach.css"],
@@ -18,6 +18,7 @@ makedocs(
 deploydocs(
     repo = "github.com/JuliaReach/MathematicalSystems.jl.git",
     target = "build",
+    julia = "1.1",
     deps = nothing,
     make = nothing
 )

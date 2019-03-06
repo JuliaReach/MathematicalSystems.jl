@@ -12,7 +12,8 @@ makedocs(
         "Types" => "lib/types.md",
         "Methods" => "lib/methods.md"],
         "About" => "about.md"
-    ]
+    ],
+    strict = true
 )
 
 deploydocs(

@@ -41,7 +41,8 @@ export ContinuousIdentitySystem,
        LinearAlgebraicContinuousSystem,
        ConstrainedLinearAlgebraicContinuousSystem,
        PolynomialContinuousSystem,
-       ConstrainedPolynomialContinuousSystem
+       ConstrainedPolynomialContinuousSystem,
+       ImplicitContinuousSystem
 
 #==================================
 Concrete Types for Discrete Systems
@@ -58,7 +59,8 @@ export DiscreteIdentitySystem,
        LinearAlgebraicDiscreteSystem,
        ConstrainedLinearAlgebraicDiscreteSystem,
        PolynomialDiscreteSystem,
-       ConstrainedPolynomialDiscreteSystem
+       ConstrainedPolynomialDiscreteSystem,
+       ImplicitDiscreteSystem
 
 include("systems.jl")
 

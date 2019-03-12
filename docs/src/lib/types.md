@@ -38,6 +38,7 @@ LinearAlgebraicContinuousSystem
 ConstrainedLinearAlgebraicContinuousSystem
 PolynomialContinuousSystem
 ConstrainedPolynomialContinuousSystem
+ImplicitContinuousSystem
 ```
 
 ## Discrete Systems
@@ -56,6 +57,7 @@ LinearAlgebraicDiscreteSystem
 ConstrainedLinearAlgebraicDiscreteSystem
 PolynomialDiscreteSystem
 ConstrainedPolynomialDiscreteSystem
+ImplicitDiscreteSystem
 ```
 
 ## Identity operator

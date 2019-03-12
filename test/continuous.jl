@@ -170,3 +170,17 @@ end
     @test TypedPolynomials.nvariables(s) == 2
     @test TypedPolynomials.variables(s) == (x, y)
 end
+
+@testset "Implicit continuous system" begin
+    # van der pol
+    function vanderpol(t, x, dx)
+        dx[1] = x[2]
+        dx[2] = x[2] * (1-x[1]^2) - x[1]
+        return dx
+    end
+    s = ImplicitContinuousSystem(vanderpol, 2)
+    x = [1.0, 0.0]
+    dx = similar(x)
+    f = s.f(1.0, x, dx)
+    @test dx ≈ [0.0, -1.0]
+end

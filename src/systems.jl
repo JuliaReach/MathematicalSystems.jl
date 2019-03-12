@@ -1,5 +1,5 @@
-using MultivariatePolynomials
-using MultivariatePolynomials: AbstractPolynomialLike
+import MultivariatePolynomials
+import MultivariatePolynomials: AbstractPolynomialLike
 
 for (Z, AZ) in ((:ContinuousIdentitySystem, :AbstractContinuousSystem),
                 (:DiscreteIdentitySystem, :AbstractDiscreteSystem))
@@ -673,3 +673,49 @@ Discrete-time polynomial system with state constraints:
 - `statedim` -- number of state variables
 """
 ConstrainedPolynomialDiscreteSystem
+
+for (Z, AZ) in ((:ImplicitContinuousSystem, :AbstractContinuousSystem),
+                (:ImplicitDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){FT} <: $(AZ)
+            f::FT
+            statedim::Int
+        end
+        statedim(s::$Z) = s.statedim
+        inputdim(s::$Z) = 0
+        islinear(::$Z) = false
+        isaffine(::$Z) = false
+    end
+end
+
+@doc """
+    ImplicitContinuousSystem <: AbstractContinuousSystem
+
+Continuous-time system defined by a right-hand side of the form:
+
+```math
+    x' = f(t)
+```
+
+### Fields
+
+- `f`        -- function that holds the right-hand side
+- `statedim` -- number of state variables
+"""
+ImplicitContinuousSystem
+
+@doc """
+    ImplicitDiscreteSystem <: AbstractDiscreteSystem
+
+Discrete-time system defined by a right-hand side of the form:
+
+```math
+    x_{k+1} = f(x_k)
+```
+
+### Fields
+
+- `f`        -- function that holds the right-hand side
+- `statedim` -- number of state variables
+"""
+ImplicitDiscreteSystem

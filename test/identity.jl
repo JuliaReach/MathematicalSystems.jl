@@ -1,7 +1,7 @@
 @testset "Creation of an identity multiple" begin
     for n in [1, 2, 1000]
         In = IdentityMultiple(1.0I, n) # same as IdentityMultiple(UniformScaling(1.0), n))
-        @test size(In) == n
+        @test size(In) == (n, n)
         @test In[1, 1] == 1.0 && In[1, 2] == 0.0
     end
 end
@@ -23,7 +23,7 @@ end
     A, B = rand(4, 4), rand(4, 2)
     X = rand(Hyperrectangle, dim=4)
     U = rand(Ball2, dim=2)
-    I4 = IdentityMultiple(UniformScaling(1.0), 4)
+    I4 = I(4)
     s = ConstrainedLinearControlContinuousSystem(A, I4, X, B*U);
 
     @test statedim(s) == 4

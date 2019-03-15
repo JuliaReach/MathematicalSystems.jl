@@ -10,31 +10,66 @@ A scalar multiple of the identity matrix of given order and numeric type.
 
 ### Notes
 
-This is a wrapper type around Julia's lazy multiple of the identity operator,
-`UniformScaling`, such that `IdentityMultiple` can be used where abstract matrix
-is needed for dispatch. The difference between `UniformScaling` and a
-`IdentityMultiple` is that while the size of the former is generic, the size of
-the latter is fixed.
+This type can be used to create multiples of the identity of given size. Since
+only the multiple and the order are stored, the allocations are minimal.
+
+Internally, the type wraps Julia's lazy multiple of the identity operator,
+`UniformScaling`. `IdentityMultiple` subtypes `AbstractMatix`, hence it can be
+used in usual matrix arithmetic and for dispatch on `AbstractMatrix`.
+
+The difference between `UniformScaling` and `IdentityMultiple` is that while the
+size of the former is generic, the size of the latter is fixed.
 
 ### Examples
 
-```julia
-julia> import MathematicalSystems.IdentityMultiple
+The easiest way to create an identity multiple is to use the callable version
+of `LinearAlgebra.I`:
 
-julia> I2 = IdentityMultiple(1.0*I, 2)
-Scalar multiple of the identity matrix of order 2:
-   UniformScaling{Float64}
-1.0*I
+```jldoctest identitymultiple
+julia> using MathematicalSystems: IdentityMultiple
+
+julia> I2 = I(2)
+IdentityMultiple{Float64} of value 1.0 and order 2
 
 julia> I2 + I2
-Scalar multiple of the identity matrix of order 2:
-   UniformScaling{Float64}
-2.0*I
+IdentityMultiple{Float64} of value 2.0 and order 2
 
-julia> 10.0 * I2
-Scalar multiple of the identity matrix of order 2:
-   UniformScaling{Float64}
-10.0*I
+julia> 4*I2
+IdentityMultiple{Float64} of value 4.0 and order 2
+```
+
+The numeric type (default `Float64`) can be passed as a second argument:
+
+```jldoctest identitymultiple
+julia> I2r = I(2, Rational{Int})
+IdentityMultiple{Rational{Int64}} of value 1//1 and order 2
+
+julia> I2r + I2r
+IdentityMultiple{Rational{Int64}} of value 2//1 and order 2
+
+julia> 4*I2r
+IdentityMultiple{Rational{Int64}} of value 4//1 and order 2
+```
+
+To create the matrix with a value different than the default (`1.0`), there are
+two ways. Either pass the value through the callable `I`, as in
+
+```jldoctest identitymultiple
+julia> I2 = I(2.0, 2)
+IdentityMultiple{Float64} of value 2.0 and order 2
+
+julia> I2r = I(2//1, 2)
+IdentityMultiple{Rational{Int64}} of value 2//1 and order 2
+```
+
+Or use the lower level constructor passing the `UniformScaling` (`I`):
+
+```jldoctest identitymultiple
+julia> I2 = IdentityMultiple(2.0*I, 2)
+IdentityMultiple{Float64} of value 2.0 and order 2
+
+julia> I2r = IdentityMultiple(2//1*I, 2)
+IdentityMultiple{Rational{Int64}} of value 2//1 and order 2
 ```
 """
 struct IdentityMultiple{T} <: AbstractMatrix{T}
@@ -47,21 +82,23 @@ Base.size(𝐼::IdentityMultiple) = (𝐼.n, 𝐼.n)
 Base.getindex(𝐼::IdentityMultiple, inds...) = getindex(𝐼.M, inds...)
 Base.setindex!(𝐼::IdentityMultiple, X, inds...) = error("cannot store a value in an `Identity`")
 
-Base.:(*)(x::Number, 𝐼::IdentityMultiple) = IdentityMultiple(x * 𝐼.M, size(𝐼))
+Base.:(*)(x::Number, 𝐼::IdentityMultiple) = IdentityMultiple(x * 𝐼.M, size(𝐼, 1))
 
 function Base.:(+)(𝐼1::IdentityMultiple, 𝐼2::IdentityMultiple)
     @assert size(𝐼1) == size(𝐼2)
-    return IdentityMultiple(𝐼1.M + 𝐼2.M, size(𝐼1))
+    return IdentityMultiple(𝐼1.M + 𝐼2.M, size(𝐼1, 1))
 end
 
 function Base.:(*)(𝐼1::IdentityMultiple, 𝐼2::IdentityMultiple)
     @assert size(𝐼1) == size(𝐼2)
-    return IdentityMultiple(𝐼1.M * 𝐼2.M, size(𝐼1))
+    return IdentityMultiple(𝐼1.M * 𝐼2.M, size(𝐼1, 1))
 end
 
 function Base.show(io::IO, ::MIME"text/plain", 𝐼::IdentityMultiple{T}) where T
-    print(io, "$(typeof(𝐼)) of order $(𝐼.n)")
+    print(io, "$(typeof(𝐼)) of value $(𝐼.M.λ) and order $(𝐼.n)")
 end
 
 # callable identity matrix
 LinearAlgebra.I(n::Int, N=Float64) = IdentityMultiple(one(N)*I, n)
+
+LinearAlgebra.I(λ::Number, n::Int, N=Float64) = IdentityMultiple(λ*I, n)

@@ -51,7 +51,7 @@ julia> 4*I2r
 IdentityMultiple{Rational{Int64}} of value 4//1 and order 2
 ```
 
-To create the matrix with a value different than the default (`1.0`), there are
+To create the matrix with a value different from the default (`1.0`), there are
 two ways. Either pass the value through the callable `I`, as in
 
 ```jldoctest identitymultiple
@@ -101,4 +101,4 @@ end
 # callable identity matrix
 LinearAlgebra.I(n::Int, N=Float64) = IdentityMultiple(one(N)*I, n)
 
-LinearAlgebra.I(λ::Number, n::Int, N=Float64) = IdentityMultiple(λ*I, n)
+LinearAlgebra.I(λ::Number, n::Int, N=Float64) = IdentityMultiple(N(λ)*I, n)

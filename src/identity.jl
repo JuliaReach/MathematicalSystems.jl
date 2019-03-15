@@ -43,7 +43,7 @@ struct IdentityMultiple{T} <: AbstractMatrix{T}
 end
 
 Base.IndexStyle(::Type{<:IdentityMultiple}) = IndexLinear()
-Base.size(𝐼::IdentityMultiple) = 𝐼.n
+Base.size(𝐼::IdentityMultiple) = (𝐼.n, 𝐼.n)
 Base.getindex(𝐼::IdentityMultiple, inds...) = getindex(𝐼.M, inds...)
 Base.setindex!(𝐼::IdentityMultiple, X, inds...) = error("cannot store a value in an `Identity`")
 
@@ -60,7 +60,7 @@ function Base.:(*)(𝐼1::IdentityMultiple, 𝐼2::IdentityMultiple)
 end
 
 function Base.show(io::IO, ::MIME"text/plain", 𝐼::IdentityMultiple{T}) where T
-    print(io, "Scalar multiple of the identity matrix of order $(𝐼.n):\n   ", 𝐼.M)
+    print(io, "$(typeof(𝐼)) of order $(𝐼.n)")
 end
 
 # callable identity matrix

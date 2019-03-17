@@ -88,7 +88,7 @@ Base.:(*)(x::Number, 𝐼::IdentityMultiple) = IdentityMultiple(x * 𝐼.M, 𝐼
 
 function Base.:(*)(𝐼::IdentityMultiple, v::AbstractVector)
     @assert 𝐼.n == length(v)
-    return 𝐼.M * v
+    return 𝐼.M.λ * v
 end
 
 function Base.:(*)(𝐼::IdentityMultiple, A::AbstractMatrix)

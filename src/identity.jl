@@ -82,16 +82,16 @@ Base.size(𝐼::IdentityMultiple) = (𝐼.n, 𝐼.n)
 Base.getindex(𝐼::IdentityMultiple, inds...) = getindex(𝐼.M, inds...)
 Base.setindex!(𝐼::IdentityMultiple, X, inds...) = error("cannot store a value in an `Identity`")
 
-Base.:(*)(x::Number, 𝐼::IdentityMultiple) = IdentityMultiple(x * 𝐼.M, size(𝐼, 1))
+Base.:(*)(x::Number, 𝐼::IdentityMultiple) = IdentityMultiple(x * 𝐼.M, 𝐼.n)
 
 function Base.:(+)(𝐼1::IdentityMultiple, 𝐼2::IdentityMultiple)
-    @assert size(𝐼1) == size(𝐼2)
-    return IdentityMultiple(𝐼1.M + 𝐼2.M, size(𝐼1, 1))
+    @assert 𝐼1.n == 𝐼2.n
+    return IdentityMultiple(𝐼1.M + 𝐼2.M, 𝐼1.n)
 end
 
 function Base.:(*)(𝐼1::IdentityMultiple, 𝐼2::IdentityMultiple)
-    @assert size(𝐼1) == size(𝐼2)
-    return IdentityMultiple(𝐼1.M * 𝐼2.M, size(𝐼1, 1))
+    @assert 𝐼1.n == 𝐼2.n
+    return IdentityMultiple(𝐼1.M * 𝐼2.M, 𝐼1.n)
 end
 
 function Base.show(io::IO, ::MIME"text/plain", 𝐼::IdentityMultiple{T}) where T

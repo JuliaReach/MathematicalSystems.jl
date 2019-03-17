@@ -101,4 +101,4 @@ end
 # callable identity matrix
 LinearAlgebra.I(n::Int, N=Float64) = IdentityMultiple(one(N)*I, n)
 
-LinearAlgebra.I(λ::Number, n::Int, N=Float64) = IdentityMultiple(N(λ)*I, n)
+LinearAlgebra.I(λ::Number, n::Int) = IdentityMultiple(λ*I, n)

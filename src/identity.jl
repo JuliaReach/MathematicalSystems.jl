@@ -80,14 +80,8 @@ end
 Base.IndexStyle(::Type{<:IdentityMultiple}) = IndexLinear()
 Base.size(𝐼::IdentityMultiple) = (𝐼.n, 𝐼.n)
 Base.getindex(𝐼::IdentityMultiple, inds...) = getindex(𝐼.M, inds...)
-function Base.getindex(𝐼::IdentityMultiple{T}, ind) where {T}
-    i = 1
-    while ind > 𝐼.n
-        ind -= 𝐼.n
-        i += 1
-    end
-    return ind == i ? 𝐼.M.λ : zero(T)
-end
+Base.getindex(𝐼::IdentityMultiple{T}, ind) where {T} =
+    rem(ind-1, 𝐼.n+1) == 0 ? 𝐼.M.λ : zero(T)
 Base.setindex!(𝐼::IdentityMultiple, X, inds...) = error("cannot store a value in an `Identity`")
 
 Base.:(*)(x::Number, 𝐼::IdentityMultiple) = IdentityMultiple(x * 𝐼.M, 𝐼.n)

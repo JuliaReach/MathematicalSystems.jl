@@ -29,3 +29,15 @@ end
     @test statedim(s) == 4
     @test stateset(s) == X
 end
+
+@testset "Matrix operations for identity multiple" begin
+    I2 = I(2)
+    @test getindex(I2, 1) == 1.
+    @test getindex(I2, 2) == 0.
+    @test getindex(I2, 3) == 0.
+    @test getindex(I2, 4) == 1.
+    x = I2 * rand(2)
+    @test x isa Vector && length(x) == 2
+    A = I2 * rand(2, 2)
+    @test A isa Matrix && size(A) == (2, 2)
+end

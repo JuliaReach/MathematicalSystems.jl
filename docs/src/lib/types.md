@@ -38,7 +38,9 @@ LinearAlgebraicContinuousSystem
 ConstrainedLinearAlgebraicContinuousSystem
 PolynomialContinuousSystem
 ConstrainedPolynomialContinuousSystem
-ImplicitContinuousSystem
+BlackBoxContinuousSystem
+ConstrainedBlackBoxContinuousSystem
+ConstrainedBlackBoxControlContinuousSystem
 ```
 
 ## Discrete Systems
@@ -57,7 +59,9 @@ LinearAlgebraicDiscreteSystem
 ConstrainedLinearAlgebraicDiscreteSystem
 PolynomialDiscreteSystem
 ConstrainedPolynomialDiscreteSystem
-ImplicitDiscreteSystem
+BlackBoxDiscreteSystem
+ConstrainedBlackBoxDiscreteSystem
+ConstrainedBlackBoxControlDiscreteSystem
 ```
 
 ## Identity operator

@@ -674,8 +674,8 @@ Discrete-time polynomial system with state constraints:
 """
 ConstrainedPolynomialDiscreteSystem
 
-for (Z, AZ) in ((:ImplicitContinuousSystem, :AbstractContinuousSystem),
-                (:ImplicitDiscreteSystem, :AbstractDiscreteSystem))
+for (Z, AZ) in ((:BlackBoxContinuousSystem, :AbstractContinuousSystem),
+                (:BlackBoxDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
         struct $(Z){FT} <: $(AZ)
             f::FT
@@ -689,12 +689,12 @@ for (Z, AZ) in ((:ImplicitContinuousSystem, :AbstractContinuousSystem),
 end
 
 @doc """
-    ImplicitContinuousSystem <: AbstractContinuousSystem
+    BlackBoxContinuousSystem <: AbstractContinuousSystem
 
 Continuous-time system defined by a right-hand side of the form:
 
 ```math
-    x' = f(t)
+    x' = f(x(t))
 ```
 
 ### Fields
@@ -702,10 +702,10 @@ Continuous-time system defined by a right-hand side of the form:
 - `f`        -- function that holds the right-hand side
 - `statedim` -- number of state variables
 """
-ImplicitContinuousSystem
+BlackBoxContinuousSystem
 
 @doc """
-    ImplicitDiscreteSystem <: AbstractDiscreteSystem
+    BlackBoxDiscreteSystem <: AbstractDiscreteSystem
 
 Discrete-time system defined by a right-hand side of the form:
 
@@ -718,4 +718,112 @@ Discrete-time system defined by a right-hand side of the form:
 - `f`        -- function that holds the right-hand side
 - `statedim` -- number of state variables
 """
-ImplicitDiscreteSystem
+BlackBoxDiscreteSystem
+
+for (Z, AZ) in ((:ConstrainedBlackBoxContinuousSystem, :AbstractContinuousSystem),
+                (:ConstrainedBlackBoxDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){FT, ST} <: $(AZ)
+            f::FT
+            statedim::Int
+            X::ST
+        end
+        statedim(s::$Z) = s.statedim
+        stateset(s::$Z) = s.X
+        inputdim(s::$Z) = 0
+        islinear(::$Z) = false
+        isaffine(::$Z) = false
+    end
+end
+
+@doc """
+    ConstrainedBlackBoxContinuousSystem <: AbstractContinuousSystem
+
+Continuous-time system defined by a right-hand side with state constraints of the
+form:
+
+```math
+    x' = f(x(t)), x(t) ∈ \\mathcal{X}.
+```
+
+### Fields
+
+- `f`        -- function that holds the right-hand side
+- `statedim` -- number of state variables
+- `X`        -- state constraints
+"""
+ConstrainedBlackBoxContinuousSystem
+
+@doc """
+    ConstrainedBlackBoxDiscreteSystem <: AbstractDiscreteSystem
+
+Discrete-time system defined by a right-hand side with state constraints
+of the form:
+
+```math
+    x_{k+1} = f(x_k), x(t) ∈ \\mathcal{X}.
+```
+
+### Fields
+
+- `f`        -- function that holds the right-hand side
+- `statedim` -- number of state variables
+- `X`        -- state constraints
+"""
+ConstrainedBlackBoxDiscreteSystem
+
+for (Z, AZ) in ((:ConstrainedBlackBoxControlContinuousSystem, :AbstractContinuousSystem),
+                (:ConstrainedBlackBoxControlDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){FT, ST, UT} <: $(AZ)
+            f::FT
+            statedim::Int
+            X::ST
+            U::UT
+        end
+        statedim(s::$Z) = s.statedim
+        stateset(s::$Z) = s.X
+        inputdim(s::$Z) = 0
+        inputset(s::$Z) = s.U
+        islinear(::$Z) = false
+        isaffine(::$Z) = false
+    end
+end
+
+@doc """
+    ConstrainedBlackBoxControlContinuousSystem <: AbstractContinuousSystem
+
+Continuous-time control system defined by a right-hand side with state constraints
+of the form:
+
+```math
+    x' = f(x(t), u(t)), x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U}.
+```
+
+### Fields
+
+- `f`        -- function that holds the right-hand side
+- `statedim` -- number of state variables
+- `X`        -- state constraints
+- `U`        -- input constraints
+"""
+ConstrainedBlackBoxControlContinuousSystem
+
+@doc """
+    ConstrainedBlackBoxControDiscreteSystem <: AbstractDiscreteSystem
+
+Discrete-time control system defined by a right-hand side with state constraints
+of the form:
+
+```math
+    x_{k+1} = f(x_k), x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U}.
+```
+
+### Fields
+
+- `f`        -- function that holds the right-hand side
+- `statedim` -- number of state variables
+- `X`        -- state constraints
+- `U`        -- input constraints
+"""
+ConstrainedBlackBoxControlDiscreteSystem

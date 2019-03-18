@@ -93,12 +93,12 @@ end
 
 function Base.:(*)(𝐼::IdentityMultiple, A::AbstractMatrix)
     @assert 𝐼.n == size(A, 1)
-    return 𝐼.M * A
+    return 𝐼.M.λ * A
 end
 
 function Base.:(*)(A::AbstractMatrix, 𝐼::IdentityMultiple)
     @assert size(A, 2) == 𝐼.n
-    return A * 𝐼.M
+    return A * 𝐼.M.λ
 end
 
 function Base.:(+)(𝐼1::IdentityMultiple, 𝐼2::IdentityMultiple)

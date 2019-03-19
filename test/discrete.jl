@@ -127,3 +127,10 @@ end
     @test dim(stateset(s)) == dim(X)
     @test !islinear(s) && !isaffine(s)
 end
+
+@testset "Implicit discrete system" begin
+    add_one(x) = x + 1
+    s = BlackBoxDiscreteSystem(add_one, 1)
+    x = 1.0
+    @test s.f(x) ≈ 2.0
+end

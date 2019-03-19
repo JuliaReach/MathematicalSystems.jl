@@ -170,3 +170,50 @@ end
     @test TypedPolynomials.nvariables(s) == 2
     @test TypedPolynomials.variables(s) == (x, y)
 end
+
+function vanderpol!(x, dx)
+    dx[1] = x[2]
+    dx[2] = x[2] * (1-x[1]^2) - x[1]
+    return dx
+end
+
+@testset "Continuous system defined by a function" begin
+    s = BlackBoxContinuousSystem(vanderpol!, 2)
+    f! = (x, dx) -> s.f(x, dx)
+    x = [1.0, 0.0]
+    dx = similar(x)
+    f!(x, dx)
+    @test dx ≈ [0.0, -1.0]
+end
+
+@testset "Continuous system defined by a function with state constraints" begin
+    H = HalfSpace([1.0, 0.0], 0.0) # x <= 0
+    s = ConstrainedBlackBoxContinuousSystem(vanderpol!, 2, H)
+    f! = (x, dx) -> s.f(x, dx)
+    x = [1.0, 0.0]
+    dx = similar(x)
+    f!(x, dx)
+    @test dx ≈ [0.0, -1.0]
+    @test stateset(s) == H
+end
+
+function vanderpol_controlled!(x, u, dx)
+    dx[1] = x[2]
+    dx[2] = x[2] * (1-x[1]^2) - x[1] + u[1]
+    return dx
+end
+
+@testset "Continuous control system defined by a function with state constraints" begin
+    H = HalfSpace([1.0, 0.0], 0.0) # x <= 0
+    U = Interval(-0.1, 0.1)
+    s = ConstrainedBlackBoxControlContinuousSystem(vanderpol_controlled!, 2, 1, H, U)
+    f! = (x, u, dx) -> s.f(x, u, dx)
+    x = [1.0, 0.0]
+    u = an_element(U)
+    dx = similar(x)
+    f!(x, u, dx)
+    @test dx ≈ [0.0, -1.0 + u[1]]
+    @test stateset(s) == H
+    @test inputdim(s) == 1
+    @test inputset(s) == U
+end

@@ -810,7 +810,7 @@ of the form:
 ConstrainedBlackBoxControlContinuousSystem
 
 @doc """
-    ConstrainedBlackBoxControDiscreteSystem <: AbstractDiscreteSystem
+    ConstrainedBlackBoxControlDiscreteSystem <: AbstractDiscreteSystem
 
 Discrete-time control system defined by a right-hand side with state constraints
 of the form:

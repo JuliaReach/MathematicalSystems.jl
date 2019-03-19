@@ -761,7 +761,7 @@ Discrete-time system defined by a right-hand side with state constraints
 of the form:
 
 ```math
-    x_{k+1} = f(x_k), x(t) ∈ \\mathcal{X}.
+    x_{k+1} = f(x_k), x_k ∈ \\mathcal{X}.
 ```
 
 ### Fields

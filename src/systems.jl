@@ -778,12 +778,13 @@ for (Z, AZ) in ((:ConstrainedBlackBoxControlContinuousSystem, :AbstractContinuou
         struct $(Z){FT, ST, UT} <: $(AZ)
             f::FT
             statedim::Int
+            inputdim::Int
             X::ST
             U::UT
         end
         statedim(s::$Z) = s.statedim
         stateset(s::$Z) = s.X
-        inputdim(s::$Z) = 0
+        inputdim(s::$Z) = s.inputdim
         inputset(s::$Z) = s.U
         islinear(::$Z) = false
         isaffine(::$Z) = false
@@ -804,6 +805,7 @@ of the form:
 
 - `f`        -- function that holds the right-hand side
 - `statedim` -- number of state variables
+- `inputdim` -- number of input variables
 - `X`        -- state constraints
 - `U`        -- input constraints
 """
@@ -823,6 +825,7 @@ of the form:
 
 - `f`        -- function that holds the right-hand side
 - `statedim` -- number of state variables
+- `inputdim` -- number of input variables
 - `X`        -- state constraints
 - `U`        -- input constraints
 """

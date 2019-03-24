@@ -12,6 +12,8 @@
 
 - [Manual](http://juliareach.github.io/MathematicalSystems.jl/latest/)
 - [Contributing](https://juliareach.github.io/MathematicalSystems.jl/latest/about.html#Contributing-1)
+- [Release notes](https://github.com/JuliaReach/MathematicalSystems.jl/releases)
+- [Release notes of the development version](https://github.com/JuliaReach/MathematicalSystems.jl/wiki/Release-log-tracker)
 
 ## Installing
 

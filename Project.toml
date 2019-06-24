@@ -15,7 +15,8 @@ MultivariatePolynomials = "≥ 0.1.4"
 [extras]
 LazySets = "b4f0291d-fe17-52bc-9479-3d1a343d9043"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 TypedPolynomials = "afbbf031-7a57-5f58-a1b9-b774a0fad08d"
 
 [targets]
-test = ["LazySets", "SparseArrays", "TypedPolynomials"]
+test = ["LazySets", "SparseArrays", "Test", "TypedPolynomials"]

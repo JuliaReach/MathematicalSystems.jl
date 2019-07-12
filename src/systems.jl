@@ -383,7 +383,7 @@ ConstrainedAffineControlContinuousSystem
 Continuous-time affine control system with state constraints of the form:
 
 ```math
-    x_{k+1} = A x+k + B u_k + c, x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U} \\text{ for all } k,
+    x_{k+1} = A x_k + B u_k + c, x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U} \\text{ for all } k,
 ```
 and ``c`` a vector.
 

@@ -3,7 +3,7 @@ using SparseArrays, LinearAlgebra
 using Test
 
 # fix namespace conflicts with LazySets
-using MathematicalSystems: LinearMap, ResetMap
+using MathematicalSystems: LinearMap, AffineMap, ResetMap
 
 include("continuous.jl")
 include("discrete.jl")

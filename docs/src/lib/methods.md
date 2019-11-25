@@ -52,7 +52,7 @@ isaffine(::AbstractMap)
 apply
 ```
 
-## Successor state of discrete systems
+## Successor
 
 ```@docs
 successor

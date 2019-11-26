@@ -131,7 +131,7 @@ The result of applying the system to `x`.
 """
 function successor(system::ConstrainedAffineDiscreteSystem, x)
     @assert statedim(system) == length(x)
-    @assert x ∈ system.X
+    @assert x ∈ stateset(system)
     return system.A * x + system.b
 end
 

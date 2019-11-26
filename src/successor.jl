@@ -144,7 +144,7 @@ Return the successor state of a `ConstrainedLinearControlDiscreteSystem`.
 
 - `system` -- `ConstrainedLinearControlDiscreteSystem`
 - `x`      -- state (it should be any vector type)
-- `u`      -- state (it should be any vector type)
+- `u`      -- input (it should be any vector type)
 
 ### Output
 

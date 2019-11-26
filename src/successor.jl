@@ -39,7 +39,7 @@ end
 """
     successor(system::ConstrainedDiscreteIdentitySystem, x::AbstractVector)
 
-Return the successor state of a `ConstrainedDiscreteIdentitySystem`.
+Return the successor state of a `LinearDiscreteSystem`.
 
 ### Input
 

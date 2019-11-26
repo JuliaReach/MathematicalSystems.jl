@@ -43,7 +43,7 @@ Return the successor state of a `ConstrainedDiscreteIdentitySystem`.
 
 ### Input
 
-- `system` -- `ConstrainedDiscreteIdentitySystem`
+- `system` -- `LinearDiscreteSystem`
 - `x`      -- state (it should be any vector type)
 
 ### Output

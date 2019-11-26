@@ -42,7 +42,7 @@ outputmap
 islinear(::AbstractSystem)
 islinear(::AbstractMap)
 isaffine(::AbstractSystem)
-isalgebraic(::AbstractSystem)
+ispolynomial(::AbstractSystem)
 isaffine(::AbstractMap)
 ```
 

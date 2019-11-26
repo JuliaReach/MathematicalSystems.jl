@@ -30,7 +30,7 @@ export statedim,
 # traits
 export islinear,
        isaffine,
-       isalgebraic
+       ispolynomial
 
 #====================================
 Concrete Types for Continuous Systems

@@ -167,7 +167,7 @@ Return the successor state of a `ConstrainedAffineControlDiscreteSystem`.
 
 - `system` -- `ConstrainedAffineControlDiscreteSystem`
 - `x`      -- state (it should be any vector type)
-- `u`      -- state (it should be any vector type)
+- `u`      -- input (it should be any vector type)
 
 ### Output
 

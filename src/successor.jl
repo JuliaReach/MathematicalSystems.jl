@@ -1,18 +1,19 @@
 """
-    successor(system::DiscreteIdentitySystem, x)
+    successor(system::DiscreteIdentitySystem, x::AbstractVector)
 
 Return the successor state of a `DiscreteIdentitySystem`.
 
 ### Input
 
 - `system` -- `DiscreteIdentitySystem`
-- `x`      -- state (it can be of any type)
+- `x`      -- state (it should be any vector type)
 
 ### Output
 
 The same state `x`.
 """
-function successor(system::DiscreteIdentitySystem, x)
+function successor(system::DiscreteIdentitySystem, x::AbstractVector)
+    @assert statedim(system) == length(x)
     return x
 end
 

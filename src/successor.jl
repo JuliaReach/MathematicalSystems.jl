@@ -37,7 +37,7 @@ function successor(system::ConstrainedDiscreteIdentitySystem, x::AbstractVector)
 end
 
 """
-    successor(system::ConstrainedDiscreteIdentitySystem, x::AbstractVector)
+    successor(system::LinearDiscreteSystem, x::AbstractVector)
 
 Return the successor state of a `LinearDiscreteSystem`.
 

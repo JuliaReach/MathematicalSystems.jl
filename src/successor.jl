@@ -134,7 +134,7 @@ Return the successor state of a `ConstrainedAffineDiscreteSystem`.
 The result of applying the system to `x`.
 """
 function successor(system::ConstrainedAffineDiscreteSystem, x)
-    (!_conformable(system, x) || !_in_stateset(system, x)) && throw(ArgumentError())
+    (!_is_conformable_state(system, x) || !_in_stateset(system, x)) && throw(ArgumentError())
     return system.A * x + system.b
 end
 

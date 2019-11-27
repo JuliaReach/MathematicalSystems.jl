@@ -1,3 +1,9 @@
+# helper functions to check that the given system can be applied to the states/inputs
+@inline _is_conformable_state(system, x) = statedim(system) == length(x)
+@inline _is_conformable_input(system, u) = inputdim(system) == length(u)
+@inline _in_stateset(system, x) = x ∈ stateset(system)
+@inline _in_inputset(system, u) = u ∈ inputset(system)
+
 """
     successor(system::DiscreteIdentitySystem, x::AbstractVector)
 
@@ -13,7 +19,7 @@ Return the successor state of a `DiscreteIdentitySystem`.
 The same state `x`.
 """
 function successor(system::DiscreteIdentitySystem, x::AbstractVector)
-    @assert statedim(system) == length(x)
+    !_is_conformable_state(system, x) && throw(ArgumentError())
     return x
 end
 
@@ -32,8 +38,7 @@ Return the successor state of a `ConstrainedDiscreteIdentitySystem`.
 The same state `x`.
 """
 function successor(system::ConstrainedDiscreteIdentitySystem, x::AbstractVector)
-    @assert statedim(system) == length(x)
-    @assert x ∈ stateset(system)
+    (!_is_conformable_state(system, x) || !_in_stateset(system, x)) && throw(ArgumentError())
     return x
 end
 
@@ -52,7 +57,7 @@ Return the successor state of a `LinearDiscreteSystem`.
 The result of applying the system to `x`.
 """
 function successor(system::LinearDiscreteSystem, x::AbstractVector)
-    @assert statedim(system) == length(x)
+    !_is_conformable_state(system, x) && throw(ArgumentError())
     return system.A * x
 end
 
@@ -71,7 +76,7 @@ Return the successor state of a `AffineDiscreteSystem`.
 The result of applying the system to `x`.
 """
 function successor(system::AffineDiscreteSystem, x::AbstractVector)
-    @assert statedim(system) == length(x)
+    !_is_conformable_state(system, x) && throw(ArgumentError())
     return system.A * x + system.b
 end
 
@@ -91,8 +96,7 @@ Return the successor state of a `LinearControlDiscreteSystem`.
 The result of applying the system to `x`, with input `u`.
 """
 function successor(system::LinearControlDiscreteSystem, x::AbstractVector, u::AbstractVector)
-    @assert statedim(system) == length(x)
-    @assert inputdim(system) == length(u)
+    (!_is_conformable_state(system, x) || !_is_conformable_input(system, u)) && throw(ArgumentError())
     return system.A * x + system.B * u
 end
 
@@ -111,8 +115,7 @@ Return the successor state of a `ConstrainedLinearDiscreteSystem`.
 The result of applying the system to `x`.
 """
 function successor(system::ConstrainedLinearDiscreteSystem, x::AbstractVector)
-    @assert statedim(system) == length(x)
-    @assert x ∈ stateset(system)
+    (!_is_conformable_state(system, x) || !_in_stateset(system, x)) && throw(ArgumentError())
     return system.A * x
 end
 
@@ -131,8 +134,7 @@ Return the successor state of a `ConstrainedAffineDiscreteSystem`.
 The result of applying the system to `x`.
 """
 function successor(system::ConstrainedAffineDiscreteSystem, x)
-    @assert statedim(system) == length(x)
-    @assert x ∈ stateset(system)
+    (!_conformable(system, x) || !_in_stateset(system, x)) && throw(ArgumentError())
     return system.A * x + system.b
 end
 
@@ -152,10 +154,8 @@ Return the successor state of a `ConstrainedLinearControlDiscreteSystem`.
 The result of applying the system to `x`, with input `u`.
 """
 function successor(system::ConstrainedLinearControlDiscreteSystem, x::AbstractVector, u::AbstractVector)
-    @assert statedim(system) == length(x)
-    @assert x ∈ stateset(system)
-    @assert inputdim(system) == length(u)
-    @assert u ∈ inputset(system)
+    (!_is_conformable_state(system, x) || !_is_conformable_input(system, u) ||
+    !_in_stateset(system, x) || !_in_inputset(system, u)) && throw(ArgumentError())
     return system.A * x + system.B * u
 end
 
@@ -175,10 +175,8 @@ Return the successor state of a `ConstrainedAffineControlDiscreteSystem`.
 The result of applying the system to `x`, with input `u`.
 """
 function successor(system::ConstrainedAffineControlDiscreteSystem, x::AbstractVector, u::AbstractVector)
-    @assert statedim(system) == length(x)
-    @assert x ∈ stateset(system)
-    @assert inputdim(system) == length(u)
-    @assert u ∈ inputset(system)
+    (!_is_conformable_state(system, x) || !_is_conformable_input(system, u) ||
+    !_in_stateset(system, x) || !_in_inputset(system, u)) && throw(ArgumentError())
     return system.A * x + system.B * u + system.c
 end
 
@@ -197,7 +195,7 @@ Return the successor state of a `BlackBoxDiscreteSystem`.
 The result of applying the system to `x`.
 """
 function successor(system::BlackBoxDiscreteSystem, x::AbstractVector)
-    @assert statedim(system) == length(x)
+    !_is_conformable_state(system, x) && throw(ArgumentError())
     return system.f(x)
 end
 
@@ -216,7 +214,6 @@ Return the successor state of a `ConstrainedBlackBoxDiscreteSystem`.
 The result of applying the system to `x`.
 """
 function successor(system::ConstrainedBlackBoxDiscreteSystem, x::AbstractVector)
-    @assert statedim(system) == length(x)
-    @assert x ∈ stateset(system)
+    (!_is_conformable_state(system, x) || !_in_stateset(system, x)) && throw(ArgumentError())
     return system.f(x)
 end

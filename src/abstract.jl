@@ -88,6 +88,16 @@ For example, polynomial systems can be nonlinear; hence `isaffine` is `false`.
 function isaffine(::AbstractSystem) end
 
 """
+    ispolynomial(s::AbstractSystem)
+
+Specifies if the dynamics of system `s` is specified by polynomial equations.
+
+The criterion refers to the *type* information, not the value. Hence, e.g. a
+`LinearContinuousSystem` is not considered to be of polynomial type.
+"""
+function ispolynomial(::AbstractSystem) end
+
+"""
     AbstractMap
 
 Abstract supertype for all map types.
@@ -138,4 +148,3 @@ function isaffine(::AbstractMap) end
 Apply the rule specified by the map to the given arguments.
 """
 function apply end
-

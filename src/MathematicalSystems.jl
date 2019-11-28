@@ -53,11 +53,11 @@ export ContinuousIdentitySystem,
        ConstrainedPolynomialContinuousSystem,
        BlackBoxContinuousSystem,
        ConstrainedBlackBoxContinuousSystem,
-       ConstrainedBlackBoxControlContinuousSystem
+       ConstrainedBlackBoxControlContinuousSystem,
        NoisyConstrainedLinearContinuousSystem,
        NoisyConstrainedLinearControlContinuousSystem,
        NoisyConstrainedBlackBoxControlContinuousSystem,
-       NoisyConstrainedAffineControlContinuousSystem,
+       NoisyConstrainedAffineControlContinuousSystem
 
 #==================================
 Concrete Types for Discrete Systems

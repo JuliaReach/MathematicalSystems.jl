@@ -41,6 +41,10 @@ ConstrainedPolynomialContinuousSystem
 BlackBoxContinuousSystem
 ConstrainedBlackBoxContinuousSystem
 ConstrainedBlackBoxControlContinuousSystem
+NoisyConstrainedLinearContinuousSystem
+NoisyConstrainedLinearControlContinuousSystem
+NoisyConstrainedBlackBoxControlContinuousSystem
+NoisyConstrainedAffineControlContinuousSystem
 ```
 
 ## Discrete Systems
@@ -62,6 +66,10 @@ ConstrainedPolynomialDiscreteSystem
 BlackBoxDiscreteSystem
 ConstrainedBlackBoxDiscreteSystem
 ConstrainedBlackBoxControlDiscreteSystem
+NoisyConstrainedLinearDiscreteSystem
+NoisyConstrainedLinearControlDiscreteSystem
+NoisyConstrainedAffineControlDiscreteSystem
+NoisyConstrainedBlackBoxControlDiscreteSystem
 ```
 
 ## Identity operator

@@ -14,20 +14,27 @@ export IdentityMultiple, I
 #=========================
 Abstract Types for Systems
 ==========================#
+include("abstract.jl")
+
+# types
 export AbstractSystem,
        AbstractDiscreteSystem,
-       AbstractContinuousSystem,
-       statedim,
+       AbstractContinuousSystem
+
+# methods
+export statedim,
        stateset,
        inputdim,
        inputset,
        noisedim,
        noiseset,
-       isnoisy,
-       islinear,
-       isaffine
 
-include("abstract.jl")
+
+# traits
+export islinear,
+       isaffine,
+       ispolynomial,
+       isnoisy
 
 #====================================
 Concrete Types for Continuous Systems
@@ -99,6 +106,8 @@ include("inputs.jl")
 #==================================
 Maps
 ===================================#
+
+# types
 export AbstractMap,
        IdentityMap,
        ConstrainedIdentityMap,
@@ -113,6 +122,7 @@ export AbstractMap,
        ResetMap,
        ConstrainedResetMap
 
+# methods
 export outputmap,
        outputdim,
        apply

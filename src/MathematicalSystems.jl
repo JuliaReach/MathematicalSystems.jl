@@ -27,8 +27,7 @@ export statedim,
        inputdim,
        inputset,
        noisedim,
-       noiseset,
-
+       noiseset
 
 # traits
 export islinear,

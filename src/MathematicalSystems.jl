@@ -48,6 +48,10 @@ export ContinuousIdentitySystem,
        BlackBoxContinuousSystem,
        ConstrainedBlackBoxContinuousSystem,
        ConstrainedBlackBoxControlContinuousSystem
+       NoisyConstrainedLinearContinuousSystem,
+       NoisyConstrainedLinearControlContinuousSystem,
+       NoisyConstrainedBlackBoxControlContinuousSystem,
+       NoisyConstrainedAffineControlContinuousSystem,
 
 #==================================
 Concrete Types for Discrete Systems
@@ -68,13 +72,9 @@ export DiscreteIdentitySystem,
        BlackBoxDiscreteSystem,
        ConstrainedBlackBoxDiscreteSystem,
        ConstrainedBlackBoxControlDiscreteSystem,
-       NoisyConstrainedLinearContinuousSystem,
        NoisyConstrainedLinearDiscreteSystem,
-       NoisyConstrainedLinearControlContinuousSystem,
        NoisyConstrainedLinearControlDiscreteSystem,
-       NoisyConstrainedAffineControlContinuousSystem,
        NoisyConstrainedAffineControlDiscreteSystem,
-       NoisyConstrainedBlackBoxControlContinuousSystem,
        NoisyConstrainedBlackBoxControlDiscreteSystem
 
 include("systems.jl")

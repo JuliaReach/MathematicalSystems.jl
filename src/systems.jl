@@ -344,7 +344,7 @@ for (Z, AZ) in ((:ConstrainedAffineControlContinuousSystem, :AbstractContinuousS
             X::ST
             U::UT
             function $(Z)(A::MTA, B::MTB, c::VT, X::ST, U::UT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST, UT}
-                @assert checksquare(A) == length(c) == size(B, 1) 
+                @assert checksquare(A) == length(c) == size(B, 1)
                 return new{T, MTA, MTB, VT, ST, UT}(A, B, c, X, U)
             end
         end
@@ -794,7 +794,7 @@ end
 @doc """
     ConstrainedBlackBoxControlContinuousSystem <: AbstractContinuousSystem
 
-Continuous-time control system defined by a right-hand side with state constraints
+Continuous-time control system defined by a right-hand side with state and input constraints
 of the form:
 
 ```math
@@ -814,11 +814,11 @@ ConstrainedBlackBoxControlContinuousSystem
 @doc """
     ConstrainedBlackBoxControlDiscreteSystem <: AbstractDiscreteSystem
 
-Discrete-time control system defined by a right-hand side with state constraints
+Discrete-time control system defined by a right-hand side with state and input constraints
 of the form:
 
 ```math
-    x_{k+1} = f(x_k), x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U}.
+    x_{k+1} = f(x_k, u_k), x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U}.
 ```
 
 ### Fields
@@ -830,3 +830,278 @@ of the form:
 - `U`        -- input constraints
 """
 ConstrainedBlackBoxControlDiscreteSystem
+
+# Noisy Systems
+for (Z, AZ) in ((:NoisyConstrainedLinearContinuousSystem, :AbstractContinuousSystem),
+                (:NoisyConstrainedLinearDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MTA <: AbstractMatrix{T}, MTD <: AbstractMatrix{T}, ST, WT} <: $(AZ)
+            A::MTA
+            D::MTD
+            X::ST
+            W::WT
+            function $(Z)(A::MTA, D::MTD, X::ST, W::WT) where {T, MTA <: AbstractMatrix{T}, MTD <: AbstractMatrix{T}, ST, WT}
+                @assert checksquare(A) == size(D,1) # == dim(X)
+                return new{T, MTA, MTD, ST, WT}(A, D, X, W)
+            end
+            function $(Z)(A::MTA, X::ST, W::WT) where {T, MTA <: AbstractMatrix{T}, ST, WT}
+                # @assert checksquare(A) == dim(X)
+                n = size(A,1)
+                D = Matrix{T}(I, n, n)
+                return new{T, MTA, MTA, ST, WT}(A, D, X, W)
+            end
+        end
+        statedim(s::$Z) = checksquare(s.A)
+        stateset(s::$Z) = s.X
+        noisedim(s::$Z) = size(s.D, 2)
+        noiseset(s::$Z) = s.W
+        inputdim(::$Z) = 0
+        islinear(::$Z) = true
+        isaffine(::$Z) = true
+        isnoisy(::$Z) = true
+    end
+end
+
+@doc """
+    NoisyConstrainedLinearContinuousSystem
+
+Continuous-time linear system with  additive disturbance and  state constraints of the form:
+
+```math
+    x' = A x + D w, x(t) ∈ \\mathcal{X}, w(t) ∈ \\mathcal{W}.
+```
+
+### Fields
+
+- `A` -- square matrix
+- `D` -- matrix
+- `X` -- state constraints
+- `W` -- disturbance set
+"""
+NoisyConstrainedLinearContinuousSystem
+
+@doc """
+    NoisyConstrainedLinearDiscreteSystem
+
+Discrete-time linear system with additive disturbance and state constraints of the form:
+
+```math
+    x_{k+1} = A x_k + D w_k, x_k ∈ \\mathcal{X}, w(t) ∈ \\mathcal{W} .
+```
+
+### Fields
+
+- `A` -- square matrix
+- `D` -- matrix
+- `X` -- state constraints
+- `W` -- disturbance set
+"""
+NoisyConstrainedLinearDiscreteSystem
+
+for (Z, AZ) in ((:NoisyConstrainedLinearControlContinuousSystem, :AbstractContinuousSystem),
+                (:NoisyConstrainedLinearControlDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, MTD <: AbstractMatrix{T}, ST, UT, WT} <: $(AZ)
+            A::MTA
+            B::MTB
+            D::MTD
+            X::ST
+            U::UT
+            W::WT
+            function $(Z)(A::MTA, B::MTB, D::MTD, X::ST, U::UT, W::WT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, MTD <: AbstractMatrix{T}, ST, UT, WT}
+                @assert checksquare(A) == size(B, 1) == size(D,1)
+                return new{T, MTA, MTB, MTD, ST, UT, WT}(A, B, D, X, U, W)
+            end
+            function $(Z)(A::MTA, B::MTB, X::ST, U::UT, W::WT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, ST, UT, WT}
+                @assert checksquare(A) == size(B, 1) # == dim(W)
+                n = size(A,1)
+                D = Matrix{T}(I, n, n)
+                return new{T, MTA, MTB, MTA, ST, UT, WT}(A, B, D, X, U, W)
+            end
+        end
+        statedim(s::$Z) = size(s.A, 1)
+        stateset(s::$Z) = s.X
+        inputdim(s::$Z) = size(s.B, 2)
+        inputset(s::$Z) = s.U
+        noisedim(s::$Z) = size(s.D, 2)
+        noiseset(s::$Z) = s.W
+        islinear(::$Z) = true
+        isaffine(::$Z) = true
+        isnoisy(::$Z) = true
+    end
+end
+
+@doc """
+    NoisyConstrainedLinearControlContinuousSystem
+Continuous-time affine control system with state constraints of the form:
+```math
+    x' = A x + B u + Dw, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U}, w(t) ∈ \\mathcal{W} \\text{ for all } t,
+```
+and ``c`` a vector.
+### Fields
+- `A` -- square matrix
+- `B` -- matrix
+- `D` -- matrix
+- `X` -- state constraints
+- `U` -- input constraints
+- `W` -- disturbance set
+"""
+NoisyConstrainedLinearControlContinuousSystem
+
+@doc """
+    NoisyConstrainedLinearControlDiscreteSystem
+Continuous-time affine control system with state constraints of the form:
+```math
+    x_{k+1} = A x_k + B u_k + D w_k, x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U}, w_k ∈ \\mathcal{W} \\text{ for all } k,
+```
+and ``c`` a vector.
+### Fields
+- `A` -- square matrix
+- `B` -- matrix
+- `D` -- matrix
+- `X` -- state constraints
+- `U` -- input constraints
+- `W` -- disturbance set
+"""
+NoisyConstrainedLinearControlDiscreteSystem
+
+for (Z, AZ) in ((:NoisyConstrainedAffineControlContinuousSystem, :AbstractContinuousSystem),
+                (:NoisyConstrainedAffineControlDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}, MTD <: AbstractMatrix{T}, ST, UT, WT} <: $(AZ)
+            A::MTA
+            B::MTB
+            c::VT
+            D::MTD
+            X::ST
+            U::UT
+            W::WT
+            function $(Z)(A::MTA, B::MTB, c::VT, D::MTD, X::ST, U::UT, W::WT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}, MTD <: AbstractMatrix{T}, ST, UT, WT}
+                @assert checksquare(A) == length(c) == size(B, 1) == size(D,1)
+                return new{T, MTA, MTB, VT, MTD, ST, UT, WT}(A, B, c, D, X, U, W)
+            end
+            function $(Z)(A::MTA, B::MTB, c::VT, X::ST, U::UT, W::WT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST, UT, WT}
+                @assert checksquare(A) == length(c) == size(B, 1) # ==  dim(W)
+                n = size(A,1)
+                D = Matrix{T}(I, n, n)
+                return new{T, MTA, MTB, VT, MTA, ST, UT, WT}(A, B, c, D, X, U, W)
+            end
+        end
+        statedim(s::$Z) = length(s.c)
+        stateset(s::$Z) = s.X
+        inputdim(s::$Z) = size(s.B, 2)
+        inputset(s::$Z) = s.U
+        noisedim(s::$Z) = size(s.D, 2)
+        noiseset(s::$Z) = s.W
+        islinear(::$Z) = false
+        isaffine(::$Z) = true
+        isnoisy(::$Z) = true
+    end
+end
+
+@doc """
+    NoisyConstrainedAffineControlContinuousSystem
+Continuous-time affine control system with state constraints of the form:
+```math
+    x' = A x + B u + c + Dw, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U}, w(t) ∈ \\mathcal{W} \\text{ for all } t,
+```
+and ``c`` a vector.
+### Fields
+- `A` -- square matrix
+- `B` -- matrix
+- `c` -- vector
+- `D` -- matrix
+- `X` -- state constraints
+- `U` -- input constraints
+- `W` -- disturbance set
+"""
+NoisyConstrainedAffineControlContinuousSystem
+
+@doc """
+    NoisyConstrainedAffineControlDiscreteSystem
+Continuous-time affine control system with state constraints of the form:
+```math
+    x_{k+1} = A x_k + B u_k + c + D w_k, x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U}, w_k ∈ \\mathcal{W} \\text{ for all } k,
+```
+and ``c`` a vector.
+### Fields
+- `A` -- square matrix
+- `B` -- matrix
+- `c` -- vector
+- `D` -- matrix
+- `X` -- state constraints
+- `U` -- input constraints
+- `W` -- disturbance set
+"""
+NoisyConstrainedAffineControlDiscreteSystem
+
+
+for (Z, AZ) in ((:NoisyConstrainedBlackBoxControlContinuousSystem, :AbstractContinuousSystem),
+                (:NoisyConstrainedBlackBoxControlDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){FT, ST, UT,WT} <: $(AZ)
+            f::FT
+            statedim::Int
+            inputdim::Int
+            noisedim::Int
+            X::ST
+            U::UT
+            W::WT
+        end
+        # function $(Z)(f::FT, X::ST, U::UT, W::WT) where {FT, ST, UT, WT}
+        #     # @assert  length(f(zeros(dim(X)), zeros(dim(U)))) == dim(X)
+        #     return new{FT, ST, UT, WT}(f, dim(X), dim(U), X, U, W)
+        # end
+        statedim(s::$Z) = s.statedim
+        stateset(s::$Z) = s.X
+        inputdim(s::$Z) = s.inputdim
+        inputset(s::$Z) = s.U
+        noisedim(s::$Z) = s.noisedim
+        noiseset(s::$Z) = s.W
+        islinear(::$Z) = false
+        isaffine(::$Z) = false
+        isnoisy(::$Z) = true
+    end
+end
+
+@doc """
+    NoisyConstrainedBlackBoxControlContinuousSystem <: AbstractContinuousSystem
+
+Continuous-time control system defined by a right-hand side with state constraints
+of the form:
+
+```math
+    x' = f(x(t), u(t), w(t)), x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U}, w(t) ∈ \\mathcal{W}.
+```
+
+### Fields
+
+- `f`        -- function that holds the right-hand side
+- `statedim` -- number of state variables
+- `inputdim` -- number of input variables
+- `X`        -- state constraints
+- `U`        -- input constraints
+- `W`        -- disturbance set
+"""
+NoisyConstrainedBlackBoxControlContinuousSystem
+
+@doc """
+    NoisyConstrainedBlackBoxControlDiscreteSystem <: AbstractDiscreteSystem
+
+Discrete-time control system defined by a right-hand side with state constraints
+of the form:
+
+```math
+    x_{k+1} = f(x_k, u_k), x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U},  w_k ∈ \\mathcal{W}.
+```
+
+### Fields
+
+- `f`        -- function that holds the right-hand side
+- `statedim` -- number of state variables
+- `inputdim` -- number of input variables
+- `X`        -- state constraints
+- `U`        -- input constraints
+- `W`        -- disturbance set
+"""
+NoisyConstrainedBlackBoxControlDiscreteSystem

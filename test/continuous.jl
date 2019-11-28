@@ -144,7 +144,7 @@ end
     @polyvar x y
     p = 2x^2 - 3x + y
 
-    # default constructor for scalar p and 
+    # default constructor for scalar p and
     s = PolynomialContinuousSystem(p)
     @test !islinear(s) && !isaffine(s)
     @test statedim(s) == 2
@@ -161,7 +161,7 @@ end
     p = 2x^2 - 3x + y
     X = BallInf(zeros(2), 0.1)
 
-    # default constructor for scalar p and 
+    # default constructor for scalar p and
     s = ConstrainedPolynomialContinuousSystem(p, X)
     @test !islinear(s) && !isaffine(s)
     @test statedim(s) == 2
@@ -216,4 +216,89 @@ end
     @test stateset(s) == H
     @test inputdim(s) == 1
     @test inputset(s) == U
+end
+
+# Noisy
+@testset "Noisy Continuous constrained linear system" begin
+    A = [1. 1; 1 -1]
+    D = [1. 2; 0 1]
+    X = Line([1., -1], 0.) # line x = y
+    W = BallInf(zeros(2), 2.0)
+    s = NoisyConstrainedLinearContinuousSystem(A, D, X, W)
+    @test statedim(s) == 2
+    @test stateset(s) == X
+    @test s.A == A
+    @test s.D == D
+    @test noisedim(s) == 2 == dim(W)
+    @test noiseset(s) == W
+    @test inputdim(s) == 0
+    @test islinear(s) && isaffine(s) && isnoisy(s)
+    # if D is omitted, add the identiy matrix
+    s2 = NoisyConstrainedLinearContinuousSystem(A, X, W)
+    @test s2.D == [1. 0; 0 1]
+end
+
+@testset "Noisy Continuous constrained control linear system" begin
+    A = [1. 1; 1 -1]
+    B = Matrix([0.5 1.5]')
+    D = [1. 2; 0 1]
+    X = Line([1., -1], 0.) # line x = y
+    U = Hyperrectangle(low=[0.9], high=[1.1])
+    W = BallInf(zeros(2), 2.0)
+    s = NoisyConstrainedLinearControlContinuousSystem(A, B, D, X, U, W)
+    @test statedim(s) == 2
+    @test stateset(s) == X
+    @test s.A == A
+    @test s.B == B
+    @test s.D == D
+    @test noisedim(s) == 2 == dim(W)
+    @test noiseset(s) == W
+    @test inputdim(s) == dim(U)
+    @test islinear(s) && isaffine(s) && isnoisy(s)
+    # if D is omitted, add the identiy matrix
+    s2 = NoisyConstrainedLinearControlContinuousSystem(A, B, X, U, W)
+    @test s2.D == [1. 0; 0 1]
+end
+
+@testset "Noisy Continuous constrained control affine system" begin
+    A = [1. 1; 1 -1]
+    B = Matrix([0.5 1.5]')
+    c = [1.0, 0.5]
+    D = [1. 2; 0 1]
+    X = Line([1., -1], 0.) # line x = y
+    U = Hyperrectangle(low=[0.9], high=[1.1])
+    W = BallInf(zeros(2), 2.0)
+    s = NoisyConstrainedAffineControlContinuousSystem(A, B, c, D, X, U, W)
+    @test statedim(s) == 2
+    @test stateset(s) == X
+    @test s.A == A
+    @test s.B == B
+    @test s.c == c
+    @test s.D == D
+    @test noisedim(s) == 2 == dim(W)
+    @test noiseset(s) == W
+    @test inputdim(s) == dim(U)
+    @test isaffine(s) && isnoisy(s)
+    # if D is omitted, add the identiy matrix
+    s2 = NoisyConstrainedAffineControlContinuousSystem(A, B, c, X, U, W)
+    @test s2.D == [1. 0; 0 1]
+end
+
+@testset "Noisy Continuous constrained control blackbox system" begin
+    n = 2
+    m = 1
+    l = 2
+    f(x,u,w) = ones(n,n)*x + ones(n,m)*u + ones(n,l)*w
+    X = BallInf(zeros(n), 1.0)
+    U =  BallInf(zeros(m), 1.0)
+    W =  BallInf(zeros(l), 1.0)
+    s = NoisyConstrainedBlackBoxControlContinuousSystem(f, n, m, l, X, U, W)
+    @test statedim(s) == n
+    @test s.f == f
+    @test stateset(s) == X
+    @test noisedim(s) == l == dim(W)
+    @test noiseset(s) == W
+    @test inputdim(s) == dim(U)
+    @test !islinear(s) && !isaffine(s) && isnoisy(s)
+    # s = NoisyConstrainedBlackBoxControlContinuousSystem(f, X, U, W)
 end

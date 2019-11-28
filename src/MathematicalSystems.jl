@@ -21,6 +21,9 @@ export AbstractSystem,
        stateset,
        inputdim,
        inputset,
+       noisedim,
+       noiseset,
+       isnoisy,
        islinear,
        isaffine
 
@@ -64,7 +67,15 @@ export DiscreteIdentitySystem,
        ConstrainedPolynomialDiscreteSystem,
        BlackBoxDiscreteSystem,
        ConstrainedBlackBoxDiscreteSystem,
-       ConstrainedBlackBoxControlDiscreteSystem
+       ConstrainedBlackBoxControlDiscreteSystem,
+       NoisyConstrainedLinearContinuousSystem,
+       NoisyConstrainedLinearDiscreteSystem,
+       NoisyConstrainedLinearControlContinuousSystem,
+       NoisyConstrainedLinearControlDiscreteSystem,
+       NoisyConstrainedAffineControlContinuousSystem,
+       NoisyConstrainedAffineControlDiscreteSystem,
+       NoisyConstrainedBlackBoxControlContinuousSystem,
+       NoisyConstrainedBlackBoxControlDiscreteSystem
 
 include("systems.jl")
 

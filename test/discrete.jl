@@ -135,8 +135,6 @@ end
     @test s.f(x) ≈ 2.0
 end
 
-
-# Noisy
 @testset "Noisy Discrete constrained linear system" begin
     A = [1. 1; 1 -1]
     D = [1. 2; 0 1]
@@ -151,9 +149,6 @@ end
     @test noiseset(s) == W
     @test inputdim(s) == 0
     @test islinear(s) && isaffine(s) && isnoisy(s)
-    # if D is omitted, add the identiy matrix
-    s2 = NoisyConstrainedLinearDiscreteSystem(A, X, W)
-    @test s2.D == [1. 0; 0 1]
 end
 
 @testset "Noisy Discrete constrained control linear system" begin
@@ -173,9 +168,6 @@ end
     @test noiseset(s) == W
     @test inputdim(s) == dim(U)
     @test islinear(s) && isaffine(s) && isnoisy(s)
-    # if D is omitted, add the identiy matrix
-    s2 = NoisyConstrainedLinearControlDiscreteSystem(A, B, X, U, W)
-    @test s2.D == [1. 0; 0 1]
 end
 
 @testset "Noisy Discrete constrained control affine system" begin
@@ -197,9 +189,6 @@ end
     @test noiseset(s) == W
     @test inputdim(s) == dim(U)
     @test isaffine(s) && isnoisy(s)
-    # if D is omitted, add the identiy matrix
-    s2 = NoisyConstrainedAffineControlDiscreteSystem(A, B, c, X, U, W)
-    @test s2.D == [1. 0; 0 1]
 end
 
 @testset "Noisy Discrete constrained control blackbox system" begin
@@ -218,5 +207,4 @@ end
     @test noiseset(s) == W
     @test inputdim(s) == dim(U)
     @test !islinear(s) && !isaffine(s) && isnoisy(s)
-    # s = NoisyConstrainedBlackBoxControlDiscreteSystem(f, X, U, W)
 end

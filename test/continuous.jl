@@ -233,9 +233,6 @@ end
     @test noiseset(s) == W
     @test inputdim(s) == 0
     @test islinear(s) && isaffine(s) && isnoisy(s)
-    # if D is omitted, add the identiy matrix
-    s2 = NoisyConstrainedLinearContinuousSystem(A, X, W)
-    @test s2.D == [1. 0; 0 1]
 end
 
 @testset "Noisy Continuous constrained control linear system" begin
@@ -255,9 +252,6 @@ end
     @test noiseset(s) == W
     @test inputdim(s) == dim(U)
     @test islinear(s) && isaffine(s) && isnoisy(s)
-    # if D is omitted, add the identiy matrix
-    s2 = NoisyConstrainedLinearControlContinuousSystem(A, B, X, U, W)
-    @test s2.D == [1. 0; 0 1]
 end
 
 @testset "Noisy Continuous constrained control affine system" begin
@@ -279,9 +273,6 @@ end
     @test noiseset(s) == W
     @test inputdim(s) == dim(U)
     @test isaffine(s) && isnoisy(s)
-    # if D is omitted, add the identiy matrix
-    s2 = NoisyConstrainedAffineControlContinuousSystem(A, B, c, X, U, W)
-    @test s2.D == [1. 0; 0 1]
 end
 
 @testset "Noisy Continuous constrained control blackbox system" begin
@@ -300,5 +291,4 @@ end
     @test noiseset(s) == W
     @test inputdim(s) == dim(U)
     @test !islinear(s) && !isaffine(s) && isnoisy(s)
-    # s = NoisyConstrainedBlackBoxControlContinuousSystem(f, X, U, W)
 end

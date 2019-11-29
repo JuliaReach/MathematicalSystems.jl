@@ -844,7 +844,6 @@ of the form:
 """
 ConstrainedBlackBoxControlDiscreteSystem
 
-# Noisy Systems
 for (Z, AZ) in ((:NoisyConstrainedLinearContinuousSystem, :AbstractContinuousSystem),
                 (:NoisyConstrainedLinearDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
@@ -854,17 +853,11 @@ for (Z, AZ) in ((:NoisyConstrainedLinearContinuousSystem, :AbstractContinuousSys
             X::ST
             W::WT
             function $(Z)(A::MTA, D::MTD, X::ST, W::WT) where {T, MTA <: AbstractMatrix{T}, MTD <: AbstractMatrix{T}, ST, WT}
-                @assert checksquare(A) == size(D,1) # == dim(X)
+                @assert checksquare(A) == size(D,1)
                 return new{T, MTA, MTD, ST, WT}(A, D, X, W)
             end
-            function $(Z)(A::MTA, X::ST, W::WT) where {T, MTA <: AbstractMatrix{T}, ST, WT}
-                # @assert checksquare(A) == dim(X)
-                n = size(A,1)
-                D = Matrix{T}(I, n, n)
-                return new{T, MTA, MTA, ST, WT}(A, D, X, W)
-            end
         end
-        statedim(s::$Z) = checksquare(s.A)
+        statedim(s::$Z) = size(s.A,1)
         stateset(s::$Z) = s.X
         noisedim(s::$Z) = size(s.D, 2)
         noiseset(s::$Z) = s.W
@@ -924,12 +917,6 @@ for (Z, AZ) in ((:NoisyConstrainedLinearControlContinuousSystem, :AbstractContin
             function $(Z)(A::MTA, B::MTB, D::MTD, X::ST, U::UT, W::WT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, MTD <: AbstractMatrix{T}, ST, UT, WT}
                 @assert checksquare(A) == size(B, 1) == size(D,1)
                 return new{T, MTA, MTB, MTD, ST, UT, WT}(A, B, D, X, U, W)
-            end
-            function $(Z)(A::MTA, B::MTB, X::ST, U::UT, W::WT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, ST, UT, WT}
-                @assert checksquare(A) == size(B, 1) # == dim(W)
-                n = size(A,1)
-                D = Matrix{T}(I, n, n)
-                return new{T, MTA, MTB, MTA, ST, UT, WT}(A, B, D, X, U, W)
             end
         end
         statedim(s::$Z) = size(s.A, 1)
@@ -993,12 +980,6 @@ for (Z, AZ) in ((:NoisyConstrainedAffineControlContinuousSystem, :AbstractContin
                 @assert checksquare(A) == length(c) == size(B, 1) == size(D,1)
                 return new{T, MTA, MTB, VT, MTD, ST, UT, WT}(A, B, c, D, X, U, W)
             end
-            function $(Z)(A::MTA, B::MTB, c::VT, X::ST, U::UT, W::WT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST, UT, WT}
-                @assert checksquare(A) == length(c) == size(B, 1) # ==  dim(W)
-                n = size(A,1)
-                D = Matrix{T}(I, n, n)
-                return new{T, MTA, MTB, VT, MTA, ST, UT, WT}(A, B, c, D, X, U, W)
-            end
         end
         statedim(s::$Z) = length(s.c)
         stateset(s::$Z) = s.X
@@ -1061,10 +1042,6 @@ for (Z, AZ) in ((:NoisyConstrainedBlackBoxControlContinuousSystem, :AbstractCont
             U::UT
             W::WT
         end
-        # function $(Z)(f::FT, X::ST, U::UT, W::WT) where {FT, ST, UT, WT}
-        #     # @assert  length(f(zeros(dim(X)), zeros(dim(U)))) == dim(X)
-        #     return new{FT, ST, UT, WT}(f, dim(X), dim(U), X, U, W)
-        # end
         statedim(s::$Z) = s.statedim
         stateset(s::$Z) = s.X
         inputdim(s::$Z) = s.inputdim

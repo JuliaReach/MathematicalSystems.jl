@@ -12,6 +12,7 @@ for (Z, AZ) in ((:ContinuousIdentitySystem, :AbstractContinuousSystem),
         islinear(::$Z) = true
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
+        isnoisy(::$Z) = false
     end
 end
 
@@ -57,6 +58,7 @@ for (Z, AZ) in ((:ConstrainedContinuousIdentitySystem, :AbstractContinuousSystem
         islinear(::$Z) = true
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
+        isnoisy(::$Z) = false
     end
 end
 
@@ -103,6 +105,7 @@ for (Z, AZ) in ((:LinearContinuousSystem, :AbstractContinuousSystem),
         islinear(::$Z) = true
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
+        isnoisy(::$Z) = false
     end
 end
 
@@ -152,6 +155,7 @@ for (Z, AZ) in ((:AffineContinuousSystem, :AbstractContinuousSystem),
         islinear(::$Z) = false
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
+        isnoisy(::$Z) = false
     end
 end
 
@@ -203,6 +207,7 @@ for (Z, AZ) in ((:LinearControlContinuousSystem, :AbstractContinuousSystem),
         islinear(::$Z) = true
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
+        isnoisy(::$Z) = false
     end
 end
 
@@ -251,6 +256,7 @@ for (Z, AZ) in ((:ConstrainedLinearContinuousSystem, :AbstractContinuousSystem),
         islinear(::$Z) = true
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
+        isnoisy(::$Z) = false
     end
 end
 
@@ -304,6 +310,7 @@ for (Z, AZ) in ((:ConstrainedAffineContinuousSystem, :AbstractContinuousSystem),
         islinear(::$Z) = false
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
+        isnoisy(::$Z) = false
     end
 end
 
@@ -362,6 +369,7 @@ for (Z, AZ) in ((:ConstrainedAffineControlContinuousSystem, :AbstractContinuousS
         islinear(::$Z) = false
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
+        isnoisy(::$Z) = false
     end
 end
 
@@ -425,6 +433,7 @@ for (Z, AZ) in ((:ConstrainedLinearControlContinuousSystem, :AbstractContinuousS
         islinear(::$Z) = true
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
+        isnoisy(::$Z) = false
     end
 end
 
@@ -479,6 +488,7 @@ for (Z, AZ) in ((:LinearAlgebraicContinuousSystem, :AbstractContinuousSystem),
         islinear(::$Z) = true
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
+        isnoisy(::$Z) = false
     end
 end
 
@@ -532,6 +542,7 @@ for (Z, AZ) in ((:ConstrainedLinearAlgebraicContinuousSystem, :AbstractContinuou
         islinear(::$Z) = true
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
+        isnoisy(::$Z) = false
     end
 end
 
@@ -585,6 +596,7 @@ for (Z, AZ) in ((:PolynomialContinuousSystem, :AbstractContinuousSystem),
         islinear(::$Z) = false
         isaffine(::$Z) = false
         ispolynomial(::$Z) = true
+        isnoisy(::$Z) = false
 
         MultivariatePolynomials.variables(s::$Z) = MultivariatePolynomials.variables(s.p)
         MultivariatePolynomials.nvariables(s::$Z) = s.statedim
@@ -644,6 +656,7 @@ for (Z, AZ) in ((:ConstrainedPolynomialContinuousSystem, :AbstractContinuousSyst
         islinear(::$Z) = false
         isaffine(::$Z) = false
         ispolynomial(::$Z) = true
+        isnoisy(::$Z) = false
 
         MultivariatePolynomials.variables(s::$Z) = MultivariatePolynomials.variables(s.p)
         MultivariatePolynomials.nvariables(s::$Z) = s.statedim
@@ -698,6 +711,8 @@ for (Z, AZ) in ((:BlackBoxContinuousSystem, :AbstractContinuousSystem),
         inputdim(s::$Z) = 0
         islinear(::$Z) = false
         isaffine(::$Z) = false
+        ispolynomial(::$Z) = false
+        isnoisy(::$Z) = false
     end
 end
 
@@ -746,6 +761,8 @@ for (Z, AZ) in ((:ConstrainedBlackBoxContinuousSystem, :AbstractContinuousSystem
         inputdim(s::$Z) = 0
         islinear(::$Z) = false
         isaffine(::$Z) = false
+        ispolynomial(::$Z) = false
+        isnoisy(::$Z) = false
     end
 end
 
@@ -801,6 +818,8 @@ for (Z, AZ) in ((:ConstrainedBlackBoxControlContinuousSystem, :AbstractContinuou
         inputset(s::$Z) = s.U
         islinear(::$Z) = false
         isaffine(::$Z) = false
+        ispolynomial(::$Z) = false
+        isnoisy(::$Z) = false
     end
 end
 
@@ -864,6 +883,7 @@ for (Z, AZ) in ((:NoisyConstrainedLinearContinuousSystem, :AbstractContinuousSys
         inputdim(::$Z) = 0
         islinear(::$Z) = true
         isaffine(::$Z) = true
+        ispolynomial(::$Z) = false
         isnoisy(::$Z) = true
     end
 end
@@ -927,6 +947,7 @@ for (Z, AZ) in ((:NoisyConstrainedLinearControlContinuousSystem, :AbstractContin
         noiseset(s::$Z) = s.W
         islinear(::$Z) = true
         isaffine(::$Z) = true
+        ispolynomial(::$Z) = false
         isnoisy(::$Z) = true
     end
 end
@@ -989,6 +1010,7 @@ for (Z, AZ) in ((:NoisyConstrainedAffineControlContinuousSystem, :AbstractContin
         noiseset(s::$Z) = s.W
         islinear(::$Z) = false
         isaffine(::$Z) = true
+        ispolynomial(::$Z) = false
         isnoisy(::$Z) = true
     end
 end
@@ -1050,6 +1072,7 @@ for (Z, AZ) in ((:NoisyConstrainedBlackBoxControlContinuousSystem, :AbstractCont
         noiseset(s::$Z) = s.W
         islinear(::$Z) = false
         isaffine(::$Z) = false
+        ispolynomial(::$Z) = false
         isnoisy(::$Z) = true
     end
 end

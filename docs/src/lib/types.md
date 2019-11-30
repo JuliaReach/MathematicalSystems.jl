@@ -43,8 +43,8 @@ ConstrainedBlackBoxContinuousSystem
 ConstrainedBlackBoxControlContinuousSystem
 NoisyConstrainedLinearContinuousSystem
 NoisyConstrainedLinearControlContinuousSystem
-NoisyConstrainedBlackBoxControlContinuousSystem
 NoisyConstrainedAffineControlContinuousSystem
+NoisyConstrainedBlackBoxControlContinuousSystem
 ```
 
 ## Discrete Systems

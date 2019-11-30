@@ -56,8 +56,8 @@ export ContinuousIdentitySystem,
        ConstrainedBlackBoxControlContinuousSystem,
        NoisyConstrainedLinearContinuousSystem,
        NoisyConstrainedLinearControlContinuousSystem,
-       NoisyConstrainedBlackBoxControlContinuousSystem,
-       NoisyConstrainedAffineControlContinuousSystem
+       NoisyConstrainedAffineControlContinuousSystem,
+       NoisyConstrainedBlackBoxControlContinuousSystem
 
 #==================================
 Concrete Types for Discrete Systems

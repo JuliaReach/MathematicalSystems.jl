@@ -170,8 +170,8 @@ Return the successor state of a `ConstrainedLinearControlDiscreteSystem`.
 - `system`            -- `ConstrainedLinearControlDiscreteSystem`
 - `x`                 -- state (it should be any vector type)
 - `u`                 -- input (it should be any vector type)
-- `check_constraints` -- (optional, default: `true`) check if the state belongs to
-                         the state set
+- `check_constraints` -- (optional, default: `true`) check if the state (resp. input)
+                         belongs to the state set (resp. input set)
 
 ### Output
 
@@ -197,8 +197,8 @@ Return the successor state of a `ConstrainedAffineControlDiscreteSystem`.
 - `system`            -- `ConstrainedAffineControlDiscreteSystem`
 - `x`                 -- state (it should be any vector type)
 - `u`                 -- input (it should be any vector type)
-- `check_constraints` -- (optional, default: `true`) check if the state belongs to
-                         the state set
+- `check_constraints` -- (optional, default: `true`) check if the state (resp. input)
+                         belongs to the state set (resp. input set)
 
 ### Output
 

@@ -25,12 +25,15 @@ export AbstractSystem,
 export statedim,
        stateset,
        inputdim,
-       inputset
+       inputset,
+       noisedim,
+       noiseset
 
 # traits
 export islinear,
        isaffine,
-       ispolynomial
+       ispolynomial,
+       isnoisy
 
 #====================================
 Concrete Types for Continuous Systems
@@ -50,7 +53,11 @@ export ContinuousIdentitySystem,
        ConstrainedPolynomialContinuousSystem,
        BlackBoxContinuousSystem,
        ConstrainedBlackBoxContinuousSystem,
-       ConstrainedBlackBoxControlContinuousSystem
+       ConstrainedBlackBoxControlContinuousSystem,
+       NoisyConstrainedLinearContinuousSystem,
+       NoisyConstrainedLinearControlContinuousSystem,
+       NoisyConstrainedAffineControlContinuousSystem,
+       NoisyConstrainedBlackBoxControlContinuousSystem
 
 #==================================
 Concrete Types for Discrete Systems
@@ -70,7 +77,11 @@ export DiscreteIdentitySystem,
        ConstrainedPolynomialDiscreteSystem,
        BlackBoxDiscreteSystem,
        ConstrainedBlackBoxDiscreteSystem,
-       ConstrainedBlackBoxControlDiscreteSystem
+       ConstrainedBlackBoxControlDiscreteSystem,
+       NoisyConstrainedLinearDiscreteSystem,
+       NoisyConstrainedLinearControlDiscreteSystem,
+       NoisyConstrainedAffineControlDiscreteSystem,
+       NoisyConstrainedBlackBoxControlDiscreteSystem
 
 include("systems.jl")
 

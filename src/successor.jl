@@ -24,21 +24,28 @@ function successor(system::DiscreteIdentitySystem, x::AbstractVector)
 end
 
 """
-    successor(system::ConstrainedDiscreteIdentitySystem, x::AbstractVector)
+    successor(system::ConstrainedDiscreteIdentitySystem, x::AbstractVector;
+              [check_invariant]=true)
 
 Return the successor state of a `ConstrainedDiscreteIdentitySystem`.
 
 ### Input
 
-- `system` -- `ConstrainedDiscreteIdentitySystem`
-- `x`      -- state (it should be any vector type)
+- `system`          -- `ConstrainedDiscreteIdentitySystem`
+- `x`               -- state (it should be any vector type)
+- `check_invariant` -- (optional, default: `true`) check if the state belongs to
+                       the state set
 
 ### Output
 
 The same state `x`.
 """
-function successor(system::ConstrainedDiscreteIdentitySystem, x::AbstractVector)
-    (!_is_conformable_state(system, x) || !_in_stateset(system, x)) && throw(ArgumentError())
+function successor(system::ConstrainedDiscreteIdentitySystem, x::AbstractVector;
+                   check_invariant::Bool=true)
+    !_is_conformable_state(system, x) && throw(ArgumentError())
+    if check_invariant
+        !_in_stateset(system, x) && throw(ArgumentError())
+    end
     return x
 end
 
@@ -101,82 +108,108 @@ function successor(system::LinearControlDiscreteSystem, x::AbstractVector, u::Ab
 end
 
 """
-    successor(system::ConstrainedLinearDiscreteSystem, x::AbstractVector)
+    successor(system::ConstrainedLinearDiscreteSystem, x::AbstractVector;
+              [check_invariant]=true)
 
 Return the successor state of a `ConstrainedLinearDiscreteSystem`.
 
 ### Input
 
-- `system` -- `ConstrainedLinearDiscreteSystem`
-- `x`      -- state (it should be any vector type)
+- `system`          -- `ConstrainedLinearDiscreteSystem`
+- `x`               -- state (it should be any vector type)
+- `check_invariant` -- (optional, default: `true`) check if the state belongs to
+                       the state set
 
 ### Output
 
 The result of applying the system to `x`.
 """
-function successor(system::ConstrainedLinearDiscreteSystem, x::AbstractVector)
-    (!_is_conformable_state(system, x) || !_in_stateset(system, x)) && throw(ArgumentError())
+function successor(system::ConstrainedLinearDiscreteSystem, x::AbstractVector;
+                   check_invariant::Bool=true)
+    !_is_conformable_state(system, x) && throw(ArgumentError())
+    if check_invariant
+        !_in_stateset(system, x) && throw(ArgumentError())
+    end
     return system.A * x
 end
 
 """
-    successor(system::ConstrainedAffineDiscreteSystem, x::AbstractVector)
+    successor(system::ConstrainedAffineDiscreteSystem, x::AbstractVector;
+              [check_invariant])
 
 Return the successor state of a `ConstrainedAffineDiscreteSystem`.
 
 ### Input
 
-- `system` -- `ConstrainedAffineDiscreteSystem`
-- `x`      -- state (it should be any vector type)
+- `system`          -- `ConstrainedAffineDiscreteSystem`
+- `x`               -- state (it should be any vector type)
+- `check_invariant` -- (optional, default: `true`) check if the state belongs to
+                       the state set
 
 ### Output
 
 The result of applying the system to `x`.
 """
-function successor(system::ConstrainedAffineDiscreteSystem, x)
-    (!_is_conformable_state(system, x) || !_in_stateset(system, x)) && throw(ArgumentError())
+function successor(system::ConstrainedAffineDiscreteSystem, x::AbstractVector;
+                   check_invariant::Bool=true)
+    !_is_conformable_state(system, x) && throw(ArgumentError())
+    if check_invariant
+        !_in_stateset(system, x) && throw(ArgumentError())
+    end
     return system.A * x + system.b
 end
 
 """
-    successor(system::ConstrainedLinearControlDiscreteSystem, x::AbstractVector, u::AbstractVector)
+    successor(system::ConstrainedLinearControlDiscreteSystem, x::AbstractVector,
+              u::AbstractVector; [check_invariant]=true)
 
 Return the successor state of a `ConstrainedLinearControlDiscreteSystem`.
 
 ### Input
 
-- `system` -- `ConstrainedLinearControlDiscreteSystem`
-- `x`      -- state (it should be any vector type)
-- `u`      -- input (it should be any vector type)
+- `system`          -- `ConstrainedLinearControlDiscreteSystem`
+- `x`               -- state (it should be any vector type)
+- `u`               -- input (it should be any vector type)
+- `check_invariant` -- (optional, default: `true`) check if the state belongs to
+                       the state set
 
 ### Output
 
 The result of applying the system to `x`, with input `u`.
 """
-function successor(system::ConstrainedLinearControlDiscreteSystem, x::AbstractVector, u::AbstractVector)
-    (!_is_conformable_state(system, x) || !_is_conformable_input(system, u) ||
-    !_in_stateset(system, x) || !_in_inputset(system, u)) && throw(ArgumentError())
+function successor(system::ConstrainedLinearControlDiscreteSystem, x::AbstractVector,
+                   u::AbstractVector; check_invariant::Bool=true)
+    (!_is_conformable_state(system, x) || !_is_conformable_input(system, u)) && throw(ArgumentError())
+    if check_invariant
+        (!_in_stateset(system, x) || !_in_inputset(system, u)) && throw(ArgumentError())
+    end
     return system.A * x + system.B * u
 end
 
 """
-    successor(system::ConstrainedAffineControlDiscreteSystem, x::AbstractVector, u::AbstractVector)
+    successor(system::ConstrainedAffineControlDiscreteSystem, x::AbstractVector,
+              u::AbstractVector; [check_invariant]=true)
 
 Return the successor state of a `ConstrainedAffineControlDiscreteSystem`.
 
 ### Input
 
-- `system` -- `ConstrainedAffineControlDiscreteSystem`
-- `x`      -- state (it should be any vector type)
-- `u`      -- input (it should be any vector type)
+- `system`          -- `ConstrainedAffineControlDiscreteSystem`
+- `x`               -- state (it should be any vector type)
+- `u`               -- input (it should be any vector type)
+- `check_invariant` -- (optional, default: `true`) check if the state belongs to
+                       the state set
 
 ### Output
 
 The result of applying the system to `x`, with input `u`.
 """
-function successor(system::ConstrainedAffineControlDiscreteSystem, x::AbstractVector, u::AbstractVector)
-    (!_is_conformable_state(system, x) || !_is_conformable_input(system, u) ||
-    !_in_stateset(system, x) || !_in_inputset(system, u)) && throw(ArgumentError())
+function successor(system::ConstrainedAffineControlDiscreteSystem, x::AbstractVector,
+                   u::AbstractVector; check_invariant::Bool=true)
+    (!_is_conformable_state(system, x) || !_is_conformable_input(system, u)) && throw(ArgumentError())
+    if check_invariant
+        (!_in_stateset(system, x) || !_in_inputset(system, u)) && throw(ArgumentError())
+    end
     return system.A * x + system.B * u + system.c
 end
 
@@ -200,20 +233,27 @@ function successor(system::BlackBoxDiscreteSystem, x::AbstractVector)
 end
 
 """
-    successor(system::ConstrainedBlackBoxDiscreteSystem, x::AbstractVector)
+    successor(system::ConstrainedBlackBoxDiscreteSystem, x::AbstractVector;
+              [check_invariant]=true)
 
 Return the successor state of a `ConstrainedBlackBoxDiscreteSystem`.
 
 ### Input
 
-- `system` -- `ConstrainedBlackBoxDiscreteSystem`
-- `x`      -- state (it should be any vector type)
+- `system`          -- `ConstrainedBlackBoxDiscreteSystem`
+- `x`               -- state (it should be any vector type)
+- `check_invariant` -- (optional, default: `true`) check if the state belongs to
+                       the state set
 
 ### Output
 
 The result of applying the system to `x`.
 """
-function successor(system::ConstrainedBlackBoxDiscreteSystem, x::AbstractVector)
-    (!_is_conformable_state(system, x) || !_in_stateset(system, x)) && throw(ArgumentError())
+function successor(system::ConstrainedBlackBoxDiscreteSystem, x::AbstractVector;
+                   check_invariant::Bool=true)
+    !_is_conformable_state(system, x) && throw(ArgumentError())
+    if check_invariant
+        !_in_stateset(system, x) && throw(ArgumentError())
+    end
     return system.f(x)
 end

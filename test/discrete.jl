@@ -208,3 +208,15 @@ end
     @test inputdim(s) == dim(U)
     @test !islinear(s) && !isaffine(s) && isnoisy(s)
 end
+
+@testset "Successor state of a constrained discrete system" begin
+    A = [1. 1; 1 -1]
+    B = Matrix([0.5 1.5]')
+    X = Hyperrectangle([0.0, 0.3], [2.0, 2.0])
+    U = Interval(0.0, 1.0)
+    sys = ConstrainedLinearControlDiscreteSystem(A, B, X, U)
+    x = [0.0; 0.3]
+    u = [0.5]
+
+    @test successor(sys, x, u) == [0.55, 0.45]
+end

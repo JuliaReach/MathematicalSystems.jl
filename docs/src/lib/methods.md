@@ -51,3 +51,9 @@ isaffine(::AbstractMap)
 ```@docs
 apply
 ```
+
+## Successor
+
+```@docs
+successor
+```

@@ -144,5 +144,11 @@ export @map
 
 include("macros.jl")
 
+#===================================
+Successor state for discrete systems
+====================================#
+export successor
+
+include("successor.jl")
 
 end # module

@@ -3,7 +3,9 @@
         s = ContinuousIdentitySystem(sd)
         @test statedim(s) == sd
         @test inputdim(s) == 0
-        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isnoisy(s)
+        @test noisedim(s) == 0
+        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
 end
 
@@ -12,9 +14,11 @@ end
         X = Singleton(ones(sd))
         s = ConstrainedContinuousIdentitySystem(sd, X)
         @test statedim(s) == sd
-        @test stateset(s) == X
         @test inputdim(s) == 0
-        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isnoisy(s)
+        @test noisedim(s) == 0
+        @test stateset(s) == X
+        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
 end
 
@@ -23,7 +27,9 @@ end
         s = LinearContinuousSystem(zeros(sd, sd))
         @test statedim(s) == sd
         @test inputdim(s) == 0
-        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isnoisy(s)
+        @test noisedim(s) == 0
+        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
 end
 
@@ -32,8 +38,45 @@ end
         s = AffineContinuousSystem(zeros(sd, sd), zeros(sd))
         @test statedim(s) == sd
         @test inputdim(s) == 0
-        @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isnoisy(s)
+        @test !islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
+end
+
+@testset "Continuous linear control system" begin
+    for sd in 1:3
+        s = LinearControlContinuousSystem(zeros(sd, sd), ones(sd, sd))
+        @test statedim(s) == sd
+        @test inputdim(s) == sd
+        @test noisedim(s) == 0
+        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+    end
+end
+
+@testset "Continuous constrained linear system" begin
+    A = [1. 1; 1 -1]
+    X = Line([1., -1], 0.) # line x = y
+    s = ConstrainedLinearContinuousSystem(A, X)
+    @test statedim(s) == 2
+    @test inputdim(s) == 0
+    @test noisedim(s) == 0
+    @test stateset(s) == X
+    @test islinear(s) && isaffine(s) && !ispolynomial(s)
+    @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+end
+
+@testset "Continuous constrained affine system" begin
+    A = [1. 1; 1 -1]
+    c = [1.; 1.]
+    X = Line([1., -1], 0.) # line x = y
+    s = ConstrainedAffineContinuousSystem(A, c, X)
+    @test statedim(s) == 2
+    @test inputdim(s) == 0
+    @test noisedim(s) == 0
+    @test stateset(s) == X
+    @test !islinear(s) && isaffine(s) && !ispolynomial(s)
+    @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
 end
 
 @testset "Continuous affine control system with state constraints" begin
@@ -44,38 +87,23 @@ end
     U = Interval(-1.0, 1.0)  # -1 <= u <= 1
     s = ConstrainedAffineControlContinuousSystem(A, B, c, X, U)
     @test statedim(s) == 2
-    @test stateset(s) == X
     @test inputdim(s) == 1
-    @test inputset(s) == U
-    @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isnoisy(s)
-end
-
-@testset "Continuous linear control system" begin
-    for sd in 1:3
-        s = LinearControlContinuousSystem(zeros(sd, sd), ones(sd, sd))
-        @test statedim(s) == sd
-        @test inputdim(s) == sd
-        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isnoisy(s)
-    end
-end
-
-@testset "Continuous constrained linear system" begin
-    A = [1. 1; 1 -1]
-    X = Line([1., -1], 0.) # line x = y
-    s = ConstrainedLinearContinuousSystem(A, X)
-    @test statedim(s) == 2
+    @test noisedim(s) == 0
     @test stateset(s) == X
-    @test inputdim(s) == 0
-    @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isnoisy(s)
+    @test inputset(s) == U
+    @test !islinear(s) && isaffine(s) && !ispolynomial(s)
+    @test !isnoisy(s) && iscontrolled(s) && isconstrained(s)
 end
 
 @testset "Continuous constrained affine system" begin
     X = Line([1., -1], 0.) # line x = y
     s = ConstrainedAffineContinuousSystem(zeros(2, 2), zeros(2), X)
     @test statedim(s) == 2
-    @test stateset(s) == X
     @test inputdim(s) == 0
-    @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isnoisy(s)
+    @test noisedim(s) == 0
+    @test stateset(s) == X
+    @test !islinear(s) && isaffine(s) && !ispolynomial(s)
+    @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
 end
 
 @testset "Continuous constrained linear control system" begin
@@ -85,10 +113,12 @@ end
     U = Interval(0.9, 1.1)
     s = ConstrainedLinearControlContinuousSystem(A, B, X, U)
     @test statedim(s) == 2
-    @test stateset(s) == X
     @test inputdim(s) == 1
+    @test noisedim(s) == 0
+    @test stateset(s) == X
     @test inputset(s) == U
-    @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isnoisy(s)
+    @test islinear(s) && isaffine(s) && !ispolynomial(s)
+    @test !isnoisy(s) && iscontrolled(s) && isconstrained(s)
 
     # initial value problem composite type
     x0 = Singleton([1.5, 2.0])
@@ -111,9 +141,11 @@ end
 @testset "Continuous linear algebraic system" begin
     for sd in 1:3
         s = LinearAlgebraicContinuousSystem(zeros(sd, sd), zeros(sd, sd))
-        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isnoisy(s)
         @test statedim(s) == sd
         @test inputdim(s) == 0
+        @test noisedim(s) == 0
+        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
 end
 
@@ -122,10 +154,12 @@ end
     E = [0. 1; 1 0]
     X = LinearConstraint([0, -1.], 0.) # the set y ≥ 0
     s = ConstrainedLinearAlgebraicContinuousSystem(A, E, X)
-    @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isnoisy(s)
     @test statedim(s) == 2
-    @test stateset(s) == X
     @test inputdim(s) == 0
+    @test noisedim(s) == 0
+    @test stateset(s) == X
+    @test islinear(s) && isaffine(s) && !ispolynomial(s)
+    @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
 end
 
 @testset "Initial value problem for a continuous constrained linear algebraic system" begin
@@ -133,11 +167,15 @@ end
     E = [0. 1; 1 0]
     X = LinearConstraint([0, -1.], 0.) # the set y ≥ 0
     s = ConstrainedLinearAlgebraicContinuousSystem(A, E, X)
-    @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isnoisy(s)
+    @test statedim(s) == 2
+    @test inputdim(s) == 0
+    @test noisedim(s) == 0
+    @test stateset(s) == X
+    @test islinear(s) && isaffine(s) && !ispolynomial(s)
+    @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+
     x0 = Singleton([1.5, 2.0])
     p = IVP(s, x0)
-    @test statedim(p) == 2
-    @test inputdim(p) == 0
 end
 
 @testset "Polynomial system in continuous time" begin
@@ -146,9 +184,12 @@ end
 
     # default constructor for scalar p and
     s = PolynomialContinuousSystem(p)
-    @test !islinear(s) && !isaffine(s) && ispolynomial(s) && !isnoisy(s)
     @test statedim(s) == 2
     @test inputdim(s) == 0
+    @test noisedim(s) == 0
+    @test !islinear(s) && !isaffine(s) && ispolynomial(s)
+    @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+
     @test TypedPolynomials.nvariables(s) == 2
     @test TypedPolynomials.variables(s) == (x, y)
 
@@ -163,10 +204,13 @@ end
 
     # default constructor for scalar p and
     s = ConstrainedPolynomialContinuousSystem(p, X)
-    @test !islinear(s) && !isaffine(s) && ispolynomial(s) && !isnoisy(s)
     @test statedim(s) == 2
     @test inputdim(s) == 0
+    @test noisedim(s) == 0
     @test dim(stateset(s)) == dim(X)
+    @test !islinear(s) && !isaffine(s) && ispolynomial(s)
+    @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+
     @test TypedPolynomials.nvariables(s) == 2
     @test TypedPolynomials.variables(s) == (x, y)
 end
@@ -184,7 +228,8 @@ end
     dx = similar(x)
     f!(x, dx)
     @test dx ≈ [0.0, -1.0]
-    @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && !isnoisy(s)
+    @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+    @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
 end
 
 @testset "Continuous system defined by a function with state constraints" begin
@@ -196,7 +241,8 @@ end
     f!(x, dx)
     @test dx ≈ [0.0, -1.0]
     @test stateset(s) == H
-    @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && !isnoisy(s)
+    @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+    @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
 end
 
 function vanderpol_controlled!(x, u, dx)
@@ -215,10 +261,12 @@ end
     dx = similar(x)
     f!(x, u, dx)
     @test dx ≈ [0.0, -1.0 + u[1]]
-    @test stateset(s) == H
+    @test statedim(s) == 2
     @test inputdim(s) == 1
+    @test stateset(s) == H
     @test inputset(s) == U
-    @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && !isnoisy(s)
+    @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+    @test !isnoisy(s) && iscontrolled(s) && isconstrained(s)
 end
 
 # Noisy
@@ -228,14 +276,15 @@ end
     X = Line([1., -1], 0.) # line x = y
     W = BallInf(zeros(2), 2.0)
     s = NoisyConstrainedLinearContinuousSystem(A, D, X, W)
-    @test statedim(s) == 2
-    @test stateset(s) == X
     @test s.A == A
     @test s.D == D
-    @test noisedim(s) == 2 == dim(W)
-    @test noiseset(s) == W
+    @test statedim(s) == 2
     @test inputdim(s) == 0
-    @test islinear(s) && isaffine(s) && !ispolynomial(s) && isnoisy(s)
+    @test noisedim(s) == 2 == dim(W)
+    @test stateset(s) == X
+    @test noiseset(s) == W
+    @test islinear(s) && isaffine(s) && !ispolynomial(s)
+    @test isnoisy(s) && !iscontrolled(s) && isconstrained(s)
 end
 
 @testset "Noisy Continuous constrained control linear system" begin
@@ -246,15 +295,17 @@ end
     U = Hyperrectangle(low=[0.9], high=[1.1])
     W = BallInf(zeros(2), 2.0)
     s = NoisyConstrainedLinearControlContinuousSystem(A, B, D, X, U, W)
-    @test statedim(s) == 2
-    @test stateset(s) == X
     @test s.A == A
     @test s.B == B
     @test s.D == D
-    @test noisedim(s) == 2 == dim(W)
-    @test noiseset(s) == W
+    @test statedim(s) == 2
     @test inputdim(s) == dim(U)
-    @test islinear(s) && isaffine(s)  && !ispolynomial(s) && isnoisy(s)
+    @test noisedim(s) == 2 == dim(W)
+    @test stateset(s) == X
+    @test inputset(s) == U
+    @test noiseset(s) == W
+    @test islinear(s) && isaffine(s) && !ispolynomial(s)
+    @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
 end
 
 @testset "Noisy Continuous constrained control affine system" begin
@@ -266,16 +317,18 @@ end
     U = Hyperrectangle(low=[0.9], high=[1.1])
     W = BallInf(zeros(2), 2.0)
     s = NoisyConstrainedAffineControlContinuousSystem(A, B, c, D, X, U, W)
-    @test statedim(s) == 2
-    @test stateset(s) == X
     @test s.A == A
     @test s.B == B
     @test s.c == c
     @test s.D == D
-    @test noisedim(s) == 2 == dim(W)
-    @test noiseset(s) == W
+    @test statedim(s) == 2
     @test inputdim(s) == dim(U)
-    @test !islinear(s) && isaffine(s)  && !ispolynomial(s) && isnoisy(s)
+    @test noisedim(s) == 2 == dim(W)
+    @test stateset(s) == X
+    @test inputset(s) == U
+    @test noiseset(s) == W
+    @test isaffine(s) && isnoisy(s) && !ispolynomial(s)
+    @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
 end
 
 @testset "Noisy Continuous constrained control blackbox system" begin
@@ -287,11 +340,13 @@ end
     U =  BallInf(zeros(m), 1.0)
     W =  BallInf(zeros(l), 1.0)
     s = NoisyConstrainedBlackBoxControlContinuousSystem(f, n, m, l, X, U, W)
-    @test statedim(s) == n
     @test s.f == f
-    @test stateset(s) == X
-    @test noisedim(s) == l == dim(W)
-    @test noiseset(s) == W
+    @test statedim(s) == n
     @test inputdim(s) == dim(U)
-    @test !islinear(s) && !isaffine(s)  && !ispolynomial(s) && isnoisy(s)
+    @test noisedim(s) == l == dim(W)
+    @test stateset(s) == X
+    @test inputset(s) == U
+    @test noiseset(s) == W
+    @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+    @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
 end

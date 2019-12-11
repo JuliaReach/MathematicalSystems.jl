@@ -1,6 +1,11 @@
 import MultivariatePolynomials
 import MultivariatePolynomials: AbstractPolynomialLike
 
+# check if a matrix is square
+@inline function issquare(A::AbstractMatrix)
+    return size(A, 1) == size(A, 2)
+end
+
 for (Z, AZ) in ((:ContinuousIdentitySystem, :AbstractContinuousSystem),
                 (:DiscreteIdentitySystem, :AbstractDiscreteSystem))
     @eval begin
@@ -99,8 +104,12 @@ for (Z, AZ) in ((:LinearContinuousSystem, :AbstractContinuousSystem),
     @eval begin
         struct $(Z){T, MT <: AbstractMatrix{T}} <: $(AZ)
             A::MT
+            function $(Z)(A::MT) where {T, MT <: AbstractMatrix{T}}
+                @assert issquare(A)
+                return new{T, MT}(A)
+            end
         end
-        statedim(s::$Z) = checksquare(s.A)
+        statedim(s::$Z) = size(s.A, 1)
         inputdim(::$Z) = 0
         islinear(::$Z) = true
         isaffine(::$Z) = true
@@ -202,7 +211,7 @@ for (Z, AZ) in ((:LinearControlContinuousSystem, :AbstractContinuousSystem),
                 return new{T, MTA, MTB}(A, B)
             end
         end
-        statedim(s::$Z) = checksquare(s.A)
+        statedim(s::$Z) = size(s.A, 1)
         inputdim(s::$Z) = size(s.B, 2)
         islinear(::$Z) = true
         isaffine(::$Z) = true
@@ -249,8 +258,12 @@ for (Z, AZ) in ((:ConstrainedLinearContinuousSystem, :AbstractContinuousSystem),
         struct $(Z){T, MT <: AbstractMatrix{T}, ST} <: $(AZ)
             A::MT
             X::ST
+            function $(Z)(A::MT, X::ST) where {T, MT <: AbstractMatrix{T}, ST}
+                @assert issquare(A)
+                return new{T, MT, ST}(A, X)
+            end
         end
-        statedim(s::$Z) = checksquare(s.A)
+        statedim(s::$Z) = size(s.A, 1)
         stateset(s::$Z) = s.X
         inputdim(::$Z) = 0
         islinear(::$Z) = true
@@ -426,7 +439,7 @@ for (Z, AZ) in ((:ConstrainedLinearControlContinuousSystem, :AbstractContinuousS
                 return new{T, MTA, MTB, ST, UT}(A, B, X, U)
             end
         end
-        statedim(s::$Z) = checksquare(s.A)
+        statedim(s::$Z) = size(s.A, 1)
         stateset(s::$Z) = s.X
         inputdim(s::$Z) = size(s.B, 2)
         inputset(s::$Z) = s.U

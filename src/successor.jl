@@ -6,8 +6,21 @@
 @inline _in_inputset(system, u) = u ∈ inputset(system)
 @inline _in_noiseset(system, w) = w ∈ noiseset(system)
 
-@inline _argument_error(sym) = throw(ArgumentError("$sym has wrong dimensions"))
-@inline _argument_error(sym, set) = throw(ArgumentError("$sym is not contained in $set"))
+@inline function _argument_error(sym, set=:none)
+    if sym == :x
+        vector = "state"
+    elseif sym == :u
+        vector = "input"
+    elseif sym == :w
+        vector = "noise"
+    end
+    if set == :none
+        throw(ArgumentError("the $vector vector has the wrong dimensions"))
+    else
+        throw(ArgumentError( "the $vector vector is not contained in the $(vector)set"))
+    end
+end
+
 
 
 

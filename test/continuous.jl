@@ -327,7 +327,7 @@ end
     @test stateset(s) == X
     @test inputset(s) == U
     @test noiseset(s) == W
-    @test isaffine(s) && isnoisy(s) && !ispolynomial(s)
+    @test isaffine(s) && !islinear(s) && !ispolynomial(s)
     @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
 end
 

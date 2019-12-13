@@ -61,31 +61,28 @@ macro map(ex, args)
         throw(ArgumentError("unable to match the given expression to a known map type"))
     end
 end
-
 macro map(ex)
-    quote
-        local x = $(ex.args)[1]
-        local rhs = $(ex.args)[2].args[2]
+    local x = (ex.args)[1]
+    local rhs = (ex.args)[2].args[2]
 
-        # x -> I(n)*x
-        # (this rule is more specific than x -> Ax so it should come before it)
-        MT = IdentityMap
-        pat = Meta.parse("I(_n) * $x")
-        matched = matchex(pat, rhs)
-        matched != nothing && return MT(eval(matched[:_n]))
+    # x -> I(n)*x
+    # (this rule is more specific than x -> Ax so it should come before it)
+    MT = IdentityMap
+    pat = Meta.parse("I(_n) * $x")
+    matched = matchex(pat, rhs)
+    matched != nothing && return esc(:(IdentityMap($(matched[:_n]))))
 
-        # x -> Ax 
-        MT = LinearMap
-        local pat = Meta.parse("_A * $x")
-        local matched = matchex(pat, rhs)
-        matched != nothing && return MT(eval(matched[:_A]))
+    # x -> Ax
+    MT = LinearMap
+    local pat = Meta.parse("_A * $x")
+    local matched = matchex(pat, rhs)
+    matched != nothing && return esc(:(LinearMap($(matched[:_A]))))
 
-        # x -> Ax + b
-        MT = AffineMap
-        pat = Meta.parse("_A * $x + _b")
-        matched = matchex(pat, rhs)
-        matched != nothing && return MT(eval(matched[:_A]), eval(matched[:_b]))
-
-        throw(ArgumentError("unable to match the given expression to a known map type"))
-    end
+    # x -> Ax + b
+    MT = AffineMap
+    pat = Meta.parse("_A * $x + _b")
+    matched = matchex(pat, rhs)
+    matched != nothing &&
+        return esc(:(LinearMap($(matched[:_A]),$(matched[:_b]))))
+    throw(ArgumentError("unable to match the given expression to a known map type"))
 end

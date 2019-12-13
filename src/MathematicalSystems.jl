@@ -23,17 +23,19 @@ export AbstractSystem,
 
 # methods
 export statedim,
-       stateset,
        inputdim,
-       inputset,
        noisedim,
+       stateset,
+       inputset,
        noiseset
 
 # traits
 export islinear,
        isaffine,
        ispolynomial,
-       isnoisy
+       isnoisy,
+       iscontrolled,
+       isconstrained
 
 #====================================
 Concrete Types for Continuous Systems

@@ -14,10 +14,13 @@ for (Z, AZ) in ((:ContinuousIdentitySystem, :AbstractContinuousSystem),
         end
         statedim(s::$Z) = s.statedim
         inputdim(s::$Z) = 0
+        noisedim(s::$Z) = 0
         islinear(::$Z) = true
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
         isnoisy(::$Z) = false
+        iscontrolled(::$Z) = false
+        isconstrained(::$Z) = false
     end
 end
 
@@ -58,12 +61,15 @@ for (Z, AZ) in ((:ConstrainedContinuousIdentitySystem, :AbstractContinuousSystem
             X::ST
         end
         statedim(s::$Z) = s.statedim
-        stateset(s::$Z) = s.X
         inputdim(::$Z) = 0
+        noisedim(::$Z) = 0
+        stateset(s::$Z) = s.X
         islinear(::$Z) = true
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
         isnoisy(::$Z) = false
+        iscontrolled(::$Z) = false
+        isconstrained(::$Z) = true
     end
 end
 
@@ -111,10 +117,13 @@ for (Z, AZ) in ((:LinearContinuousSystem, :AbstractContinuousSystem),
         end
         statedim(s::$Z) = size(s.A, 1)
         inputdim(::$Z) = 0
+        noisedim(::$Z) = 0
         islinear(::$Z) = true
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
         isnoisy(::$Z) = false
+        iscontrolled(::$Z) = false
+        isconstrained(::$Z) = false
     end
 end
 
@@ -161,10 +170,13 @@ for (Z, AZ) in ((:AffineContinuousSystem, :AbstractContinuousSystem),
         end
         statedim(s::$Z) = length(s.b)
         inputdim(::$Z) = 0
+        noisedim(::$Z) = 0
         islinear(::$Z) = false
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
         isnoisy(::$Z) = false
+        iscontrolled(::$Z) = false
+        isconstrained(::$Z) = false
     end
 end
 
@@ -213,10 +225,13 @@ for (Z, AZ) in ((:LinearControlContinuousSystem, :AbstractContinuousSystem),
         end
         statedim(s::$Z) = size(s.A, 1)
         inputdim(s::$Z) = size(s.B, 2)
+        noisedim(::$Z) = 0
         islinear(::$Z) = true
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
         isnoisy(::$Z) = false
+        iscontrolled(::$Z) = true
+        isconstrained(::$Z) = false
     end
 end
 
@@ -264,12 +279,15 @@ for (Z, AZ) in ((:ConstrainedLinearContinuousSystem, :AbstractContinuousSystem),
             end
         end
         statedim(s::$Z) = size(s.A, 1)
-        stateset(s::$Z) = s.X
         inputdim(::$Z) = 0
+        noisedim(::$Z) = 0
+        stateset(s::$Z) = s.X
         islinear(::$Z) = true
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
         isnoisy(::$Z) = false
+        iscontrolled(::$Z) = false
+        isconstrained(::$Z) = true
     end
 end
 
@@ -318,12 +336,15 @@ for (Z, AZ) in ((:ConstrainedAffineContinuousSystem, :AbstractContinuousSystem),
             end
         end
         statedim(s::$Z) = length(s.b)
-        stateset(s::$Z) = s.X
         inputdim(::$Z) = 0
+        noisedim(::$Z) = 0
+        stateset(s::$Z) = s.X
         islinear(::$Z) = false
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
         isnoisy(::$Z) = false
+        iscontrolled(::$Z) = false
+        isconstrained(::$Z) = true
     end
 end
 
@@ -376,13 +397,16 @@ for (Z, AZ) in ((:ConstrainedAffineControlContinuousSystem, :AbstractContinuousS
             end
         end
         statedim(s::$Z) = length(s.c)
-        stateset(s::$Z) = s.X
         inputdim(s::$Z) = size(s.B, 2)
+        noisedim(::$Z) = 0
+        stateset(s::$Z) = s.X
         inputset(s::$Z) = s.U
         islinear(::$Z) = false
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
         isnoisy(::$Z) = false
+        iscontrolled(::$Z) = true
+        isconstrained(::$Z) = true
     end
 end
 
@@ -440,13 +464,16 @@ for (Z, AZ) in ((:ConstrainedLinearControlContinuousSystem, :AbstractContinuousS
             end
         end
         statedim(s::$Z) = size(s.A, 1)
-        stateset(s::$Z) = s.X
         inputdim(s::$Z) = size(s.B, 2)
+        noisedim(::$Z) = 0
+        stateset(s::$Z) = s.X
         inputset(s::$Z) = s.U
         islinear(::$Z) = true
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
         isnoisy(::$Z) = false
+        iscontrolled(::$Z) = true
+        isconstrained(::$Z) = true
     end
 end
 
@@ -498,10 +525,13 @@ for (Z, AZ) in ((:LinearAlgebraicContinuousSystem, :AbstractContinuousSystem),
         end
         statedim(s::$Z) = size(s.A, 1)
         inputdim(::$Z) = 0
+        noisedim(::$Z) = 0
         islinear(::$Z) = true
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
         isnoisy(::$Z) = false
+        iscontrolled(::$Z) = false
+        isconstrained(::$Z) = false
     end
 end
 
@@ -550,12 +580,15 @@ for (Z, AZ) in ((:ConstrainedLinearAlgebraicContinuousSystem, :AbstractContinuou
             end
         end
         statedim(s::$Z) = size(s.A, 1)
-        stateset(s::$Z) = s.X
         inputdim(::$Z) = 0
+        noisedim(::$Z) = 0
+        stateset(s::$Z) = s.X
         islinear(::$Z) = true
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
         isnoisy(::$Z) = false
+        iscontrolled(::$Z) = false
+        isconstrained(::$Z) = true
     end
 end
 
@@ -606,10 +639,13 @@ for (Z, AZ) in ((:PolynomialContinuousSystem, :AbstractContinuousSystem),
         end
         statedim(s::$Z) = s.statedim
         inputdim(::$Z) = 0
+        noisedim(::$Z) = 0
         islinear(::$Z) = false
         isaffine(::$Z) = false
         ispolynomial(::$Z) = true
         isnoisy(::$Z) = false
+        iscontrolled(::$Z) = false
+        isconstrained(::$Z) = false
 
         MultivariatePolynomials.variables(s::$Z) = MultivariatePolynomials.variables(s.p)
         MultivariatePolynomials.nvariables(s::$Z) = s.statedim
@@ -664,12 +700,15 @@ for (Z, AZ) in ((:ConstrainedPolynomialContinuousSystem, :AbstractContinuousSyst
             end
         end
         statedim(s::$Z) = s.statedim
-        stateset(s::$Z) = s.X
         inputdim(::$Z) = 0
+        noisedim(::$Z) = 0
+        stateset(s::$Z) = s.X
         islinear(::$Z) = false
         isaffine(::$Z) = false
         ispolynomial(::$Z) = true
         isnoisy(::$Z) = false
+        iscontrolled(::$Z) = false
+        isconstrained(::$Z) = true
 
         MultivariatePolynomials.variables(s::$Z) = MultivariatePolynomials.variables(s.p)
         MultivariatePolynomials.nvariables(s::$Z) = s.statedim
@@ -722,10 +761,13 @@ for (Z, AZ) in ((:BlackBoxContinuousSystem, :AbstractContinuousSystem),
         end
         statedim(s::$Z) = s.statedim
         inputdim(s::$Z) = 0
+        noisedim(::$Z) = 0
         islinear(::$Z) = false
         isaffine(::$Z) = false
         ispolynomial(::$Z) = false
         isnoisy(::$Z) = false
+        iscontrolled(::$Z) = false
+        isconstrained(::$Z) = false
     end
 end
 
@@ -770,12 +812,15 @@ for (Z, AZ) in ((:ConstrainedBlackBoxContinuousSystem, :AbstractContinuousSystem
             X::ST
         end
         statedim(s::$Z) = s.statedim
-        stateset(s::$Z) = s.X
         inputdim(s::$Z) = 0
+        noisedim(::$Z) = 0
+        stateset(s::$Z) = s.X
         islinear(::$Z) = false
         isaffine(::$Z) = false
         ispolynomial(::$Z) = false
         isnoisy(::$Z) = false
+        iscontrolled(::$Z) = false
+        isconstrained(::$Z) = true
     end
 end
 
@@ -826,13 +871,16 @@ for (Z, AZ) in ((:ConstrainedBlackBoxControlContinuousSystem, :AbstractContinuou
             U::UT
         end
         statedim(s::$Z) = s.statedim
-        stateset(s::$Z) = s.X
         inputdim(s::$Z) = s.inputdim
+        noisedim(::$Z) = 0
+        stateset(s::$Z) = s.X
         inputset(s::$Z) = s.U
         islinear(::$Z) = false
         isaffine(::$Z) = false
         ispolynomial(::$Z) = false
         isnoisy(::$Z) = false
+        iscontrolled(::$Z) = true
+        isconstrained(::$Z) = true
     end
 end
 
@@ -890,14 +938,16 @@ for (Z, AZ) in ((:NoisyConstrainedLinearContinuousSystem, :AbstractContinuousSys
             end
         end
         statedim(s::$Z) = size(s.A,1)
-        stateset(s::$Z) = s.X
-        noisedim(s::$Z) = size(s.D, 2)
-        noiseset(s::$Z) = s.W
         inputdim(::$Z) = 0
+        noisedim(s::$Z) = size(s.D, 2)
+        stateset(s::$Z) = s.X
+        noiseset(s::$Z) = s.W
         islinear(::$Z) = true
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
         isnoisy(::$Z) = true
+        iscontrolled(::$Z) = false
+        isconstrained(::$Z) = true
     end
 end
 
@@ -953,15 +1003,17 @@ for (Z, AZ) in ((:NoisyConstrainedLinearControlContinuousSystem, :AbstractContin
             end
         end
         statedim(s::$Z) = size(s.A, 1)
-        stateset(s::$Z) = s.X
         inputdim(s::$Z) = size(s.B, 2)
-        inputset(s::$Z) = s.U
         noisedim(s::$Z) = size(s.D, 2)
+        stateset(s::$Z) = s.X
+        inputset(s::$Z) = s.U
         noiseset(s::$Z) = s.W
         islinear(::$Z) = true
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
         isnoisy(::$Z) = true
+        iscontrolled(::$Z) = true
+        isconstrained(::$Z) = true
     end
 end
 
@@ -1025,6 +1077,8 @@ for (Z, AZ) in ((:NoisyConstrainedAffineControlContinuousSystem, :AbstractContin
         isaffine(::$Z) = true
         ispolynomial(::$Z) = false
         isnoisy(::$Z) = true
+        iscontrolled(::$Z) = true
+        isconstrained(::$Z) = true
     end
 end
 
@@ -1078,15 +1132,17 @@ for (Z, AZ) in ((:NoisyConstrainedBlackBoxControlContinuousSystem, :AbstractCont
             W::WT
         end
         statedim(s::$Z) = s.statedim
-        stateset(s::$Z) = s.X
         inputdim(s::$Z) = s.inputdim
-        inputset(s::$Z) = s.U
         noisedim(s::$Z) = s.noisedim
+        stateset(s::$Z) = s.X
+        inputset(s::$Z) = s.U
         noiseset(s::$Z) = s.W
         islinear(::$Z) = false
         isaffine(::$Z) = false
         ispolynomial(::$Z) = false
         isnoisy(::$Z) = true
+        iscontrolled(::$Z) = true
+        isconstrained(::$Z) = true
     end
 end
 

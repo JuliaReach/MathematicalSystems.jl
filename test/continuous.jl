@@ -95,17 +95,6 @@ end
     @test !isnoisy(s) && iscontrolled(s) && isconstrained(s)
 end
 
-@testset "Continuous constrained affine system" begin
-    X = Line([1., -1], 0.) # line x = y
-    s = ConstrainedAffineContinuousSystem(zeros(2, 2), zeros(2), X)
-    @test statedim(s) == 2
-    @test inputdim(s) == 0
-    @test noisedim(s) == 0
-    @test stateset(s) == X
-    @test !islinear(s) && isaffine(s) && !ispolynomial(s)
-    @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
-end
-
 @testset "Continuous constrained linear control system" begin
     A = [1. 1; 1 -1]
     B = Matrix([0.5 1.5]')
@@ -327,7 +316,7 @@ end
     @test stateset(s) == X
     @test inputset(s) == U
     @test noiseset(s) == W
-    @test isaffine(s) && isnoisy(s) && !ispolynomial(s)
+    @test isaffine(s) && !islinear(s) && !ispolynomial(s)
     @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
 end
 

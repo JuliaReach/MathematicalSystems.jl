@@ -233,7 +233,7 @@ function successor(system::ConstrainedAffineControlDiscreteSystem,
     !_is_conformable_state(system, x) && _argument_error(:x)
     !_is_conformable_input(system, u) && _argument_error(:u)
     if check_constraints
-        !_in_stateset(system, x) &&_argument_error(:x,:X)
+        !_in_stateset(system, x) && _argument_error(:x,:X)
         !_in_inputset(system, u) && _argument_error(:u,:U)
     end
     return system.A * x + system.B * u + system.c

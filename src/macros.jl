@@ -71,20 +71,21 @@ macro map(ex)
     pat = Meta.parse("I(_n) * $x")
     matched = matchex(pat, rhs)
     matched != nothing &&
-        return Expr(:call,:($MT),esc(:($(matched[:_n]))))
+        return Expr(:call, :($MT), esc(:($(matched[:_n]))))
 
     # x -> Ax
     MT = LinearMap
     pat = Meta.parse("_A * $x")
     matched = matchex(pat, rhs)
     matched != nothing &&
-        return Expr(:call,:($MT),esc(:($(matched[:_A]))))
+        return Expr(:call, :($MT), esc(:($(matched[:_A]))))
 
     # x -> Ax + b
     MT = AffineMap
     pat = Meta.parse("_A * $x + _b")
     matched = matchex(pat, rhs)
     matched != nothing &&
-        return Expr(:call,:($MT), esc(:($(matched[:_A]))), esc(:($(matched[:_b]))))
+        return Expr(:call, :($MT), esc(:($(matched[:_A]))), esc(:($(matched[:_b]))))
+
     throw(ArgumentError("unable to match the given expression to a known map type"))
 end

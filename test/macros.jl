@@ -7,5 +7,5 @@
     linearmap = @map x -> A*x
     @test linearmap == MathematicalSystems.LinearMap(A)
     affinemap = @map x -> A*x + b
-    @test affinemap == MathematicalSystems.AffineMap(A,b)
+    @test affinemap == MathematicalSystems.AffineMap(A, b)
 end

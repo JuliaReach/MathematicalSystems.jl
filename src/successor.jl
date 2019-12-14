@@ -229,7 +229,7 @@ Return the successor state of a `ConstrainedAffineControlDiscreteSystem`.
 The result of applying the system to `x`, with input `u`.
 """
 function successor(system::ConstrainedAffineControlDiscreteSystem,
-    x::AbstractVector, u::AbstractVector; check_constraints::Bool=true)
+                   x::AbstractVector, u::AbstractVector; check_constraints::Bool=true)
     !_is_conformable_state(system, x) && _argument_error(:x)
     !_is_conformable_input(system, u) && _argument_error(:u)
     if check_constraints

@@ -300,7 +300,7 @@ Return the successor state of a `ConstrainedBlackBoxControlDiscreteSystem`.
 
 ### Output
 
-The result of applying the system to `x`.
+The result of applying the system to `x`, with input `u`.
 """
 function successor(system::ConstrainedBlackBoxControlDiscreteSystem, x::AbstractVector,
                    u::AbstractVector; check_constraints::Bool=true)

@@ -330,7 +330,7 @@ Return the successor state of a `NoisyConstrainedLinearDiscreteSystem`.
 
 ### Output
 
-The result of applying the system to `x`.
+The result of applying the system to `x`, with noise `w`.
 """
 function successor(system::NoisyConstrainedLinearDiscreteSystem, x::AbstractVector,
                    w::AbstractVector; check_constraints::Bool=true)

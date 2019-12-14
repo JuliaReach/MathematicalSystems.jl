@@ -361,7 +361,7 @@ Return the successor state of a `NoisyConstrainedLinearControlDiscreteSystem`.
 
 ### Output
 
-The result of applying the system to `x`, with input `u`.
+The result of applying the system to `x`, with input `u` and noise `w`.
 """
 function successor(system::NoisyConstrainedLinearControlDiscreteSystem,
                    x::AbstractVector, u::AbstractVector, w::AbstractVector; check_constraints::Bool=true)
@@ -369,9 +369,9 @@ function successor(system::NoisyConstrainedLinearControlDiscreteSystem,
     !_is_conformable_input(system, u) && _argument_error(:u)
     !_is_conformable_noise(system, w) && _argument_error(:w)
     if check_constraints
-        !_in_stateset(system, x) &&_argument_error(:x,:X)
+        !_in_stateset(system, x) && _argument_error(:x,:X)
         !_in_inputset(system, u) && _argument_error(:u,:U)
-        !_in_noiseset(system, w) &&_argument_error(:w,:W)
+        !_in_noiseset(system, w) && _argument_error(:w,:W)
     end
     return system.A * x + system.B * u + system.D * w
 end
@@ -394,7 +394,7 @@ Return the successor state of a `NoisyConstrainedAffineControlDiscreteSystem`.
 
 ### Output
 
-The result of applying the system to `x`, with input `u`.
+The result of applying the system to `x`, with input `u` and noise `w`.
 """
 function successor(system::NoisyConstrainedAffineControlDiscreteSystem,
                    x::AbstractVector, u::AbstractVector, w::AbstractVector;
@@ -427,7 +427,7 @@ Return the successor state of a `NoisyConstrainedBlackBoxControlDiscreteSystem`.
 
 ### Output
 
-The result of applying the system to `x`.
+The result of applying the system to `x`, with input `u` and noise `w`.
 """
 function successor(system::NoisyConstrainedBlackBoxControlDiscreteSystem,
                    x::AbstractVector, u::AbstractVector, w::AbstractVector; check_constraints::Bool=true)

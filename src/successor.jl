@@ -338,7 +338,7 @@ function successor(system::NoisyConstrainedLinearDiscreteSystem, x::AbstractVect
    !_is_conformable_noise(system, w) && _argument_error(:w)
     if check_constraints
         !_in_stateset(system, x) && _argument_error(:x,:X)
-        !_in_noiseset(system, w) &&_argument_error(:w,:W)
+        !_in_noiseset(system, w) && _argument_error(:w,:W)
     end
     return system.A * x + system.D * w
 end

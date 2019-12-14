@@ -62,8 +62,8 @@ macro map(ex, args)
     end
 end
 macro map(ex)
-    local x = (ex.args)[1]
-    local rhs = (ex.args)[2].args[2]
+    x = (ex.args)[1]
+    rhs = (ex.args)[2].args[2]
 
     # x -> I(n)*x
     # (this rule is more specific than x -> Ax so it should come before it)
@@ -75,8 +75,8 @@ macro map(ex)
 
     # x -> Ax
     MT = LinearMap
-    local pat = Meta.parse("_A * $x")
-    local matched = matchex(pat, rhs)
+    pat = Meta.parse("_A * $x")
+    matched = matchex(pat, rhs)
     matched != nothing &&
         return Expr(:call,:($MT),esc(:($(matched[:_A]))))
 

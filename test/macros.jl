@@ -1,5 +1,11 @@
-@testset "@map macro" begin
+@testset "@map macro(ex)" begin
+    n = 3
     A = rand(2, 2);
-    map = @map x -> A*x
-    @test MathematicalSystems.LinearMap(A) == map
+    b = rand(2)
+    identitymap = @map x -> I(n)*x
+    @test identitymap == MathematicalSystems.IdentityMap(n)
+    linearmap = @map x -> A*x
+    @test linearmap == MathematicalSystems.LinearMap(A)
+    affinemap = @map x -> A*x + b
+    @test affinemap == MathematicalSystems.AffineMap(A,b)
 end

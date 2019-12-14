@@ -17,7 +17,7 @@
     if set == :none
         throw(ArgumentError("the $vector vector has the wrong dimensions"))
     else
-        throw(ArgumentError( "the $vector vector is not contained in the $(vector)set"))
+        throw(ArgumentError("the $vector vector is not contained in the $(vector) set"))
     end
 end
 

@@ -279,7 +279,7 @@ function successor(system::ConstrainedBlackBoxDiscreteSystem, x::AbstractVector;
                    check_constraints::Bool=true)
     !_is_conformable_state(system, x) && _argument_error(:x)
     if check_constraints
-        !_in_stateset(system, x) &&_argument_error(:x,:X)
+        !_in_stateset(system, x) && _argument_error(:x,:X)
     end
     return system.f(x)
 end

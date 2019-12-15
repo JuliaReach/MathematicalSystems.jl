@@ -1,5 +1,4 @@
 using LinearAlgebra: inv, rank
-using MathematicalSystems
 
 import Base.==
 import Base.≈

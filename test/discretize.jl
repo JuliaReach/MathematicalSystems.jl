@@ -2,28 +2,18 @@ using LazySets
 using MathematicalSystems
 using Test
 
-_corresponding_type2(::LinearDiscreteSystem) =  LinearContinuousSystem
-_corresponding_type2(::Type{LinearDiscreteSystem}) =  LinearContinuousSystem
-_corresponding_type2(::LinearContinuousSystem) = LinearDiscreteSystem
-_corresponding_type2(::Type{AbstractContinuousSystem}) =  LinearDiscreteSystem
-_corresponding_type2(LinearDiscreteSystem)
-_corresponding_type2(LinearDiscreteSystem(rand(2,2)))
-_corresponding_type2(LinearContinuousSystem)
-_corresponding_type2(LinearContinuousSystem(rand(2,2)))
-
-
 @testset "Convert Continuous to Discrete Type" begin
     DTYPES = subtypes(AbstractDiscreteSystem)
     for dtype in DTYPES
         ctype =  eval.(Meta.parse.(replace(string(dtype), "Discrete" => "Continuous")))
-        @test _corresponding_type(AbstractContinuousSystem, dtype) == ctype
+        @test _corresponding_type(dtype) == ctype
         @test _corresponding_type(AbstractContinuousSystem, fieldnames(dtype)) == ctype
     end
 
     CTYPES = subtypes(AbstractContinuousSystem)
     for ctype in CTYPES
         dtype =  eval.(Meta.parse.(replace(string(ctype), "Continuous" => "Discrete")))
-        @test _corresponding_type(AbstractDiscreteSystem, ctype) == dtype
+        @test _corresponding_type(ctype) == dtype
         @test _corresponding_type(AbstractDiscreteSystem, fieldnames(ctype)) == dtype
     end
 end

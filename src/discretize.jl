@@ -32,13 +32,18 @@ function ≈(sys1::AbstractSystem, sys2::AbstractSystem)
 end
 
 function _corresponding_type(sys::AbstractSystem)
-    sys_type = (typeof(sys))
+    sys_type = typeof(sys)
     return _corresponding_type(sys_type)
 end
 
 function _corresponding_type(sys_type::Type{<:AbstractSystem})
     fields = fieldnames(sys_type)
-    return _corresponding_type(supertype(sys_type), fields)
+    if supertype(sys_type) == AbstractDiscreteSystem
+        abstract_type = AbstractContinuousSystem
+    else
+        abstract_type = AbstractDiscreteSystem
+    end
+    return _corresponding_type(abstract_type, fields)
 end
 
 function _corresponding_type(abstract_type, fields::Tuple)
@@ -66,16 +71,17 @@ function discretize(sys::AbstractContinuousSystem, ΔT::Real; algorithm=:default
           algorithm = :euler
         end
     end
-    disc_nonset_values = discretize(cont_nonset_values...,ΔT; algorithm=algorithm)
+    disc_nonset_values = _discretize_arrays(cont_nonset_values...,ΔT;
+                                            algorithm=algorithm)
     set_values = [getfield(sys, f) for f in filter(!noset, fields)]
-    discrete_type = _corresponding_type(AbstractDiscreteSystem, sys)
+    discrete_type = _corresponding_type(sys)
     return discrete_type(disc_nonset_values..., set_values...)
 end
 
-function discretize(A::AbstractMatrix,
-                    B::AbstractMatrix,
-                    c::AbstractVector,
-                    D::AbstractMatrix, ΔT::Real; algorithm=:exact)
+function _discretize_arrays(A::AbstractMatrix,
+                            B::AbstractMatrix,
+                            c::AbstractVector,
+                            D::AbstractMatrix, ΔT::Real; algorithm=:exact)
     if algorithm == :exact
         A_d = exp(A*ΔT)
         B_d = inv(A)*(A_d - I)*B
@@ -92,44 +98,44 @@ function discretize(A::AbstractMatrix,
     return [A_d, B_d, c_d, D_d]
 end
 
-function discretize(A::AbstractMatrix, ΔT::Real; algorithm=:exact)
+function _discretize_arrays(A::AbstractMatrix, ΔT::Real; algorithm=:exact)
     n = size(A,1)
-    A_d, _, _, _ = discretize(A, spzeros(n,n), spzeros(n), spzeros(n,n), ΔT;
+    A_d, _, _, _ = _discretize_arrays(A, spzeros(n,n), spzeros(n), spzeros(n,n), ΔT;
                               algorithm=algorithm)
     return [A_d]
 end
 
 # works for (:A,:D) and (:A, :B)
-function discretize(A::AbstractMatrix,
-                    B::AbstractMatrix, ΔT::Real; algorithm=:exact)
+function _discretize_arrays(A::AbstractMatrix,
+                            B::AbstractMatrix, ΔT::Real; algorithm=:exact)
     n = size(A,1)
-    A_d, B_d, c_d, D_d = discretize(A, B, spzeros(n), spzeros(n,n), ΔT;
+    A_d, B_d, c_d, D_d = _discretize_arrays(A, B, spzeros(n), spzeros(n,n), ΔT;
                                     algorithm=algorithm)
     return [A_d, B_d]
 end
 
-function discretize(A::AbstractMatrix,
+function _discretize_arrays(A::AbstractMatrix,
                     c::AbstractVector, ΔT::Real; algorithm=:exact)
     n = size(A,1)
-    A_d, B_d, c_d, D_d = discretize(A, spzeros(n,n), c, spzeros(n,n), ΔT;
+    A_d, B_d, c_d, D_d = _discretize_arrays(A, spzeros(n,n), c, spzeros(n,n), ΔT;
                                     algorithm=algorithm)
     return [A_d, c_d]
 end
 
-function discretize(A::AbstractMatrix,
-                    B::AbstractMatrix,
-                    c::AbstractVector, ΔT::Real; algorithm=:exact)
+function _discretize_arrays(A::AbstractMatrix,
+                            B::AbstractMatrix,
+                            c::AbstractVector, ΔT::Real; algorithm=:exact)
     n = size(A,1)
-    A_d, B_d, c_d, D_d = discretize(A, B, c, spzeros(n,n), ΔT;
+    A_d, B_d, c_d, D_d = _discretize_arrays(A, B, c, spzeros(n,n), ΔT;
                                     algorithm=algorithm)
     return [A_d, B_d, c_d]
 end
 
-function discretize(A::AbstractMatrix,
-                    B::AbstractMatrix,
-                    D::AbstractMatrix, ΔT::Real; algorithm=:exact)
+function _discretize_arrays(A::AbstractMatrix,
+                            B::AbstractMatrix,
+                            D::AbstractMatrix, ΔT::Real; algorithm=:exact)
     n = size(A,1)
-    A_d, B_d, c_d, D_d = discretize(A, B, spzeros(n), D, ΔT;
+    A_d, B_d, c_d, D_d = _discretize_arrays(A, B, spzeros(n), D, ΔT;
                                     algorithm=algorithm)
     return [A_d, B_d, D_d]
 end

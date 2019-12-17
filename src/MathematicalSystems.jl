@@ -15,6 +15,11 @@ export IdentityMultiple, I
 Abstract Types for Systems
 ==========================#
 include("abstract.jl")
+#=======================
+Equality operator
+=======================#
+include("utilities.jl")
+
 
 # types
 export AbstractSystem,

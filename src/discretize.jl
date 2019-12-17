@@ -1,7 +1,11 @@
 using LinearAlgebra: inv, rank
+using SparseArrays: spzeros
+using InteractiveUtils: subtypes
 
 import Base.==
 import Base.≈
+
+export _corresponding_type, discretize
 
 function ==(sys1::AbstractSystem, sys2::AbstractSystem)
     if typeof(sys1)!== typeof(sys2)
@@ -27,16 +31,14 @@ function ≈(sys1::AbstractSystem, sys2::AbstractSystem)
     return true
 end
 
-# get _corresponding_type with system as input
-function _corresponding_type(abstract_type, sys::AbstractSystem)
-    fields = fieldnames(typeof(sys))
-    return _corresponding_type(abstract_type, fields)
+function _corresponding_type(sys::AbstractSystem)
+    sys_type = (typeof(sys))
+    return _corresponding_type(sys_type)
 end
 
-# get _corresponding_type with type of system as input
-function _corresponding_type(abstract_type, sys_type::typeof(AbstractSystem))
+function _corresponding_type(sys_type::Type{<:AbstractSystem})
     fields = fieldnames(sys_type)
-    return _corresponding_type(abstract_type, fields)
+    return _corresponding_type(supertype(sys_type), fields)
 end
 
 function _corresponding_type(abstract_type, fields::Tuple)
@@ -51,16 +53,20 @@ function _corresponding_type(abstract_type, fields::Tuple)
     return TYPES[idx][1]
 end
 
-function discretize(sys::AbstractContinuousSystem, ΔT::Real; algo=:exact)
+function discretize(sys::AbstractContinuousSystem, ΔT::Real; algorithm=:default)
     noset(x) = !(x ∈ [:X,:U,:W])
     fields = collect(fieldnames(typeof(sys)))
     cont_nonset_values = [getfield(sys, f) for f in filter(noset, fields)]
-    if algo == :exact && !(rank(sys.A) == size(sys.A,1))# check if A is invertible
-        # if A is not invertible, use approximative disretization
-        @info("Euler Approximation")
-        algo = :euler
+    if algorithm == :default
+        if rank(sys.A) == size(sys.A, 1)
+          # A is invertible, use exact discretizaion
+          algorithm = :exact
+        else
+          # A is not invertible, use approximative discretizaion
+          algorithm = :euler
+        end
     end
-    disc_nonset_values = discretize(cont_nonset_values...,ΔT; algo=algo)
+    disc_nonset_values = discretize(cont_nonset_values...,ΔT; algorithm=algorithm)
     set_values = [getfield(sys, f) for f in filter(!noset, fields)]
     discrete_type = _corresponding_type(AbstractDiscreteSystem, sys)
     return discrete_type(disc_nonset_values..., set_values...)
@@ -69,54 +75,61 @@ end
 function discretize(A::AbstractMatrix,
                     B::AbstractMatrix,
                     c::AbstractVector,
-                    D::AbstractMatrix, ΔT::Real; algo=:exact)
-    if algo == :exact
+                    D::AbstractMatrix, ΔT::Real; algorithm=:exact)
+    if algorithm == :exact
         A_d = exp(A*ΔT)
         B_d = inv(A)*(A_d - I)*B
         c_d = inv(A)*(A_d - I)*c
         D_d = inv(A)*(A_d - I)*D
-    elseif algo == :euler
+    elseif algorithm == :euler
         A_d = (I + ΔT*A)
         B_d = ΔT*B
         c_d = ΔT*c
         D_d = ΔT*D
+    else
+        error("discretization algorithm $algorithm is not known")
     end
     return [A_d, B_d, c_d, D_d]
 end
 
-function discretize(A::AbstractMatrix, ΔT::Real; algo=:exact)
+function discretize(A::AbstractMatrix, ΔT::Real; algorithm=:exact)
     n = size(A,1)
-    A_d, _, _, _ = discretize(A, zeros(n,n), zeros(n), zeros(n,n), ΔT; algo=algo)
+    A_d, _, _, _ = discretize(A, spzeros(n,n), spzeros(n), spzeros(n,n), ΔT;
+                              algorithm=algorithm)
     return [A_d]
 end
 
 # works for (:A,:D) and (:A, :B)
 function discretize(A::AbstractMatrix,
-                    B::AbstractMatrix, ΔT::Real; algo=:exact)
+                    B::AbstractMatrix, ΔT::Real; algorithm=:exact)
     n = size(A,1)
-    A_d, B_d, c_d, D_d = discretize(A, B, zeros(n), zeros(n,n), ΔT; algo=algo)
+    A_d, B_d, c_d, D_d = discretize(A, B, spzeros(n), spzeros(n,n), ΔT;
+                                    algorithm=algorithm)
     return [A_d, B_d]
 end
 
 function discretize(A::AbstractMatrix,
-                    c::AbstractVector, ΔT::Real; algo=:exact)
+                    c::AbstractVector, ΔT::Real; algorithm=:exact)
     n = size(A,1)
-    A_d, B_d, c_d, D_d = discretize(A, zeros(n,n), c, zeros(n,n), ΔT; algo=algo)
+    A_d, B_d, c_d, D_d = discretize(A, spzeros(n,n), c, spzeros(n,n), ΔT;
+                                    algorithm=algorithm)
     return [A_d, c_d]
 end
 
 function discretize(A::AbstractMatrix,
                     B::AbstractMatrix,
-                    c::AbstractVector, ΔT::Real; algo=:exact)
+                    c::AbstractVector, ΔT::Real; algorithm=:exact)
     n = size(A,1)
-    A_d, B_d, c_d, D_d = discretize(A, B, c, zeros(n,n), ΔT; algo=algo)
+    A_d, B_d, c_d, D_d = discretize(A, B, c, spzeros(n,n), ΔT;
+                                    algorithm=algorithm)
     return [A_d, B_d, c_d]
 end
 
 function discretize(A::AbstractMatrix,
                     B::AbstractMatrix,
-                    D::AbstractMatrix, ΔT::Real; algo=:exact)
+                    D::AbstractMatrix, ΔT::Real; algorithm=:exact)
     n = size(A,1)
-    A_d, B_d, c_d, D_d = discretize(A, B, zeros(n), D, ΔT; algo=algo)
+    A_d, B_d, c_d, D_d = discretize(A, B, spzeros(n), D, ΔT;
+                                    algorithm=algorithm)
     return [A_d, B_d, D_d]
 end

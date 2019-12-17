@@ -1,5 +1,3 @@
-export isequal, isapprox
-
 function Base.isequal(sys1::AbstractSystem, sys2::AbstractSystem)
     if !(typeof(sys1) == typeof(sys2))
         return false

@@ -58,6 +58,40 @@ function _corresponding_type(abstract_type, fields::Tuple)
     return TYPES[idx][1]
 end
 
+
+"""
+     discretize(sys::AbstractContinuousSystem, ΔT::Real; algorithm=:default)
+
+    Discretization of a `isaffine` `AbstractContinuousSystem` to a
+    `AbstractDiscreteSystem` with discretization time `ΔT` using the exact
+    discretization algorithm if possible.
+
+    ### Input
+
+    - `sys` -- a affine continuous system
+    - `ΔT` -- discretization time
+    - `algorithm` -- (optional, default=:default) discretization algorithm
+
+    ### Output
+
+    Returns a discretization of the input system `sys` with discretization time `ΔT`.
+
+    ### Algorithm
+
+    Consider a `NoisyAffineControlledContinuousSystem` with system dynamics
+    `x' = Ax + Bu + c + Du`.
+
+    If A is invertible, the exact discretization is calculated by solving the
+    integral for `t = [t, t+ΔT]` for a fixed input `u` and fixed noise realisation
+    `w` which writes as `x⁺ = Aᵈx + Bᵈu + cᵈ + Dᵈu` where
+    `Aᵈ = exp(A⋅ΔT)`, `Bᵈ = inv(A)⋅(Aᵈ - I)⋅B`, `cᵈ = inv(A)⋅(Aᵈ - I)⋅c` and
+    `Dᵈ = inv(A)⋅(Aᵈ - I)⋅D`.
+
+    If A is not invertible, a first order approximation of the exact discretiziation,
+    the euler discretization can be apllied which writes as `x⁺ = Aᵈx + Bᵈu + cᵈ + Dᵈu`
+     where  `Aᵈ = I + ΔT⋅A`, `Bᵈ = ΔT⋅B`, `cᵈ = ΔT⋅c` and
+    `Dᵈ = ΔT⋅D`.
+"""
 function discretize(sys::AbstractContinuousSystem, ΔT::Real; algorithm=:default)
     noset(x) = !(x ∈ [:X,:U,:W])
     fields = collect(fieldnames(typeof(sys)))
@@ -88,7 +122,7 @@ function _discretize_arrays(A::AbstractMatrix,
         c_d = inv(A)*(A_d - I)*c
         D_d = inv(A)*(A_d - I)*D
     elseif algorithm == :euler
-        A_d = (I + ΔT*A)
+        A_d = I + ΔT*A
         B_d = ΔT*B
         c_d = ΔT*c
         D_d = ΔT*D

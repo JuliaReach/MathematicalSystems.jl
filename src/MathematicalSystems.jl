@@ -16,7 +16,7 @@ Abstract Types for Systems
 ==========================#
 include("abstract.jl")
 #=======================
-Equality operator
+Utility functions
 =======================#
 include("utilities.jl")
 

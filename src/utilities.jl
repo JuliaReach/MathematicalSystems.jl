@@ -1,5 +1,5 @@
 function Base.isequal(sys1::AbstractSystem, sys2::AbstractSystem)
-    if !(typeof(sys1) == typeof(sys2))
+    if typeof(sys1) != typeof(sys2)
         return false
     end
     for field in fieldnames(typeof(sys1))
@@ -11,7 +11,7 @@ function Base.isequal(sys1::AbstractSystem, sys2::AbstractSystem)
 end
 
 function Base.isapprox(sys1::AbstractSystem, sys2::AbstractSystem; kwargs...)
-    if !(typeof(sys1) == typeof(sys2))
+    if typeof(sys1) != typeof(sys2)
         return false
     end
     for field in fieldnames(typeof(sys1))

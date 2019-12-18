@@ -30,6 +30,21 @@ function ≈(sys1::AbstractSystem, sys2::AbstractSystem)
     end
     return true
 end
+using MathematicalSystems
+sys = LinearDiscreteSystem(rand(2,2))
+using BenchmarkTools
+@time _corr_type(sys)
+@time _corresponding_type(sys)
+function _corr_type(sys)
+    string1 = string.(typeof(sys))
+    if supertype(sys) == AbstractDiscreteSystem
+        string2 =  replace(string1, "Discrete" => "Continuous")
+    else
+        string2 =  replace(string1, "Discrete" => "Continuous")
+    end
+    string3 = string2[1:22]
+    eval(Meta.parse(string3))
+end
 
 function _corresponding_type(sys::AbstractSystem)
     sys_type = typeof(sys)

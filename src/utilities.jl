@@ -5,7 +5,7 @@ function ==(sys1::AbstractSystem, sys2::AbstractSystem)
         return false
     end
     for field in fieldnames(typeof(sys1))
-        if !(getfield(sys1, field) == getfield(sys2, field))
+        if getfield(sys1, field) != getfield(sys2, field)
             return false
         end
     end

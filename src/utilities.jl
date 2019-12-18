@@ -1,9 +1,9 @@
-function Base.isequal(sys1::AbstractSystem, sys2::AbstractSystem)
+function Base.==(sys1::AbstractSystem, sys2::AbstractSystem)
     if !(typeof(sys1) == typeof(sys2))
         return false
     end
     for field in fieldnames(typeof(sys1))
-        if !isequal(getfield(sys1, field), getfield(sys2, field))
+        if !(getfield(sys1, field) == getfield(sys2, field))
             return false
         end
     end

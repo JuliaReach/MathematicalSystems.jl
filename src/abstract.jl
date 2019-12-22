@@ -107,7 +107,7 @@ function isnoisy(::AbstractSystem) end
 """
     iscontrolled(s::AbstractSystem)
 
-Specifies if the dynamics of system `s` contains a input term `u`.
+Specifies if the dynamics of system `s` contains a control input `u`.
 """
 function iscontrolled(::AbstractSystem) end
 

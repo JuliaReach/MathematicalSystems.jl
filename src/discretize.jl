@@ -2,77 +2,53 @@ using LinearAlgebra: inv, rank
 using SparseArrays: spzeros
 using InteractiveUtils: subtypes
 
-import Base.==
-import Base.≈
 
-export _corresponding_type, discretize
+"""
+    _complementary_type(system::AbstractSystem)
 
-function ==(sys1::AbstractSystem, sys2::AbstractSystem)
-    if typeof(sys1)!== typeof(sys2)
-        return false
-    end
-    for field in fieldnames(typeof(sys1))
-        if getfield(sys1, field) != getfield(sys2, field)
-            return false
-        end
-    end
-    return true
+    Return the complementary type of a `system`.
+
+    For a `system` with supertype `AbstractDiscreteSystem`, the complementary
+    `AbstractContinuousSystem` type is returned and vice versa.
+
+    ### Input
+
+    - `system` -- system
+
+    ### Ouput
+
+    Return complementary type of `system`.
+"""
+function _complementary_type(system::AbstractSystem)
+    system_type = typeof(system)
+    return _complementary_type(system_type)
 end
 
-function ≈(sys1::AbstractSystem, sys2::AbstractSystem)
-    if typeof(sys1)!== typeof(sys2)
-        return false
-    end
-    for field in fieldnames(typeof(sys1))
-        if !(getfield(sys1, field) ≈ getfield(sys2, field))
-            return false
-        end
-    end
-    return true
-end
-using MathematicalSystems
-sys = LinearDiscreteSystem(rand(2,2))
-using BenchmarkTools
-@time _corr_type(sys)
-@time _corresponding_type(sys)
-function _corr_type(sys)
-    string1 = string.(typeof(sys))
-    if supertype(sys) == AbstractDiscreteSystem
-        string2 =  replace(string1, "Discrete" => "Continuous")
+"""
+    _complementary_type(system_type::Type{<:AbstractSystem})
+
+    Return the complementary type of a system type `system_type`.
+
+    For a `system_type<:AbstractDiscreteSystem`, the complementary
+    `AbstractContinuousSystem` type is returned and vice versa.
+
+    ### Input
+
+    - `system_type` -- type of `AbstractSystem`
+
+    ### Ouput
+
+    Return complementary type of `system_type`.
+"""
+function _complementary_type(system_type::Type{<:AbstractSystem})
+    type_string = string(system_type)
+    if supertype(typeof(system)) == AbstractDiscreteSystem
+        type_string =  replace(type_string, "Discrete"=>"Continuous")
     else
-        string2 =  replace(string1, "Discrete" => "Continuous")
+        type_string =  replace(type_string, "Continuous"=>"Discrete")
     end
-    string3 = string2[1:22]
-    eval(Meta.parse(string3))
+    return eval(Meta.parse(type_string))
 end
-
-function _corresponding_type(sys::AbstractSystem)
-    sys_type = typeof(sys)
-    return _corresponding_type(sys_type)
-end
-
-function _corresponding_type(sys_type::Type{<:AbstractSystem})
-    fields = fieldnames(sys_type)
-    if supertype(sys_type) == AbstractDiscreteSystem
-        abstract_type = AbstractContinuousSystem
-    else
-        abstract_type = AbstractDiscreteSystem
-    end
-    return _corresponding_type(abstract_type, fields)
-end
-
-function _corresponding_type(abstract_type, fields::Tuple)
-      @show abstract_type, fields
-    TYPES = subtypes(abstract_type)
-    TYPES_FIELDS = fieldnames.(TYPES)
-    is_in(x, y) = all([el ∈ y for el in x])
-    idx = findall(x -> is_in(x, fields) && is_in(fields,x), TYPES_FIELDS)
-    if length(idx) == 0
-        error("$(fields) does not match any system type of MathematicalSystems")
-    end
-    return TYPES[idx][1]
-end
-
 
 """
      discretize(sys::AbstractContinuousSystem, ΔT::Real; algorithm=:default)
@@ -85,7 +61,7 @@ end
 
     - `sys` -- a affine continuous system
     - `ΔT` -- discretization time
-    - `algorithm` -- (optional, default=:default) discretization algorithm
+    - `algorithm` -- (optional, default=`:default`) discretization algorithm
 
     ### Output
 
@@ -96,16 +72,16 @@ end
     Consider a `NoisyAffineControlledContinuousSystem` with system dynamics
     `x' = Ax + Bu + c + Du`.
 
-    If A is invertible, the exact discretization is calculated by solving the
-    integral for `t = [t, t+ΔT]` for a fixed input `u` and fixed noise realisation
-    `w` which writes as `x⁺ = Aᵈx + Bᵈu + cᵈ + Dᵈu` where
-    `Aᵈ = exp(A⋅ΔT)`, `Bᵈ = inv(A)⋅(Aᵈ - I)⋅B`, `cᵈ = inv(A)⋅(Aᵈ - I)⋅c` and
-    `Dᵈ = inv(A)⋅(Aᵈ - I)⋅D`.
+    If A is invertible:
+    The exact discretization is calculated by solving the integral for
+    `t = [t, t+ΔT]` for a fixed input `u` and fixed noise realisation `w` which
+    writes as `x⁺ = Aᵈx + Bᵈu + cᵈ + Dᵈu` where `Aᵈ = exp(A⋅ΔT)`,
+    `Bᵈ = inv(A)⋅(Aᵈ - I)⋅B`, `cᵈ = inv(A)⋅(Aᵈ - I)⋅c` and `Dᵈ = inv(A)⋅(Aᵈ - I)⋅D`.
 
-    If A is not invertible, a first order approximation of the exact discretiziation,
-    the euler discretization can be apllied which writes as `x⁺ = Aᵈx + Bᵈu + cᵈ + Dᵈu`
-     where  `Aᵈ = I + ΔT⋅A`, `Bᵈ = ΔT⋅B`, `cᵈ = ΔT⋅c` and
-    `Dᵈ = ΔT⋅D`.
+    If A is not invertible:
+    A first order approximation of the exact discretiziation, the euler
+    discretization can be apllied which writes as `x⁺ = Aᵈx + Bᵈu + cᵈ + Dᵈu`
+     where  `Aᵈ = I + ΔT⋅A`, `Bᵈ = ΔT⋅B`, `cᵈ = ΔT⋅c` and `Dᵈ = ΔT⋅D`.
 """
 function discretize(sys::AbstractContinuousSystem, ΔT::Real; algorithm=:default)
     noset(x) = !(x ∈ [:X,:U,:W])
@@ -120,17 +96,16 @@ function discretize(sys::AbstractContinuousSystem, ΔT::Real; algorithm=:default
           algorithm = :euler
         end
     end
-    disc_nonset_values = _discretize_arrays(cont_nonset_values...,ΔT;
-                                            algorithm=algorithm)
+    disc_nonset_values = _discretize(cont_nonset_values...,ΔT; algorithm=algorithm)
     set_values = [getfield(sys, f) for f in filter(!noset, fields)]
-    discrete_type = _corresponding_type(sys)
+    discrete_type = _complementary_type(sys)
     return discrete_type(disc_nonset_values..., set_values...)
 end
 
-function _discretize_arrays(A::AbstractMatrix,
-                            B::AbstractMatrix,
-                            c::AbstractVector,
-                            D::AbstractMatrix, ΔT::Real; algorithm=:exact)
+function _discretize(A::AbstractMatrix,
+                     B::AbstractMatrix,
+                     c::AbstractVector,
+                     D::AbstractMatrix, ΔT::Real; algorithm=:exact)
     if algorithm == :exact
         A_d = exp(A*ΔT)
         B_d = inv(A)*(A_d - I)*B
@@ -147,44 +122,44 @@ function _discretize_arrays(A::AbstractMatrix,
     return [A_d, B_d, c_d, D_d]
 end
 
-function _discretize_arrays(A::AbstractMatrix, ΔT::Real; algorithm=:exact)
+function _discretize(A::AbstractMatrix, ΔT::Real; algorithm=:exact)
     n = size(A,1)
-    A_d, _, _, _ = _discretize_arrays(A, spzeros(n,n), spzeros(n), spzeros(n,n), ΔT;
-                              algorithm=algorithm)
+    A_d, B_d, c_d, D_d = _discretize(A, spzeros(n,n), spzeros(n), spzeros(n,n), ΔT;
+                                     algorithm=algorithm)
     return [A_d]
 end
 
 # works for (:A,:D) and (:A, :B)
-function _discretize_arrays(A::AbstractMatrix,
+function _discretize(A::AbstractMatrix,
                             B::AbstractMatrix, ΔT::Real; algorithm=:exact)
     n = size(A,1)
-    A_d, B_d, c_d, D_d = _discretize_arrays(A, B, spzeros(n), spzeros(n,n), ΔT;
-                                    algorithm=algorithm)
+    A_d, B_d, c_d, D_d = _discretize(A, B, spzeros(n), spzeros(n,n), ΔT;
+                                     algorithm=algorithm)
     return [A_d, B_d]
 end
 
-function _discretize_arrays(A::AbstractMatrix,
+function _discretize(A::AbstractMatrix,
                     c::AbstractVector, ΔT::Real; algorithm=:exact)
     n = size(A,1)
-    A_d, B_d, c_d, D_d = _discretize_arrays(A, spzeros(n,n), c, spzeros(n,n), ΔT;
-                                    algorithm=algorithm)
+    A_d, B_d, c_d, D_d = _discretize(A, spzeros(n,n), c, spzeros(n,n), ΔT;
+                                     algorithm=algorithm)
     return [A_d, c_d]
 end
 
-function _discretize_arrays(A::AbstractMatrix,
+function _discretize(A::AbstractMatrix,
                             B::AbstractMatrix,
                             c::AbstractVector, ΔT::Real; algorithm=:exact)
     n = size(A,1)
-    A_d, B_d, c_d, D_d = _discretize_arrays(A, B, c, spzeros(n,n), ΔT;
-                                    algorithm=algorithm)
+    A_d, B_d, c_d, D_d = _discretize(A, B, c, spzeros(n,n), ΔT;
+                                     algorithm=algorithm)
     return [A_d, B_d, c_d]
 end
 
-function _discretize_arrays(A::AbstractMatrix,
+function _discretize(A::AbstractMatrix,
                             B::AbstractMatrix,
                             D::AbstractMatrix, ΔT::Real; algorithm=:exact)
     n = size(A,1)
-    A_d, B_d, c_d, D_d = _discretize_arrays(A, B, spzeros(n), D, ΔT;
-                                    algorithm=algorithm)
+    A_d, B_d, c_d, D_d = _discretize(A, B, spzeros(n), D, ΔT;
+                                     algorithm=algorithm)
     return [A_d, B_d, D_d]
 end

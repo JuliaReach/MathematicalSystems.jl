@@ -4,15 +4,15 @@ using SparseArrays: spzeros
 """
     typename(system::AbstractSystem)
 
-    Returns base-type of `system` without information parameter information.
+Returns the base type of `system` without parameter information.
 
-    ### Input
+### Input
 
-    - `system` -- `AbstractSystem`
+- `system` -- `AbstractSystem`
 
-    ### Output
+### Output
 
-    Returns base-type of `system`.
+Returns base-type of `system`.
 
 """
 function typename(system::AbstractSystem)

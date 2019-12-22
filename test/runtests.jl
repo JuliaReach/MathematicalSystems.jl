@@ -7,6 +7,7 @@ using Test
 using MathematicalSystems: LinearMap, AffineMap, ResetMap
 
 include("continuous.jl")
+include("discrete.jl")
 include("identity.jl")
 include("inputs.jl")
 include("maps.jl")

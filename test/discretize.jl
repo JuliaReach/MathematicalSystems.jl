@@ -1,13 +1,13 @@
 @testset "Convert Continuous to Discrete Type" begin
     DTYPES = subtypes(AbstractDiscreteSystem)
     for dtype in DTYPES
-        ctype =  eval.(Meta.parse.(replace(string(dtype), "Discrete" => "Continuous")))
+        ctype = eval.(Meta.parse.(replace(string(dtype), "Discrete" => "Continuous")))
         @test MathematicalSystems._complementary_type(dtype) == ctype
     end
 
     CTYPES = subtypes(AbstractContinuousSystem)
     for ctype in CTYPES
-        dtype =  eval.(Meta.parse.(replace(string(ctype), "Continuous" => "Discrete")))
+        dtype = eval.(Meta.parse.(replace(string(ctype), "Continuous" => "Discrete")))
         @test MathematicalSystems._complementary_type(ctype) == dtype
     end
 end

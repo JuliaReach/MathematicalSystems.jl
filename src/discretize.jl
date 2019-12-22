@@ -41,9 +41,9 @@ end
 function _complementary_type(system_type::Type{<:AbstractSystem})
     type_string = string(Base.typename(system_type))
     if supertype(system_type) == AbstractDiscreteSystem
-        type_string =  replace(type_string, "Discrete"=>"Continuous")
+        type_string = replace(type_string, "Discrete"=>"Continuous")
     else
-        type_string =  replace(type_string, "Continuous"=>"Discrete")
+        type_string = replace(type_string, "Continuous"=>"Discrete")
     end
     return eval(Meta.parse(type_string))
 end
@@ -78,11 +78,11 @@ end
 
     If A is not invertible:
     A first order approximation of the exact discretiziation, the euler
-    discretization can be apllied which writes as `x⁺ = Aᵈx + Bᵈu + cᵈ + Dᵈu`
+    discretization, can be applied, which writes as `x⁺ = Aᵈx + Bᵈu + cᵈ + Dᵈu`
      where  `Aᵈ = I + ΔT⋅A`, `Bᵈ = ΔT⋅B`, `cᵈ = ΔT⋅c` and `Dᵈ = ΔT⋅D`.
 """
 function discretize(sys::AbstractContinuousSystem, ΔT::Real; algorithm=:default)
-    noset(x) = !(x ∈ [:X,:U,:W])
+    noset(x) = x ∉ [:X,:U,:W]
     fields = collect(fieldnames(typeof(sys)))
     cont_nonset_values = [getfield(sys, f) for f in filter(noset, fields)]
     if algorithm == :default

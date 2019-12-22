@@ -98,7 +98,6 @@ function discretize(sys::AbstractContinuousSystem, ΔT::Real; algorithm=:default
     disc_nonset_values = _discretize(cont_nonset_values..., ΔT; algorithm=algorithm)
     set_values = [getfield(sys, f) for f in filter(!noset, fields)]
     discrete_type = _complementary_type(sys)
-    @show discrete_type, disc_nonset_values, set_values
     return discrete_type(disc_nonset_values..., set_values...)
 end
 

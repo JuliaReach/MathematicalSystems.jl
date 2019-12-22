@@ -17,7 +17,7 @@ using InteractiveUtils: subtypes
     end
 end
 
-@testset "Exact Discretization of Continous Systems"
+@testset "Exact Discretization of Continous Systems" begin
 ΔT = 0.1
 A = [0.5 1; 0.0 0.5]
 B = Matrix([0.5 1.0]')

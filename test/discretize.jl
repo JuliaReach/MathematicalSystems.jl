@@ -23,10 +23,11 @@ end
     U = BallInf(zeros(1), 2.0)
     W = BallInf(zeros(2), 3.0)
     A_d = exp(A*ΔT)
-    B_d = inv(A)*(A_d - I)*B
-    c_d = inv(A)*(A_d - I)*c
-    b_d = inv(A)*(A_d - I)*b
-    D_d = inv(A)*(A_d - I)*D
+    M = inv(A)*(A_d - I)
+    B_d = M*B
+    c_d = M*c
+    b_d = M*b
+    D_d = M*D
     dict = Dict([:A => A, :B => B, :b => b, :c => c, :D => D,
                  :X => X, :U => U, :W => W])
     dict_discretized = Dict([:A => A_d, :B => B_d, :b => b_d, :c => c_d, :D => D_d,
@@ -42,5 +43,4 @@ end
     discretized_constructed = [DTYPES[i](DValues[i]...) for i=1:length(DTYPES)]
 
     @test all(discretized_constructed .== discretized_function)
-    @test all(discretized_constructed .≈ discretized_function)
 end

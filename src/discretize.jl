@@ -4,18 +4,18 @@ using SparseArrays: spzeros
 """
     _complementary_type(system::AbstractSystem)
 
-    Return the complementary type of a `system`.
+Return the complementary type of a `system`.
 
-    For a `system` with supertype `AbstractDiscreteSystem`, the complementary
-    `AbstractContinuousSystem` type is returned and vice versa.
+For a `system` with supertype `AbstractDiscreteSystem`, the complementary
+`AbstractContinuousSystem` type is returned and vice versa.
 
-    ### Input
+### Input
 
-    - `system` -- system
+- `system` -- system
 
-    ### Ouput
+### Ouput
 
-    Return complementary type of `system`.
+Return complementary type of `system`.
 """
 function _complementary_type(system::AbstractSystem)
     system_type = typeof(system)
@@ -25,18 +25,18 @@ end
 """
     _complementary_type(system_type::Type{<:AbstractSystem})
 
-    Return the complementary type of a system type `system_type`.
+Return the complementary type of a system type `system_type`.
 
-    For a `system_type<:AbstractDiscreteSystem`, the complementary
-    `AbstractContinuousSystem` type is returned and vice versa.
+For a `system_type<:AbstractDiscreteSystem`, the complementary
+`AbstractContinuousSystem` type is returned and vice versa.
 
-    ### Input
+### Input
 
-    - `system_type` -- type of `AbstractSystem`
+- `system_type` -- type of `AbstractSystem`
 
-    ### Ouput
+### Ouput
 
-    Return complementary type of `system_type`.
+Return complementary type of `system_type`.
 """
 function _complementary_type(system_type::Type{<:AbstractSystem})
     type_string = string(Base.typename(system_type))
@@ -51,35 +51,35 @@ end
 """
      discretize(sys::AbstractContinuousSystem, ΔT::Real; algorithm=:default)
 
-    Discretization of a `isaffine` `AbstractContinuousSystem` to a
-    `AbstractDiscreteSystem` with discretization time `ΔT` using the exact
-    discretization algorithm if possible.
+Discretization of a `isaffine` `AbstractContinuousSystem` to a
+`AbstractDiscreteSystem` with discretization time `ΔT` using the exact
+discretization algorithm if possible.
 
-    ### Input
+### Input
 
-    - `sys` -- a affine continuous system
-    - `ΔT` -- discretization time
-    - `algorithm` -- (optional, default=`:default`) discretization algorithm
+- `sys` -- a affine continuous system
+- `ΔT` -- discretization time
+- `algorithm` -- (optional, default=`:default`) discretization algorithm
 
-    ### Output
+### Output
 
-    Returns a discretization of the input system `sys` with discretization time `ΔT`.
+Returns a discretization of the input system `sys` with discretization time `ΔT`.
 
-    ### Algorithm
+### Algorithm
 
-    Consider a `NoisyAffineControlledContinuousSystem` with system dynamics
-    `x' = Ax + Bu + c + Du`.
+Consider a `NoisyAffineControlledContinuousSystem` with system dynamics
+`x' = Ax + Bu + c + Du`.
 
-    If A is invertible:
-    The exact discretization is calculated by solving the integral for
-    `t = [t, t+ΔT]` for a fixed input `u` and fixed noise realisation `w` which
-    writes as `x⁺ = Aᵈx + Bᵈu + cᵈ + Dᵈu` where `Aᵈ = exp(A⋅ΔT)`,
-    `Bᵈ = inv(A)⋅(Aᵈ - I)⋅B`, `cᵈ = inv(A)⋅(Aᵈ - I)⋅c` and `Dᵈ = inv(A)⋅(Aᵈ - I)⋅D`.
+If A is invertible:
+The exact discretization is calculated by solving the integral for
+`t = [t, t+ΔT]` for a fixed input `u` and fixed noise realisation `w` which
+writes as `x⁺ = Aᵈx + Bᵈu + cᵈ + Dᵈu` where `Aᵈ = exp(A⋅ΔT)`,
+`Bᵈ = inv(A)⋅(Aᵈ - I)⋅B`, `cᵈ = inv(A)⋅(Aᵈ - I)⋅c` and `Dᵈ = inv(A)⋅(Aᵈ - I)⋅D`.
 
-    If A is not invertible:
-    A first order approximation of the exact discretiziation, the euler
-    discretization can be apllied which writes as `x⁺ = Aᵈx + Bᵈu + cᵈ + Dᵈu`
-     where  `Aᵈ = I + ΔT⋅A`, `Bᵈ = ΔT⋅B`, `cᵈ = ΔT⋅c` and `Dᵈ = ΔT⋅D`.
+If A is not invertible:
+A first order approximation of the exact discretiziation, the euler
+discretization can be apllied which writes as `x⁺ = Aᵈx + Bᵈu + cᵈ + Dᵈu`
+ where  `Aᵈ = I + ΔT⋅A`, `Bᵈ = ΔT⋅B`, `cᵈ = ΔT⋅c` and `Dᵈ = ΔT⋅D`.
 """
 function discretize(sys::AbstractContinuousSystem, ΔT::Real; algorithm=:default)
     noset(x) = !(x ∈ [:X,:U,:W])
@@ -104,9 +104,9 @@ end
     _discretize(A::AbstractMatrix, B::AbstractMatrix, c::AbstractVector,
                 D::AbstractMatrix, ΔT::Real; algorithm=:exact)
 
-    Implementation of the discretization algorithm used in `discretize`.
+Implementation of the discretization algorithm used in `discretize`.
 
-    See [`discretize`](@ref) for more details.
+See [`discretize`](@ref) for more details.
 """
 function _discretize(A::AbstractMatrix,
                      B::AbstractMatrix,

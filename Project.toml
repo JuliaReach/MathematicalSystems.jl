@@ -4,19 +4,20 @@ version = "0.8.1"
 
 [deps]
 Espresso = "6912e4f1-e036-58b0-9138-08d1e6358ea9"
+InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 MultivariatePolynomials = "102ac46a-7ee4-5c85-9060-abc95bfdeaa3"
+SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [compat]
-julia = "1"
 Espresso = "^ 0.6.0"
 MultivariatePolynomials = "^ 0.3"
+julia = "1"
 
 [extras]
 LazySets = "b4f0291d-fe17-52bc-9479-3d1a343d9043"
-SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 TypedPolynomials = "afbbf031-7a57-5f58-a1b9-b774a0fad08d"
 
 [targets]
-test = ["LazySets", "SparseArrays", "Test", "TypedPolynomials"]
+test = ["LazySets", "Test", "TypedPolynomials"]

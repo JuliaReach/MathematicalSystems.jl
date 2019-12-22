@@ -2,24 +2,21 @@ using LinearAlgebra: inv, rank
 using SparseArrays: spzeros
 
 """
-    _complementary_type(system::AbstractSystem)
+    typename(system::AbstractSystem)
 
-Return the complementary type of a `system`.
+    Returns base-type of `system` without information parameter information.
 
-For a `system` with supertype `AbstractDiscreteSystem`, the complementary
-`AbstractContinuousSystem` type is returned and vice versa.
+    ### Input
 
-### Input
+    - `system` -- `AbstractSystem`
 
-- `system` -- system
+    ### Output
 
-### Ouput
+    Returns base-type of `system`.
 
-Return complementary type of `system`.
 """
-function _complementary_type(system::AbstractSystem)
-    system_type = typeof(system)
-    return _complementary_type(system_type)
+function typename(system::AbstractSystem)
+    return Base.typename(typeof(system)).wrapper
 end
 
 """
@@ -37,19 +34,29 @@ For a `system_type<:AbstractDiscreteSystem`, the complementary
 ### Ouput
 
 Return complementary type of `system_type`.
+
+### Note
+To get the `_complementary_type` of a `system<:AbstractSystem` use
+`_complementary_type(typename(system))`.
 """
-function _complementary_type(system_type::Type{<:AbstractSystem})
-    type_string = string(Base.typename(system_type))
+@generated function _complementary_type(type::Type{<:AbstractSystem})
+    # type is a Type{<:AbstractSystem}, e.g. Type{AffineContinuousSystem}
+    # extract the system type information with
+    system_type = type.parameters[1]
+    type_string = string(system_type)
     if supertype(system_type) == AbstractDiscreteSystem
         type_string = replace(type_string, "Discrete"=>"Continuous")
-    else
+    elseif supertype(system_type) == AbstractContinuousSystem
         type_string = replace(type_string, "Continuous"=>"Discrete")
+    else
+        error("$system_type <: $(supertype(system_type)) is neither discrete nor continuous")
     end
-    return eval(Meta.parse(type_string))
+    return Meta.parse(type_string)
 end
 
+
 """
-     discretize(sys::AbstractContinuousSystem, ΔT::Real; algorithm=:default)
+     discretize(system::AbstractContinuousSystem, ΔT::Real; algorithm=:default)
 
 Discretization of a `isaffine` `AbstractContinuousSystem` to a
 `AbstractDiscreteSystem` with discretization time `ΔT` using the exact
@@ -57,13 +64,13 @@ discretization algorithm if possible.
 
 ### Input
 
-- `sys` -- a affine continuous system
+- `system` -- a affine continuous system
 - `ΔT` -- discretization time
 - `algorithm` -- (optional, default=`:default`) discretization algorithm
 
 ### Output
 
-Returns a discretization of the input system `sys` with discretization time `ΔT`.
+Returns a discretization of the input system `system` with discretization time `ΔT`.
 
 ### Algorithm
 
@@ -83,12 +90,15 @@ discretization, can be applied, which writes as `x⁺ = Aᵈx + Bᵈu + cᵈ + D
 where  `Aᵈ = I + ΔT⋅A`, `Bᵈ = ΔT⋅B`, `cᵈ = ΔT⋅c` and `Dᵈ = ΔT⋅D`.
 
 """
-function discretize(sys::AbstractContinuousSystem, ΔT::Real; algorithm=:default)
+function discretize(system::AbstractContinuousSystem, ΔT::Real; algorithm=:default)
     noset(x) = x ∉ [:X,:U,:W]
-    fields = collect(fieldnames(typeof(sys)))
-    cont_nonset_values = [getfield(sys, f) for f in filter(noset, fields)]
+    # get all fields from system
+    fields = collect(fieldnames(typeof(system)))
+    # get fields of system that are parameter of the system dynamics (no sets)
+    # i.e., all fields that needs to be discretized
+    values_cont = [getfield(system, f) for f in filter(noset, fields)]
     if algorithm == :default
-        if rank(sys.A) == size(sys.A, 1)
+        if rank(system.A) == size(system.A, 1)
           # A is invertible, use exact discretizaion
           algorithm = :exact
         else
@@ -96,10 +106,14 @@ function discretize(sys::AbstractContinuousSystem, ΔT::Real; algorithm=:default
           algorithm = :euler
         end
     end
-    disc_nonset_values = _discretize(cont_nonset_values..., ΔT; algorithm=algorithm)
-    set_values = [getfield(sys, f) for f in filter(!noset, fields)]
-    discrete_type = _complementary_type(sys)
-    return discrete_type(disc_nonset_values..., set_values...)
+    # compute discretized values of dynamics_params_c
+    values_disc = _discretize(values_cont..., ΔT; algorithm=algorithm)
+    # get fields of system that are sets
+    set_values = [getfield(system, f) for f in filter(!noset, fields)]
+    # get corresponding discrete type of system
+    discrete_type = _complementary_type(typename(system))
+    # build the new discrete type with the discretized and set values
+    return discrete_type(values_disc..., set_values...)
 end
 
 """
@@ -116,9 +130,10 @@ function _discretize(A::AbstractMatrix,
                      D::AbstractMatrix, ΔT::Real; algorithm=:exact)
     if algorithm == :exact
         A_d = exp(A*ΔT)
-        B_d = inv(A)*(A_d - I)*B
-        c_d = inv(A)*(A_d - I)*c
-        D_d = inv(A)*(A_d - I)*D
+        Matr = inv(A)*(A_d - I)
+        B_d = Matr*B
+        c_d = Matr*c
+        D_d = Matr*D
     elseif algorithm == :euler
         A_d = I + ΔT*A
         B_d = ΔT*B
@@ -140,7 +155,7 @@ end
 
 # works for (:A,:D) and (:A, :B)
 function _discretize(A::AbstractMatrix,
-                            B::AbstractMatrix, ΔT::Real; algorithm=:exact)
+                     B::AbstractMatrix, ΔT::Real; algorithm=:exact)
     n = size(A,1)
     mzero = spzeros(n, n)
     vzero = spzeros(n)
@@ -149,7 +164,7 @@ function _discretize(A::AbstractMatrix,
 end
 
 function _discretize(A::AbstractMatrix,
-                    c::AbstractVector, ΔT::Real; algorithm=:exact)
+                     c::AbstractVector, ΔT::Real; algorithm=:exact)
     n = size(A,1)
     mzero = spzeros(n, n)
     A_d, _, c_d, _ = _discretize(A, mzero, c, mzero, ΔT; algorithm=algorithm)
@@ -157,8 +172,8 @@ function _discretize(A::AbstractMatrix,
 end
 
 function _discretize(A::AbstractMatrix,
-                            B::AbstractMatrix,
-                            c::AbstractVector, ΔT::Real; algorithm=:exact)
+                     B::AbstractMatrix,
+                     c::AbstractVector, ΔT::Real; algorithm=:exact)
     n = size(A,1)
     mzero = spzeros(n, n)
     A_d, B_d, c_d, _ = _discretize(A, B, c, mzero, ΔT; algorithm=algorithm)
@@ -166,8 +181,8 @@ function _discretize(A::AbstractMatrix,
 end
 
 function _discretize(A::AbstractMatrix,
-                            B::AbstractMatrix,
-                            D::AbstractMatrix, ΔT::Real; algorithm=:exact)
+                     B::AbstractMatrix,
+                     D::AbstractMatrix, ΔT::Real; algorithm=:exact)
     n = size(A,1)
     vzero = spzeros(n)
     A_d, B_d, _, D_d = _discretize(A, B, vzero, D, ΔT; algorithm=algorithm)

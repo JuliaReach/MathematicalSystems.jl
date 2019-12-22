@@ -2,7 +2,6 @@ using LinearAlgebra: inv, rank
 using SparseArrays: spzeros
 using InteractiveUtils: subtypes
 
-
 """
     _complementary_type(system::AbstractSystem)
 
@@ -41,8 +40,8 @@ end
     Return complementary type of `system_type`.
 """
 function _complementary_type(system_type::Type{<:AbstractSystem})
-    type_string = string(system_type)
-    if supertype(typeof(system)) == AbstractDiscreteSystem
+    type_string = string(Base.typename(system_type))
+    if supertype(system_type) == AbstractDiscreteSystem
         type_string =  replace(type_string, "Discrete"=>"Continuous")
     else
         type_string =  replace(type_string, "Continuous"=>"Discrete")
@@ -96,12 +95,21 @@ function discretize(sys::AbstractContinuousSystem, ΔT::Real; algorithm=:default
           algorithm = :euler
         end
     end
-    disc_nonset_values = _discretize(cont_nonset_values...,ΔT; algorithm=algorithm)
+    disc_nonset_values = _discretize(cont_nonset_values..., ΔT; algorithm=algorithm)
     set_values = [getfield(sys, f) for f in filter(!noset, fields)]
     discrete_type = _complementary_type(sys)
+    @show discrete_type, disc_nonset_values, set_values
     return discrete_type(disc_nonset_values..., set_values...)
 end
 
+"""
+    _discretize(A::AbstractMatrix, B::AbstractMatrix, c::AbstractVector,
+                D::AbstractMatrix, ΔT::Real; algorithm=:exact)
+
+    Implementation of the discretization algorithm used in `discretize`.
+
+    See [`discretize`](@ref) for more details.
+"""
 function _discretize(A::AbstractMatrix,
                      B::AbstractMatrix,
                      c::AbstractVector,
@@ -124,8 +132,9 @@ end
 
 function _discretize(A::AbstractMatrix, ΔT::Real; algorithm=:exact)
     n = size(A,1)
-    A_d, B_d, c_d, D_d = _discretize(A, spzeros(n,n), spzeros(n), spzeros(n,n), ΔT;
-                                     algorithm=algorithm)
+    mzero = spzeros(n, n)
+    vzero = spzeros(n)
+    A_d, _, _, _ = _discretize(A, mzero, vzero, mzero, ΔT; algorithm=algorithm)
     return [A_d]
 end
 
@@ -133,16 +142,17 @@ end
 function _discretize(A::AbstractMatrix,
                             B::AbstractMatrix, ΔT::Real; algorithm=:exact)
     n = size(A,1)
-    A_d, B_d, c_d, D_d = _discretize(A, B, spzeros(n), spzeros(n,n), ΔT;
-                                     algorithm=algorithm)
+    mzero = spzeros(n, n)
+    vzero = spzeros(n)
+    A_d, B_d, _, _ = _discretize(A, B, vzero, mzero, ΔT; algorithm=algorithm)
     return [A_d, B_d]
 end
 
 function _discretize(A::AbstractMatrix,
                     c::AbstractVector, ΔT::Real; algorithm=:exact)
     n = size(A,1)
-    A_d, B_d, c_d, D_d = _discretize(A, spzeros(n,n), c, spzeros(n,n), ΔT;
-                                     algorithm=algorithm)
+    mzero = spzeros(n, n)
+    A_d, _, c_d, _ = _discretize(A, mzero, c, mzero, ΔT; algorithm=algorithm)
     return [A_d, c_d]
 end
 
@@ -150,8 +160,8 @@ function _discretize(A::AbstractMatrix,
                             B::AbstractMatrix,
                             c::AbstractVector, ΔT::Real; algorithm=:exact)
     n = size(A,1)
-    A_d, B_d, c_d, D_d = _discretize(A, B, c, spzeros(n,n), ΔT;
-                                     algorithm=algorithm)
+    mzero = spzeros(n, n)
+    A_d, B_d, c_d, _ = _discretize(A, B, c, mzero, ΔT; algorithm=algorithm)
     return [A_d, B_d, c_d]
 end
 
@@ -159,7 +169,7 @@ function _discretize(A::AbstractMatrix,
                             B::AbstractMatrix,
                             D::AbstractMatrix, ΔT::Real; algorithm=:exact)
     n = size(A,1)
-    A_d, B_d, c_d, D_d = _discretize(A, B, spzeros(n), D, ΔT;
-                                     algorithm=algorithm)
+    vzero = spzeros(n)
+    A_d, B_d, _, D_d = _discretize(A, B, vzero, D, ΔT; algorithm=algorithm)
     return [A_d, B_d, D_d]
 end

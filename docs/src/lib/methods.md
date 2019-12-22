@@ -57,3 +57,9 @@ apply
 ```@docs
 successor
 ```
+
+## Discretization
+
+```@docs
+discretize
+```

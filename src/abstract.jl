@@ -107,14 +107,14 @@ function isnoisy(::AbstractSystem) end
 """
     iscontrolled(s::AbstractSystem)
 
-Specifies if the dynamics of system `s` contains a control input `u`.
+Determines if the dynamics of system `s` contains a control input `u`.
 """
 function iscontrolled(::AbstractSystem) end
 
 """
     isconstrained(s::AbstractSystem)
 
-Specifies if the system `s` has constraints on the state, input and noise,
+Determines if the system `s` has constraints on the state, input and noise,
 respectively (those that are available).
 """
 function isconstrained(::AbstractSystem) end

@@ -100,7 +100,7 @@ function ispolynomial(::AbstractSystem) end
 """
     isnoisy(s::AbstractSystem)
 
-Specifies if the dynamics of system `s` contains a noise term `w`.
+Determines if the dynamics of system `s` contains a noise term `w`.
 """
 function isnoisy(::AbstractSystem) end
 
@@ -115,7 +115,7 @@ function iscontrolled(::AbstractSystem) end
     isconstrained(s::AbstractSystem)
 
 Specifies if the system `s` has constraints on the state, input and noise,
-respectively, the element that are available.
+respectively (those that are available).
 """
 function isconstrained(::AbstractSystem) end
 

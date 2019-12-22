@@ -157,6 +157,12 @@ Successor state for discrete systems
 export successor
 
 include("successor.jl")
+
+#===================================
+Discretization for affine systems
+====================================#
+export discretize
+
 include("discretize.jl")
 
 end # module

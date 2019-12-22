@@ -1,14 +1,15 @@
+
 @testset "Convert Continuous to Discrete Type" begin
-    DTYPES = subtypes(AbstractDiscreteSystem)
-    for dtype in DTYPES
+    for dtype in subtypes(AbstractDiscreteSystem)
         ctype = eval.(Meta.parse.(replace(string(dtype), "Discrete" => "Continuous")))
         @test MathematicalSystems._complementary_type(dtype) == ctype
+        @inferred MathematicalSystems._complementary_type(dtype)
     end
 
-    CTYPES = subtypes(AbstractContinuousSystem)
-    for ctype in CTYPES
+    for ctype in subtypes(AbstractContinuousSystem)
         dtype = eval.(Meta.parse.(replace(string(ctype), "Continuous" => "Discrete")))
         @test MathematicalSystems._complementary_type(ctype) == dtype
+        @inferred MathematicalSystems._complementary_type(ctype)
     end
 end
 
@@ -16,7 +17,6 @@ end
     ΔT = 0.1
     A = [0.5 1; 0.0 0.5]
     B = Matrix([0.5 1.0]')
-    b = [1.0; 1.0] #because Ax + b
     c = [1.0; 1.0]
     D = [0.3 0.7; -0.5 1.30]
     X = BallInf(zeros(2), 1.0)
@@ -26,11 +26,10 @@ end
     M = inv(A)*(A_d - I)
     B_d = M*B
     c_d = M*c
-    b_d = M*b
     D_d = M*D
-    dict = Dict([:A => A, :B => B, :b => b, :c => c, :D => D,
+    dict = Dict([:A => A, :B => B, :b => c, :c => c, :D => D,
                  :X => X, :U => U, :W => W])
-    dict_discretized = Dict([:A => A_d, :B => B_d, :b => b_d, :c => c_d, :D => D_d,
+    dict_discretized = Dict([:A => A_d, :B => B_d, :b => c_d, :c => c_d, :D => D_d,
                  :X => X, :U => U, :W => W])
     # get affine ctypes
     CTYPES = filter(x -> (occursin("Linear", string(x)) || occursin("Affine", string(x))) &&

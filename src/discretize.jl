@@ -1,6 +1,5 @@
 using LinearAlgebra: inv, rank
 using SparseArrays: spzeros
-using InteractiveUtils: subtypes
 
 """
     _complementary_type(system::AbstractSystem)

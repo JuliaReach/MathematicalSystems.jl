@@ -15,4 +15,3 @@ include("macros.jl")
 include("successor.jl")
 include("utilities.jl")
 include("discretize.jl")
-

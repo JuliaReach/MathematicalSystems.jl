@@ -1,4 +1,12 @@
 using Espresso: matchex
+using LinearAlgebra: I
+using MacroTools: @capture
+using InteractiveUtils: subtypes
+export @system
+
+# ========================
+# @map macro
+# ========================
 
 """
     map(ex, args)
@@ -61,6 +69,7 @@ macro map(ex, args)
         throw(ArgumentError("unable to match the given expression to a known map type"))
     end
 end
+
 macro map(ex)
     x = (ex.args)[1]
     rhs = (ex.args)[2].args[2]
@@ -90,23 +99,31 @@ macro map(ex)
     throw(ArgumentError("unable to match the given expression to a known map type"))
 end
 
+# ========================
+# @system macro
+# ========================
 
+const TYPES_CONTINUOUS = subtypes(AbstractContinuousSystem)
+const FIELDS_CONTINUOUS = fieldnames.(TYPES_CONTINUOUS)
 
-# @System Macro ================================================================
-# Autors: @mforets, @ueliwechsler
-using LinearAlgebra: I
-using MacroTools: @capture
-using InteractiveUtils: subtypes
-export @system
+const TYPES_DISCRETE = subtypes(AbstractContinuousSystem)
+const FIELDS_DISCRETE = fieldnames.(TYPES_DISCRETE)
 
-function corresponding_type(abstract_type, fields::Tuple)
-    TYPES = subtypes(abstract_type)
-    TYPES_FIELDS = fieldnames.(TYPES)
-    is_in(x, y) = all([el ∈ y for el in x])
-    idx = findall(x -> is_in(x, fields) && is_in(fields,x), TYPES_FIELDS)
-    if length(idx) == 0
-        error("The entry $(fields) does not match a MathematicalSystem structure.")
+types_table(::Type{AbstractContinuousSystem}) = TYPES_CONTINUOUS
+types_table(::Type{AbstractDiscreteSystem}) = TYPES_DISCRETE
+
+fields_table(::Type{AbstractContinuousSystem}) = FIELDS_CONTINUOUS
+fields_table(::Type{AbstractDiscreteSystem}) = FIELDS_DISCRETE
+
+function corresponding_type(AT::Type{<:AbstractSystem}, fields::Tuple;
+                            TYPES=types_table(AT),
+                            FIELDS=fields_table(AT))
+    idx = findall(x -> issetequal(fields, x), FIELDS)
+    if isempty(idx)
+        throw(ArgumentError("the entry $(fields) does not match a " *
+                            "`MathematicalSystems.jl` structure"))
     end
+    @assert length(idx) == 1 "found more than one compatible system type"
     return TYPES[idx][1]
 end
 

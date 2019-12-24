@@ -115,9 +115,38 @@ types_table(::Type{AbstractDiscreteSystem}) = TYPES_DISCRETE
 fields_table(::Type{AbstractContinuousSystem}) = FIELDS_CONTINUOUS
 fields_table(::Type{AbstractDiscreteSystem}) = FIELDS_DISCRETE
 
-function corresponding_type(AT::Type{<:AbstractSystem}, fields::Tuple;
-                            TYPES=types_table(AT),
-                            FIELDS=fields_table(AT))
+"""
+    _corresponding_type(AT::Type{<:AbstractSystem}, fields::Tuple)
+
+Return the system type whose field names match those in `fields`.
+
+### Input
+
+- `AT`     -- abstract system type, which can be either `AbstractContinuousSystem`
+              or `AbstractDiscreSystem`
+- `fields` -- tuple of field names
+
+### Output
+
+The system type (either discrete or continous, depending on `AT`) whose fields
+names correspond to those in `fields`, or an error if the `fields` do not match
+any known system type.
+
+### Examples
+
+```jldoctest
+julia> using MathematicalSystems: _corresponding_type
+
+julia> _corresponding_type(AbstractContinuousSystem, ((:A),))
+LinearContinuousSystem
+
+julia> _corresponding_type(AbstractContinuousSystem, ((:A), (:B), (:X), (:U)))
+ConstrainedLinearControlContinuousSystem
+```
+"""
+function _corresponding_type(AT::Type{<:AbstractSystem}, fields::Tuple)
+    TYPES = types_table(AT)
+    FIELDS = fields_table(AT)
     idx = findall(x -> issetequal(fields, x), FIELDS)
     if isempty(idx)
         throw(ArgumentError("the entry $(fields) does not match a " *
@@ -127,17 +156,36 @@ function corresponding_type(AT::Type{<:AbstractSystem}, fields::Tuple;
     return TYPES[idx][1]
 end
 
-# return the tuple containing the dimension(s) in `f_dims`
-# order of if, elseif, elseif is important!!
-function _capture_dim(f_dims)
-    if @capture(f_dims, (x_, u_, w_))
+"""
+    _capture_dim(expr)
+
+Return the tuple containing the dimension(s) in `expr`.
+
+### Input
+
+- `expr` -- symbolic expression that can be of any of the following forms:
+
+        - `x` or `(x)` -- state dimension
+        - `(x, u)`     -- state and input dimension
+        - `(x, u, w)`  -- state, input and noise dimensions
+
+### Output
+
+- The scalar `x` if `expr` specified the state dimension.
+- The vector `[x, u]` if `expr` specifies state and input dimension.
+- The vector `[x, u, w]` if `expr` specifies state, input and noise dimensions.
+"""
+function _capture_dim(expr)
+    # the order of the `if` clauses is important, as e.g.
+    # `@capture(expr, (x_, u_, w_))` is a particular case of `@capture(expr, (x_))`.
+    if @capture(expr, (x_, u_, w_))
         dims = [x, u, w]
-    elseif @capture(f_dims, (x_, u_))
+    elseif @capture(expr, (x_, u_))
         dims = [x, u]
-    elseif @capture(f_dims, (x_))
+    elseif @capture(expr, (x_))
         dims = x
     else
-        throw(ArgumentError("the dimensions $f_dims could not be parsed; " *
+        throw(ArgumentError("the dimensions in expression $expr could not be parsed; " *
             "see the documentation for valid examples"))
     end
     return dims
@@ -148,11 +196,6 @@ end
 function is_equation(expr)
     return @capture(expr, lhs_ = rhs_)
 end
-
-# return the tuple `(true, AT)` if the given expression `expr` corresponds to a dynamic equation,
-# either of the form `x⁺ = rhs` or `x' = rhs` and `false` otherwise, in the former
-# case `AT = AbstractDiscreteSystem` and in the latter `AT = AbstractContinuousSystem`
-# otherwise, return `(false, nothing)`
 
 # returns `(equation, AT, state)` if `expr` if the given expression `expr`
 # corresponds to a dynamic equation, either of the form `x⁺ = rhs` or `x' = rhs`
@@ -408,6 +451,6 @@ macro system(expr...)
     lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, noise, dim, AT)
     set = expand_set.(constr, state, noise)
     field_names, var_names = constructor_input(lhs, rhs, set)
-    sys_type = corresponding_type(AT, field_names)
+    sys_type = _corresponding_type(AT, field_names)
     return  esc(Expr(:call, :($sys_type), :($(var_names...))))
 end

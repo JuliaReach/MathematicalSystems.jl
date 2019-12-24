@@ -98,6 +98,28 @@ The criterion refers to the *type* information, not the value. Hence, e.g. a
 function ispolynomial(::AbstractSystem) end
 
 """
+    isnoisy(s::AbstractSystem)
+
+Determines if the dynamics of system `s` contains a noise term `w`.
+"""
+function isnoisy(::AbstractSystem) end
+
+"""
+    iscontrolled(s::AbstractSystem)
+
+Determines if the dynamics of system `s` contains a control input `u`.
+"""
+function iscontrolled(::AbstractSystem) end
+
+"""
+    isconstrained(s::AbstractSystem)
+
+Determines if the system `s` has constraints on the state, input and noise,
+respectively (those that are available).
+"""
+function isconstrained(::AbstractSystem) end
+
+"""
     AbstractMap
 
 Abstract supertype for all map types.

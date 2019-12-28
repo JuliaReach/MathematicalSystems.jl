@@ -105,7 +105,7 @@ The result of applying the system to `x`.
 """
 function successor(system::AffineDiscreteSystem, x::AbstractVector)
     !_is_conformable_state(system, x) && _argument_error(:x)
-    return system.A * x + system.b
+    return system.A * x + system.c
 end
 
 """
@@ -178,7 +178,7 @@ function successor(system::ConstrainedAffineDiscreteSystem, x::AbstractVector;
     if check_constraints
         !_in_stateset(system, x) && _argument_error(:x,:X)
     end
-    return system.A * x + system.b
+    return system.A * x + system.c
 end
 
 """

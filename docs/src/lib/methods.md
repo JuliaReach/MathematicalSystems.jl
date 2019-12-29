@@ -68,6 +68,6 @@ discretize
 
 ```@docs
 _discretize
-_complementary_type(::AbstractSystem)
+typename(::AbstractSystem)
 _complementary_type(::Type{<:AbstractSystem})
 ```

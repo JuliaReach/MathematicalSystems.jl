@@ -54,7 +54,6 @@ To get the `_complementary_type` of a `system<:AbstractSystem` use
     return Meta.parse(type_string)
 end
 
-
 """
      discretize(system::AbstractContinuousSystem, ΔT::Real; algorithm=:default)
 
@@ -75,20 +74,23 @@ Returns a discretization of the input system `system` with discretization time `
 ### Algorithm
 
 Consider a `NoisyAffineControlledContinuousSystem` with system dynamics
-`x' = Ax + Bu + c + Du`.
+``x' = Ax + Bu + c + Du``.
 
 If A is invertible:
 The exact discretization is calculated by solving the integral for
-`t = [t, t+ΔT]` for a fixed input `u` and fixed noise realisation `w` which
-writes as `x⁺ = Aᵈx + Bᵈu + cᵈ + Dᵈu` where `Aᵈ = exp(A⋅ΔT)`,
-`Bᵈ = inv(A)⋅(Aᵈ - I)⋅B`, `cᵈ = inv(A)⋅(Aᵈ - I)⋅c` and `Dᵈ = inv(A)⋅(Aᵈ - I)⋅D`.
+``t = [t, t + \\Delta T]`` for a fixed input `u` and fixed noise realisation `w`
+which writes as ``x^+ = A^d x + B^d u + c^d  + D^d u`` where
+``A^d = \\exp^{A \\cdot \\Delta T}``,
+``B^d = A^{-1}(A^d - I)B``,
+``c^d = A^{-1}(A^d - I)c`` and
+``D^d = A^{-1}(A^d - I)D``.
 
 
 If A is not invertible:
 A first order approximation of the exact discretiziation, the euler
-discretization, can be applied, which writes as `x⁺ = Aᵈx + Bᵈu + cᵈ + Dᵈu`
-where  `Aᵈ = I + ΔT⋅A`, `Bᵈ = ΔT⋅B`, `cᵈ = ΔT⋅c` and `Dᵈ = ΔT⋅D`.
-
+discretization, can be applied, which writes as ``x^+ = A^d x + B^d u + c^d + D^d u``
+where  ``A^d = I + \\Delta T \\cdot A``, ``B^d = \\Delta T \\cdot B``,
+``c^d = ΔT \\cdot c`` and ``D^d = \\Delta T \\cdot D``.
 """
 function discretize(system::AbstractContinuousSystem, ΔT::Real; algorithm=:default)
     noset(x) = x ∉ [:X,:U,:W]

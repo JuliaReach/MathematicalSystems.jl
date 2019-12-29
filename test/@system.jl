@@ -1,6 +1,3 @@
-using Revise
-using MathematicalSystems, LazySets, Test
-
 # ========
 # Setup
 # ========
@@ -161,3 +158,7 @@ sys_equal = @system(E*x⁺ = Ax) == @system(E1*x⁺ = A1*x)
 # Otherwise, we could let the dimension field optional in the constructor.
 
 =#
+
+
+
+## @system utility functions

@@ -40,7 +40,7 @@ AffineMap{Int64,Array{Int64,2},Array{Int64,1}}([1 0; 0 0], [2, 0])
 
 Additional arguments can be passed to `@map` using the function-call form, i.e.
 separating the arguments by commas, and using parentheses around the macro call.
-For exmple, an identity map of dimension 5 can be defined as:
+For example, an identity map of dimension 5 can be defined as:
 
 ```jldoctest
 julia> @map(x -> x, dim=5)
@@ -442,6 +442,84 @@ function expand_set(expr, state, noise) # input => to check set definitions
     error("The set-entry $(expr) does not have the correct form")
 end
 
+
+
+"""
+    system(expr...)
+
+Returns an instance of the system type corresponding to the given expressions.
+
+### Input
+
+- `expr`   -- expressions separated by commas which define the dynamic equation,
+the constraint sets or the dimensionality of the system
+
+### Output
+
+A system that best matches the given expressions.
+
+### Note
+
+The `expr` consist of one or several of the following elements:
+- continuous dynamic equation: `x' = Ax `
+- discrete dynamic equation: `x⁺ = Ax `
+- sets: `x ∈ X`
+- dimensionality: `dim: 1` or `dim = 1`
+- defining the noise variable: `noise: w`, `noise= w`
+
+The dynamic equation is parsed as following. The variable on the left hand side
+corresponds to the state variable, the noise variable is by default `w`, if not
+specified differently, and the input variable is the arbitrary remaining variable.
+If we want to change the default of the noise variable, this can be done by adding
+the term `noise: var` where `var` corresponds to the new value for the noise variable.
+
+If asterisk are used to separated the terms of the equation, the input variable
+can be any valid variable, i.e. `x⁺ = A*x + B*u_extra_long` if no asaterisk are
+used, the input can only be a single letter, i.e.  `x⁺ = Ax + Bv`.
+
+### Examples
+
+Let us first create a continuous linear system using this macro:
+
+```jldoctest
+julia> A = [1. 0; 0 1.]
+julia> @system(x' = A*x)
+LinearContinuousSystem{Array{Int64,2}}([1. 0; 0 1.])
+```
+a discrete system can be defined by using  `⁺`
+
+```jldoctest
+julia> A = [1. 0; 0 1.]
+julia> @system(x⁺ = A*x)
+LinearDiscreteSystem{Array{Int64,2}}([1. 0; 0 1.])
+```
+
+Additionally, a set definition `x ∈ X` can be added to create a constrained system
+For example, an  controlled affine system with state and input constrained writes
+as
+
+```jldoctest
+julia> using LazySets
+julia> A = [1. 0; 0 1.]
+julia> B = Matrix([1. 0.5]')
+julia> c = [1., 1.5]
+julia> X = BallInf(zeros(2), 10.)
+julia> U = BallInf(zeros(1), 2.)
+julia> @system(x⁺ = A*x + B*u + c, x∈X, u∈U)
+```
+
+For the creation of a blackbox system, the state, input and noise dimensions have
+to be defined separately. For a constrained controlled black box system, the macro
+writes as
+
+```jldoctest
+julia> using LazySets
+julia> f(x,u) = x + u
+julia> X = BallInf(zeros(2), 10.)
+julia> U = BallInf(zeros(1), 2.)
+julia> @system(x⁺ = f(x,u), x∈X, u∈U, dim:(2,2))
+```
+"""
 macro system(expr...)
     if typeof(expr) == :Expr
         dyn_eq, state, AT, constr, noise, dim = parse_system([expr])

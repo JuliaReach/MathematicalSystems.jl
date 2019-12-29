@@ -191,8 +191,21 @@ function _capture_dim(expr)
     return dims
 end
 
-# return `true` if the given expression `expr` corresponds to an equation `lhs = rhs`
-# and `false` otherwise. This function just detects the presence of the symbol `=`.
+
+"""
+    is_equation(expr)
+
+Return `true` if the given expression `expr` corresponds to an equation `lhs = rhs`
+and `false` otherwise. This function just detects the presence of the symbol `=`.
+
+### Input
+
+- `expr` -- expression
+
+### Output
+
+Returns Bool indicating wether `expr` is an equation or not.
+"""
 function is_equation(expr)
     return @capture(expr, lhs_ = rhs_)
 end
@@ -333,22 +346,50 @@ function extract_dyn_equation_parameters(equation, state, noise, dim, AT)
     return lhs_params, rhs_params
 end
 
+"""
+    add_asterisk(summand, state::Symbol, noise::Symbol)
 
-# CAVEAT: This function "adds" most of the restriction to the API of @system
-# if there are no * used in the equation.
-# add a asterisk * to a expression, if the expression itself is not yet in the
-# form `Expr(:call, :*, :A, :x)`. It checks if the expression if contains the
-# value of  `state` or `noise` at the its end and separates the expreseion accoridngly,
-# if neither is true, it checks if `expr` has only one letter, then it is assumed to
-# be a constant and otherwise, it assume there is a one letter input.
-# Examples:
-# add_asterisk(:(A1*x), :x, :w) # :(A1*x)
-# add_asterisk(:(A1x12), :x12, :w) # :(A1*x12)
-# add_asterisk(:(A1w12), :x, :w12) # :(A1*w12)
-# add_asterisk(:(A1u), :x, :w) # :(A1*u)
-# add_asterisk(:(A1ub), :x, :w) # :(A1u*b)
-# add_asterisk(:(d), :x, :w) # :(d)
-function add_asterisk(summand, state, noise)
+Convert expression `summand` into the form `Expr(:call, :*, :A, :x)`,
+unless `summand` is a single letter symbol, than `summand` is returned.
+
+It checks if the expression if contains the value of  `state` or `noise` at its end
+and separates the expreseion accoridngly, if neither is true, it checks if `expr`
+has only one letter, then it is assumed to be a constant and otherwise,
+it assume there is a one letter input.
+
+### Input
+
+- `summand` -- expressions
+- `state` -- state variable
+- `noise` -- noise variable, if available
+
+### Output
+
+Multiplication expression or single letter symbol.
+
+### Note
+
+CAVEAT: This function "adds" most of the restriction to the API of @system
+if there are no * used in the equation.
+
+### Example
+
+```jldoctest
+julia> extract_sum(:(A1*x), :x, :w)
+:(A1*x)
+julia> extract_sum(:(c), :x, :w)
+:(c)
+julia> extract_sum(:(Axi), :xi, :w)
+:(A*x1)
+julia> extract_sum(:(Awb), :xi, :wb)
+:(A*wb)
+julia> extract_sum(:(A1u), :x, :w)
+:(A1*u)
+julia> extract_sum(:(A1ub), :x, :w)
+:(A1u*b)
+```
+"""
+function add_asterisk(summand, state::Symbol, noise::Symbol)
     if @capture(summand, A_ * x_)
         return summand
     end
@@ -364,20 +405,43 @@ function add_asterisk(summand, state, noise)
             return Meta.parse(str[1:end-length(statestr)]*"*$state")
         elseif lennoise < length(str) && str[(end-lennoise+1):end] == noisestr
             return Meta.parse(str[1:end-length(noisestr)]*"*$noise")
-        else
+        else # input is parsed as single letter variable
             return Meta.parse(str[1:end-1]*"*"*str[end])
         end
     end
 end
 
-# # call to * with right argument equals state => state matrix
-# extract(:(A1*x), :x, :w) # (:A1, :A)
-# # call to * with right argument equals noise => noise matrix
-# extract(:(A2*w), :x, :w) # (:A2, :D)
-# # call to * with right argument not equals state or  noise = input matrix
-# extract(:(A3*u), :x, :w) # (:A3, :B)
-# # single expression => const term
-# extract(:(u), :x, :w) # (:u, :c)
+"""
+    extract_sum(summands, state::Symbol, noise::Symbol)
+
+Given a array of expression `summands` which consists of one or more elements
+which either are mutliplication or a symbol, the corresponding fields of the
+affine system and the variable use are extracted.
+The state variable is parsed as `state`, the noise variable as `noise` and the input
+variable as everything else.
+
+### Input
+
+- `summands` -- array of expressions
+- `state` -- state variable
+- `noise` -- noise variable, if available
+
+### Output
+
+Array of tuples of symbols with variable name and field name.
+
+### Example
+
+```jldoctest
+julia> extract_sum(:(A1*x), :x, :w)
+(:A1, :A)
+julia> extract_sum(:(A1*x+ B1*u1 + c1), :x, :w)
+[(:A1, :A), (:B1, :B), (:c1, :c)]
+
+julia> extract_sum(:(A1*x7+ B1*w + B2*w8), :x7, :w8)
+[(:A1, :A), (:B1, :B), (:B2, :D)]
+```
+"""
 function extract_sum(summands, state::Symbol, noise::Symbol)
     params = Any[]
     for summand in summands

@@ -352,10 +352,10 @@ end
 Convert expression `summand` into the form `Expr(:call, :*, :A, :x)`,
 unless `summand` is a single letter symbol, than `summand` is returned.
 
-It checks if the expression if contains the value of  `state` or `noise` at its end
-and separates the expreseion accoridngly, if neither is true, it checks if `expr`
-has only one letter, then it is assumed to be a constant and otherwise,
-it assume there is a one letter input.
+It checks if the expression contains the value of  `state` or `noise` at its end
+and separates the expression accordingly. If neither is true, it checks if `expr`
+has only one letter; then it is assumed to be a constant. Otherwise,
+it is assumed that there is a one letter input.
 
 ### Input
 
@@ -370,7 +370,7 @@ Multiplication expression or single letter symbol.
 ### Note
 
 CAVEAT: This function "adds" most of the restriction to the API of @system
-if there are no * used in the equation.
+if there are no `*` used in the equation.
 
 ### Example
 
@@ -393,7 +393,7 @@ function add_asterisk(summand, state::Symbol, noise::Symbol)
     if @capture(summand, A_ * x_)
         return summand
     end
-    # the constant term needs to be a single chars, and if there
+    # the constant term needs to be a single char, and if there
     # are no *, also the variables need to be single chars
     str = string(summand)
     if length(str) == 1
@@ -414,9 +414,9 @@ end
 """
     extract_sum(summands, state::Symbol, noise::Symbol)
 
-Given a array of expression `summands` which consists of one or more elements
-which either are mutliplication or a symbol, the corresponding fields of the
-affine system and the variable use are extracted.
+Given an array of expressions `summands` which consists of one or more elements
+which either are mutliplication symbols or single-letter expressions, the corresponding fields of the
+affine system and the variable are extracted.
 The state variable is parsed as `state`, the noise variable as `noise` and the input
 variable as everything else.
 
@@ -529,16 +529,16 @@ The `expr` consist of one or several of the following elements:
 - discrete dynamic equation: `x⁺ = Ax `
 - sets: `x ∈ X`
 - dimensionality: `dim: 1` or `dim = 1`
-- defining the noise variable: `noise: w`, `noise= w`
+- defining the noise variable: `noise: w`, `noise = w`
 
 The dynamic equation is parsed as following. The variable on the left hand side
 corresponds to the state variable, the noise variable is by default `w`, if not
 specified differently, and the input variable is the arbitrary remaining variable.
-If we want to change the default of the noise variable, this can be done by adding
-the term `noise: var` where `var` corresponds to the new value for the noise variable.
+If we want to change the default name of the noise variable, this can be done by adding
+the term `noise: var` where `var` corresponds to the new name of the noise variable.
 
-If asterisk are used to separated the terms of the equation, the input variable
-can be any valid variable, i.e. `x⁺ = A*x + B*u_extra_long` if no asaterisk are
+If asterisks are used to separate the terms of the equation, the input variable
+can be any valid variable, i.e. `x⁺ = A*x + B*u_extra_long`. If no asterisks are
 used, the input can only be a single letter, i.e.  `x⁺ = Ax + Bv`.
 
 ### Examples
@@ -550,7 +550,7 @@ julia> A = [1. 0; 0 1.]
 julia> @system(x' = A*x)
 LinearContinuousSystem{Array{Int64,2}}([1. 0; 0 1.])
 ```
-a discrete system can be defined by using  `⁺`
+A discrete system can be defined by using  `⁺`:
 
 ```jldoctest
 julia> A = [1. 0; 0 1.]
@@ -558,8 +558,8 @@ julia> @system(x⁺ = A*x)
 LinearDiscreteSystem{Array{Int64,2}}([1. 0; 0 1.])
 ```
 
-Additionally, a set definition `x ∈ X` can be added to create a constrained system
-For example, an  controlled affine system with state and input constrained writes
+Additionally, a set definition `x ∈ X` can be added to create a constrained system.
+For example, a discrete controlled affine system with constrained states and inputs writes
 as
 
 ```jldoctest
@@ -572,8 +572,8 @@ julia> U = BallInf(zeros(1), 2.)
 julia> @system(x⁺ = A*x + B*u + c, x∈X, u∈U)
 ```
 
-For the creation of a blackbox system, the state, input and noise dimensions have
-to be defined separately. For a constrained controlled black box system, the macro
+For the creation of a black-box system, the state, input and noise dimensions have
+to be defined separately. For a constrained controlled black-box system, the macro
 writes as
 
 ```jldoctest

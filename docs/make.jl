@@ -1,4 +1,5 @@
 using Documenter, MathematicalSystems
+import LazySets
 
 DocMeta.setdocmeta!(MathematicalSystems, :DocTestSetup,
                     :(using MathematicalSystems); recursive=true)

@@ -106,7 +106,7 @@ end
 const TYPES_CONTINUOUS = subtypes(AbstractContinuousSystem)
 const FIELDS_CONTINUOUS = fieldnames.(TYPES_CONTINUOUS)
 
-const TYPES_DISCRETE = subtypes(AbstractContinuousSystem)
+const TYPES_DISCRETE = subtypes(AbstractDiscreteSystem)
 const FIELDS_DISCRETE = fieldnames.(TYPES_DISCRETE)
 
 types_table(::Type{AbstractContinuousSystem}) = TYPES_CONTINUOUS

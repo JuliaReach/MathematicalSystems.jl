@@ -373,17 +373,22 @@ if there are no `*` used in the equation.
 ### Example
 
 ```jldoctest
-julia> extract_sum(:(A1*x), :x, :w)
+julia> MathematicalSystems.add_asterisk(:(A1*x), :x, :w)
 :(A1*x)
-julia> extract_sum(:(c), :x, :w)
-:(c)
-julia> extract_sum(:(Axi), :xi, :w)
+
+julia> MathematicalSystems.add_asterisk(:(c), :x, :w)
+:c
+
+julia>  MathematicalSystems.add_asterisk(:(Axi), :xi, :w)
 :(A*x1)
-julia> extract_sum(:(Awb), :xi, :wb)
+
+julia>  MathematicalSystems.add_asterisk(:(Awb), :xi, :wb)
 :(A*wb)
-julia> extract_sum(:(A1u), :x, :w)
+
+julia>  MathematicalSystems.add_asterisk(:(A1u), :x, :w)
 :(A1*u)
-julia> extract_sum(:(A1ub), :x, :w)
+
+julia>  MathematicalSystems.add_asterisk(:(A1ub), :x, :w)
 :(A1u*b)
 ```
 """
@@ -413,7 +418,7 @@ end
     extract_sum(summands, state::Symbol, noise::Symbol)
 
 Given an array of expressions `summands` which consists of one or more elements
-which either are mutliplication symbols or single-letter expressions, the corresponding fields of the
+which either are mutliplication expression or single-letter symbol, the corresponding fields of the
 affine system and the variable are extracted.
 The state variable is parsed as `state`, the noise variable as `noise` and the input
 variable as everything else.
@@ -431,12 +436,13 @@ Array of tuples of symbols with variable name and field name.
 ### Example
 
 ```jldoctest
-julia> extract_sum(:(A1*x), :x, :w)
+julia>  MathematicalSystems.extract_sum([:(A1*x)], :x, :w)
 (:A1, :A)
-julia> extract_sum(:(A1*x+ B1*u1 + c1), :x, :w)
+
+julia> MathematicalSystems.extract_sum([:(A1*x), :(B1*u1), :c], :x, :w)
 [(:A1, :A), (:B1, :B), (:c1, :c)]
 
-julia> extract_sum(:(A1*x7+ B1*w + B2*w8), :x7, :w8)
+julia> MathematicalSystems.extract_sum([:(A1*x7),:( B1*w), :( B2*w8)], :x7, :w8)
 [(:A1, :A), (:B1, :B), (:B2, :D)]
 ```
 """
@@ -545,7 +551,7 @@ Let us first create a continuous linear system using this macro:
 julia> A = [1. 0; 0 1.];
 
 julia> @system(x' = A*x)
-LinearContinuousSystem{Array{Int64,2}}([1. 0; 0 1.])
+LinearContinuousSystem{Float64,Array{Float64,2}}([1.0 0.0; 0.0 1.0])
 ```
 A discrete system can be defined by using  `⁺`:
 
@@ -553,7 +559,7 @@ A discrete system can be defined by using  `⁺`:
 julia> A = [1. 0; 0 1.];
 
 julia> @system(x⁺ = A*x)
-LinearDiscreteSystem{Array{Int64,2}}([1. 0; 0 1.])
+LinearContinuousSystem{Float64,Array{Float64,2}}([1.0 0.0; 0.0 1.0])
 ```
 
 Additionally, a set definition `x ∈ X` can be added to create a constrained system.
@@ -561,13 +567,20 @@ For example, a discrete controlled affine system with constrained states and inp
 as
 
 ```jldoctest
-julia> using LazySets
-julia> A = [1. 0; 0 1.]
-julia> B = Matrix([1. 0.5]')
-julia> c = [1., 1.5]
-julia> X = BallInf(zeros(2), 10.)
-julia> U = BallInf(zeros(1), 2.)
-julia> @system(x⁺ = A*x + B*u + c, x∈X, u∈U)
+julia> using LazySets;
+
+julia> A = [1. 0; 0 1.];
+
+julia> B = Matrix([1. 0.5]');
+
+julia> c = [1., 1.5];
+
+julia> X = BallInf(zeros(2), 10.);
+
+julia> U = BallInf(zeros(1), 2.);
+
+julia> @system(x⁺ = A*x + B*u + c, x∈X, u∈U);
+ConstrainedAffineControlContinuousSystem{Float64,Array{Float64,2},Array{Float64,2},Array{Float64,1},BallInf{Float64},BallInf{Float64}}([1.0 0.0; 0.0 1.0], [1.0; 0.5], [1.0, 1.5], BallInf{Float64}([0.0, 0.0], 10.0), BallInf{Float64}([0.0], 2.0))
 ```
 
 For the creation of a black-box system, the state, input and noise dimensions have
@@ -575,11 +588,16 @@ to be defined separately. For a constrained controlled black-box system, the mac
 writes as
 
 ```jldoctest
-julia> using LazySets
-julia> f(x,u) = x + u
-julia> X = BallInf(zeros(2), 10.)
-julia> U = BallInf(zeros(1), 2.)
+julia> using LazySets;
+
+julia> f(x,u) = x + u;
+
+julia> X = BallInf(zeros(2), 10.);
+
+julia> U = BallInf(zeros(1), 2.);
+
 julia> @system(x⁺ = f(x,u), x∈X, u∈U, dim:(2,2))
+ConstrainedBlackBoxControlContinuousSystem{typeof(f),BallInf{Float64},BallInf{Float64}}(f, 2, 2, BallInf{Float64}([0.0, 0.0], 10.0), BallInf{Float64}([0.0], 2.0))
 ```
 """
 macro system(expr...)

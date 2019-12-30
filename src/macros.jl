@@ -454,11 +454,11 @@ Array of tuples of symbols with variable name and field name.
 
 ```jldoctest
 julia>  MathematicalSystems.extract_sum([:(A1*x)], :x, :u, :w)
-1-element Array{Any,1}:
+1-element Array{Tuple{Symbol,Symbol},1}:
  (:A1, :A)
 
 julia> MathematicalSystems.extract_sum([:(A1*x), :(B1*u), :c], :x, :u, :w)
-3-element Array{Any,1}:
+3-element Array{Tuple{Symbol,Symbol},1}:
  (:A1, :A)
  (:B1, :B)
  (:c, :c)

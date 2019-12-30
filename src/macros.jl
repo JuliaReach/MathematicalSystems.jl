@@ -583,7 +583,7 @@ A discrete system can be defined by using  `⁺`:
 julia> A = [1. 0; 0 1.];
 
 julia> @system(x⁺ = A*x)
-LinearContinuousSystem{Float64,Array{Float64,2}}([1.0 0.0; 0.0 1.0])
+LinearDiscreteSystem{Float64,Array{Float64,2}}([1.0 0.0; 0.0 1.0])
 ```
 
 Additionally, a set definition `x ∈ X` can be added to create a constrained system.

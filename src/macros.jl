@@ -358,49 +358,42 @@ end
 """
     add_asterisk(summand, state::Symbol, input::Symbol, noise::Symbol)
 
-Convert expression `summand` into the form `Expr(:call, :*, :A, :x)`,
-unless `summand` is a single letter symbol, than `summand` is returned.
-
-It checks if the expression contains the value of  `state` or `noise` at its end
-and separates the expression accordingly. If neither is true, it checks if `expr`
-has only one letter; then it is assumed to be a constant. Otherwise,
-it is assumed that there is a one letter input.
+Checks expression `summand` if `state`, `input`or `noise` is contained at its
+end. if so, a multiplication expression, e.g. `Expr(:call, :*, :A, :x) is created.
+If not, `summand` is returned.
 
 ### Input
 
 - `summand` -- expressions
 - `state` -- state variable
+- `input` -- input variable
 - `noise` -- noise variable, if available
 
 ### Output
 
-Multiplication expression or single letter symbol.
+Multiplication expression or symbol.
 
-### Note
-
-CAVEAT: This function "adds" most of the restriction to the API of @system
-if there are no `*` used in the equation.
 
 ### Example
 
 ```jldoctest
-julia> MathematicalSystems.add_asterisk(:(A1*x), :x, :w)
+julia> MathematicalSystems.add_asterisk(:(A1*x), :x, :u, :w)
 :(A1*x)
 
-julia> MathematicalSystems.add_asterisk(:(c), :x, :w)
-:c
+julia> MathematicalSystems.add_asterisk(:(c1), :x, :u, :w)
+:c1
 
-julia>  MathematicalSystems.add_asterisk(:(Axi), :xi, :w)
+julia>  MathematicalSystems.add_asterisk(:(Axi), :xi, :u, :w)
 :(A*x1)
 
-julia>  MathematicalSystems.add_asterisk(:(Awb), :xi, :wb)
+julia>  MathematicalSystems.add_asterisk(:(Awb), :xi, :u, :wb)
 :(A*wb)
 
-julia>  MathematicalSystems.add_asterisk(:(A1u), :x, :w)
+julia>  MathematicalSystems.add_asterisk(:(A1u), :x, :u, :w)
 :(A1*u)
 
-julia>  MathematicalSystems.add_asterisk(:(A1ub), :x, :w)
-:(A1u*b)
+julia>  MathematicalSystems.add_asterisk(:(A1ub), :x, :u, :w)
+:(A1ub)
 ```
 """
 function add_asterisk(summand, state::Symbol, input::Symbol, noise::Symbol)
@@ -431,8 +424,18 @@ end
 """
     extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
 
+Extract the variable name and field name for the every element of `summands`.
+
+If a element of `summands` is a symbol, the symbol is the variable name and the
+field name is `:c`. If a element of `summands` is a multiplication expression
+`lhs*rhs`, return `lhs` as variable name and `:A` as field name if `lhs==state`,
+`:B` as field name if `lhs==input` and `:D` as field name if `lhs==noise`
+
+
 Given an array of expressions `summands` which consists of one or more elements
-which either are mutliplication expression or single-letter symbol, the corresponding fields of the
+which either are mutliplication expression or symbols.
+
+, the corresponding fields of the
 affine system and the variable are extracted.
 The state variable is parsed as `state`, the noise variable as `noise` and the input
 variable as everything else.
@@ -466,10 +469,16 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
         if @capture(summand, array_ * var_)
             if state == var
                 push!(params, (array, :A))
+
             elseif input == var
                 push!(params, (array, :B))
+
             elseif noise == var
                 push!(params, (array, :D))
+
+            else
+                error("in the dynamic equation, the expression $summand does not" *
+                "contain the state $state, the input $input or the noise term $noise")
             end
         elseif @capture(summand, array_)
             push!(params, (array, :c))
@@ -547,17 +556,16 @@ The `expr` consist of one or several of the following elements:
 - discrete dynamic equation: `x⁺ = Ax `
 - sets: `x ∈ X`
 - dimensionality: `dim: 1` or `dim = 1`
+- defining the input variable: `input: u`, `input = u`
 - defining the noise variable: `noise: w`, `noise = w`
 
 The dynamic equation is parsed as following. The variable on the left hand side
-corresponds to the state variable, the noise variable is by default `w`, if not
-specified differently, and the input variable is the arbitrary remaining variable.
-If we want to change the default name of the noise variable, this can be done by adding
-the term `noise: var` where `var` corresponds to the new name of the noise variable.
+corresponds to the state variable. The input variable is by default `u` and the
+noise variable is by default `w`, if notspecified differently.
 
-If asterisks are used to separate the terms of the equation, the input variable
-can be any valid variable, i.e. `x⁺ = A*x + B*u_extra_long`. If no asterisks are
-used, the input can only be a single letter, i.e.  `x⁺ = Ax + Bv`.
+If we want to change the default name of the input or noise variable, this can be
+done by addingthe term `input: var` where `var` corresponds to the new name of
+the input variable.
 
 ### Examples
 

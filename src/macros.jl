@@ -241,11 +241,12 @@ function parse_system(exprs)
     # define default dynamic equation, unknown abstract system type,
     # and empty list of constraints
     dynamic_equation = nothing
-    state_var = :x
     AT = nothing
     constraints = Vector{Expr}()
 
-    # define default input symbol and default dimension
+    # define defaults for state, noise and input symbol and default dimension
+    state_var = :x
+    input_var = :u
     noise_var = :w
     dimension = nothing
 
@@ -258,10 +259,16 @@ function parse_system(exprs)
                 dynamic_equation = stripped
                 state_var = subject
                 AT = abstract_system_type
+
             elseif @capture(ex, (dim = (f_dims_)) | (dims = (f_dims_)))
                 dimension = _capture_dim(f_dims)
+
+            elseif @capture(ex, (input = u_) | (u_ = input))
+                input_var = w
+
             elseif @capture(ex, (noise = w_) | (w_ = noise))
                 noise_var = w
+
             else
                 throw(ArgumentError("could not properly parse the equation $ex; " *
                                     "see the documentation for valid examples"))
@@ -269,6 +276,9 @@ function parse_system(exprs)
 
         elseif @capture(ex, state_ ∈ Set_)  # parse a constraint
             push!(constraints, ex)
+
+        elseif @capture(ex, (input: u_) | (u_: input))  # parse an input symbol
+            input_var = u
 
         elseif @capture(ex, (noise: w_) | (w_: noise))  # parse a noise symbol
             noise_var = w
@@ -289,13 +299,14 @@ function parse_system(exprs)
     nsets = length(constraints)
     nsets > 3 && error("cannot parse $nsets set constraints")
 
-    return dynamic_equation, state_var, AT, constraints, noise_var, dimension
+    return dynamic_equation, AT, constraints,
+           state_var, input_var, noise_var, dimension
 end
 
 # extract the field and value parameter from the dynamic equation `equation`
 # in the form `rhs = [(:A_user, :A), (:B_user, :B), ....]` and
 # `lhs = [(:E_user, :E)]` or `lhs = Any[]`
-function extract_dyn_equation_parameters(equation, state, noise, dim, AT)
+function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
     @capture(equation, lhs_ = rhscode_)
     # a multiplication sign * needs to be used
     lhs_params = Any[]
@@ -308,8 +319,8 @@ function extract_dyn_equation_parameters(equation, state, noise, dim, AT)
         rhs = rhscode
     end
     if @capture(rhs, A_ + B__) # If rhs is a sum
-        summands = add_asterisk.([A, B...], Ref(state), Ref(noise))
-        push!(rhs_params, extract_sum(summands, state, noise)...)
+        summands = add_asterisk.([A, B...], Ref(state), Ref(input), Ref(noise))
+        push!(rhs_params, extract_sum(summands, state, input, noise)...)
     elseif @capture(rhs, f_(a__))  && f != :(*) # If rhs is function call
         # the dimension argument needs to be a iterable
         (dim == nothing) && error("for a blackbox system, the dimension has to be defined")
@@ -325,7 +336,7 @@ function extract_dyn_equation_parameters(equation, state, noise, dim, AT)
         elseif rhs == :(0) && AT == AbstractContinuousSystem
             push!(rhs_params, (dim, :statedim))
         else
-            rhs = add_asterisk(rhs, state, noise)
+            rhs = add_asterisk(rhs, state, input, noise)
             if @capture(rhs, array_ * var_)
                 if state == var
                     value = tryparse(Float64, string(array))
@@ -345,7 +356,7 @@ function extract_dyn_equation_parameters(equation, state, noise, dim, AT)
 end
 
 """
-    add_asterisk(summand, state::Symbol, noise::Symbol)
+    add_asterisk(summand, state::Symbol, input::Symbol, noise::Symbol)
 
 Convert expression `summand` into the form `Expr(:call, :*, :A, :x)`,
 unless `summand` is a single letter symbol, than `summand` is returned.
@@ -392,30 +403,33 @@ julia>  MathematicalSystems.add_asterisk(:(A1ub), :x, :w)
 :(A1u*b)
 ```
 """
-function add_asterisk(summand, state::Symbol, noise::Symbol)
+function add_asterisk(summand, state::Symbol, input::Symbol, noise::Symbol)
     if @capture(summand, A_ * x_)
         return summand
     end
-    # the constant term needs to be a single char, and if there
-    # are no *, also the variables need to be single chars
+
     str = string(summand)
-    if length(str) == 1
+    statestr = string(state); lenstate = length(statestr)
+    inputstr = string(input); leninput = length(inputstr)
+    noisestr = string(noise); lennoise = length(noisestr)
+
+    if lenstate < length(str) && str[(end-lenstate+1):end] == statestr
+        return Meta.parse(str[1:end-length(statestr)]*"*$state")
+
+    elseif leninput < length(str) && str[(end-leninput+1):end] == inputstr
+        return Meta.parse(str[1:end-length(inputstr)]*"*$input")
+
+    elseif lennoise < length(str) && str[(end-lennoise+1):end] == noisestr
+        return Meta.parse(str[1:end-length(noisestr)]*"*$noise")
+
+    else # summand is parsed as a constant term
         return summand
-    else
-        statestr = string(state); lenstate = length(statestr)
-        noisestr = string(noise); lennoise = length(noisestr)
-        if lenstate < length(str) && str[(end-lenstate+1):end] == statestr
-            return Meta.parse(str[1:end-length(statestr)]*"*$state")
-        elseif lennoise < length(str) && str[(end-lennoise+1):end] == noisestr
-            return Meta.parse(str[1:end-length(noisestr)]*"*$noise")
-        else # input is parsed as single letter variable
-            return Meta.parse(str[1:end-1]*"*"*str[end])
-        end
     end
+
 end
 
 """
-    extract_sum(summands, state::Symbol, noise::Symbol)
+    extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
 
 Given an array of expressions `summands` which consists of one or more elements
 which either are mutliplication expression or single-letter symbol, the corresponding fields of the
@@ -446,17 +460,16 @@ julia> MathematicalSystems.extract_sum([:(A1*x7),:( B1*w), :( B2*w8)], :x7, :w8)
 [(:A1, :A), (:B1, :B), (:B2, :D)]
 ```
 """
-function extract_sum(summands, state::Symbol, noise::Symbol)
+function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
     params = Any[]
     for summand in summands
         if @capture(summand, array_ * var_)
             if state == var
                 push!(params, (array, :A))
+            elseif input == var
+                push!(params, (array, :B))
             elseif noise == var
                 push!(params, (array, :D))
-            else
-                push!(params, (array, :B))
-                # input = var # => return this to check if constraints are correctly defined
             end
         elseif @capture(summand, array_)
             push!(params, (array, :c))
@@ -495,17 +508,20 @@ function constructor_input(lhs, rhs, set)
     return field_names, var_names
 end
 
-function expand_set(expr, state, noise) # input => to check set definitions
+function expand_set(expr, state, input, noise) # input => to check set definitions
     if @capture(expr, x_ ∈ Set_)
         if x == state
             return  Set, :X
+        elseif x == input
+            return  Set, :U
         elseif x == noise
             return  Set, :W
         else
-            return  Set, :U
+            error("$expr is not a valid set definition, it does not contain"*
+                  "the state $state, the input $input or noise term $noise")
         end
     end
-    error("The set-entry $(expr) does not have the correct form")
+    error("The set-entry $(expr) does not have the correct form `x∈X`")
 end
 
 
@@ -602,12 +618,12 @@ ConstrainedBlackBoxControlContinuousSystem{typeof(f),BallInf{Float64},BallInf{Fl
 """
 macro system(expr...)
     if typeof(expr) == :Expr
-        dyn_eq, state, AT, constr, noise, dim = parse_system([expr])
+        dyn_eq, AT, constr, state, input, noise, dim = parse_system([expr])
     else
-        dyn_eq, state, AT, constr, noise, dim = parse_system(expr)
+        dyn_eq, AT, constr, state, input, noise, dim = parse_system(expr)
     end
-    lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, noise, dim, AT)
-    set = expand_set.(constr, state, noise)
+    lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, input, noise, dim, AT)
+    set = expand_set.(constr, state, input, noise)
     field_names, var_names = constructor_input(lhs, rhs, set)
     sys_type = _corresponding_type(AT, field_names)
     return  esc(Expr(:call, :($sys_type), :($(var_names...))))

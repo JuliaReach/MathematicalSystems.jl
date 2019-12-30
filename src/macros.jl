@@ -307,13 +307,11 @@ function extract_dyn_equation_parameters(equation, state, noise, dim, AT)
     else
         rhs = rhscode
     end
-    @show lhs, rhs
     if @capture(rhs, A_ + B__) # If rhs is a sum
-        @show summands = add_asterisk.([A, B...], Ref(state), Ref(noise))
+        summands = add_asterisk.([A, B...], Ref(state), Ref(noise))
         push!(rhs_params, extract_sum(summands, state, noise)...)
     elseif @capture(rhs, f_(a__))  && f != :(*) # If rhs is function call
         # the dimension argument needs to be a iterable
-        @show dim
         (dim == nothing) && error("for a blackbox system, the dimension has to be defined")
         dim_vec = [dim...]
         push!(rhs_params, extract_function(rhs, dim_vec)...)
@@ -446,7 +444,6 @@ function extract_sum(summands, state::Symbol, noise::Symbol)
     params = Any[]
     for summand in summands
         if @capture(summand, array_ * var_)
-            @show array, var
             if state == var
                 push!(params, (array, :A))
             elseif noise == var
@@ -463,7 +460,6 @@ function extract_sum(summands, state::Symbol, noise::Symbol)
 end
 
 function extract_function(rhs, dim::AbstractVector)
-    @show dim
     if @capture(rhs, f_(x_))
         @assert length(dim) == 1
         return [(f, :f), (dim[1], :statedim)]
@@ -546,14 +542,16 @@ used, the input can only be a single letter, i.e.  `x⁺ = Ax + Bv`.
 Let us first create a continuous linear system using this macro:
 
 ```jldoctest
-julia> A = [1. 0; 0 1.]
+julia> A = [1. 0; 0 1.];
+
 julia> @system(x' = A*x)
 LinearContinuousSystem{Array{Int64,2}}([1. 0; 0 1.])
 ```
 A discrete system can be defined by using  `⁺`:
 
 ```jldoctest
-julia> A = [1. 0; 0 1.]
+julia> A = [1. 0; 0 1.];
+
 julia> @system(x⁺ = A*x)
 LinearDiscreteSystem{Array{Int64,2}}([1. 0; 0 1.])
 ```

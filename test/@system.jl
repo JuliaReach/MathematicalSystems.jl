@@ -65,21 +65,22 @@ f1(x, u, w) = x'*x + u'*u + w'*w
 
 # AffineSystem
 # Needs AffineContinuousSystem to have fields :A, :c
-@test @system(x' = A*x  + b) == AffineContinuousSystem(A, b)
-@test @system(x⁺ = Ax + b) == AffineDiscreteSystem(A, b)
+# @test @system(x' = A*x  + b) == AffineContinuousSystem(A, b)
+# @test @system(x⁺ = Ax + b) == AffineDiscreteSystem(A, b)
 
 # LinearControlSystem
 @test @system(x' = A1x + B1u) == LinearControlContinuousSystem(A1, B1)
-@test @system(z_1' = A*z_1 + B*u_1) == LinearControlContinuousSystem(A, B)
+@test @system(z_1' = A*z_1 + B*u_1, input:u_1) == LinearControlContinuousSystem(A, B)
 
 @test @system(x⁺ = A1x + B1u) == LinearControlDiscreteSystem(A1, B1)
-@test @system(z_1⁺ = A*z_1 + B*v_1) == LinearControlDiscreteSystem(A, B)
+@test @system(z_1⁺ = A*z_1 + B*v_1, input:v_1) == LinearControlDiscreteSystem(A, B)
 
 # Constrained affine Systems
 @test @system(x' = Ax + Bu, x ∈ X, u ∈ U) == ConstrainedLinearControlContinuousSystem(A, B, X, U1) # pass
-@test @system(z_1' = A*z_1 + B*v_1 + c, z_1 ∈ X, v_1 ∈ U1) == ConstrainedAffineControlContinuousSystem(A, B, c, X, U1) # pass
+@test @system(z_1' = A*z_1 + B*v_1 + c, z_1 ∈ X, v_1 ∈ U1, input:v_1) == ConstrainedAffineControlContinuousSystem(A, B, c, X, U1) # pass
 @test @system(x' = Ax + Bu + Dw, x ∈ X, u ∈ U1, w ∈ W1) == NoisyConstrainedLinearControlContinuousSystem(A, B, D, X, U1, W1) # pass
-@test @system(z_1' = Az_1 + B*v_1 + c + Dd_1, z_1 ∈ X, v_1 ∈ U1, d_1 ∈ W1, d_1:noise) == NoisyConstrainedAffineControlContinuousSystem(A, B, c, D, X, U1, W1) # pass
+@test @system(z_1' = Az_1 + B*v_1 + c + Dd_1, z_1 ∈ X, v_1 ∈ U1, d_1 ∈ W1, input:v_1, d_1:noise) ==
+    NoisyConstrainedAffineControlContinuousSystem(A, B, c, D, X, U1, W1) # pass
 
 @test_throws ArgumentError @system(x' = Ax + Bu + c) # not a system type
 
@@ -107,7 +108,7 @@ f1(x, u, w) = x'*x + u'*u + w'*w
 @test_throws ArgumentError @system(x⁺ = Az)
 
 # affine
-@test @system(x⁺ = A1*x + c) == AffineDiscreteSystem(A1, c)
+# @test @system(x⁺ = A1*x + c) == AffineDiscreteSystem(A1, c)
 @test_throws ArgumentError @system(x⁺ = Ax + Bu + c)
 
 # algebraic
@@ -127,19 +128,12 @@ sys_equal = @system(E*x⁺ = Ax) == @system(E1*x⁺ = A1*x)
 # here u is interpreted as input
 @test @system(x⁺ = Ax + Bu, x ∈ X, u ∈ U1) == ConstrainedLinearControlDiscreteSystem(A, B, X, U1)
 # here v is interpreted as input (if the input has more than one letter, use a *)
-@test @system(x⁺ = Ax + B*u123, x ∈ X, u123 ∈ U1) == ConstrainedLinearControlDiscreteSystem(A, B, X, U1)
-@test_throws ArgumentError @system(x⁺ = Ax + Bu123, x ∈ X, u123 ∈ U1) == ConstrainedLinearControlDiscreteSystem(A, B, X, U1)
+@test @system(x⁺ = Ax + B*u123, x ∈ X, u123 ∈ U1, input: u123) == ConstrainedLinearControlDiscreteSystem(A, B, X, U1)
+@test @system(x⁺ = Ax + Bu123, x ∈ X, u123 ∈ U1, input: u123) == ConstrainedLinearControlDiscreteSystem(A, B, X, U1)
 
 # by default w is reserved for nosie
 # here w is interpreted as noise
 @test @system(x⁺ = A1x + Dw, x ∈ X1, w ∈ W) == NoisyConstrainedLinearDiscreteSystem(A1, D, X1, W)
-
-# if you want w to be interpreted as input, overwritte that w is noise by using e.g. w1: noise
-@test @system(x⁺ = Ax + Bw, x ∈ X, w ∈ U1, w1: noise) == ConstrainedLinearControlDiscreteSystem(A, B, X, U1)
-# if u does not correspond to the constraint, throw exception
-@test_throw ArgumentError @system(x⁺ = Ax + Bw, x ∈ X, u1 ∈ U1, w1: noise) == ConstrainedLinearControlDiscreteSystem(A, B, X, U1)
-
-@test @system(x⁺ = Ax + Bu + c, x ∈ X, u ∈ U1) == ConstrainedAffineControlDiscreteSystem(A, B, c, X, U1)
 
 # more noisy cases
 @test @system(x⁺ = A1x + Dw, x ∈ X1, w ∈ W, w:noise) == NoisyConstrainedLinearDiscreteSystem(A1, D, X1, W1)

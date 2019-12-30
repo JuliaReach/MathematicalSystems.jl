@@ -378,22 +378,22 @@ Multiplication expression or symbol.
 
 ```jldoctest
 julia> MathematicalSystems.add_asterisk(:(A1*x), :x, :u, :w)
-:(A1*x)
+:(A1 * x)
 
 julia> MathematicalSystems.add_asterisk(:(c1), :x, :u, :w)
 :c1
 
-julia>  MathematicalSystems.add_asterisk(:(Axi), :xi, :u, :w)
-:(A*x1)
+julia>  MathematicalSystems.add_asterisk(:(Ax1), :xi, :u, :w)
+:(A * x1)
 
 julia>  MathematicalSystems.add_asterisk(:(Awb), :xi, :u, :wb)
-:(A*wb)
+:(A * wb)
 
 julia>  MathematicalSystems.add_asterisk(:(A1u), :x, :u, :w)
-:(A1*u)
+:(A1 * u)
 
 julia>  MathematicalSystems.add_asterisk(:(A1ub), :x, :u, :w)
-:(A1ub)
+:A1ub
 ```
 """
 function add_asterisk(summand, state::Symbol, input::Symbol, noise::Symbol)
@@ -453,13 +453,13 @@ Array of tuples of symbols with variable name and field name.
 ### Example
 
 ```jldoctest
-julia>  MathematicalSystems.extract_sum([:(A1*x)], :x, :w)
+julia>  MathematicalSystems.extract_sum([:(A1*x)], :x, :u, :w)
 (:A1, :A)
 
-julia> MathematicalSystems.extract_sum([:(A1*x), :(B1*u1), :c], :x, :w)
+julia> MathematicalSystems.extract_sum([:(A1*x), :(B1*u1), :c], :x, :u, :w)
 [(:A1, :A), (:B1, :B), (:c1, :c)]
 
-julia> MathematicalSystems.extract_sum([:(A1*x7),:( B1*w), :( B2*w8)], :x7, :w8)
+julia> MathematicalSystems.extract_sum([:(A1*x7),:( B1*u7), :( B2*w7)], :x7, :u7, :w7)
 [(:A1, :A), (:B1, :B), (:B2, :D)]
 ```
 """
@@ -603,7 +603,7 @@ julia> X = BallInf(zeros(2), 10.);
 
 julia> U = BallInf(zeros(1), 2.);
 
-julia> @system(x⁺ = A*x + B*u + c, x∈X, u∈U);
+julia> @system(x' = A*x + B*u + c, x∈X, u∈U)
 ConstrainedAffineControlContinuousSystem{Float64,Array{Float64,2},Array{Float64,2},Array{Float64,1},BallInf{Float64},BallInf{Float64}}([1.0 0.0; 0.0 1.0], [1.0; 0.5], [1.0, 1.5], BallInf{Float64}([0.0, 0.0], 10.0), BallInf{Float64}([0.0], 2.0))
 ```
 
@@ -621,7 +621,7 @@ julia> X = BallInf(zeros(2), 10.);
 julia> U = BallInf(zeros(1), 2.);
 
 julia> @system(x⁺ = f(x,u), x∈X, u∈U, dim:(2,2))
-ConstrainedBlackBoxControlContinuousSystem{typeof(f),BallInf{Float64},BallInf{Float64}}(f, 2, 2, BallInf{Float64}([0.0, 0.0], 10.0), BallInf{Float64}([0.0], 2.0))
+ConstrainedBlackBoxControlDiscreteSystem{typeof(f),BallInf{Float64},BallInf{Float64}}(f, 2, 2, BallInf{Float64}([0.0, 0.0], 10.0), BallInf{Float64}([0.0], 2.0))
 ```
 """
 macro system(expr...)

@@ -383,10 +383,10 @@ julia> MathematicalSystems.add_asterisk(:(A1*x), :x, :u, :w)
 julia> MathematicalSystems.add_asterisk(:(c1), :x, :u, :w)
 :c1
 
-julia>  MathematicalSystems.add_asterisk(:(Ax1), :xi, :u, :w)
+julia>  MathematicalSystems.add_asterisk(:(Ax1), :x1, :u, :w)
 :(A * x1)
 
-julia>  MathematicalSystems.add_asterisk(:(Awb), :xi, :u, :wb)
+julia>  MathematicalSystems.add_asterisk(:(Awb), :x1, :u, :wb)
 :(A * wb)
 
 julia>  MathematicalSystems.add_asterisk(:(A1u), :x, :u, :w)
@@ -454,9 +454,9 @@ Array of tuples of symbols with variable name and field name.
 
 ```jldoctest
 julia>  MathematicalSystems.extract_sum([:(A1*x)], :x, :u, :w)
-(:A1, :A)
+[(:A1, :A)]
 
-julia> MathematicalSystems.extract_sum([:(A1*x), :(B1*u1), :c], :x, :u, :w)
+julia> MathematicalSystems.extract_sum([:(A1*x), :(B1*u), :c], :x, :u, :w)
 [(:A1, :A), (:B1, :B), (:c1, :c)]
 
 julia> MathematicalSystems.extract_sum([:(A1*x7),:( B1*u7), :( B2*w7)], :x7, :u7, :w7)
@@ -464,7 +464,7 @@ julia> MathematicalSystems.extract_sum([:(A1*x7),:( B1*u7), :( B2*w7)], :x7, :u7
 ```
 """
 function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
-    params = Any[]
+    params = Tuple{Symbol,Symbol}[]
     for summand in summands
         if @capture(summand, array_ * var_)
             if state == var

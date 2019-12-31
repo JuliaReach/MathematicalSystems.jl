@@ -66,7 +66,6 @@ end
 end
 
 @testset "@system for affine continuous systems" begin
-    # TODO: needs AffineContinuousSystem to have fields :A, :c
     @test @system(x' = A*x  + b) == AffineContinuousSystem(A, b)
     @test @system(x⁺ = Ax + b) == AffineDiscreteSystem(A, b)
     @test @system(z_1' = A*z_1 + B*v_1 + c, z_1 ∈ X, v_1 ∈ U1, input:v_1) == ConstrainedAffineControlContinuousSystem(A, B, c, X, U1) # pass

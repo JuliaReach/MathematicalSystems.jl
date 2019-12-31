@@ -46,7 +46,7 @@ end
     # but if the input should be named `w`
     @test_throws ArgumentError @system(x' = Ax + Bw)
     @test @system(x' = Ax + Bw, input:w) == LinearControlContinuousSystem(A,B)
-    # if the input has more than one letter
+    # if the input name is different from `u`
     @test @system(x' = Ax + Bu_1, input:u_1) == LinearControlContinuousSystem(A,B)
     @test @system(x' = Ax + B*u_1, input:u_1) == LinearControlContinuousSystem(A,B)
 
@@ -58,7 +58,7 @@ end
 
 @testset "@system for linear algebraic continous systems" begin
     # lhs needs a *
-    @testthrows @system(Ex' = Ax) == LinearAlgebraicContinuousSystem(A, E)
+    @test_throws ArgumentError @system(Ex' = Ax) == LinearAlgebraicContinuousSystem(A, E)
     @test@system(E*x' = Ax) == LinearAlgebraicContinuousSystem(A, E)
 
     @test @system(E*x' = A*x) == LinearAlgebraicContinuousSystem(A, E)
@@ -96,7 +96,7 @@ end
     @test @system(x₁⁺ = x₁, dim: 2) == DiscreteIdentitySystem(2)
 
     @test @system(u⁺ = u, dim: 3, u ∈ U) == ConstrainedDiscreteIdentitySystem(3, U)
-    @test @system(x1⁺ = x1, dim = 3, x1 ∈ U1) == ConstrainedDiscreteIdentitySystem(3, U)
+    @test @system(x1⁺ = x1, dim = 3, x1 ∈ X1) == ConstrainedDiscreteIdentitySystem(3, X1)
 
     # emoij support 😉
     🚈 = X
@@ -121,7 +121,7 @@ end
 
 @testset "@system for affine discrete systems" begin
     @test @system(x⁺ = A1*x + c) == AffineDiscreteSystem(A1, c)
-    @test_throws ArgumentError @system(x⁺ = Ax + Bu + c)
+    @test_throws ArgumentError @system(x⁺ = Ax + Bu + c) # not a system type
 end
 
 @testset "@system for linear algebraic discrete systems" begin
@@ -133,7 +133,7 @@ end
     @test sys == ConstrainedLinearAlgebraicDiscreteSystem(A, E, X)
 end
 
-@testset "@system for linear control discrete systems"
+@testset "@system for linear control discrete systems" begin
     sys = @system(x⁺ = A*x + B1*u)
     @test sys == LinearControlDiscreteSystem(A, B)
     @test sys == @system(x⁺ = A1*x + Bu)
@@ -150,7 +150,7 @@ end
     @test sys == ConstrainedLinearControlDiscreteSystem(A, B, X, U1)
 
     sys = @system(x⁺ = Ax + Bu123, x ∈ X, u123 ∈ U1, input: u123)
-    @test sys = ConstrainedLinearControlDiscreteSystem(A, B, X, U1)
+    @test sys == ConstrainedLinearControlDiscreteSystem(A, B, X, U1)
 end
 
 @testset "@system for noisy discrete systems" begin

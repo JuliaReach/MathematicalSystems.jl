@@ -72,6 +72,12 @@ NoisyConstrainedAffineControlDiscreteSystem
 NoisyConstrainedBlackBoxControlDiscreteSystem
 ```
 
+## System macro
+
+```@docs
+@system
+```
+
 ## Identity operator
 
 ```@docs

@@ -19,4 +19,12 @@ end
 ```@docs
 _corresponding_type
 _capture_dim
+add_asterisk
+```
+
+## Querying expressions
+
+```@docs
+is_equation
+extract_sum
 ```

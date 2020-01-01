@@ -331,23 +331,30 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
             if AT == AbstractDiscreteSystem
                 push!(rhs_params, (dim, :statedim))
             elseif AT == AbstractContinuousSystem
-                push!(rhs_params, (Matrix{Int}(I, dim, dim), :A))
+                push!(rhs_params, (Diagonal(ones(dim)), :A))
             end
         elseif rhs == :(0) && AT == AbstractContinuousSystem
             push!(rhs_params, (dim, :statedim))
         else
-            rhs = add_asterisk(rhs, state, input, noise)
-            if @capture(rhs, array_ * var_)
+            if @capture(rhs, -var_) # => x' = -x
                 if state == var
-                    value = tryparse(Float64, string(array))
-                    if value == nothing
-                        push!(rhs_params, (array, :A))
+                    dim = dim == nothing ? 1 : dim # we don't need dim=1
+                    push!(rhs_params, (-Diagonal(ones(dim)), :A))
+                end
+            else
+                rhs = add_asterisk(rhs, state, input, noise)
+                if @capture(rhs, array_ * var_)
+                    if state == var
+                        value = tryparse(Float64, string(array))
+                        if value == nothing # e.g. => x' = Ax
+                            push!(rhs_params, (array, :A))
+                        else # => e.g, x' = 2x
+                            push!(rhs_params, (value*Diagonal(ones(dim)), :A))
+                        end
                     else
-                        push!(rhs_params, (value*Matrix{Int}(I, dim, dim), :A))
+                        throw(ArgumentError("if there is only one term on the right side, it needs to"*
+                                " include the state."))
                     end
-                else
-                    throw(ArgumentError("if there is only one term on the right side, it needs to"*
-                            " include the state."))
                 end
             end
         end

@@ -323,7 +323,8 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
         push!(rhs_params, extract_sum(summands, state, input, noise)...)
     elseif @capture(rhs, f_(a__))  && f != :(*) && f != :(-) # If rhs is function call
         # the dimension argument needs to be a iterable
-        (dim == nothing) && error("for a blackbox system, the dimension has to be defined")
+        (dim == nothing) &&
+            throw(ArgumentError("for a blackbox system, the dimension has to be defined"))
         dim_vec = [dim...]
         push!(rhs_params, extract_function(rhs, dim_vec)...)
     else # if rhs is a single term (eith A*x, Ax, 2x, x or 0)
@@ -544,7 +545,7 @@ function expand_set(expr, state, input, noise) # input => to check set definitio
                   "the state $state, the input $input or noise term $noise")
         end
     end
-    error("The set-entry $(expr) does not have the correct form `x∈X`")
+    throw(ArgumentError("The set-entry $(expr) does not have the correct form `x∈X`"))
 end
 
 
@@ -639,14 +640,22 @@ ConstrainedBlackBoxControlDiscreteSystem{typeof(f),BallInf{Float64},BallInf{Floa
 ```
 """
 macro system(expr...)
-    if typeof(expr) == :Expr
-        dyn_eq, AT, constr, state, input, noise, dim = parse_system([expr])
-    else
-        dyn_eq, AT, constr, state, input, noise, dim = parse_system(expr)
+    try
+        if typeof(expr) == :Expr
+            dyn_eq, AT, constr, state, input, noise, dim = parse_system([expr])
+        else
+            dyn_eq, AT, constr, state, input, noise, dim = parse_system(expr)
+        end
+        lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, input, noise, dim, AT)
+        set = expand_set.(constr, state, input, noise)
+        field_names, var_names = constructor_input(lhs, rhs, set)
+        sys_type = _corresponding_type(AT, field_names)
+        return  esc(Expr(:call, :($sys_type), :($(var_names...))))
+    catch ex
+        if  isa(ex, ArgumentError)
+            return :(throw($ex))
+        else
+            throw(ex)
+        end
     end
-    lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, input, noise, dim, AT)
-    set = expand_set.(constr, state, input, noise)
-    field_names, var_names = constructor_input(lhs, rhs, set)
-    sys_type = _corresponding_type(AT, field_names)
-    return  esc(Expr(:call, :($sys_type), :($(var_names...))))
 end

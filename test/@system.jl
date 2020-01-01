@@ -44,7 +44,7 @@ end
     # if the state should be named `w`
     @test @system(w' = Aw + Bu) == LinearControlContinuousSystem(A, B)
     # but if the input should be named `w`
-    @test_throws ArgumentError @system(x' = Ax + Bw)
+    @test_throws ArgumentError  @system(x' = Ax + Bw)
     @test @system(x' = Ax + Bw, input:w) == LinearControlContinuousSystem(A,B)
     # if the input name is different from `u`
     @test @system(x' = Ax + Bu_1, input:u_1) == LinearControlContinuousSystem(A,B)

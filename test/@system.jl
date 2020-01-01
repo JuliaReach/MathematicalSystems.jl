@@ -35,9 +35,9 @@ end
 
     # automatic identification of rhs linearity
     # TODO use Diagonal? IdentityMultiple?
-    @test @system(x' = -x) == LinearContinuousSystem(-1.0 * Matrix{Int}(I, 1, 1))
-    @test @system(x' = x, dim=3) == LinearContinuousSystem(Matrix{Int}(I, 3, 3))
-    @test @system(x' = 2x, dim=3) == LinearContinuousSystem(2.0*Matrix{Int}(I, 3, 3))
+    @test @system(x' = -x) == LinearContinuousSystem(-1.0 * Diagonal(ones(1)))
+    @test @system(x' = x, dim=3) == LinearContinuousSystem(Diagonal(ones(3)))
+    @test @system(x' = 2x, dim=3) == LinearContinuousSystem(2.0*Diagonal(ones(3)))
 end
 
 @testset "@system for linear control continuous systems" begin
@@ -58,7 +58,7 @@ end
 
 @testset "@system for linear algebraic continous systems" begin
     # lhs needs a *
-    @test_throws ArgumentError @system(Ex' = Ax) == LinearAlgebraicContinuousSystem(A, E)
+    @test_throws ArgumentError @system(Ex' = Ax)
     @test@system(E*x' = Ax) == LinearAlgebraicContinuousSystem(A, E)
 
     @test @system(E*x' = A*x) == LinearAlgebraicContinuousSystem(A, E)
@@ -68,22 +68,28 @@ end
 @testset "@system for affine continuous systems" begin
     @test @system(x' = A*x  + b) == AffineContinuousSystem(A, b)
     @test @system(x⁺ = Ax + b) == AffineDiscreteSystem(A, b)
-    @test @system(z_1' = A*z_1 + B*v_1 + c, z_1 ∈ X, v_1 ∈ U1, input:v_1) == ConstrainedAffineControlContinuousSystem(A, B, c, X, U1) # pass
+    sys =  @system(z_1' = A*z_1 + B*v_1 + c, z_1 ∈ X, v_1 ∈ U1, input:v_1)
+    @test sys == ConstrainedAffineControlContinuousSystem(A, B, c, X, U1)
     @test_throws ArgumentError @system(x' = Ax + Bu + c) # not a system type
 end
 
 @testset "@system for noisy continous systems" begin
-    @test @system(x' = f1(x, u, w), x ∈ X, u ∈ U, w ∈ W, dims=(1, 2,3)) == NoisyConstrainedBlackBoxControlContinuousSystem(f1, 1, 2, 3, X, U, W)
+    sys = @system(x' = f1(x, u, w), x ∈ X, u ∈ U, w ∈ W, dims=(1, 2,3))
+    @test sys == NoisyConstrainedBlackBoxControlContinuousSystem(f1, 1, 2, 3, X, U, W)
 
-    @test @system(x' = Ax + Bu + Dw, x ∈ X, u ∈ U1, w ∈ W1) == NoisyConstrainedLinearControlContinuousSystem(A, B, D, X, U1, W1)
-    @test @system(z_1' = Az_1 + B*v_1 + c + Dd_1, z_1 ∈ X, v_1 ∈ U1, d_1 ∈ W1, input:v_1, d_1:noise) == NoisyConstrainedAffineControlContinuousSystem(A, B, c, D, X, U1, W1)
+    sys = @system(x' = Ax + Bu + Dw, x ∈ X, u ∈ U1, w ∈ W1)
+    @test sys == NoisyConstrainedLinearControlContinuousSystem(A, B, D, X, U1, W1)
+    sys = @system(z_1' = Az_1 + B*v_1 + c + Dd_1, z_1 ∈ X, v_1 ∈ U1, d_1 ∈ W1, input:v_1, d_1:noise)
+    @test sys == NoisyConstrainedAffineControlContinuousSystem(A, B, c, D, X, U1, W1)
 end
 
 @testset "@system for black-box continous systems" begin
     @test_throws ArgumentError @system(x' = f1(x))
-    @test @system(x' = f1(x), x ∈ X, dim:2) == ConstrainedBlackBoxContinuousSystem(f1, 2, X)
-    @test @system(x' = f1(x, u), x ∈ X, u ∈ U, dims=(1, 2)) == ConstrainedBlackBoxControlContinuousSystem(f1, 1, 2, X, U)
     @test_throws ArgumentError @system(x' = f1(x, u))
+    sys =  @system(x' = f1(x), x ∈ X, dim:2)
+    @test sys == ConstrainedBlackBoxContinuousSystem(f1, 2, X)
+    sys = @system(x' = f1(x, u), x ∈ X, u ∈ U, dims=(1, 2))
+    @test sys == ConstrainedBlackBoxControlContinuousSystem(f1, 1, 2, X, U)
 end
 
 # ==================
@@ -113,7 +119,7 @@ end
     @test @system(x1⁺ = A*x1) == LinearDiscreteSystem(A)
     @test @system(x1⁺ = Ax1) == LinearDiscreteSystem(A)
 
-    @test @system(x⁺ = 2x, dim=3) == LinearDiscreteSystem(2.0*Matrix{Int}(I, 3, 3))
+    @test @system(x⁺ = 2x, dim=3) == LinearDiscreteSystem(2.0*Diagonal(ones(3)))
 
     @test @system(x⁺ = A1x, x ∈ X1) == ConstrainedLinearDiscreteSystem(A1, X1)
 end

@@ -31,10 +31,9 @@ end
 
 @testset "@system for linear continous systems" begin
     @test @system(x' = A*x) == LinearContinuousSystem(A)
-    @test @system(x1' = A1x1) == LinearContinuousSystem(A)
+    @test @system(x1' = A1x1) == LinearContinuousSystem(A1)
 
     # automatic identification of rhs linearity
-    # TODO use Diagonal? IdentityMultiple?
     @test @system(x' = -x) == LinearContinuousSystem(-1.0 * Diagonal(ones(1)))
     @test @system(x' = x, dim=3) == LinearContinuousSystem(Diagonal(ones(3)))
     @test @system(x' = 2x, dim=3) == LinearContinuousSystem(2.0*Diagonal(ones(3)))
@@ -53,7 +52,7 @@ end
     @test @system(x' = A1x + B1u) == LinearControlContinuousSystem(A1, B1)
     @test @system(z_1' = A*z_1 + B*u_1, input:u_1) == LinearControlContinuousSystem(A, B)
 
-    @test @system(x' = Ax + Bu, x ∈ X, u ∈ U) == ConstrainedLinearControlContinuousSystem(A, B, X, U1)
+    @test @system(x' = Ax + Bu, x ∈ X, u ∈ U) == ConstrainedLinearControlContinuousSystem(A, B, X, U)
 end
 
 @testset "@system for linear algebraic continous systems" begin

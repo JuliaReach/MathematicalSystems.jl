@@ -60,18 +60,18 @@ end
      discretize(system::AbstractContinuousSystem, ΔT::Real; algorithm=:default)
 
 Discretization of a `isaffine` `AbstractContinuousSystem` to a
-`AbstractDiscreteSystem` with discretization time `ΔT` using the exact
+`AbstractDiscreteSystem` with sampling time `ΔT` using the exact
 discretization algorithm if possible.
 
 ### Input
 
 - `system` -- an affine continuous system
-- `ΔT` -- discretization time
+- `ΔT` -- sampling time
 - `algorithm` -- (optional, default: `:default`) discretization algorithm
 
 ### Output
 
-Returns a discretization of the input system `system` with discretization time `ΔT`.
+Returns a discretization of the input system `system` with sampling time `ΔT`.
 
 ### Algorithm
 
@@ -100,27 +100,35 @@ Consider [1] as a source for further information.
 [1] https://en.wikipedia.org/wiki/Discretization
 """
 function discretize(system::AbstractContinuousSystem, ΔT::Real; algorithm=:default)
-    noset(x) = x ∉ [:X,:U,:W]
-    # get all fields from system
-    fields = collect(fieldnames(typeof(system)))
-    # get fields of system that are parameter of the system dynamics (no sets)
-    # i.e., all fields that need to be discretized
-    values_cont = [getfield(system, f) for f in filter(noset, fields)]
+    sets(x) = x ∈ [:X,:U,:W]
+    matrices(x) = x ∈ [:A,:B,:b,:c,:D]
+
     if algorithm == :default
         if rank(system.A) == size(system.A, 1)
-          # A is invertible, use exact discretizaion
-          algorithm = :exact
+            # A is invertible, use exact discretizaion
+            algorithm = :exact
         else
-          # A is not invertible, use approximative discretizaion
-          algorithm = :euler
+            # A is not invertible, use approximative discretizaion
+            algorithm = :euler
         end
     end
+
+    # get all fields from system
+    fields = collect(fieldnames(typeof(system)))
+
+    # get the fields of `system` that are parameter of the affine system dynamics
+    # i.e., all fields that need to be discretized
+    values_cont = [getfield(system, f) for f in filter(matrices, fields)]
+
     # compute discretized values of dynamics_params_c
     values_disc = _discretize(values_cont..., ΔT; algorithm=algorithm)
-    # get fields of system that are sets
-    set_values = [getfield(system, f) for f in filter(!noset, fields)]
-    # get corresponding discrete type of system
+
+    # get the fields of `system` that are sets
+    set_values = [getfield(system, f) for f in filter(sets, fields)]
+
+    # get corresponding discrete type of `system`
     discrete_type = _complementary_type(typename(system))
+
     # build the new discrete type with the discretized and set values
     return discrete_type(values_disc..., set_values...)
 end
@@ -129,9 +137,23 @@ end
     _discretize(A::AbstractMatrix, B::AbstractMatrix, c::AbstractVector,
                 D::AbstractMatrix, ΔT::Real; algorithm=:exact)
 
-Implementation of the discretization algorithm used in `discretize`.
+Implementation of the discretization algorithm used in `discretize` with sampling
+time `ΔT` and discretization method `algorithm`.
 
 See [`discretize`](@ref) for more details.
+
+### Input
+
+- `A` -- state matrix
+- `B` -- input matrix
+- `c` -- vector
+- `D` -- noise matrix
+- `ΔT` -- sampling time
+- `algorithm` -- (optional, default: `:exact`) discretization algorithm
+
+### Output
+
+Returns a vector containing the discretized input arguments `A`, `B`, `c` and `D`.
 """
 function _discretize(A::AbstractMatrix,
                      B::AbstractMatrix,
@@ -154,6 +176,24 @@ function _discretize(A::AbstractMatrix,
     return [A_d, B_d, c_d, D_d]
 end
 
+"""
+    _discretize(A::AbstractMatrix, ΔT::Real; algorithm=:exact)
+
+Discretize the state matrix `A` with sampling time `ΔT` and discretization method
+`algorithm`.
+
+See [`discretize`](@ref) for more details.
+
+### Input
+
+- `A` -- state matrix
+- `ΔT` -- sampling time
+- `algorithm` -- (optional, default: `:exact`) discretization algorithm
+
+### Output
+
+Returns a vector containing the discretized input argument `A`.
+"""
 function _discretize(A::AbstractMatrix, ΔT::Real; algorithm=:exact)
     n = size(A,1)
     mzero = spzeros(n, n)
@@ -162,7 +202,31 @@ function _discretize(A::AbstractMatrix, ΔT::Real; algorithm=:exact)
     return [A_d]
 end
 
-# works for (:A,:D) and (:A, :B)
+"""
+    _discretize(A::AbstractMatrix,
+                B::AbstractMatrix, ΔT::Real; algorithm=:exact)
+
+Discretize the state matrix `A` and input or noise matrix `B` with sampling time
+`ΔT` and discretization method `algorithm`.
+
+See [`discretize`](@ref) for more details.
+
+### Input
+
+- `A` -- state matrix
+- `B` -- input or noise matrix
+- `ΔT` -- sampling time
+- `algorithm` -- (optional, default: `:exact`) discretization algorithm
+
+### Output
+
+Returns a vector containing the discretized input arguments `A` and `B`.
+
+### Note
+
+This method signature with two arguments of type `AbstractMatrix` works both for
+a noisy system with fields `(:A,:D)` and a controlled system with fields `(:A,:B)`.
+"""
 function _discretize(A::AbstractMatrix,
                      B::AbstractMatrix, ΔT::Real; algorithm=:exact)
     n = size(A,1)
@@ -172,6 +236,26 @@ function _discretize(A::AbstractMatrix,
     return [A_d, B_d]
 end
 
+"""
+    _discretize(A::AbstractMatrix,
+                c::AbstractVector, ΔT::Real; algorithm=:exact)
+
+Discretize the state matrix `A` and vector `c` with sampling time `ΔT` and
+discretization method `algorithm`.
+
+See [`discretize`](@ref) for more details.
+
+### Input
+
+- `A` -- state matrix
+- `c` -- vector
+- `ΔT` -- sampling time
+- `algorithm` -- (optional, default: `:exact`) discretization algorithm
+
+### Output
+
+Returns a vector containing the discretized input arguments `A` and `c`.
+"""
 function _discretize(A::AbstractMatrix,
                      c::AbstractVector, ΔT::Real; algorithm=:exact)
     n = size(A,1)
@@ -180,6 +264,28 @@ function _discretize(A::AbstractMatrix,
     return [A_d, c_d]
 end
 
+"""
+    _discretize(A::AbstractMatrix,
+                B::AbstractMatrix,
+                c::AbstractVector, ΔT::Real; algorithm=:exact)
+
+Discretize the state matrix `A`, input matrix `B` and vector `c` with sampling
+time `ΔT` and discretization method `algorithm`.
+
+See [`discretize`](@ref) for more details.
+
+### Input
+
+- `A` -- state matrix
+- `B` -- input matrix
+- `c` -- vector
+- `ΔT` -- sampling time
+- `algorithm` -- (optional, default: `:exact`) discretization algorithm
+
+### Output
+
+Returns a vector containing the discretized input arguments `A`, `B` and `c`.
+"""
 function _discretize(A::AbstractMatrix,
                      B::AbstractMatrix,
                      c::AbstractVector, ΔT::Real; algorithm=:exact)
@@ -189,6 +295,28 @@ function _discretize(A::AbstractMatrix,
     return [A_d, B_d, c_d]
 end
 
+"""
+    _discretize(A::AbstractMatrix,
+                B::AbstractMatrix,
+                D::AbstractMatrix, ΔT::Real; algorithm=:exact)
+
+Discretize the state matrix `A`, input matrix `B` and noise matrix `C` with
+sampling time `ΔT` and discretization method `algorithm`.
+
+See [`discretize`](@ref) for more details.
+
+### Input
+
+- `A` -- state matrix
+- `B` -- input matrix
+- `D` -- noise matrix
+- `ΔT` -- sampling time
+- `algorithm` -- (optional, default: `:exact`) discretization algorithm
+
+### Output
+
+Returns a vector containing the discretized input arguments `A`, `B` and `D`.
+"""
 function _discretize(A::AbstractMatrix,
                      B::AbstractMatrix,
                      D::AbstractMatrix, ΔT::Real; algorithm=:exact)

@@ -161,7 +161,7 @@ include("successor.jl")
 #===================================
 Discretization for affine systems
 ====================================#
-export discretize, typename
+export discretize
 
 include("discretize.jl")
 

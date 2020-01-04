@@ -24,8 +24,12 @@ end
 
 Return the complementary type of a system type `system_type`.
 
-For a `system_type<:AbstractDiscreteSystem`, the complementary
-`AbstractContinuousSystem` type is returned and vice versa.
+There are two main subclasses of abstract types continuous types and discrete
+types. A complementary type of `system_type` has the same fields as `system_type`
+but belongs to the other subclass, e.g. for a `LinearContinuousSystem` which is
+a subtype of `AbstractContinuousSystem` and has the field `:A`, the subtype of
+`AbstractDiscreteSystem` with the field `:A`, i.e.`LinearDiscreteSystem`,
+is returned.
 
 ### Input
 
@@ -76,19 +80,24 @@ Consider a `NoisyAffineControlledContinuousSystem` with system dynamics
 
 If A is invertible:
 The exact discretization is calculated by solving the integral for
-``t = [t, t + \\Delta T]`` for a fixed input `u` and fixed noise realisation `w`
-which writes as ``x^+ = A^d x + B^d u + c^d  + D^d u`` where
-``A^d = \\exp^{A \\cdot \\Delta T}``,
+``t = [t, t + ΔT]`` for a fixed input `u` and fixed noise realisation `w`.
+The resulting discretization writes as
+``x^+ = A^d x + B^d u + c^d  + D^d u`` where
+``A^d = \\exp^{A \\cdot ΔT}``,
 ``B^d = A^{-1}(A^d - I)B``,
 ``c^d = A^{-1}(A^d - I)c`` and
 ``D^d = A^{-1}(A^d - I)D``.
 
-
 If A is not invertible:
 A first order approximation of the exact discretiziation, the euler
 discretization, can be applied, which writes as ``x^+ = A^d x + B^d u + c^d + D^d u``
-where  ``A^d = I + \\Delta T \\cdot A``, ``B^d = \\Delta T \\cdot B``,
-``c^d = ΔT \\cdot c`` and ``D^d = \\Delta T \\cdot D``.
+where  ``A^d = I + ΔT \\cdot A``, ``B^d = ΔT \\cdot B``,
+``c^d = ΔT \\cdot c`` and ``D^d = ΔT \\cdot D``.
+
+The algorithms described above are a well known results from the literature.
+Consider [1] as a source for further information.
+
+[1] https://en.wikipedia.org/wiki/Discretization
 """
 function discretize(system::AbstractContinuousSystem, ΔT::Real; algorithm=:default)
     noset(x) = x ∉ [:X,:U,:W]

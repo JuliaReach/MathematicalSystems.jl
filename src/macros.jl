@@ -293,11 +293,11 @@ function parse_system(exprs)
     end
 
     # error handling for the given equations
-    dynamic_equation == nothing && error("the dynamic equation was not found")
+    dynamic_equation == nothing && throw(ArgumentError("the dynamic equation was not found"))
 
     # error handling for the given set constraints
     nsets = length(constraints)
-    nsets > 3 && error("cannot parse $nsets set constraints")
+    nsets > 3 && throw(ArgumentError("cannot parse $nsets set constraints"))
 
     return dynamic_equation, AT, constraints,
            state_var, input_var, noise_var, dimension
@@ -492,8 +492,9 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
                 push!(params, (array, :D))
 
             else
-                error("in the dynamic equation, the expression $summand does not" *
-                "contain the state $state, the input $input or the noise term $noise")
+                throw(ArgumentError("in the dynamic equation, the expression "*
+                "$summand does not contain the state $state, the input $input "*
+                "or the noise term $noise"))
             end
         elseif @capture(summand, array_)
             push!(params, (array, :c))
@@ -523,7 +524,7 @@ function constructor_input(lhs, rhs, set)
     lhs_fields = [tuple[2] for tuple in lhs]
     set_fields = [tuple[2] for tuple in set]
     (length(unique(set_fields)) != length(set_fields)) &&
-        error("There is some ambiguity in the set definition")
+        throw(ArgumentError("There is some ambiguity in the set definition"))
     rhs_var_names = [tuple[1] for tuple in rhs]
     lhs_var_names = [tuple[1] for tuple in lhs]
     set_var_names = [tuple[1] for tuple in set]
@@ -545,7 +546,7 @@ function expand_set(expr, state, input, noise) # input => to check set definitio
                   "the state $state, the input $input or noise term $noise")
         end
     end
-    throw(ArgumentError("The set-entry $(expr) does not have the correct form `x∈X`"))
+    throw(ArgumentError("The set-entry $(expr) does not have the correct form `x_ ∈ X_`"))
 end
 
 
@@ -567,10 +568,10 @@ A system that best matches the given expressions.
 ### Note
 
 The `expr` consist of one or several of the following elements:
-- continuous dynamic equation: `x' = Ax `
-- discrete dynamic equation: `x⁺ = Ax `
+- continuous dynamic equation: `x' = Ax`
+- discrete dynamic equation: `x⁺ = Ax`
 - sets: `x ∈ X`
-- dimensionality: `dim: 1` or `dim = 1`
+- dimensionality: `dim: (2,1)` or `dim = 1`
 - defining the input variable: `input: u`, `input = u`
 - defining the noise variable: `noise: w`, `noise = w`
 

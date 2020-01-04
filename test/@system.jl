@@ -4,7 +4,6 @@
 
 n = 3; m = 2; l = 3
 A = A1 = rand(n, n)
-b = b1 = rand(n)
 B = B1 = rand(n, m)
 c = c1 = rand(n)
 D = D1 = rand(n, l)
@@ -34,20 +33,26 @@ end
     @test @system(x1' = A1x1) == LinearContinuousSystem(A1)
 
     # automatic identification of rhs linearity
-    @test @system(x' = -x) == LinearContinuousSystem(-1.0 * Diagonal(ones(1)))
+    @test @system(x' = -x) == LinearContinuousSystem(-1.0*Diagonal(ones(1)))
     @test @system(x' = x, dim=3) == LinearContinuousSystem(Diagonal(ones(3)))
     @test @system(x' = 2x, dim=3) == LinearContinuousSystem(2.0*Diagonal(ones(3)))
+
+    @test @system(x' = A*x, x ∈ X) == ConstrainedLinearContinuousSystem(A,X)
+    @test @system(x1' = A1x1, x1 ∈ X1) == ConstrainedLinearContinuousSystem(A1,X1)
 end
 
 @testset "@system for linear control continuous systems" begin
     # if the state should be named `w`
     @test @system(w' = Aw + Bu) == LinearControlContinuousSystem(A, B)
     # but if the input should be named `w`
-    @test_throws ArgumentError  @system(x' = Ax + Bw)
-    @test @system(x' = Ax + Bw, input:w) == LinearControlContinuousSystem(A,B)
-    # if the input name is different from `u`
-    @test @system(x' = Ax + Bu_1, input:u_1) == LinearControlContinuousSystem(A,B)
-    @test @system(x' = Ax + B*u_1, input:u_1) == LinearControlContinuousSystem(A,B)
+    # without specification, a noisy system is returned
+    @test  @system(x' = Ax + Bw, x∈X, w∈W) == NoisyConstrainedLinearContinuousSystem(A, B, X, W)
+    # but if we use the `input:w`, a controlled system is returned
+    @test @system(x' = Ax + Bw, input:w) == LinearControlContinuousSystem(A, B)
+    # and in general, if the input name is different from `u`
+    @test @system(x' = Ax + Bu_1, input:u_1) == LinearControlContinuousSystem(A, B)
+    @test @system(x' = Ax + B*u_1, input:u_1) == LinearControlContinuousSystem(A, B)
+    @test_throws ArgumentError @system(z' = A*z + B*u1)
 
     @test @system(x' = A1x + B1u) == LinearControlContinuousSystem(A1, B1)
     @test @system(z_1' = A*z_1 + B*u_1, input:u_1) == LinearControlContinuousSystem(A, B)
@@ -61,14 +66,13 @@ end
     @test@system(E*x' = Ax) == LinearAlgebraicContinuousSystem(A, E)
 
     @test @system(E*x' = A*x) == LinearAlgebraicContinuousSystem(A, E)
-    @test @system(E*x' = A*x,x∈X) == ConstrainedLinearAlgebraicContinuousSystem(A, E, X)
+    @test @system(E*x' = A*x, x∈X) == ConstrainedLinearAlgebraicContinuousSystem(A, E, X)
 end
 
 @testset "@system for affine continuous systems" begin
-    @test @system(x' = A*x  + b) == AffineContinuousSystem(A, b)
-    @test @system(x⁺ = Ax + b) == AffineDiscreteSystem(A, b)
-    sys =  @system(z_1' = A*z_1 + B*v_1 + c, z_1 ∈ X, v_1 ∈ U1, input:v_1)
-    @test sys == ConstrainedAffineControlContinuousSystem(A, B, c, X, U1)
+    @test @system(x' = A*x  + c) == AffineContinuousSystem(A, c)
+    sys =  @system(z_1' = A*z_1 + B*v_1 + c1, z_1 ∈ X, v_1 ∈ U1, input:v_1)
+    @test sys == ConstrainedAffineControlContinuousSystem(A, B, c1, X, U1)
     @test_throws ArgumentError @system(x' = Ax + Bu + c) # not a system type
 end
 
@@ -85,6 +89,8 @@ end
 @testset "@system for black-box continous systems" begin
     @test_throws ArgumentError @system(x' = f1(x))
     @test_throws ArgumentError @system(x' = f1(x, u))
+    sys =  @system(x' = f1(x), dim:3)
+    @test sys == BlackBoxContinuousSystem(f1, 3)
     sys =  @system(x' = f1(x), x ∈ X, dim:2)
     @test sys == ConstrainedBlackBoxContinuousSystem(f1, 2, X)
     sys = @system(x' = f1(x, u), x ∈ X, u ∈ U, dims=(1, 2))
@@ -105,7 +111,7 @@ end
     # emoij support 😉
     🚈 = X
     sys = @system(👨⁺ = 👨, dim: 2, 👨∈🚈)
-    @test sys == ConstrainedDiscreteIdentitySystem(2,X)
+    @test sys == ConstrainedDiscreteIdentitySystem(2, X)
 end
 
 @testset "@system for linear discrete systems" begin
@@ -124,7 +130,8 @@ end
 end
 
 @testset "@system for affine discrete systems" begin
-    @test @system(x⁺ = A1*x + c) == AffineDiscreteSystem(A1, c)
+    @test @system(x⁺ = A*x + c) == AffineDiscreteSystem(A, c)
+    @test @system(x⁺ = A1*x + c1) == AffineDiscreteSystem(A1, c1)
     @test_throws ArgumentError @system(x⁺ = Ax + Bu + c) # not a system type
 end
 

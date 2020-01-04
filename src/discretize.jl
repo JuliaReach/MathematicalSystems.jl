@@ -40,8 +40,6 @@ To get the `_complementary_type` of a `system<:AbstractSystem` use
 `_complementary_type(typename(system))`.
 """
 @generated function _complementary_type(type::Type{<:AbstractSystem})
-    # type is a Type{<:AbstractSystem}, e.g. Type{AffineContinuousSystem}
-    # extract the system type information with
     system_type = type.parameters[1]
     type_string = string(system_type)
     if supertype(system_type) == AbstractDiscreteSystem
@@ -63,9 +61,9 @@ discretization algorithm if possible.
 
 ### Input
 
-- `system` -- a affine continuous system
+- `system` -- an affine continuous system
 - `ΔT` -- discretization time
-- `algorithm` -- (optional, default=`:default`) discretization algorithm
+- `algorithm` -- (optional, default: `:default`) discretization algorithm
 
 ### Output
 
@@ -97,7 +95,7 @@ function discretize(system::AbstractContinuousSystem, ΔT::Real; algorithm=:defa
     # get all fields from system
     fields = collect(fieldnames(typeof(system)))
     # get fields of system that are parameter of the system dynamics (no sets)
-    # i.e., all fields that needs to be discretized
+    # i.e., all fields that need to be discretized
     values_cont = [getfield(system, f) for f in filter(noset, fields)]
     if algorithm == :default
         if rank(system.A) == size(system.A, 1)

@@ -1,5 +1,5 @@
 
-@testset "Convert Continuous to Discrete Type" begin
+@testset "Convert continuous to discrete type" begin
     for dtype in subtypes(AbstractDiscreteSystem)
         ctype = eval.(Meta.parse.(replace(string(dtype), "Discrete" => "Continuous")))
         @test MathematicalSystems._complementary_type(dtype) == ctype
@@ -13,7 +13,8 @@
     end
 end
 
-@testset "Exact Discretization of Continous Systems" begin
+@testset "Exact discretization of affine continous systems" begin
+    algorithm = MathematicalSystems.ExactDiscretization()
     ΔT = 0.1
     A = [0.5 1; 0.0 0.5]
     B = Matrix([0.5 1.0]')
@@ -35,11 +36,48 @@ end
     CTYPES = filter(x -> (occursin("Linear", string(x)) || occursin("Affine", string(x))) &&
                          !occursin("Algebraic", string(x)) , subtypes(AbstractContinuousSystem))
     DTYPES = MathematicalSystems._complementary_type.(CTYPES)
+    n_types = length(CTYPES)
     CFIELDS = fieldnames.(CTYPES)
     CValues = [getindex.(Ref(dict), type) for type in CFIELDS]
     DValues = [getindex.(Ref(dict_discretized), type) for type in CFIELDS]
-    discretized_function = [discretize(CTYPES[i](CValues[i]...), ΔT) for i=1:length(CTYPES)]
-    discretized_constructed = [DTYPES[i](DValues[i]...) for i=1:length(DTYPES)]
+    # Create discretized system manually
+    discretized_manually = [DTYPES[i](DValues[i]...) for i=1:n_types]
+    for i=1:n_types
+        discretized_with_method = discretize(CTYPES[i](CValues[i]...), ΔT, algorithm)
+        @test discretized_with_method == discretized_manually[i]
+    end
+end
 
-    @test all(discretized_constructed .== discretized_function)
+@testset "Euler discretization of affine continous systems" begin
+    algorithm = MathematicalSystems.EulerDiscretization()
+    ΔT = 0.1
+    A = [0.5 1; 0.0 0.5]
+    B = Matrix([0.5 1.0]')
+    c = [1.0; 1.0]
+    D = [0.3 0.7; -0.5 1.30]
+    X = BallInf(zeros(2), 1.0)
+    U = BallInf(zeros(1), 2.0)
+    W = BallInf(zeros(2), 3.0)
+    A_d = I + ΔT*A
+    B_d = ΔT*B
+    c_d = ΔT*c
+    D_d = ΔT*D
+    dict = Dict([:A => A, :B => B, :b => c, :c => c, :D => D,
+                 :X => X, :U => U, :W => W])
+    dict_discretized = Dict([:A => A_d, :B => B_d, :b => c_d, :c => c_d, :D => D_d,
+                 :X => X, :U => U, :W => W])
+    # get affine ctypes
+    CTYPES = filter(x -> (occursin("Linear", string(x)) || occursin("Affine", string(x))) &&
+                         !occursin("Algebraic", string(x)) , subtypes(AbstractContinuousSystem))
+    DTYPES = MathematicalSystems._complementary_type.(CTYPES)
+    n_types = length(CTYPES)
+    CFIELDS = fieldnames.(CTYPES)
+    CValues = [getindex.(Ref(dict), type) for type in CFIELDS]
+    DValues = [getindex.(Ref(dict_discretized), type) for type in CFIELDS]
+    # Create discretized system manually
+    discretized_manually = [DTYPES[i](DValues[i]...) for i=1:n_types]
+    for i=1:n_types
+        discretized_with_method = discretize(CTYPES[i](CValues[i]...), ΔT, algorithm)
+        @test discretized_with_method == discretized_manually[i]
+    end
 end

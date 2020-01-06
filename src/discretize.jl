@@ -76,13 +76,13 @@ Returns a discretization of the input system `system` with sampling time `ΔT`.
 ### Algorithm
 
 Consider a `NoisyAffineControlledContinuousSystem` with system dynamics
-``x' = Ax + Bu + c + Du``.
+``x' = Ax + Bu + c + Dw``.
 
 If A is invertible:
 The exact discretization is calculated by solving the integral for
 ``t = [t, t + ΔT]`` for a fixed input `u` and fixed noise realisation `w`.
 The resulting discretization writes as
-``x^+ = A^d x + B^d u + c^d  + D^d u`` where
+``x^+ = A^d x + B^d u + c^d  + D^d w`` where
 ``A^d = \\exp^{A \\cdot ΔT}``,
 ``B^d = A^{-1}(A^d - I)B``,
 ``c^d = A^{-1}(A^d - I)c`` and
@@ -90,7 +90,7 @@ The resulting discretization writes as
 
 If A is not invertible:
 A first order approximation of the exact discretiziation, the euler
-discretization, can be applied, which writes as ``x^+ = A^d x + B^d u + c^d + D^d u``
+discretization, can be applied, which writes as ``x^+ = A^d x + B^d u + c^d + D^d w``
 where  ``A^d = I + ΔT \\cdot A``, ``B^d = ΔT \\cdot B``,
 ``c^d = ΔT \\cdot c`` and ``D^d = ΔT \\cdot D``.
 

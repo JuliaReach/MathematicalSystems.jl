@@ -72,6 +72,13 @@ NoisyConstrainedAffineControlDiscreteSystem
 NoisyConstrainedBlackBoxControlDiscreteSystem
 ```
 
+#### Discretization Algorithms
+```@docs
+AbstractDiscretizationAlgorithm
+ExactDiscretization
+EulerDiscretization
+```
+
 ## Identity operator
 
 ```@docs

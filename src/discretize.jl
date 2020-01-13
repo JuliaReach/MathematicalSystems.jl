@@ -12,7 +12,7 @@ Returns the base type of `system` without parameter information.
 
 ### Output
 
-Returns base-type of `system`.
+The base type of `system`.
 
 """
 function typename(system::AbstractSystem)
@@ -24,7 +24,7 @@ end
 
 Return the complementary type of a system type `system_type`.
 
-There are two main subclasses of abstract types continuous types and discrete
+There are two main subclasses of abstract types: continuous types and discrete
 types. A complementary type of `system_type` has the same fields as `system_type`
 but belongs to the other subclass, e.g. for a `LinearContinuousSystem` which is
 a subtype of `AbstractContinuousSystem` and has the field `:A`, the subtype of
@@ -85,7 +85,7 @@ Consider a `NoisyAffineControlledContinuousSystem` with system dynamics
 ``x' = Ax + Bu + c + Dw``.
 
 The exact discretization is calculated by solving the integral for
-``t = [t, t + ΔT]`` for a fixed input `u` and fixed noise realisation `w`.
+``t = [t, t + ΔT]`` for a fixed input `u` and fixed noise realization `w`.
 The resulting discretization writes as
 ``x^+ = A^d x + B^d u + c^d  + D^d w`` where
 ``A^d = \\exp^{A \\cdot ΔT}``,
@@ -93,8 +93,7 @@ The resulting discretization writes as
 ``c^d = A^{-1}(A^d - I)c`` and
 ``D^d = A^{-1}(A^d - I)D``.
 
-The algorithm described above is a well known results from the literature.
-Consider [1] as a source for further information.
+The algorithm described above is a well known result from the literature [1].
 
 [1] https://en.wikipedia.org/wiki/Discretization#Discretization_of_linear_state_space_models
 """
@@ -116,8 +115,7 @@ discretiziation [`ExactDiscretization`](@ref), writes as
 where  ``A^d = I + ΔT \\cdot A``, ``B^d = ΔT \\cdot B``,
 ``c^d = ΔT \\cdot c`` and ``D^d = ΔT \\cdot D``.
 
-The algorithm described above is a well known results from the literature.
-Consider [1] as a source for further information.
+The algorithm described above is a well known result from the literature [1].
 
 [1] https://en.wikipedia.org/wiki/Discretization#Approximations
 """
@@ -150,7 +148,7 @@ function discretize(system::AbstractContinuousSystem, ΔT::Real,
     # get all fields from system
     fields = collect(fieldnames(typeof(system)))
 
-    # get the fields of `system` that are parameter of the affine system dynamics
+    # get the fields of `system` that are parameters of the affine system dynamics
     # i.e., all fields that need to be discretized
     values_cont = [getfield(system, f) for f in filter(matrices, fields)]
 

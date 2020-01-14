@@ -123,7 +123,8 @@ struct EulerDiscretization <: AbstractDiscretizationAlgorithm end
 
 """
     discretize(system::AbstractContinuousSystem, ΔT::Real,
-               algorithm::AbstractDiscretizationAlgorithm=ExactDiscretization())
+               algorithm::AbstractDiscretizationAlgorithm=ExactDiscretization(),
+               constructor=_default_complementary_constructor(system))
 
 Discretization of a `isaffine` `AbstractContinuousSystem` to a
 `AbstractDiscreteSystem` with sampling time `ΔT` using the discretization
@@ -134,6 +135,7 @@ method `algorithm`.
 - `system` -- an affine continuous system
 - `ΔT` -- sampling time
 - `algorithm` -- (optional, default: `ExactDiscretization()`) discretization algorithm
+- `constructor` -- (optional, default: `_default_complementary_constructor(system)`) construction method
 
 ### Output
 
@@ -141,7 +143,8 @@ Returns a discretization of the input system `system` with discretization method
 `algorithm` and sampling time `ΔT`.
 """
 function discretize(system::AbstractContinuousSystem, ΔT::Real,
-                    algorithm::AbstractDiscretizationAlgorithm=ExactDiscretization())
+                    algorithm::AbstractDiscretizationAlgorithm=ExactDiscretization(),
+                    constructor=_default_complementary_constructor(system))
 
     (!isaffine(system)) && throw(ArgumentError("system needs to be affine"))
 
@@ -153,19 +156,25 @@ function discretize(system::AbstractContinuousSystem, ΔT::Real,
 
     # get the fields of `system` that are parameters of the affine system dynamics
     # i.e., all fields that need to be discretized
-    values_cont = [getfield(system, f) for f in filter(matrices, fields)]
+    cont_values = [getfield(system, f) for f in filter(matrices, fields)]
 
     # compute discretized values of dynamics_params_c
-    values_disc = _discretize(algorithm, ΔT, values_cont...)
+    disc_values = _discretize(algorithm, ΔT, cont_values...)
 
     # get the fields of `system` that are sets
     set_values = [getfield(system, f) for f in filter(sets, fields)]
 
+    # build the new discrete type according to the constructor method with the
+    # discretized and set values
+    return constructor(disc_values, set_values)
+end
+
+# returns a function with signature 'Vector × Vector -> AbstractDiscreteSystem'
+function _default_complementary_constructor(system)
     # get corresponding discrete type of `system`
     discrete_type = _complementary_type(typename(system))
-
     # build the new discrete type with the discretized and set values
-    return discrete_type(values_disc..., set_values...)
+    return (disc_values, set_values) -> discrete_type(disc_values..., set_values...)
 end
 
 """

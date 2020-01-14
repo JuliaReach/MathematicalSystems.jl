@@ -58,6 +58,12 @@ end
     @test @system(z_1' = A*z_1 + B*u_1, input:u_1) == LinearControlContinuousSystem(A, B)
 
     @test @system(x' = Ax + Bu, x ∈ X, u ∈ U) == ConstrainedLinearControlContinuousSystem(A, B, X, U)
+
+    # if * are used x_ =A_*x_ + B_*u_, u_ is interpreted as input variable,
+    # independent of the name used for u_
+    @test @system(w' = A*w + B*u_1) == LinearControlContinuousSystem(A, B)
+    # similarily for x_ =A_*x_ + B_*u_ + c_
+    @test @system(w' = A*w + B*u_1 + c, w∈X, u_1∈U) == ConstrainedAffineControlContinuousSystem(A, B, c, X, U)
 end
 
 @testset "@system for linear algebraic continous systems" begin

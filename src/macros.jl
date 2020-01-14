@@ -259,6 +259,11 @@ function parse_system(exprs)
                 dynamic_equation = stripped
                 state_var = subject
                 AT = abstract_system_type
+                # if the system has the structure  x_ =A_*x_ + B_*u_ ,
+                # handle u_ as input variable
+                if @capture(stripped, (x_ = A_*x_ + B_*u_) | (x_ = A_*x_ + B_*u_ + c_) )
+                    input_var = u
+                end
 
             elseif @capture(ex, (dim = (f_dims_)) | (dims = (f_dims_)))
                 dimension = _capture_dim(f_dims)

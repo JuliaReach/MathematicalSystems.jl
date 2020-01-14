@@ -199,6 +199,13 @@ See [`discretize`](@ref) for more details.
 
 Returns a vector containing the discretized input arguments `A`, `B`, `c` and `D`.
 """
+function _discretize(::AbstractDiscretizationAlgorithm, ΔT::Real,
+                     A::AbstractMatrix,
+                     B::AbstractMatrix,
+                     c::AbstractVector,
+                     D::AbstractMatrix)
+end
+
 function _discretize(::ExactDiscretization, ΔT::Real,
                      A::AbstractMatrix,
                      B::AbstractMatrix,
@@ -214,7 +221,7 @@ function _discretize(::ExactDiscretization, ΔT::Real,
         error("exact discretization for singular state matrix, i.e. A is non-invertible,"*
               " not implemented yet, please use algorithm `EulerDiscretization`")
     end
-    return [A_d, B_d, c_d, D_d]
+    return A_d, B_d, c_d, D_d
 end
 
 function _discretize(::EulerDiscretization, ΔT::Real,
@@ -226,7 +233,7 @@ function _discretize(::EulerDiscretization, ΔT::Real,
     B_d = ΔT*B
     c_d = ΔT*c
     D_d = ΔT*D
-    return [A_d, B_d, c_d, D_d]
+    return A_d, B_d, c_d, D_d
 end
 
 """

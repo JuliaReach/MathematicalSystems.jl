@@ -8,13 +8,30 @@ B = B1 = rand(n, m)
 c = c1 = rand(n)
 D = D1 = rand(n, l)
 E = E1 = rand(l, l)
-X = X1 = BallInf(zeros(n), 100.)
-U = U1 = BallInf(zeros(m), 100.)
+X = X1 = BallInf(zeros(n), 50.)
+U = U1 = BallInf(zeros(m), 70.)
 W = W1 = BallInf(zeros(l), 100.)
 
 f1(x) = x'*x
 f1(x, u) = x'*x + u'*u
 f1(x, u, w) = x'*x + u'*u + w'*w
+
+
+# ===================
+# Playground Tests
+# ===================
+
+sys = @system(x' = Ax + Bu + w, x∈X, u∈U, w∈W)
+sys2 = @system(x' = Ax + Bu + w, x∈X, w∈W, u∈U)
+sys == NoisyConstrainedLinearControlContinuousSystem(A,B, Diagonal(ones(n)), X, U, W)
+# Caveat: (aka BUG)
+sys2 == NoisyConstrainedLinearControlContinuousSystem(A,B, Diagonal(ones(n)), X, U, W)
+sys = @system(x' = Ax + u + w, x∈X, u∈U, w∈W)
+sys == NoisyConstrainedLinearControlContinuousSystem(A,Diagonal(ones(n)), Diagonal(ones(n)), X, U, W)
+@system(x' = Ax + u) == LinearControlContinuousSystem(A, Diagonal(ones(n)))
+@system(x' = Ax + w, x∈X, w∈W) == NoisyConstrainedLinearContinuousSystem(A, Diagonal(ones(n)), X, W)
+
+
 
 # ===================
 # Continuous systems
@@ -52,7 +69,6 @@ end
     # and in general, if the input name is different from `u`
     @test @system(x' = Ax + Bu_1, input:u_1) == LinearControlContinuousSystem(A, B)
     @test @system(x' = Ax + B*u_1, input:u_1) == LinearControlContinuousSystem(A, B)
-    @test_throws ArgumentError @system(z' = A*z + B*u1)
 
     @test @system(x' = A1x + B1u) == LinearControlContinuousSystem(A1, B1)
     @test @system(z_1' = A*z_1 + B*u_1, input:u_1) == LinearControlContinuousSystem(A, B)

@@ -1,8 +1,9 @@
 using Espresso: matchex
-using LinearAlgebra: I
+using LinearAlgebra: I, Diagonal
 using MacroTools: @capture
 using InteractiveUtils: subtypes
 export @system
+
 
 # ========================
 # @map macro
@@ -484,11 +485,14 @@ julia> MathematicalSystems.extract_sum([:(A1*x7),:( B1*u7), :( B2*w7)], :x7, :u7
 ```
 """
 function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
-    params = Tuple{Symbol,Symbol}[]
+    params = Tuple{Any,Symbol}[]
+    state_dim = 0
     for summand in summands
         if @capture(summand, array_ * var_)
             if state == var
                 push!(params, (array, :A))
+                # obtain "state_dim" for later using in  Diagonal(ones(size(A,1)))
+                state_dim =  Expr(:call, :size, :($array), 1)
 
             elseif input == var
                 push!(params, (array, :B))
@@ -502,7 +506,15 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
                 "or the noise term $noise"))
             end
         elseif @capture(summand, array_)
-            push!(params, (array, :c))
+            # if array == input: input matrix = Diagonal(ones(size(A,1)))
+            if input == array
+                push!(params, (:(Diagonal(ones($state_dim))), :B))
+            # if array == noise: noise matrix = Diagonal(ones(size(A,1)))
+            elseif noise == array
+                push!(params, (:(Diagonal(ones($state_dim))), :D))
+            else
+                push!(params, (array, :c))
+            end
         end
     end
     return params
@@ -654,6 +666,7 @@ macro system(expr...)
         end
         lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, input, noise, dim, AT)
         set = expand_set.(constr, state, input, noise)
+        # TODO: order set variables such that the order is X, U, W
         field_names, var_names = constructor_input(lhs, rhs, set)
         sys_type = _corresponding_type(AT, field_names)
         return  esc(Expr(:call, :($sys_type), :($(var_names...))))

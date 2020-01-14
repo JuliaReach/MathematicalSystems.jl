@@ -142,6 +142,9 @@ Returns a discretization of the input system `system` with discretization method
 """
 function discretize(system::AbstractContinuousSystem, ΔT::Real,
                     algorithm::AbstractDiscretizationAlgorithm=ExactDiscretization())
+
+    (!isaffine(system)) && throw(ArgumentError("system needs to be affine"))
+
     sets(x) = x ∈ [:X,:U,:W]
     matrices(x) = x ∈ [:A,:B,:b,:c,:D]
 

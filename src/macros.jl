@@ -264,7 +264,7 @@ function parse_system(exprs)
                 dimension = _capture_dim(f_dims)
 
             elseif @capture(ex, (input = u_) | (u_ = input))
-                input_var = w
+                input_var = u
 
             elseif @capture(ex, (noise = w_) | (w_ = noise))
                 noise_var = w

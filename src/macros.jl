@@ -314,7 +314,6 @@ end
 # `lhs = [(:E_user, :E)]` or `lhs = Any[]`
 function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
     @capture(equation, lhs_ = rhscode_)
-    # a multiplication sign * needs to be used
     lhs_params = Any[]
     rhs_params = Any[]
     # if a * is used on the lhs, the rhs is a code-block
@@ -325,6 +324,7 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
         rhs = rhscode
     end
     if @capture(rhs, A_ + B__) # If rhs is a sum
+        # parse summands of rhs and add * if needed
         summands = add_asterisk.([A, B...], Ref(state), Ref(input), Ref(noise))
         push!(rhs_params, extract_sum(summands, state, input, noise)...)
     elseif @capture(rhs, f_(a__))  && f != :(*) && f != :(-) # If rhs is function call
@@ -334,33 +334,34 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
         dim_vec = [dim...]
         push!(rhs_params, extract_function(rhs, dim_vec)...)
     else # if rhs is a single term (eith A*x, Ax, 2x, x or 0)
-        if rhs == state
+        if rhs == state  # => rhs =  x
             if AT == AbstractDiscreteSystem
                 push!(rhs_params, (dim, :statedim))
             elseif AT == AbstractContinuousSystem
                 push!(rhs_params, (Diagonal(ones(dim)), :A))
             end
-        elseif rhs == :(0) && AT == AbstractContinuousSystem
+        elseif rhs == :(0) && AT == AbstractContinuousSystem # x' = 0
             push!(rhs_params, (dim, :statedim))
         else
-            if @capture(rhs, -var_) # => x' = -x
+            if @capture(rhs, -var_) # => rhs = -x
                 if state == var
-                    dim = dim == nothing ? 1 : dim # we don't need dim=1
+                    # assume dim = 1 if not specified
+                    dim = (dim == nothing) ? 1 : dim
                     push!(rhs_params, (-Diagonal(ones(dim)), :A))
                 end
             else
                 rhs = add_asterisk(rhs, state, input, noise)
                 if @capture(rhs, array_ * var_)
-                    if state == var
+                    if state == var # rhs = A_x_ or rhs= A_*x_
                         value = tryparse(Float64, string(array))
-                        if value == nothing # e.g. => x' = Ax
+                        if value == nothing # e.g. => rhs = Ax
                             push!(rhs_params, (array, :A))
-                        else # => e.g, x' = 2x
+                        else # => e.g, rhs = 2x
                             push!(rhs_params, (value*Diagonal(ones(dim)), :A))
                         end
                     else
-                        throw(ArgumentError("if there is only one term on the right side, it needs to"*
-                                " include the state."))
+                        throw(ArgumentError("if there is only one term on the "*
+                                  "right side, it needs to include the state."))
                     end
                 end
             end

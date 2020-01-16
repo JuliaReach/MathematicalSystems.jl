@@ -1,5 +1,5 @@
 using Espresso: matchex
-using LinearAlgebra: I, Diagonal
+using LinearAlgebra: I
 using MacroTools: @capture
 using InteractiveUtils: subtypes
 export @system
@@ -329,25 +329,24 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
         push!(rhs_params, extract_sum(summands, state, input, noise)...)
     elseif @capture(rhs, f_(a__))  && f != :(*) && f != :(-) # If rhs is function call
         # the dimension argument needs to be a iterable
-        (dim == nothing) &&
-            throw(ArgumentError("for a blackbox system, the dimension has to be defined"))
+        (dim == nothing) && throw(ArgumentError("for a blackbox system, the dimension has to be defined"))
         dim_vec = [dim...]
         push!(rhs_params, extract_function(rhs, dim_vec)...)
     else # if rhs is a single term (eith A*x, Ax, 2x, x or 0)
+        # assume dim = 1 if not specified
+        dim = (dim == nothing) ? 1 : dim
         if rhs == state  # => rhs =  x
             if AT == AbstractDiscreteSystem
                 push!(rhs_params, (dim, :statedim))
             elseif AT == AbstractContinuousSystem
-                push!(rhs_params, (Diagonal(ones(dim)), :A))
+                push!(rhs_params, (IdentityMultiple(I, dim), :A))
             end
         elseif rhs == :(0) && AT == AbstractContinuousSystem # x' = 0
             push!(rhs_params, (dim, :statedim))
         else
             if @capture(rhs, -var_) # => rhs = -x
                 if state == var
-                    # assume dim = 1 if not specified
-                    dim = (dim == nothing) ? 1 : dim
-                    push!(rhs_params, (-Diagonal(ones(dim)), :A))
+                    push!(rhs_params, (-1*IdentityMultiple(I, dim), :A))
                 end
             else
                 rhs = add_asterisk(rhs, state, input, noise)
@@ -357,7 +356,7 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
                         if value == nothing # e.g. => rhs = Ax
                             push!(rhs_params, (array, :A))
                         else # => e.g, rhs = 2x
-                            push!(rhs_params, (value*Diagonal(ones(dim)), :A))
+                            push!(rhs_params, (value*IdentityMultiple(I,dim), :A))
                         end
                     else
                         throw(ArgumentError("if there is only one term on the "*
@@ -492,7 +491,7 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
         if @capture(summand, array_ * var_)
             if state == var
                 push!(params, (array, :A))
-                # obtain "state_dim" for later using in  Diagonal(ones(size(A,1)))
+                # obtain "state_dim" for later using in IdentityMultiple
                 state_dim =  Expr(:call, :size, :($array), 1)
 
             elseif input == var
@@ -507,12 +506,12 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
                 "or the noise term $noise"))
             end
         elseif @capture(summand, array_)
-            # if array == input: input matrix = Diagonal(ones(size(A,1)))
+            # if array == input: input matrix equals identity matrix
             if input == array
-                push!(params, (:(Diagonal(ones($state_dim))), :B))
-            # if array == noise: noise matrix = Diagonal(ones(size(A,1)))
+                push!(params, (:(IdentityMultiple(1.0*MathematicalSystems.I,$state_dim)), :B))
+            # if array == noise: noise matrix equals identity matrix
             elseif noise == array
-                push!(params, (:(Diagonal(ones($state_dim))), :D))
+                push!(params, (:(IdentityMultiple(1.0*MathematicalSystems.I,$state_dim)), :D))
             else
                 push!(params, (array, :c))
             end

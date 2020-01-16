@@ -160,7 +160,6 @@ function discretize(system::AbstractContinuousSystem, ΔT::Real,
 
     # compute discretized values of dynamics_params_c
     disc_values = _discretize(algorithm, ΔT, cont_values...)
-
     # get the fields of `system` that are sets
     set_values = [getfield(system, f) for f in filter(sets, fields)]
 
@@ -221,7 +220,7 @@ function _discretize(::ExactDiscretization, ΔT::Real,
         error("exact discretization for singular state matrix, i.e. A is non-invertible,"*
               " not implemented yet, please use algorithm `EulerDiscretization`")
     end
-    return A_d, B_d, c_d, D_d
+    return [A_d, B_d, c_d, D_d]
 end
 
 function _discretize(::EulerDiscretization, ΔT::Real,
@@ -233,7 +232,7 @@ function _discretize(::EulerDiscretization, ΔT::Real,
     B_d = ΔT*B
     c_d = ΔT*c
     D_d = ΔT*D
-    return A_d, B_d, c_d, D_d
+    return [A_d, B_d, c_d, D_d]
 end
 
 """

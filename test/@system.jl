@@ -18,20 +18,11 @@ f1(x, u, w) = x'*x + u'*u + w'*w
 
 
 # ===================
-# Playground Tests
+# Test to fix in next PR
 # ===================
 
-sys = @system(x' = Ax + Bu + w, x∈X, u∈U, w∈W)
-sys2 = @system(x' = Ax + Bu + w, x∈X, w∈W, u∈U)
-sys == NoisyConstrainedLinearControlContinuousSystem(A,B, Diagonal(ones(n)), X, U, W)
-# Caveat: (aka BUG)
-sys2 == NoisyConstrainedLinearControlContinuousSystem(A,B, Diagonal(ones(n)), X, U, W)
-sys = @system(x' = Ax + u + w, x∈X, u∈U, w∈W)
-sys == NoisyConstrainedLinearControlContinuousSystem(A,Diagonal(ones(n)), Diagonal(ones(n)), X, U, W)
-@system(x' = Ax + u) == LinearControlContinuousSystem(A, Diagonal(ones(n)))
-@system(x' = Ax + w, x∈X, w∈W) == NoisyConstrainedLinearContinuousSystem(A, Diagonal(ones(n)), X, W)
-
-
+# sys = @system(x' = Ax + Bu, u∈U, x∈X)
+# sys == ConstrainedLinearControlContinuousSystem(A,B,X,U)
 
 # ===================
 # Continuous systems
@@ -50,9 +41,9 @@ end
     @test @system(x1' = A1x1) == LinearContinuousSystem(A1)
 
     # automatic identification of rhs linearity
-    @test @system(x' = -x) == LinearContinuousSystem(-1.0*Diagonal(ones(1)))
-    @test @system(x' = x, dim=3) == LinearContinuousSystem(Diagonal(ones(3)))
-    @test @system(x' = 2x, dim=3) == LinearContinuousSystem(2.0*Diagonal(ones(3)))
+    @test @system(x' = -x) == LinearContinuousSystem(-1*IdentityMultiple(I,1))
+    @test @system(x' = x, dim=3) == LinearContinuousSystem(IdentityMultiple(I, 3))
+    @test @system(x' = 2x, dim=3) == LinearContinuousSystem(2.0*IdentityMultiple(I,3))
 
     @test @system(x' = A*x, x ∈ X) == ConstrainedLinearContinuousSystem(A,X)
     @test @system(x1' = A1x1, x1 ∈ X1) == ConstrainedLinearContinuousSystem(A1,X1)
@@ -74,6 +65,9 @@ end
     @test @system(z_1' = A*z_1 + B*u_1, input:u_1) == LinearControlContinuousSystem(A, B)
 
     @test @system(x' = Ax + Bu, x ∈ X, u ∈ U) == ConstrainedLinearControlContinuousSystem(A, B, X, U)
+
+    # if variable in front of input is ommitted add identity matrix
+    @system(x' = Ax + u) == LinearControlContinuousSystem(A, IdentityMultiple(1.0*I,n))
 
     # if * are used x_ =A_*x_ + B_*u_, u_ is interpreted as input variable,
     # independent of the name used for u_
@@ -106,6 +100,11 @@ end
     @test sys == NoisyConstrainedLinearControlContinuousSystem(A, B, D, X, U1, W1)
     sys = @system(z_1' = Az_1 + B*v_1 + c + Dd_1, z_1 ∈ X, v_1 ∈ U1, d_1 ∈ W1, input:v_1, d_1:noise)
     @test sys == NoisyConstrainedAffineControlContinuousSystem(A, B, c, D, X, U1, W1)
+
+
+    # if variable in front of input or noise  is ommitted add identity matrix
+    sys = @system(x' = Ax + u + c + w, x∈X, u∈U, w∈W)
+    sys == NoisyConstrainedAffineControlContinuousSystem(A, IdentityMultiple(1.0*I,n), c, IdentityMultiple(1.0*I,n), X, U, W)
 end
 
 @testset "@system for black-box continous systems" begin
@@ -146,7 +145,7 @@ end
     @test @system(x1⁺ = A*x1) == LinearDiscreteSystem(A)
     @test @system(x1⁺ = Ax1) == LinearDiscreteSystem(A)
 
-    @test @system(x⁺ = 2x, dim=3) == LinearDiscreteSystem(2.0*Diagonal(ones(3)))
+    @test @system(x⁺ = 2x, dim=3) == LinearDiscreteSystem(2.0*IdentityMultiple(I,3))
 
     @test @system(x⁺ = A1x, x ∈ X1) == ConstrainedLinearDiscreteSystem(A1, X1)
 end
@@ -181,6 +180,10 @@ end
     # here v is interpreted as input (if the input has more than one letter, use a *)
     @system(x⁺ = Ax + B*u123, x ∈ X, u123 ∈ U1, input: u123)
     @test sys == ConstrainedLinearControlDiscreteSystem(A, B, X, U1)
+
+    # if variable in front of input is ommitted add identity matrix
+    @system(x⁺ = Ax + u) == LinearControlDiscreteSystem(A, IdentityMultiple(1.0*I,n))
+
 
     sys = @system(x⁺ = Ax + Bu123, x ∈ X, u123 ∈ U1, input: u123)
     @test sys == ConstrainedLinearControlDiscreteSystem(A, B, X, U1)

@@ -172,7 +172,7 @@ Return the tuple containing the dimension(s) in `expr`.
 
 ### Output
 
-- The scalar `x` if `expr` specified the state dimension.
+- The scalar `x` if `expr` specifies the state dimension.
 - The vector `[x, u]` if `expr` specifies state and input dimension.
 - The vector `[x, u, w]` if `expr` specifies state, input and noise dimensions.
 """
@@ -205,7 +205,7 @@ and `false` otherwise. This function just detects the presence of the symbol `=`
 
 ### Output
 
-Returns Bool indicating wether `expr` is an equation or not.
+Returns a `Bool` indicating whether `expr` is an equation or not.
 """
 function is_equation(expr)
     return @capture(expr, lhs_ = rhs_)
@@ -260,7 +260,7 @@ function parse_system(exprs)
                 dynamic_equation = stripped
                 state_var = subject
                 AT = abstract_system_type
-                # if the system has the structure  x_ =A_*x_ + B_*u_ ,
+                # if the system has the structure x_ = A_*x_ + B_*u_ ,
                 # handle u_ as input variable
                 if @capture(stripped, (x_ = A_*x_ + B_*u_) | (x_ = A_*x_ + B_*u_ + c_) )
                     input_var = u
@@ -332,7 +332,7 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
         (dim == nothing) && throw(ArgumentError("for a blackbox system, the dimension has to be defined"))
         dim_vec = [dim...]
         push!(rhs_params, extract_function(rhs, dim_vec)...)
-    else # if rhs is a single term (eith A*x, Ax, 2x, x or 0)
+    else # if rhs is a single term (e.g., A*x, Ax, 2x, x or 0)
         # assume dim = 1 if not specified
         dim = (dim == nothing) ? 1 : dim
         if rhs == state  # => rhs =  x
@@ -355,12 +355,12 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
                         value = tryparse(Float64, string(array))
                         if value == nothing # e.g. => rhs = Ax
                             push!(rhs_params, (array, :A))
-                        else # => e.g, rhs = 2x
+                        else # => e.g., rhs = 2x
                             push!(rhs_params, (value*IdentityMultiple(I,dim), :A))
                         end
                     else
                         throw(ArgumentError("if there is only one term on the "*
-                                  "right side, it needs to include the state."))
+                                  "right-hand side, the state needs to be contained"))
                     end
                 end
             end
@@ -372,8 +372,8 @@ end
 """
     add_asterisk(summand, state::Symbol, input::Symbol, noise::Symbol)
 
-Checks expression `summand` if `state`, `input`or `noise` is contained at its
-end. if so, a multiplication expression, e.g. `Expr(:call, :*, :A, :x) is created.
+Checks if expression `summand` contains `state`, `input` or `noise` at its end.
+If so, a multiplication expression, e.g. `Expr(:call, :*, :A, :x) is created.
 If not, `summand` is returned.
 
 ### Input
@@ -438,12 +438,12 @@ end
 """
     extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
 
-Extract the variable name and field name for the every element of `summands`.
+Extract the variable name and field name for every element of `summands`.
 
-If a element of `summands` is a symbol, the symbol is the variable name and the
-field name is `:c`. If a element of `summands` is a multiplication expression
+If an element of `summands` is a symbol, the symbol is the variable name and the
+field name is `:c`. If an element of `summands` is a multiplication expression
 `lhs*rhs`, return `lhs` as variable name and `:A` as field name if `lhs==state`,
-`:B` as field name if `lhs==input` and `:D` as field name if `lhs==noise`
+`:B` as field name if `lhs==input` and `:D` as field name if `lhs==noise`.
 
 
 Given an array of expressions `summands` which consists of one or more elements
@@ -563,7 +563,7 @@ function expand_set(expr, state, input, noise) # input => to check set definitio
                   "the state $state, the input $input or noise term $noise")
         end
     end
-    throw(ArgumentError("The set-entry $(expr) does not have the correct form `x_ ∈ X_`"))
+    throw(ArgumentError("the set entry $(expr) does not have the correct form `x_ ∈ X_`"))
 end
 
 
@@ -592,12 +592,12 @@ The `expr` consist of one or several of the following elements:
 - defining the input variable: `input: u`, `input = u`
 - defining the noise variable: `noise: w`, `noise = w`
 
-The dynamic equation is parsed as following. The variable on the left hand side
+The dynamic equation is parsed as follows. The variable on the left-hand side
 corresponds to the state variable. The input variable is by default `u` and the
-noise variable is by default `w`, if notspecified differently.
+noise variable is by default `w`, if not specified differently.
 
 If we want to change the default name of the input or noise variable, this can be
-done by addingthe term `input: var` where `var` corresponds to the new name of
+done by adding the term `input: var` where `var` corresponds to the new name of
 the input variable.
 
 ### Examples
@@ -610,7 +610,7 @@ julia> A = [1. 0; 0 1.];
 julia> @system(x' = A*x)
 LinearContinuousSystem{Float64,Array{Float64,2}}([1.0 0.0; 0.0 1.0])
 ```
-A discrete system can be defined by using  `⁺`:
+A discrete system can be defined by using `⁺`:
 
 ```jldoctest
 julia> A = [1. 0; 0 1.];

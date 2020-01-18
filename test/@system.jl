@@ -69,10 +69,10 @@ end
     # if variable in front of input is ommitted add identity matrix
     @system(x' = Ax + u) == LinearControlContinuousSystem(A, IdentityMultiple(1.0*I,n))
 
-    # if * are used x_ =A_*x_ + B_*u_, u_ is interpreted as input variable,
+    # if * are used x_ = A_*x_ + B_*u_, u_ is interpreted as input variable,
     # independent of the name used for u_
     @test @system(w' = A*w + B*u_1) == LinearControlContinuousSystem(A, B)
-    # similarily for x_ =A_*x_ + B_*u_ + c_
+    # similarily for x_ = A_*x_ + B_*u_ + c_
     @test @system(w' = A*w + B*u_1 + c, w∈X, u_1∈U) == ConstrainedAffineControlContinuousSystem(A, B, c, X, U)
 end
 
@@ -102,7 +102,7 @@ end
     @test sys == NoisyConstrainedAffineControlContinuousSystem(A, B, c, D, X, U1, W1)
 
 
-    # if variable in front of input or noise  is ommitted add identity matrix
+    # if variable in front of input or noise  is omitted, add identity matrix
     sys = @system(x' = Ax + u + c + w, x∈X, u∈U, w∈W)
     sys == NoisyConstrainedAffineControlContinuousSystem(A, IdentityMultiple(1.0*I,n), c, IdentityMultiple(1.0*I,n), X, U, W)
 end
@@ -181,7 +181,7 @@ end
     @system(x⁺ = Ax + B*u123, x ∈ X, u123 ∈ U1, input: u123)
     @test sys == ConstrainedLinearControlDiscreteSystem(A, B, X, U1)
 
-    # if variable in front of input is ommitted add identity matrix
+    # if variable in front of input is omitted, add identity matrix
     @system(x⁺ = Ax + u) == LinearControlDiscreteSystem(A, IdentityMultiple(1.0*I,n))
 
 

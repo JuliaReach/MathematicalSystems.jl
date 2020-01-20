@@ -569,7 +569,11 @@ function constructor_input(lhs, rhs, set)
     return field_names, var_names
 end
 
-function expand_set(expr, state, input, noise) # input => to check set definitions
+# extract the variable name and the field name for a set expression. The method
+# check wether the set belongs to the `state`, `input` or `noise` and returns a
+# tupple of symbols where the field name is either `:X`, `:U` or `:W`  and
+# the variable name is the value parse as Set_.
+function extract_set_parameter(expr, state, input, noise) # input => to check set definitions
     if @capture(expr, x_ ∈ Set_)
         if x == state
             return  Set, :X
@@ -584,8 +588,6 @@ function expand_set(expr, state, input, noise) # input => to check set definitio
     end
     throw(ArgumentError("the set entry $(expr) does not have the correct form `x_ ∈ X_`"))
 end
-
-
 
 """
     system(expr...)
@@ -618,6 +620,13 @@ noise variable is by default `w`, if not specified differently.
 If we want to change the default name of the input or noise variable, this can be
 done by adding the term `input: var` where `var` corresponds to the new name of
 the input variable.
+
+As a exception to the rule, if the right-hand side has the form `A*x + B*u` or
+`A*x + B*u + c` the equation is parsed as a controlled linear (affine) system
+even though the `input` variable does not correspond to the value of `u`.
+
+If the left-hand side corresponds to a multiplicative term in the form `E*x⁺`
+or `E*x'`, the equation is parsed as an algebraic system.
 
 ### Examples
 
@@ -677,23 +686,23 @@ ConstrainedBlackBoxControlDiscreteSystem{typeof(f),BallInf{Float64},BallInf{Floa
 ```
 """
 macro system(expr...)
-    # try
+    try
         if typeof(expr) == :Expr
             dyn_eq, AT, constr, state, input, noise, dim = parse_system([expr])
         else
             dyn_eq, AT, constr, state, input, noise, dim = parse_system(expr)
         end
         lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, input, noise, dim, AT)
-        set = expand_set.(constr, state, input, noise)
+        set = extract_set_parameter.(constr, state, input, noise)
         # TODO: order set variables such that the order is X, U, W
         field_names, var_names = constructor_input(lhs, rhs, set)
         sys_type = _corresponding_type(AT, field_names)
         return  esc(Expr(:call, :($sys_type), :($(var_names...))))
-    # catch ex
-    #     if  isa(ex, ArgumentError)
-    #         return :(throw($ex))
-    #     else
-    #         throw(ex)
-    #     end
-    # end
+    catch ex
+        if  isa(ex, ArgumentError)
+            return :(throw($ex))
+        else
+            throw(ex)
+        end
+    end
 end

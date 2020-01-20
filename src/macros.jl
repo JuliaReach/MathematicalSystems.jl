@@ -552,6 +552,9 @@ function extract_blackbox_parameter(rhs, dim::AbstractVector)
     end
 end
 
+# Take the vectors of tupples providing the variable and fields names for the
+# lhs, the rhs and the sets combined them and return a vector of field names
+ # and a vector of variable names.
 function constructor_input(lhs, rhs, set)
     rhs_fields = [tuple[2] for tuple in rhs]
     lhs_fields = [tuple[2] for tuple in lhs]

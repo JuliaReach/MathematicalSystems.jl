@@ -452,10 +452,17 @@ end
 Extract the variable name and field name for every element of `summands` which
 corresponds to the elements of the rhs of an affine system.
 
-If an element of `summands` is a symbol, the symbol is the variable name and the
-field name is `:c`. If an element of `summands` is a multiplication expression
+If an element of `summands` is a multiplication expression
 `lhs*rhs`, return `lhs` as variable name and `:A` as field name if `lhs==state`,
 `:B` as field name if `lhs==input` and `:D` as field name if `lhs==noise`.
+
+If an element of `summands` is a symbol, and not equal to `input` or `noise`,
+the symbol is the variable name and the field name is `:c`. If it is equal to
+`input`, the variable name is a `IdentityMultiple(I,state_dim)` where `state_dim`
+is extract from the variable name of the state and the field name is `:B`.
+Similiarily, if the element is equal to `noise`, the variable name is
+`IdentityMultiple(I,state_dim)` and the field name is `:D`.
+
 
 ### Input
 

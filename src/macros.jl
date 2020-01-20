@@ -213,10 +213,12 @@ end
 
 # returns `(equation, AT, state)` if `expr` if the given expression `expr`
 # corresponds to a dynamic equation, either of the form `x⁺ = rhs` or `x' = rhs`
-#  in the former case `AT = AbstractDiscreteSystem` and in the latter
-# `AT = AbstractContinuousSystem`. The equation is `x = rhs` where the superscript
+# in the former case `AT = AbstractDiscreteSystem` and in the latter
+# `AT = AbstractContinuousSystem`. `equation` is `x = rhs` where the superscript
 # is stripped from the expression and the state corresponds to `x`,
 # otherwise, return `(nothing, nothing, nothing)`
+# Additionally, the `lhs` can be in the form `E*x'` or `E*x⁺` where `E` can be
+# any variable name.
 function strip_dynamic_equation(expr)
     expr_str = string(expr)
     stripped_equation = ""
@@ -228,8 +230,10 @@ function strip_dynamic_equation(expr)
         stripped_equation =  replace(expr_str, "⁺" => "")
     end
     stripped_expr = Meta.parse(stripped_equation)
+    # check if `stripped_expr` is an equation and extract `lhs` and `rhs` if so
     !@capture(stripped_expr, lhs_ = rhs_) && return (nothing, nothing, nothing)
 
+    # extract the name of the state variable from the lhs
     if @capture(lhs, (E_*x_)) || @capture(lhs, (x_))
         state = x
         return (stripped_expr, AT, state)
@@ -323,16 +327,22 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
     else
         rhs = rhscode
     end
-    if @capture(rhs, A_ + B__) # If rhs is a sum
+
+    # if rhs is a sum, =>  affine system which is controlled, noisy or both
+    if @capture(rhs, A_ + B__)
         # parse summands of rhs and add * if needed
         summands = add_asterisk.([A, B...], Ref(state), Ref(input), Ref(noise))
         push!(rhs_params, extract_sum(summands, state, input, noise)...)
-    elseif @capture(rhs, f_(a__))  && f != :(*) && f != :(-) # If rhs is function call
+
+    # If rhs is function call => black-box system
+    elseif @capture(rhs, f_(a__))  && f != :(*) && f != :(-)
         # the dimension argument needs to be a iterable
         (dim == nothing) && throw(ArgumentError("for a blackbox system, the dimension has to be defined"))
         dim_vec = [dim...]
         push!(rhs_params, extract_function(rhs, dim_vec)...)
-    else # if rhs is a single term (e.g., A*x, Ax, 2x, x or 0)
+
+    # if rhs is a single term => affine systm (e.g. A*x, Ax, 2x, x or 0)
+    else
         # assume dim = 1 if not specified
         dim = (dim == nothing) ? 1 : dim
         if rhs == state  # => rhs =  x
@@ -444,7 +454,6 @@ If an element of `summands` is a symbol, the symbol is the variable name and the
 field name is `:c`. If an element of `summands` is a multiplication expression
 `lhs*rhs`, return `lhs` as variable name and `:A` as field name if `lhs==state`,
 `:B` as field name if `lhs==input` and `:D` as field name if `lhs==noise`.
-
 
 Given an array of expressions `summands` which consists of one or more elements
 which either are mutliplication expression or symbols.
@@ -658,7 +667,7 @@ ConstrainedBlackBoxControlDiscreteSystem{typeof(f),BallInf{Float64},BallInf{Floa
 ```
 """
 macro system(expr...)
-    try
+    # try
         if typeof(expr) == :Expr
             dyn_eq, AT, constr, state, input, noise, dim = parse_system([expr])
         else
@@ -670,11 +679,11 @@ macro system(expr...)
         field_names, var_names = constructor_input(lhs, rhs, set)
         sys_type = _corresponding_type(AT, field_names)
         return  esc(Expr(:call, :($sys_type), :($(var_names...))))
-    catch ex
-        if  isa(ex, ArgumentError)
-            return :(throw($ex))
-        else
-            throw(ex)
-        end
-    end
+    # catch ex
+    #     if  isa(ex, ArgumentError)
+    #         return :(throw($ex))
+    #     else
+    #         throw(ex)
+    #     end
+    # end
 end

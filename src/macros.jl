@@ -397,7 +397,6 @@ If not, `summand` is returned.
 
 Multiplication expression or symbol.
 
-
 ### Example
 
 ```jldoctest
@@ -430,6 +429,9 @@ function add_asterisk(summand, state::Symbol, input::Symbol, noise::Symbol)
     inputstr = string(input); leninput = length(inputstr)
     noisestr = string(noise); lennoise = length(noisestr)
 
+    # if summand contains the state, input or noise variable at the end and has
+    # ond or more additional characters (i.e. length(str) > length(state) for the state)
+    # a `*` is added inbetween.
     if lenstate < length(str) && str[(end-lenstate+1):end] == statestr
         return Meta.parse(str[1:end-length(statestr)]*"*$state")
 
@@ -439,35 +441,28 @@ function add_asterisk(summand, state::Symbol, input::Symbol, noise::Symbol)
     elseif lennoise < length(str) && str[(end-lennoise+1):end] == noisestr
         return Meta.parse(str[1:end-length(noisestr)]*"*$noise")
 
-    else # summand is parsed as a constant term
+    else # summand is returned which is either a constant term or the state, input or noise variable
         return summand
     end
-
 end
 
 """
     extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
 
-Extract the variable name and field name for every element of `summands`.
+Extract the variable name and field name for every element of `summands` which
+corresponds to the elements of the rhs of an affine system.
 
 If an element of `summands` is a symbol, the symbol is the variable name and the
 field name is `:c`. If an element of `summands` is a multiplication expression
 `lhs*rhs`, return `lhs` as variable name and `:A` as field name if `lhs==state`,
 `:B` as field name if `lhs==input` and `:D` as field name if `lhs==noise`.
 
-Given an array of expressions `summands` which consists of one or more elements
-which either are mutliplication expression or symbols.
-
-, the corresponding fields of the
-affine system and the variable are extracted.
-The state variable is parsed as `state`, the noise variable as `noise` and the input
-variable as everything else.
-
 ### Input
 
 - `summands` -- array of expressions
 - `state` -- state variable
-- `noise` -- noise variable, if available
+- `input` -- input variable
+- `noise` -- noise variable
 
 ### Output
 

@@ -345,7 +345,7 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
     else
         # if not specified, assume dim = 1
         dim = (dim == nothing) ? 1 : dim
-        if rhs == state  # => rhs =  x
+        if rhs == state  # => rhs = x
             if AT == AbstractDiscreteSystem
                 push!(rhs_params, (dim, :statedim))
             elseif AT == AbstractContinuousSystem

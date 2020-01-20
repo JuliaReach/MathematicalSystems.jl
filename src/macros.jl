@@ -343,7 +343,7 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
 
     # if rhs is a single term => affine systm (e.g. A*x, Ax, 2x, x or 0)
     else
-        # assume dim = 1 if not specified
+        # if not specified, assume dim = 1
         dim = (dim == nothing) ? 1 : dim
         if rhs == state  # => rhs =  x
             if AT == AbstractDiscreteSystem

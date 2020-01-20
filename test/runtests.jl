@@ -1,5 +1,6 @@
 using MathematicalSystems, LazySets, TypedPolynomials
 using SparseArrays, LinearAlgebra
+using InteractiveUtils: subtypes
 using Test
 
 # fix namespace conflicts with LazySets

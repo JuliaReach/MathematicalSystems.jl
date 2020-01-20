@@ -339,7 +339,7 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
         # the dimension argument needs to be a iterable
         (dim == nothing) && throw(ArgumentError("for a blackbox system, the dimension has to be defined"))
         dim_vec = [dim...]
-        push!(rhs_params, extract_function(rhs, dim_vec)...)
+        push!(rhs_params, extract_blackbox_parameter(rhs, dim_vec)...)
 
     # if rhs is a single term => affine systm (e.g. A*x, Ax, 2x, x or 0)
     else
@@ -459,10 +459,9 @@ If an element of `summands` is a multiplication expression
 If an element of `summands` is a symbol, and not equal to `input` or `noise`,
 the symbol is the variable name and the field name is `:c`. If it is equal to
 `input`, the variable name is a `IdentityMultiple(I,state_dim)` where `state_dim`
-is extract from the variable name of the state and the field name is `:B`.
+is extracted from the variable name of the state and the field name is `:B`.
 Similiarily, if the element is equal to `noise`, the variable name is
 `IdentityMultiple(I,state_dim)` and the field name is `:D`.
-
 
 ### Input
 
@@ -531,7 +530,13 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
     return params
 end
 
-function extract_function(rhs, dim::AbstractVector)
+# Extract the variable name of the function of the rhs of a equation if it has
+# the form `f_(x_)`, `f_(x_,u_)` or `f_(x_,u_,w_)`.
+# In addition to the variable name of the function and the field name `:f`,
+# depening on the number of input arguments, the field names `:statedim`, `:inputdim`
+# and `:noisedim` with corresponding variable names (which are the number of state,
+# input and noise dimensions provided as input to the macro) is returned.
+function extract_blackbox_parameter(rhs, dim::AbstractVector)
     if @capture(rhs, f_(x_))
         @assert length(dim) == 1
         return [(f, :f), (dim[1], :statedim)]

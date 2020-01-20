@@ -1,3 +1,13 @@
+@testset "_corresponding_type" begin
+
+    for AS in [AbstractContinuousSystem, AbstractDiscreteSystem]
+        for S in subtypes(AS)
+            @test MathematicalSystems._corresponding_type(AS, fieldnames.(S)) == S
+        end
+    end
+end
+
+
 # ========
 # Setup
 # ========

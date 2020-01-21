@@ -430,8 +430,8 @@ function add_asterisk(summand, state::Symbol, input::Symbol, noise::Symbol)
     noisestr = string(noise); lennoise = length(noisestr)
 
     # if summand contains the state, input or noise variable at the end and has
-    # ond or more additional characters (i.e. length(str) > length(state) for the state)
-    # a `*` is added inbetween.
+    # one or more additional characters (i.e. length(str) > length(state) for the state)
+    # a `*` is added in between
     if lenstate < length(str) && str[(end-lenstate+1):end] == statestr
         return Meta.parse(str[1:end-length(statestr)]*"*$state")
 
@@ -530,10 +530,10 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
     return params
 end
 
-# Extract the variable name of the function of the rhs of a equation if it has
+# Extract the variable name of the function of the rhs of an equation if it has
 # the form `f_(x_)`, `f_(x_,u_)` or `f_(x_,u_,w_)`.
 # In addition to the variable name of the function and the field name `:f`,
-# depening on the number of input arguments, the field names `:statedim`, `:inputdim`
+# depending on the number of input arguments, the field names `:statedim`, `:inputdim`
 # and `:noisedim` with corresponding variable names (which are the number of state,
 # input and noise dimensions provided as input to the macro) is returned.
 function extract_blackbox_parameter(rhs, dim::AbstractVector)
@@ -552,9 +552,9 @@ function extract_blackbox_parameter(rhs, dim::AbstractVector)
     end
 end
 
-# Take the vectors of tupples providing the variable and fields names for the
-# lhs, the rhs and the sets combined them and return a vector of field names
- # and a vector of variable names.
+# Take the vectors of tuples providing the variable and fields names for the
+# lhs, the rhs and the sets, combine them, and return a vector of field names
+# and a vector of variable names.
 function constructor_input(lhs, rhs, set)
     rhs_fields = [tuple[2] for tuple in rhs]
     lhs_fields = [tuple[2] for tuple in lhs]
@@ -570,9 +570,9 @@ function constructor_input(lhs, rhs, set)
 end
 
 # extract the variable name and the field name for a set expression. The method
-# check wether the set belongs to the `state`, `input` or `noise` and returns a
-# tupple of symbols where the field name is either `:X`, `:U` or `:W`  and
-# the variable name is the value parse as Set_.
+# checks wether the set belongs to the `state`, `input` or `noise` and returns a
+# tuple of symbols where the field name is either `:X`, `:U` or `:W` and
+# the variable name is the value parsed as Set_
 function extract_set_parameter(expr, state, input, noise) # input => to check set definitions
     if @capture(expr, x_ ∈ Set_)
         if x == state
@@ -621,7 +621,7 @@ If we want to change the default name of the input or noise variable, this can b
 done by adding the term `input: var` where `var` corresponds to the new name of
 the input variable.
 
-As a exception to the rule, if the right-hand side has the form `A*x + B*u` or
+As an exception to the rule, if the right-hand side has the form `A*x + B*u` or
 `A*x + B*u + c` the equation is parsed as a controlled linear (affine) system
 even though the `input` variable does not correspond to the value of `u`.
 

@@ -461,7 +461,7 @@ the symbol is the variable name and the field name is `:c`. If it is equal to
 `input`, the variable name is a `IdentityMultiple(I,state_dim)` where `state_dim`
 is extracted from the state matrix (i.e. take the symbol `lhs` of `lhs*rhs` where
 `rhs==state` which corresponds to the state matrix and generate the expression
-`state_dim = size($lhs,1)` which is evaluated in the scope where @system is called)
+`state_dim = size(lhs,1)` which is evaluated in the scope where @system is called)
 and the field name is `:B`.
 Similiarily, if the element is equal to `noise`, the variable name is
 `IdentityMultiple(I,state_dim)` and the field name is `:D`.

@@ -453,16 +453,19 @@ Extract the variable name and field name for every element of `summands` which
 corresponds to the elements of the rhs of an affine system.
 
 If an element of `summands` is a multiplication expression
-`lhs*rhs`, return `lhs` as variable name and `:A` as field name if `lhs==state`,
-`:B` as field name if `lhs==input` and `:D` as field name if `lhs==noise`.
+`lhs*rhs`, return `lhs` as variable name and `:A` as field name if `rhs==state`,
+`:B` as field name if `rhs==input` and `:D` as field name if `rhs==noise`.
 
 If an element of `summands` is a symbol, and not equal to `input` or `noise`,
 the symbol is the variable name and the field name is `:c`. If it is equal to
 `input`, the variable name is a `IdentityMultiple(I,state_dim)` where `state_dim`
-is extracted from the variable name of the state and the field name is `:B`.
+is extracted from the state matrix (i.e. take the symbol `lhs` of `lhs*rhs` where
+`rhs==state` which corresponds to the state matrix and generate the expression
+`state_dim = size($lhs,2)` which is evaluated in the scope where @system is called)
+and the field name is `:B`.
 Similiarily, if the element is equal to `noise`, the variable name is
 `IdentityMultiple(I,state_dim)` and the field name is `:D`.
-
+    
 ### Input
 
 - `summands` -- array of expressions

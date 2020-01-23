@@ -677,7 +677,7 @@ julia> @system(x' = A*x)
 LinearContinuousSystem{Float64,Array{Float64,2}}([1.0 0.0; 0.0 1.0])
 ```
 
-A discrete system can be defined by using `⁺`:
+A discrete system is defined by using `⁺`:
 
 ```jldoctest system_macro
 julia> @system(x⁺ = A*x)

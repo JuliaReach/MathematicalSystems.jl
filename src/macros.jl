@@ -641,7 +641,7 @@ by using `'`, as in `x' = A*x`. A discrete system is specified using `⁺` (whic
 can be written with the combination of keys `\\^+[TAB]`), as in `x⁺ = A*x`.
 Moreover, the asterisk denoting matrix-vector products is optional. For instance,
 both `x' = Ax` and `x' = A*x` are parsed as the linear continuous system whose
-state matrix is `A` (matrix that is supposed to be defined at the call site).
+state matrix is `A`. The matrix is supposed to be defined at the call site.
 
 **Default values.** When the dynamic equation is parsed, the variable on the
 left-hand side is interpreted as the state variable. The input variable is by

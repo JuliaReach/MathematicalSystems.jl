@@ -162,13 +162,13 @@ for (Z, AZ) in ((:AffineContinuousSystem, :AbstractContinuousSystem),
     @eval begin
         struct $(Z){T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}} <: $(AZ)
             A::MT
-            b::VT
-            function $(Z)(A::MT, b::VT) where {T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}}
-                @assert checksquare(A) == length(b)
-                return new{T, MT, VT}(A, b)
+            c::VT
+            function $(Z)(A::MT, c::VT) where {T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}}
+                @assert checksquare(A) == length(c)
+                return new{T, MT, VT}(A, c)
             end
         end
-        statedim(s::$Z) = length(s.b)
+        statedim(s::$Z) = length(s.c)
         inputdim(::$Z) = 0
         noisedim(::$Z) = 0
         islinear(::$Z) = false
@@ -186,13 +186,13 @@ end
 Continuous-time affine system of the form:
 
 ```math
-    x' = A x + b.
+    x' = A x + c.
 ```
 
 ### Fields
 
 - `A` -- square matrix
-- `b` -- vector
+- `c` -- vector
 """
 AffineContinuousSystem
 
@@ -202,13 +202,13 @@ AffineContinuousSystem
 Discrete-time affine system of the form:
 
 ```math
-    x_{k+1} = A x_k + b.
+    x_{k+1} = A x_k + c.
 ```
 
 ### Fields
 
 - `A` -- square matrix
-- `b` -- vector
+- `c` -- vector
 """
 AffineDiscreteSystem
 
@@ -328,14 +328,14 @@ for (Z, AZ) in ((:ConstrainedAffineContinuousSystem, :AbstractContinuousSystem),
     @eval begin
         struct $(Z){T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST} <: $(AZ)
             A::MT
-            b::VT
+            c::VT
             X::ST
-            function $(Z)(A::MT, b::VT, X::ST) where {T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST}
-                @assert checksquare(A) == length(b)
-                return new{T, MT, VT, ST}(A, b, X)
+            function $(Z)(A::MT, c::VT, X::ST) where {T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST}
+                @assert checksquare(A) == length(c)
+                return new{T, MT, VT, ST}(A, c, X)
             end
         end
-        statedim(s::$Z) = length(s.b)
+        statedim(s::$Z) = length(s.c)
         inputdim(::$Z) = 0
         noisedim(::$Z) = 0
         stateset(s::$Z) = s.X
@@ -354,13 +354,13 @@ end
 Continuous-time affine system with state constraints of the form:
 
 ```math
-    x' = A x + b, x(t) ∈ \\mathcal{X}.
+    x' = A x + c, x(t) ∈ \\mathcal{X}.
 ```
 
 ### Fields
 
 - `A` -- square matrix
-- `b` -- vector
+- `c` -- vector
 - `X` -- state constraints
 """
 ConstrainedAffineContinuousSystem
@@ -371,13 +371,13 @@ ConstrainedAffineContinuousSystem
 Discrete-time affine system with state constraints of the form:
 
 ```math
-    x_{k+1} = A x_k + b, x_k ∈ \\mathcal{X} \\text{ for all } k.
+    x_{k+1} = A x_k + c, x_k ∈ \\mathcal{X} \\text{ for all } k.
 ```
 
 ### Fields
 
 - `A` -- square matrix
-- `b` -- vector
+- `c` -- vector
 - `X` -- state constraints
 """
 ConstrainedAffineDiscreteSystem

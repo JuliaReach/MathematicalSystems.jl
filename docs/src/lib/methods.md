@@ -44,6 +44,9 @@ islinear(::AbstractMap)
 isaffine(::AbstractSystem)
 ispolynomial(::AbstractSystem)
 isaffine(::AbstractMap)
+isnoisy(::AbstractSystem)
+iscontrolled(::AbstractSystem)
+isconstrained(::AbstractSystem)
 ```
 
 ## Maps

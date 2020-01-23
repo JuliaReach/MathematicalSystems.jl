@@ -12,7 +12,7 @@ export @system
 """
     map(ex, args)
 
-Returns an instance of the map type corresponding to the given expression.
+Return an instance of the map type corresponding to the given expression.
 
 ### Input
 
@@ -166,9 +166,9 @@ Return the tuple containing the dimension(s) in `expr`.
 
 - `expr` -- symbolic expression that can be of any of the following forms:
 
-        - `x` or `(x)` -- state dimension
-        - `(x, u)`     -- state and input dimension
-        - `(x, u, w)`  -- state, input and noise dimensions
+    - `:x` or `:(x)` -- state dimension
+    - `:(x, u)`      -- state and input dimension
+    - `:(x, u, w)`   -- state, input and noise dimensions
 
 ### Output
 
@@ -205,7 +205,7 @@ and `false` otherwise. This function just detects the presence of the symbol `=`
 
 ### Output
 
-Returns a `Bool` indicating whether `expr` is an equation or not.
+A `Bool` indicating whether `expr` is an equation or not.
 """
 function is_equation(expr)
     return @capture(expr, lhs_ = rhs_)
@@ -400,22 +400,24 @@ Multiplication expression or symbol.
 ### Example
 
 ```jldoctest
-julia> MathematicalSystems.add_asterisk(:(A1*x), :x, :u, :w)
+julia> using MathematicalSystems: add_asterisk
+
+julia> add_asterisk(:(A1*x), :x, :u, :w)
 :(A1 * x)
 
-julia> MathematicalSystems.add_asterisk(:(c1), :x, :u, :w)
+julia> add_asterisk(:(c1), :x, :u, :w)
 :c1
 
-julia>  MathematicalSystems.add_asterisk(:(Ax1), :x1, :u, :w)
+julia> add_asterisk(:(Ax1), :x1, :u, :w)
 :(A * x1)
 
-julia>  MathematicalSystems.add_asterisk(:(Awb), :x1, :u, :wb)
+julia> add_asterisk(:(Awb), :x1, :u, :wb)
 :(A * wb)
 
-julia>  MathematicalSystems.add_asterisk(:(A1u), :x, :u, :w)
+julia> add_asterisk(:(A1u), :x, :u, :w)
 :(A1 * u)
 
-julia>  MathematicalSystems.add_asterisk(:(A1ub), :x, :u, :w)
+julia> add_asterisk(:(A1ub), :x, :u, :w)
 :A1ub
 ```
 """
@@ -450,28 +452,14 @@ end
     extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
 
 Extract the variable name and field name for every element of `summands` which
-corresponds to the elements of the rhs of an affine system.
-
-If an element of `summands` is a multiplication expression
-`lhs*rhs`, return `lhs` as variable name and `:A` as field name if `rhs==state`,
-`:B` as field name if `rhs==input` and `:D` as field name if `rhs==noise`.
-
-If an element of `summands` is a symbol, and not equal to `input` or `noise`,
-the symbol is the variable name and the field name is `:c`. If it is equal to
-`input`, the variable name is a `IdentityMultiple(I,state_dim)` where `state_dim`
-is extracted from the state matrix (i.e. take the symbol `lhs` of `lhs*rhs` where
-`rhs==state` which corresponds to the state matrix and generate the expression
-`state_dim = size(lhs,1)` which is evaluated in the scope where @system is called)
-and the field name is `:B`.
-Similiarily, if the element is equal to `noise`, the variable name is
-`IdentityMultiple(I,state_dim)` and the field name is `:D`.
+corresponds to the elements of the right-hand side of an affine system.
 
 ### Input
 
 - `summands` -- array of expressions
-- `state` -- state variable
-- `input` -- input variable
-- `noise` -- noise variable
+- `state`    -- state variable
+- `input`    -- input variable
+- `noise`    -- noise variable
 
 ### Output
 
@@ -480,22 +468,41 @@ Array of tuples of symbols with variable name and field name.
 ### Example
 
 ```jldoctest
-julia>  MathematicalSystems.extract_sum([:(A1*x)], :x, :u, :w)
+julia> using MathematicalSystems: extract_sum
+
+julia> extract_sum([:(A1*x)], :x, :u, :w)
 1-element Array{Tuple{Any,Symbol},1}:
  (:A1, :A)
 
-julia> MathematicalSystems.extract_sum([:(A1*x), :(B1*u), :c], :x, :u, :w)
+julia> extract_sum([:(A1*x), :(B1*u), :c], :x, :u, :w)
 3-element Array{Tuple{Any,Symbol},1}:
  (:A1, :A)
  (:B1, :B)
  (:c, :c)
 
-julia> MathematicalSystems.extract_sum([:(A1*x7),:( B1*u7), :( B2*w7)], :x7, :u7, :w7)
+julia> extract_sum([:(A1*x7), :( B1*u7), :( B2*w7)], :x7, :u7, :w7)
 3-element Array{Tuple{Any,Symbol},1}:
  (:A1, :A)
  (:B1, :B)
  (:B2, :D)
 ```
+
+### Notes
+
+If an element of `summands` is a multiplication expression `lhs*rhs`,
+return `lhs` as variable name and `:A` as field name if `rhs==state`,
+`:B` as field name if `rhs==input` and `:D` as field name if `rhs==noise`.
+
+If an element of `summands` is a symbol, and not equal to `input` or `noise`,
+the symbol is the variable name and the field name is `:c`. If it is equal to
+`input`, the variable name is a `IdentityMultiple(I,state_dim)` where `state_dim`
+is extracted from the state matrix (i.e. take the symbol `lhs` of `lhs*rhs` where
+`rhs==state` which corresponds to the state matrix and generate the expression
+`state_dim = size(lhs,1)` which is evaluated in the scope where `@system` is called)
+and the field name is `:B`.
+
+Similiarily, if the element is equal to `noise`, the variable name is
+`IdentityMultiple(I, state_dim)` and the field name is `:D`.
 """
 function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
     params = Tuple{Any,Symbol}[]
@@ -595,69 +602,94 @@ end
 """
     system(expr...)
 
-Returns an instance of the system type corresponding to the given expressions.
+Return an instance of the system type corresponding to the given expressions.
 
 ### Input
 
-- `expr`   -- expressions separated by commas which define the dynamic equation,
-the constraint sets or the dimensionality of the system
+- `expr` -- expressions separated by commas which define the dynamic equation,
+            the constraint sets or the dimensionality of the system
 
 ### Output
 
 A system that best matches the given expressions.
 
-### Note
+### Notes
 
-The `expr` consist of one or several of the following elements:
-- continuous dynamic equation: `x' = Ax`
-- discrete dynamic equation: `x⁺ = Ax`
-- sets: `x ∈ X`
-- dimensionality: `dim: (2,1)` or `dim = 1`
-- defining the input variable: `input: u`, `input = u`
-- defining the noise variable: `noise: w`, `noise = w`
+**Terms.** The expression `expr` contains one or more of the following sub-expressions:
 
-The dynamic equation is parsed as follows. The variable on the left-hand side
-corresponds to the state variable. The input variable is by default `u` and the
-noise variable is by default `w`, if not specified differently.
+- dynamic equation, either continuous, e.g.`x' = Ax`, or discrete, e.g. `x⁺ = Ax`
+- set constraints, e.g. `x ∈ X`
+- input constraints, e.g. `u ∈ U`
+- dimensionality, e.g. `dim: (2,1)` or `dim = 1`
+- specification of the input variable, e.g. `input: u` or `input = u`
+- specification of the noise variable, e,g, `noise: w` or `noise = w`
 
-If we want to change the default name of the input or noise variable, this can be
-done by adding the term `input: var` where `var` corresponds to the new name of
-the input variable.
+The macro call should is then formed by separating the previous sub-expressions
+(which we simply call *terms* hereafter), as in:
 
-As an exception to the rule, if the right-hand side has the form `A*x + B*u` or
-`A*x + B*u + c` the equation is parsed as a controlled linear (affine) system
-even though the `input` variable does not correspond to the value of `u`.
+```julia
+@system(dynamic eq., set constr., input constr., input specif., noise spec., dimens.)
+```
 
-If the left-hand side corresponds to a multiplicative term in the form `E*x⁺`
-or `E*x'`, the equation is parsed as an algebraic system.
+The different terms that compose the system's definition do not have to appear in
+any particular order. Moreover, the only mandatory term is the dynamic equation;
+the other terms are optional and default values may apply depending on the system
+type; this is explained next.
+
+**Dynamic equation.** The time derivative in a continuous system is specified
+by using `'`, as in `x' = A*x`. A discrete system is specified using `⁺` (which
+can be written with the combination of keys `\\^+[TAB]`), as in `x⁺ = A*x`.
+Moreover, the asterisk denoting matrix-vector products is optional. For instance,
+both `x' = Ax` and `x' = A*x` are parsed as the linear continuous system whose
+state matrix is `A` (matrix that is supposed to be defined at the call site).
+
+**Default values.** When the dynamic equation is parsed, the variable on the
+left-hand side is interpreted as the state variable. The input variable is by
+default `u` and the noise variable is by default `w`. If we want to change the
+default name of the input variable, this can be done by adding the term
+`input: var` (or equivalently, `input=var)` where `var` corresponds to the new
+name of the input variable, eg. `@system(x' = A*x + B*v, input:v)`.
+Similarly, a noise variable is specified with `noise: var` or `noise=var`.
+
+**Exceptions.** The following exceptions and particular cases apply:
+
+- If the right-hand side has the form `A*x + B*foo` or `A*x + B*foo + c`, the
+  equation is parsed as a controlled linear (affine) system with input `foo`.
+  Note that in this case, `input` variable does not correspond to the default
+  value of `u`, but `foo` is parsed as being the input.
+
+- If the left-hand side contains a multiplicative term in the form `E*x⁺` or `E*x'`,
+  the equation is parsed as an algebraic system. In this case, the asterisk
+  `*` operator is mandatory.
+
+- Systems of the form `x' = α*x` where `α` is a scalar are parsed as linear
+  systems. The default dimension is `1`; if the system is higher-dimensional use
+  `dim`, as in `x' = 2x, dim=3`.
 
 ### Examples
 
 Let us first create a continuous linear system using this macro:
 
-```jldoctest
+```jldoctest system_macro
 julia> A = [1. 0; 0 1.];
 
 julia> @system(x' = A*x)
 LinearContinuousSystem{Float64,Array{Float64,2}}([1.0 0.0; 0.0 1.0])
 ```
+
 A discrete system can be defined by using `⁺`:
 
-```jldoctest
-julia> A = [1. 0; 0 1.];
-
+```jldoctest system_macro
 julia> @system(x⁺ = A*x)
 LinearDiscreteSystem{Float64,Array{Float64,2}}([1.0 0.0; 0.0 1.0])
 ```
 
 Additionally, a set definition `x ∈ X` can be added to create a constrained system.
-For example, a discrete controlled affine system with constrained states and inputs writes
-as
+For example, a discrete controlled affine system with constrained states and
+inputs writes as:
 
-```jldoctest
-julia> using LazySets;
-
-julia> A = [1. 0; 0 1.];
+```jldoctest system_macro
+julia> using LazySets
 
 julia> B = Matrix([1. 0.5]');
 
@@ -667,7 +699,7 @@ julia> X = BallInf(zeros(2), 10.);
 
 julia> U = BallInf(zeros(1), 2.);
 
-julia> @system(x' = A*x + B*u + c, x∈X, u∈U)
+julia> @system(x' = A*x + B*u + c, x ∈ X, u ∈ U)
 ConstrainedAffineControlContinuousSystem{Float64,Array{Float64,2},Array{Float64,2},Array{Float64,1},BallInf{Float64},BallInf{Float64}}([1.0 0.0; 0.0 1.0], [1.0; 0.5], [1.0, 1.5], BallInf{Float64}([0.0, 0.0], 10.0), BallInf{Float64}([0.0], 2.0))
 ```
 
@@ -675,16 +707,10 @@ For the creation of a black-box system, the state, input and noise dimensions ha
 to be defined separately. For a constrained controlled black-box system, the macro
 writes as
 
-```jldoctest
-julia> using LazySets;
+```jldoctest system_macro
+julia> f(x, u) = x + u;
 
-julia> f(x,u) = x + u;
-
-julia> X = BallInf(zeros(2), 10.);
-
-julia> U = BallInf(zeros(1), 2.);
-
-julia> @system(x⁺ = f(x,u), x∈X, u∈U, dim:(2,2))
+julia> @system(x⁺ = f(x, u), x ∈ X, u ∈ U, dim: (2,2))
 ConstrainedBlackBoxControlDiscreteSystem{typeof(f),BallInf{Float64},BallInf{Float64}}(f, 2, 2, BallInf{Float64}([0.0, 0.0], 10.0), BallInf{Float64}([0.0], 2.0))
 ```
 """

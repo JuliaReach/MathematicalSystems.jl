@@ -663,7 +663,7 @@ Similarly, a noise variable is specified with `noise: var` or `noise=var`.
   `*` operator is mandatory.
 
 - Systems of the form `x' = α*x` where `α` is a scalar are parsed as linear
-  systems. The default dimension is `1`; if the system is higher-dimensional use
+  systems. The default dimension is `1`; if the system is higher-dimensional, use
   `dim`, as in `x' = 2x, dim=3`.
 
 ### Examples

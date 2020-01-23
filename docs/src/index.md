@@ -18,7 +18,8 @@ DocTestFilters = [r"[0-9\.]+ seconds \(.*\)"]
 ```@contents
 Pages = [
     "lib/types.md",
-    "lib/methods.md"
+    "lib/methods.md",
+    "lib/internals.md"
 ]
 Depth = 2
 ```

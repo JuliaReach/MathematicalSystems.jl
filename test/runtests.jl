@@ -1,5 +1,6 @@
 using MathematicalSystems, LazySets, TypedPolynomials
 using SparseArrays, LinearAlgebra
+using InteractiveUtils: subtypes
 using Test
 
 # fix namespace conflicts with LazySets
@@ -14,3 +15,4 @@ include("outputs.jl")
 include("macros.jl")
 include("successor.jl")
 include("utilities.jl")
+include("@system.jl")

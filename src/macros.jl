@@ -624,7 +624,7 @@ A system that best matches the given expressions.
 - specification of the input variable, e.g. `input: u` or `input = u`
 - specification of the noise variable, e,g, `noise: w` or `noise = w`
 
-The macro call should is then formed by separating the previous sub-expressions
+The macro call is then formed by separating the previous sub-expressions
 (which we simply call *terms* hereafter), as in:
 
 ```julia

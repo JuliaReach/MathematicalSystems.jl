@@ -102,28 +102,28 @@ apply(m::ConstrainedLinearMap, x) = m.A * x
 An affine map,
 
 ```math
-    x ↦ Ax + b.
+    x ↦ Ax + c.
 ```
 
 ### Fields
 
 - `A` -- matrix
-- `b` -- vector
+- `c` -- vector
 """
 struct AffineMap{T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}} <: AbstractMap
     A::MT
-    b::VT
-    function AffineMap(A::MT, b::VT) where {T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}}
-        @assert size(A, 1) == length(b)
-        return new{T, MT, VT}(A, b)
+    c::VT
+    function AffineMap(A::MT, c::VT) where {T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}}
+        @assert size(A, 1) == length(c)
+        return new{T, MT, VT}(A, c)
     end
 end
 statedim(m::AffineMap) = size(m.A, 2)
-outputdim(m::AffineMap) = length(m.b)
+outputdim(m::AffineMap) = length(m.c)
 inputdim(::AffineMap) = 0
 islinear(::AffineMap) = false
 isaffine(::AffineMap) = true
-apply(m::AffineMap, x) = m.A * x + m.b
+apply(m::AffineMap, x) = m.A * x + m.c
 
 """
     ConstrainedAffineMap
@@ -131,31 +131,31 @@ apply(m::AffineMap, x) = m.A * x + m.b
 An affine map with state constraints of the form:
 
 ```math
-    x ↦ Ax + b, x(t) ∈ \\mathcal{X}.
+    x ↦ Ax + c, x(t) ∈ \\mathcal{X}.
 ```
 
 ### Fields
 
 - `A` -- matrix
-- `b` -- vector
+- `c` -- vector
 - `X` -- state constraints
 """
 struct ConstrainedAffineMap{T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}, ST} <: AbstractMap
     A::MT
-    b::VT
+    c::VT
     X::ST
-    function ConstrainedAffineMap(A::MT, b::VT, X::ST) where {T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}, ST}
-        @assert size(A, 1) == length(b)
-        return new{T, MT, VT, ST}(A, b, X)
+    function ConstrainedAffineMap(A::MT, c::VT, X::ST) where {T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}, ST}
+        @assert size(A, 1) == length(c)
+        return new{T, MT, VT, ST}(A, c, X)
     end
 end
 statedim(m::ConstrainedAffineMap) = size(m.A, 2)
 stateset(m::ConstrainedAffineMap) = m.X
-outputdim(m::ConstrainedAffineMap) = length(m.b)
+outputdim(m::ConstrainedAffineMap) = length(m.c)
 inputdim(::ConstrainedAffineMap) = 0
 islinear(::ConstrainedAffineMap) = false
 isaffine(::ConstrainedAffineMap) = true
-apply(m::ConstrainedAffineMap, x) = m.A * x + m.b
+apply(m::ConstrainedAffineMap, x) = m.A * x + m.c
 
 """
     LinearControlMap

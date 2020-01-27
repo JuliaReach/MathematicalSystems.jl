@@ -68,7 +68,7 @@ For implementing a custom discretization algorithm, a type definition
 and a `_discretize` method
 ```julia
 _discretize(::NewDiscretizationAlgorithm, ΔT::Real,
-             A::AbstractMatrix, B::AbstractMatrix, c::AbstractVector, D::AbstractMatrix
+             A::AbstractMatrix, B::AbstractMatrix, c::AbstractVector, D::AbstractMatrix)
 ```
 is required.
 """
@@ -109,8 +109,8 @@ Euler discretization algorithm for affine systems.
 Consider a `NoisyAffineControlledContinuousSystem` with system dynamics
 ``x' = Ax + Bu + c + Dw``.
 
-The euler discretization, a first order approximation of the exact
-discretiziation [`ExactDiscretization`](@ref), writes as
+The Euler discretization, a first order approximation of the exact
+discretization [`ExactDiscretization`](@ref), writes as
 ``x^+ = A^d x + B^d u + c^d + D^d w``
 where  ``A^d = I + ΔT \\cdot A``, ``B^d = ΔT \\cdot B``,
 ``c^d = ΔT \\cdot c`` and ``D^d = ΔT \\cdot D``.

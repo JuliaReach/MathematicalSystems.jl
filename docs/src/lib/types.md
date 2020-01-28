@@ -72,6 +72,14 @@ NoisyConstrainedAffineControlDiscreteSystem
 NoisyConstrainedBlackBoxControlDiscreteSystem
 ```
 
+#### Discretization Algorithms
+
+```@docs
+AbstractDiscretizationAlgorithm
+ExactDiscretization
+EulerDiscretization
+```
+
 ## System macro
 
 ```@docs

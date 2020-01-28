@@ -60,3 +60,17 @@ apply
 ```@docs
 successor
 ```
+
+## Discretization
+
+```@docs
+discretize
+```
+
+## Internal Methods
+
+```@docs
+_discretize
+typename(::AbstractSystem)
+_complementary_type(::Type{<:AbstractSystem})
+```

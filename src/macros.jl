@@ -57,18 +57,20 @@ IdentityMap(5)
 ```
 """
 macro map(ex, args)
-    quote
-        local x = $(ex.args)[1]
-        local rhs = $(ex.args)[2].args[2]
-
-        # x -> x, dim=...
-        MT = IdentityMap
-        local pat = Meta.parse("$x")
-        local matched = matchex(pat, rhs)
-        matched != nothing && return MT($args)
-
-        throw(ArgumentError("unable to match the given expression to a known map type"))
+    dimension = nothing
+    x = (ex.args)[1]
+    rhs = (ex.args)[2].args[2]
+    @show args
+    if x == rhs
+        if @capture(args, (dim = dim_) | (dim: dim_) )
+            dimension = dim
+        else
+            throw(ArgumentError("cannot parse dimension of identity map"))
+        end
+        return  Expr(:call, IdentityMap, esc(:($(dimension))))
     end
+
+    throw(ArgumentError("unable to match the given expression to a known map type"))
 end
 
 macro map(ex)

@@ -9,3 +9,10 @@
     affinemap = @map x -> A*x + b
     @test affinemap == MathematicalSystems.AffineMap(A, b)
 end
+
+@testset "@map macro(ex, args)" begin
+    n = 3
+    identitymap1 = @map( x->x, dim=n)
+    identitymap2 = @map( x->x, dim:3)
+    @test identitymap1 == identitymap2 == IdentityMap(n)
+end

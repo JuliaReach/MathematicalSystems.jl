@@ -242,3 +242,10 @@ end
     sys = @system(x⁺ = f1(x, u, w), x ∈ X, u ∈ U, w ∈ W, dims = (2, 2, 2))
     @test sys == NoisyConstrainedBlackBoxControlDiscreteSystem(f1, 2, 2, 2, X, U, W)
 end
+
+# =======================
+# Initial value problems
+# =======================
+@testset "@system for an initial-value problem for a continuous system" begin
+    @test @system(x' = -x, x(0) ∈ Interval(-1.0, 1.0)) == InitialValueProblem(LinearContinuousSystem(I(1)), Interval(-1, 1))
+end

@@ -60,8 +60,8 @@ macro map(ex, args)
     dimension = nothing
     x = (ex.args)[1]
     rhs = (ex.args)[2].args[2]
-    @show args
     if x == rhs
+        # identity map: x -> x, dim=..
         if @capture(args, (dim = dim_) | (dim: dim_) )
             dimension = dim
         else

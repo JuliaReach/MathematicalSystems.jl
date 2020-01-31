@@ -186,7 +186,7 @@ state_matrix(::AbstractSystem)
 """
     input_matrix(::AbstractSystem)
 
-Return the input matrix of a system with input.
+Return the input matrix of a system with linear input.
 
 ### Notes
 

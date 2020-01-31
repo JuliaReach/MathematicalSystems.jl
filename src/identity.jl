@@ -52,7 +52,7 @@ IdentityMultiple{Rational{Int64}} of value 4//1 and order 2
 ```
 
 To create the matrix with a value different from the default (`1.0`), there are
-two ways. Either pass the value through the callable `I`, as in
+two ways. Either pass the value through the callable `I`, as in:
 
 ```jldoctest identitymultiple
 julia> I2 = I(2.0, 2)
@@ -62,7 +62,7 @@ julia> I2r = I(2//1, 2)
 IdentityMultiple{Rational{Int64}} of value 2//1 and order 2
 ```
 
-Or use the lower level constructor passing the `UniformScaling` (`I`):
+Or use the constructor passing the `UniformScaling` (`I`):
 
 ```jldoctest identitymultiple
 julia> I2 = IdentityMultiple(2.0*I, 2)
@@ -80,9 +80,9 @@ end
 Base.IndexStyle(::Type{<:IdentityMultiple}) = IndexLinear()
 Base.size(𝐼::IdentityMultiple) = (𝐼.n, 𝐼.n)
 Base.getindex(𝐼::IdentityMultiple, inds...) = getindex(𝐼.M, inds...)
-Base.getindex(𝐼::IdentityMultiple{T}, ind) where {T} =
-    rem(ind-1, 𝐼.n+1) == 0 ? 𝐼.M.λ : zero(T)
-Base.setindex!(𝐼::IdentityMultiple, X, inds...) = error("cannot store a value in an `Identity`")
+Base.getindex(𝐼::IdentityMultiple{T}, ind) where {T} = rem(ind-1, 𝐼.n+1) == 0 ? 𝐼.M.λ : zero(T)
+Base.setindex!(𝐼::IdentityMultiple, X, inds...) = error("cannot store a value in "*
+                "an `IdentityMultiple`, because this type is immutable")
 
 Base.:(*)(x::Number, 𝐼::IdentityMultiple) = IdentityMultiple(x * 𝐼.M, 𝐼.n)
 Base.:(*)(𝐼::IdentityMultiple, x::Number) = IdentityMultiple(x * 𝐼.M, 𝐼.n)
@@ -146,7 +146,9 @@ function Base.show(io::IO, ::MIME"text/plain", 𝐼::IdentityMultiple{T}) where 
     print(io, "$(typeof(𝐼)) of value $(𝐼.M.λ) and order $(𝐼.n)")
 end
 
-# callable identity matrix
+# callable identity matrix given the size and the numeric type
 LinearAlgebra.I(n::Int, N=Float64) = IdentityMultiple(one(N)*I, n)
 
+# callable identity matrix given the scaling factor and the size
+IdentityMultiple(λ::Number, n::Int) = IdentityMultiple(λ*I, n)
 LinearAlgebra.I(λ::Number, n::Int) = IdentityMultiple(λ*I, n)

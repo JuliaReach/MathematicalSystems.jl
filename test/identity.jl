@@ -40,4 +40,7 @@ end
     @test x isa Vector && length(x) == 2
     A = I2 * rand(2, 2)
     @test A isa Matrix && size(A) == (2, 2)
+
+    @test I(2) / I == IdentityMultiple(1.0, 2)
+    @test I(2) - I(2) == 0.0I(2)
 end

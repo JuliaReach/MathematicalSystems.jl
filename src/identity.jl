@@ -85,6 +85,8 @@ Base.getindex(𝐼::IdentityMultiple{T}, ind) where {T} =
 Base.setindex!(𝐼::IdentityMultiple, X, inds...) = error("cannot store a value in an `Identity`")
 
 Base.:(*)(x::Number, 𝐼::IdentityMultiple) = IdentityMultiple(x * 𝐼.M, 𝐼.n)
+Base.:(*)(𝐼::IdentityMultiple, x::Number) = IdentityMultiple(x * 𝐼.M, 𝐼.n)
+Base.:(/)(𝐼::IdentityMultiple, x::Number) = IdentityMultiple(𝐼.M / x, 𝐼.n)
 
 function Base.:(*)(𝐼::IdentityMultiple, v::AbstractVector)
     @assert 𝐼.n == length(v)
@@ -101,14 +103,43 @@ function Base.:(*)(A::AbstractMatrix, 𝐼::IdentityMultiple)
     return A * 𝐼.M.λ
 end
 
+# right-division
+function Base.:(/)(A::AbstractMatrix, 𝐼::IdentityMultiple)
+    @assert size(A, 2) == 𝐼.n
+    return A * inv(𝐼.M.λ)
+end
+
 function Base.:(+)(𝐼1::IdentityMultiple, 𝐼2::IdentityMultiple)
     @assert 𝐼1.n == 𝐼2.n
     return IdentityMultiple(𝐼1.M + 𝐼2.M, 𝐼1.n)
 end
 
+function Base.:(-)(𝐼1::IdentityMultiple, 𝐼2::IdentityMultiple)
+    @assert 𝐼1.n == 𝐼2.n
+    return IdentityMultiple(𝐼1.M - 𝐼2.M, 𝐼1.n)
+end
+
 function Base.:(*)(𝐼1::IdentityMultiple, 𝐼2::IdentityMultiple)
     @assert 𝐼1.n == 𝐼2.n
     return IdentityMultiple(𝐼1.M * 𝐼2.M, 𝐼1.n)
+end
+
+function Base.:(*)(𝐼::IdentityMultiple{T}, U::UniformScaling{S}) where {T<:Number, S<:Number}
+    return IdentityMultiple(𝐼.M.λ * U, 𝐼.n)
+end
+
+function Base.:(*)(U::UniformScaling{T}, 𝐼::IdentityMultiple{S}) where {T<:Number, S<:Number}
+    return IdentityMultiple(𝐼.M.λ * U, 𝐼.n)
+end
+
+function Base.:(/)(𝐼::IdentityMultiple{T}, U::UniformScaling{S}) where {T<:Number, S<:Number}
+    @assert !iszero(U.λ)
+    return IdentityMultiple(𝐼.M * inv(U.λ), 𝐼.n)
+end
+
+function Base.:(/)(U::UniformScaling{T}, 𝐼::IdentityMultiple{S}) where {T<:Number, S<:Number}
+    @assert !iszero(𝐼.M.λ)
+    return IdentityMultiple(U * inv(𝐼.M.λ), 𝐼.n)
 end
 
 function Base.show(io::IO, ::MIME"text/plain", 𝐼::IdentityMultiple{T}) where T

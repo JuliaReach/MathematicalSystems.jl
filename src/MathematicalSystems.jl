@@ -15,11 +15,11 @@ export IdentityMultiple, I
 Abstract Types for Systems
 ==========================#
 include("abstract.jl")
+
 #=======================
 Utility functions
 =======================#
 include("utilities.jl")
-
 
 # types
 export AbstractSystem,
@@ -95,7 +95,8 @@ include("systems.jl")
 #==========================================
 Concrete Types for an Initial Value Problem
 ===========================================#
-export InitialValueProblem, IVP
+export InitialValueProblem, IVP,
+       initial_state
 
 include("ivp.jl")
 

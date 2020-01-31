@@ -165,6 +165,8 @@ end
 
     x0 = Singleton([1.5, 2.0])
     p = IVP(s, x0)
+    # getter functions
+    @test initial_state(p) == x0
 end
 
 @testset "Polynomial system in continuous time" begin

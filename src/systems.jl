@@ -21,6 +21,7 @@ for (Z, AZ) in ((:ContinuousIdentitySystem, :AbstractContinuousSystem),
         isnoisy(::$Z) = false
         iscontrolled(::$Z) = false
         isconstrained(::$Z) = false
+        state_matrix(s::$Z) = I(s.statedim)
     end
 end
 
@@ -70,6 +71,7 @@ for (Z, AZ) in ((:ConstrainedContinuousIdentitySystem, :AbstractContinuousSystem
         isnoisy(::$Z) = false
         iscontrolled(::$Z) = false
         isconstrained(::$Z) = true
+        state_matrix(s::$Z) = I(s.statedim)
     end
 end
 
@@ -124,6 +126,7 @@ for (Z, AZ) in ((:LinearContinuousSystem, :AbstractContinuousSystem),
         isnoisy(::$Z) = false
         iscontrolled(::$Z) = false
         isconstrained(::$Z) = false
+        state_matrix(s::$Z) = s.A
     end
 end
 
@@ -138,7 +141,7 @@ Continuous-time linear system of the form:
 
 ### Fields
 
-- `A` -- square matrix
+- `A` -- state matrix
 """
 LinearContinuousSystem
 
@@ -153,7 +156,7 @@ Discrete-time linear system of the form:
 
 ### Fields
 
-- `A` -- square matrix
+- `A` -- state matrix
 """
 LinearDiscreteSystem
 
@@ -177,6 +180,8 @@ for (Z, AZ) in ((:AffineContinuousSystem, :AbstractContinuousSystem),
         isnoisy(::$Z) = false
         iscontrolled(::$Z) = false
         isconstrained(::$Z) = false
+        state_matrix(s::$Z) = s.A
+        affine_term(s::$Z) = s.c
     end
 end
 
@@ -191,8 +196,8 @@ Continuous-time affine system of the form:
 
 ### Fields
 
-- `A` -- square matrix
-- `c` -- vector
+- `A` -- state matrix
+- `c` -- affine term
 """
 AffineContinuousSystem
 
@@ -207,8 +212,8 @@ Discrete-time affine system of the form:
 
 ### Fields
 
-- `A` -- square matrix
-- `c` -- vector
+- `A` -- state matrix
+- `c` -- affine term
 """
 AffineDiscreteSystem
 
@@ -232,6 +237,8 @@ for (Z, AZ) in ((:LinearControlContinuousSystem, :AbstractContinuousSystem),
         isnoisy(::$Z) = false
         iscontrolled(::$Z) = true
         isconstrained(::$Z) = false
+        state_matrix(s::$Z) = s.A
+        input_matrix(s::$Z) = s.B
     end
 end
 
@@ -246,8 +253,8 @@ Continuous-time linear control system of the form:
 
 ### Fields
 
-- `A` -- square matrix
-- `B` -- matrix
+- `A` -- state matrix
+- `B` -- input matrix
 """
 LinearControlContinuousSystem
 
@@ -262,8 +269,8 @@ Discrete-time linear control system of the form:
 
 ### Fields
 
-- `A` -- square matrix
-- `B` -- matrix
+- `A` -- state matrix
+- `B` -- input matrix
 """
 LinearControlDiscreteSystem
 
@@ -288,6 +295,7 @@ for (Z, AZ) in ((:ConstrainedLinearContinuousSystem, :AbstractContinuousSystem),
         isnoisy(::$Z) = false
         iscontrolled(::$Z) = false
         isconstrained(::$Z) = true
+        state_matrix(s::$Z) = s.A
     end
 end
 
@@ -302,7 +310,7 @@ Continuous-time linear system with state constraints of the form:
 
 ### Fields
 
-- `A` -- square matrix
+- `A` -- state matrix
 - `X` -- state constraints
 """
 ConstrainedLinearContinuousSystem
@@ -318,7 +326,7 @@ Discrete-time linear system with state constraints of the form:
 
 ### Fields
 
-- `A` -- square matrix
+- `A` -- state matrix
 - `X` -- state constraints
 """
 ConstrainedLinearDiscreteSystem
@@ -345,6 +353,8 @@ for (Z, AZ) in ((:ConstrainedAffineContinuousSystem, :AbstractContinuousSystem),
         isnoisy(::$Z) = false
         iscontrolled(::$Z) = false
         isconstrained(::$Z) = true
+        state_matrix(s::$Z) = s.A
+        affine_term(s::$Z) = s.c
     end
 end
 
@@ -359,8 +369,8 @@ Continuous-time affine system with state constraints of the form:
 
 ### Fields
 
-- `A` -- square matrix
-- `c` -- vector
+- `A` -- state matrix
+- `c` -- affine term
 - `X` -- state constraints
 """
 ConstrainedAffineContinuousSystem
@@ -376,8 +386,8 @@ Discrete-time affine system with state constraints of the form:
 
 ### Fields
 
-- `A` -- square matrix
-- `c` -- vector
+- `A` -- state matrix
+- `c` -- affine term
 - `X` -- state constraints
 """
 ConstrainedAffineDiscreteSystem
@@ -407,6 +417,9 @@ for (Z, AZ) in ((:ConstrainedAffineControlContinuousSystem, :AbstractContinuousS
         isnoisy(::$Z) = false
         iscontrolled(::$Z) = true
         isconstrained(::$Z) = true
+        state_matrix(s::$Z) = s.A
+        input_matrix(s::$Z) = s.B
+        affine_term(s::$Z) = s.c
     end
 end
 
@@ -422,9 +435,9 @@ and ``c`` a vector.
 
 ### Fields
 
-- `A` -- square matrix
-- `B` -- matrix
-- `c` -- vector
+- `A` -- state matrix
+- `B` -- input matrix
+- `c` -- affine term
 - `X` -- state constraints
 - `U` -- input constraints
 """
@@ -442,9 +455,9 @@ and ``c`` a vector.
 
 ### Fields
 
-- `A` -- square matrix
-- `B` -- matrix
-- `c` -- vector
+- `A` -- state matrix
+- `B` -- input matrix
+- `c` -- affine term
 - `X` -- state constraints
 - `U` -- input constraints
 """
@@ -474,6 +487,8 @@ for (Z, AZ) in ((:ConstrainedLinearControlContinuousSystem, :AbstractContinuousS
         isnoisy(::$Z) = false
         iscontrolled(::$Z) = true
         isconstrained(::$Z) = true
+        state_matrix(s::$Z) = s.A
+        input_matrix(s::$Z) = s.B
     end
 end
 
@@ -487,8 +502,8 @@ Continuous-time linear control system with state constraints of the form:
 
 ### Fields
 
-- `A` -- square matrix
-- `B` -- matrix
+- `A` -- state matrix
+- `B` -- input matrix
 - `X` -- state constraints
 - `U` -- input constraints
 """
@@ -505,8 +520,8 @@ Discrete-time linear control system with state constraints of the form:
 
 ### Fields
 
-- `A` -- square matrix
-- `B` -- matrix
+- `A` -- state matrix
+- `B` -- input matrix
 - `X` -- state constraints
 - `U` -- input constraints
 """
@@ -532,6 +547,7 @@ for (Z, AZ) in ((:LinearAlgebraicContinuousSystem, :AbstractContinuousSystem),
         isnoisy(::$Z) = false
         iscontrolled(::$Z) = false
         isconstrained(::$Z) = false
+        state_matrix(s::$Z) = s.A
     end
 end
 
@@ -546,7 +562,7 @@ Continuous-time linear algebraic system of the form:
 
 ### Fields
 
-- `A` -- matrix
+- `A` -- state matrix
 - `E` -- matrix, same size as `A`
 """
 LinearAlgebraicContinuousSystem
@@ -562,7 +578,7 @@ Discrete-time linear algebraic system of the form:
 
 ### Fields
 
-- `A` -- matrix
+- `A` -- state matrix
 - `E` -- matrix, same size as `A`
 """
 LinearAlgebraicDiscreteSystem
@@ -589,6 +605,7 @@ for (Z, AZ) in ((:ConstrainedLinearAlgebraicContinuousSystem, :AbstractContinuou
         isnoisy(::$Z) = false
         iscontrolled(::$Z) = false
         isconstrained(::$Z) = true
+        state_matrix(s::$Z) = s.A
     end
 end
 
@@ -603,7 +620,7 @@ Continuous-time linear system with state constraints of the form:
 
 ### Fields
 
-- `A` -- matrix
+- `A` -- state matrix
 - `E` -- matrix, same size as `A`
 - `X` -- state constraints
 """
@@ -620,7 +637,7 @@ Discrete-time linear system with state constraints of the form:
 
 ### Fields
 
-- `A` -- matrix
+- `A` -- state matrix
 - `E` -- matrix, same size as `A`
 - `X` -- state constraints
 """
@@ -948,6 +965,8 @@ for (Z, AZ) in ((:NoisyConstrainedLinearContinuousSystem, :AbstractContinuousSys
         isnoisy(::$Z) = true
         iscontrolled(::$Z) = false
         isconstrained(::$Z) = true
+        state_matrix(s::$Z) = s.A
+        noise_matrix(s::$Z) = s.D
     end
 end
 
@@ -962,8 +981,8 @@ Continuous-time linear system with  additive disturbance and  state constraints 
 
 ### Fields
 
-- `A` -- square matrix
-- `D` -- matrix
+- `A` -- state matrix
+- `D` -- noise matrix
 - `X` -- state constraints
 - `W` -- disturbance set
 """
@@ -980,8 +999,8 @@ Discrete-time linear system with additive disturbance and state constraints of t
 
 ### Fields
 
-- `A` -- square matrix
-- `D` -- matrix
+- `A` -- state matrix
+- `D` -- noise matrix
 - `X` -- state constraints
 - `W` -- disturbance set
 """
@@ -1014,20 +1033,27 @@ for (Z, AZ) in ((:NoisyConstrainedLinearControlContinuousSystem, :AbstractContin
         isnoisy(::$Z) = true
         iscontrolled(::$Z) = true
         isconstrained(::$Z) = true
+        state_matrix(s::$Z) = s.A
+        input_matrix(s::$Z) = s.B
+        noise_matrix(s::$Z) = s.D
     end
 end
 
 @doc """
     NoisyConstrainedLinearControlContinuousSystem
+
 Continuous-time affine control system with state constraints of the form:
+
 ```math
     x' = A x + B u + Dw, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U}, w(t) ∈ \\mathcal{W} \\text{ for all } t,
 ```
 and ``c`` a vector.
+
 ### Fields
-- `A` -- square matrix
-- `B` -- matrix
-- `D` -- matrix
+
+- `A` -- state matrix
+- `B` -- input matrix
+- `D` -- noise matrix
 - `X` -- state constraints
 - `U` -- input constraints
 - `W` -- disturbance set
@@ -1036,15 +1062,19 @@ NoisyConstrainedLinearControlContinuousSystem
 
 @doc """
     NoisyConstrainedLinearControlDiscreteSystem
+
 Continuous-time affine control system with state constraints of the form:
+
 ```math
     x_{k+1} = A x_k + B u_k + D w_k, x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U}, w_k ∈ \\mathcal{W} \\text{ for all } k,
 ```
 and ``c`` a vector.
+
 ### Fields
-- `A` -- square matrix
-- `B` -- matrix
-- `D` -- matrix
+
+- `A` -- state matrix
+- `B` -- input matrix
+- `D` -- noise matrix
 - `X` -- state constraints
 - `U` -- input constraints
 - `W` -- disturbance set
@@ -1079,21 +1109,29 @@ for (Z, AZ) in ((:NoisyConstrainedAffineControlContinuousSystem, :AbstractContin
         isnoisy(::$Z) = true
         iscontrolled(::$Z) = true
         isconstrained(::$Z) = true
+        state_matrix(s::$Z) = s.A
+        input_matrix(s::$Z) = s.B
+        noise_matrix(s::$Z) = s.D
+        affine_term(s::$Z) = s.c
     end
 end
 
 @doc """
     NoisyConstrainedAffineControlContinuousSystem
+
 Continuous-time affine control system with state constraints of the form:
+
 ```math
     x' = A x + B u + c + Dw, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U}, w(t) ∈ \\mathcal{W} \\text{ for all } t,
 ```
 and ``c`` a vector.
+
 ### Fields
-- `A` -- square matrix
-- `B` -- matrix
-- `c` -- vector
-- `D` -- matrix
+
+- `A` -- state matrix
+- `B` -- input matrix
+- `c` -- affine term
+- `D` -- noise matrix
 - `X` -- state constraints
 - `U` -- input constraints
 - `W` -- disturbance set
@@ -1102,16 +1140,20 @@ NoisyConstrainedAffineControlContinuousSystem
 
 @doc """
     NoisyConstrainedAffineControlDiscreteSystem
+
 Continuous-time affine control system with state constraints of the form:
+
 ```math
     x_{k+1} = A x_k + B u_k + c + D w_k, x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U}, w_k ∈ \\mathcal{W} \\text{ for all } k,
 ```
 and ``c`` a vector.
+
 ### Fields
-- `A` -- square matrix
-- `B` -- matrix
-- `c` -- vector
-- `D` -- matrix
+
+- `A` -- state matrix
+- `B` -- input matrix
+- `c` -- affine term
+- `D` -- noise matrix
 - `X` -- state constraints
 - `U` -- input constraints
 - `W` -- disturbance set

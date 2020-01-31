@@ -47,6 +47,10 @@ isaffine(::AbstractMap)
 isnoisy(::AbstractSystem)
 iscontrolled(::AbstractSystem)
 isconstrained(::AbstractSystem)
+state_matrix(::AbstractSystem)
+input_matrix(::AbstractSystem)
+noise_matrix(::AbstractSystem)
+affine_term(::AbstractSystem)
 ```
 
 ## Maps

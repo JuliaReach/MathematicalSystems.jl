@@ -79,10 +79,23 @@ end
 
 Base.IndexStyle(::Type{<:IdentityMultiple}) = IndexLinear()
 Base.size(𝐼::IdentityMultiple) = (𝐼.n, 𝐼.n)
-Base.getindex(𝐼::IdentityMultiple, inds...) = getindex(𝐼.M, inds...)
-Base.getindex(𝐼::IdentityMultiple{T}, ind) where {T} = rem(ind-1, 𝐼.n+1) == 0 ? 𝐼.M.λ : zero(T)
-Base.setindex!(𝐼::IdentityMultiple, X, inds...) = error("cannot store a value in "*
-                "an `IdentityMultiple`, because this type is immutable")
+
+function Base.getindex(𝐼::IdentityMultiple, inds...)
+    any(idx -> idx > 𝐼.n, inds) && throw(BoundsError(𝐼, inds))
+    getindex(𝐼.M, inds...)
+end
+
+function Base.getindex(𝐼::IdentityMultiple{T}, ind) where {T}
+    if 1 ≤ ind ≤ 𝐼.n^2
+        return rem(ind-1, 𝐼.n+1) == 0 ? 𝐼.M.λ : zero(T)
+    else
+        throw(BoundsError(𝐼, ind))
+    end
+end
+
+function Base.setindex!(𝐼::IdentityMultiple, X, inds...)
+    error("cannot store a value in an `IdentityMultiple` because this type is immutable")
+end
 
 Base.:(*)(x::Number, 𝐼::IdentityMultiple) = IdentityMultiple(x * 𝐼.M, 𝐼.n)
 Base.:(*)(𝐼::IdentityMultiple, x::Number) = IdentityMultiple(x * 𝐼.M, 𝐼.n)
@@ -147,7 +160,7 @@ function Base.show(io::IO, ::MIME"text/plain", 𝐼::IdentityMultiple{T}) where 
 end
 
 # callable identity matrix given the size and the numeric type
-LinearAlgebra.I(n::Int, N=Float64) = IdentityMultiple(one(N)*I, n)
+LinearAlgebra.I(n::Int, N::DataType=Float64) = IdentityMultiple(one(N)*I, n)
 
 # callable identity matrix given the scaling factor and the size
 IdentityMultiple(λ::Number, n::Int) = IdentityMultiple(λ*I, n)

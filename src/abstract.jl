@@ -198,7 +198,7 @@ input_matrix(::AbstractSystem)
 """
     noise_matrix(::AbstractSystem)
 
-Return the noise matrix of a system with noise.
+Return the noise matrix of a system with linear noise.
 
 ### Notes
 

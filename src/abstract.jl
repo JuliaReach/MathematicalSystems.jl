@@ -174,7 +174,7 @@ function apply end
 """
     state_matrix(::AbstractSystem)
 
-Return the state matrix of a system.
+Return the state matrix of an affine system.
 
 ### Notes
 

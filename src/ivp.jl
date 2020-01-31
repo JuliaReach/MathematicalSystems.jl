@@ -56,7 +56,7 @@ Return the initial state of an initial-value problem.
 
 ### Output
 
-The initial state field in an initial-value problem.
+The initial state of an initial-value problem.
 """
 initial_state(ivp::InitialValueProblem) = ivp.x0
 

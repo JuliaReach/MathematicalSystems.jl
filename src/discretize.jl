@@ -81,14 +81,21 @@ Exact discretization algorithm for affine systems.
 
 ### Algorithm
 
-Consider a `NoisyAffineControlledContinuousSystem` with system dynamics
-``x' = Ax + Bu + c + Dw``.
+This algorithm consists of integrating the continuous differential equation over
+a specified time interval to obtain an associated discrete differential equation.
+The algorithm applies to any system of the form `x' = Ax + Bu + c + Dw` where the
+state matrix `A` is invertible, and other system types e.g. linear systems,
+`x' = Ax` which are included in the above formulation.
 
-The exact discretization is calculated by solving the integral for
-``t = [t, t + ΔT]`` for a fixed input `u` and fixed noise realization `w`.
+Without loss of generality, consider a  `NoisyAffineControlledContinuousSystem`
+with system dynamics ``x' = Ax + Bu + c + Dw``.
+
+The exact discretization is calculated by integrating on both sides of the
+continuous ODE over the time span `[t, t + ΔT]`, for a fixed input `u` and fixed
+noise realization `w` at time `t`.
 The resulting discretization writes as
 ``x^+ = A^d x + B^d u + c^d  + D^d w`` where
-``A^d = \\exp^{A \\cdot ΔT}``,
+``A^d = \\exp^{A ~ ΔT}``,
 ``B^d = A^{-1}(A^d - I)B``,
 ``c^d = A^{-1}(A^d - I)c`` and
 ``D^d = A^{-1}(A^d - I)D``.
@@ -106,14 +113,20 @@ Euler discretization algorithm for affine systems.
 
 ### Algorithm
 
-Consider a `NoisyAffineControlledContinuousSystem` with system dynamics
-``x' = Ax + Bu + c + Dw``.
+This algorithm consists of a first order approximation to obtain an associated
+discrete differential equation. The algorithm applies to any system of the form
+`x' = Ax + Bu + c + Dw`, and other system types e.g. linear systems, `x' = Ax`
+which are included in the above formulation.
 
-The Euler discretization, a first order approximation of the exact
-discretization [`ExactDiscretization`](@ref), writes as
+Without loss of generality, consider a  `NoisyAffineControlledContinuousSystem`
+with system dynamics ``x' = Ax + Bu + c + Dw``.
+
+The Euler discretization is calculated by taking the first order approximation
+of the exact discretization [`ExactDiscretization`](@ref).
+The resulting discretization writes as
 ``x^+ = A^d x + B^d u + c^d + D^d w``
-where  ``A^d = I + ΔT \\cdot A``, ``B^d = ΔT \\cdot B``,
-``c^d = ΔT \\cdot c`` and ``D^d = ΔT \\cdot D``.
+where  ``A^d = I + ΔT ~  A``, ``B^d = ΔT ~  B``,
+``c^d = ΔT ~  c`` and ``D^d = ΔT ~  D``.
 
 The algorithm described above is a well known result from the literature [1].
 

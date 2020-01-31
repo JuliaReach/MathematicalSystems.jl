@@ -97,6 +97,7 @@ IdentityMultiple
 ```@docs
 InitialValueProblem
 IVP
+initial_state
 ```
 
 ## Input Types

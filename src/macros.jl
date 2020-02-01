@@ -311,6 +311,11 @@ function parse_system(exprs)
     nsets = length(constraints)
     nsets > 3 && throw(ArgumentError("cannot parse $nsets set constraints"))
 
+    # error handling for variable names
+    (state_var == input_var) && throw(ArgumentError("state and input variable have the same name `$(state_var)`"))
+    (state_var == noise_var) && throw(ArgumentError("state and noise variable have the same name `$(state_var)`"))
+    (input_var == noise_var) && throw(ArgumentError("input and noise variable have the same name `$(input_var)`"))
+
     return dynamic_equation, AT, constraints,
            state_var, input_var, noise_var, dimension
 end

@@ -40,15 +40,22 @@ f1(x, u, w) = x'*x + u'*u + w'*w
 
 @testset "@system for continous identity systems" begin
     @test @system(x' = 0, dim: 2) == ContinuousIdentitySystem(2)
+    sys = @system x' = 0 dim: 2
+    @test sys  == ContinuousIdentitySystem(2)
+
     @test @system(x₁' = 0, dim=2) == ContinuousIdentitySystem(2)
 
     @test @system(x' = 0, dim: 2, x ∈ X) == ConstrainedContinuousIdentitySystem(2, X)
     @test @system(x' = 0, dim=2, x ∈ X1) == ConstrainedContinuousIdentitySystem(2, X)
+    sys = @system x' = 0 dim=2 x ∈ X1
+    @test sys == ConstrainedContinuousIdentitySystem(2, X)
 end
 
 @testset "@system for linear continous systems" begin
     @test @system(x' = A*x) == LinearContinuousSystem(A)
     @test @system(x1' = A1x1) == LinearContinuousSystem(A1)
+    sys = @system x1' = A1x1
+    @test sys == LinearContinuousSystem(A1)
 
     # automatic identification of rhs linearity
     @test @system(x' = -x) == LinearContinuousSystem(-1*IdentityMultiple(I,1))
@@ -57,6 +64,8 @@ end
 
     @test @system(x' = A*x, x ∈ X) == ConstrainedLinearContinuousSystem(A,X)
     @test @system(x1' = A1x1, x1 ∈ X1) == ConstrainedLinearContinuousSystem(A1,X1)
+    sys = @system x1' =A1x1     x1 ∈ X1
+    @test sys  == ConstrainedLinearContinuousSystem(A1,X1)
 end
 
 @testset "@system for linear control continuous systems" begin

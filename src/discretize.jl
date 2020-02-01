@@ -84,10 +84,10 @@ Exact discretization algorithm for affine systems.
 This algorithm consists of integrating the continuous differential equation over
 a specified time interval to obtain an associated discrete differential equation.
 The algorithm applies to any system of the form `x' = Ax + Bu + c + Dw` where the
-state matrix `A` is invertible, and other system types e.g. linear systems,
+state matrix `A` is invertible, and other system types, e.g. linear systems
 `x' = Ax` which are included in the above formulation.
 
-Without loss of generality, consider a  `NoisyAffineControlledContinuousSystem`
+Without loss of generality, consider a `NoisyAffineControlledContinuousSystem`
 with system dynamics ``x' = Ax + Bu + c + Dw``.
 
 The exact discretization is calculated by integrating on both sides of the
@@ -113,20 +113,20 @@ Euler discretization algorithm for affine systems.
 
 ### Algorithm
 
-This algorithm consists of a first order approximation to obtain an associated
+This algorithm consists of a first-order approximation to obtain an associated
 discrete differential equation. The algorithm applies to any system of the form
-`x' = Ax + Bu + c + Dw`, and other system types e.g. linear systems, `x' = Ax`
+`x' = Ax + Bu + c + Dw`, and other system types, e.g. linear systems `x' = Ax`
 which are included in the above formulation.
 
-Without loss of generality, consider a  `NoisyAffineControlledContinuousSystem`
+Without loss of generality, consider a `NoisyAffineControlledContinuousSystem`
 with system dynamics ``x' = Ax + Bu + c + Dw``.
 
-The Euler discretization is calculated by taking the first order approximation
+The Euler discretization is calculated by taking the first-order approximation
 of the exact discretization [`ExactDiscretization`](@ref).
 The resulting discretization writes as
 ``x^+ = A^d x + B^d u + c^d + D^d w``
-where  ``A^d = I + ΔT ~  A``, ``B^d = ΔT ~  B``,
-``c^d = ΔT ~  c`` and ``D^d = ΔT ~  D``.
+where  ``A^d = I + ΔT ~ A``, ``B^d = ΔT ~ B``,
+``c^d = ΔT ~ c`` and ``D^d = ΔT ~ D``.
 
 The algorithm described above is a well known result from the literature [1].
 

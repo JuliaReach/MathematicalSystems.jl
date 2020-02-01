@@ -60,13 +60,14 @@ end
 end
 
 @testset "@system for linear control continuous systems" begin
-    # if the state should be named `w`
-    @test @system(w' = Aw + Bu) == LinearControlContinuousSystem(A, B)
+    # if the state should be named `w`, the default value of noise needs to be changed
+    @test @system(w' = Aw + Bu, noise:k) == LinearControlContinuousSystem(A, B)
     # but if the input should be named `w`
     # without specification, a noisy system is returned
     @test  @system(x' = Ax + Bw, x∈X, w∈W) == NoisyConstrainedLinearContinuousSystem(A, B, X, W)
-    # but if we use the `input:w`, a controlled system is returned
-    @test @system(x' = Ax + Bw, input:w) == LinearControlContinuousSystem(A, B)
+    # but if we use the `input:w` and changed the default value of noise,
+    # a controlled system is returned
+    @test @system(x' = Ax + Bw, input:w, noise:k) == LinearControlContinuousSystem(A, B)
     # and in general, if the input name is different from `u`
     @test @system(x' = Ax + Bu_1, input:u_1) == LinearControlContinuousSystem(A, B)
     @test @system(x' = Ax + B*u_1, input:u_1) == LinearControlContinuousSystem(A, B)
@@ -81,9 +82,9 @@ end
 
     # if * are used x_ = A_*x_ + B_*u_, u_ is interpreted as input variable,
     # independent of the name used for u_
-    @test @system(w' = A*w + B*u_1) == LinearControlContinuousSystem(A, B)
+    @test @system(x' = A*x + B*u_1) == LinearControlContinuousSystem(A, B)
     # similarily for x_ = A_*x_ + B_*u_ + c_
-    @test @system(w' = A*w + B*u_1 + c, w∈X, u_1∈U) == ConstrainedAffineControlContinuousSystem(A, B, c, X, U)
+    @test @system(x' = A*x + B*u_1 + c, x∈X, u_1∈U) == ConstrainedAffineControlContinuousSystem(A, B, c, X, U)
 end
 
 @testset "@system for linear algebraic continous systems" begin
@@ -128,6 +129,13 @@ end
     @test sys == ConstrainedBlackBoxControlContinuousSystem(f1, 1, 2, X, U)
 end
 
+@testset "@system error handling" begin
+    @test_throws ArgumentError @system(x' = A*x + B*w)
+    @test_throws ArgumentError @system(u' = A*u)
+    @test_throws ArgumentError @system(w' = A*w)
+    @test_throws ArgumentError @system(z' = A*z + B*z)
+end
+
 # ==================
 # Discrete systems
 # ==================
@@ -136,7 +144,7 @@ end
     @test @system(x⁺ = x, dim=2) == DiscreteIdentitySystem(2)
     @test @system(x₁⁺ = x₁, dim: 2) == DiscreteIdentitySystem(2)
 
-    @test @system(u⁺ = u, dim: 3, u ∈ U) == ConstrainedDiscreteIdentitySystem(3, U)
+    @test @system(u1⁺ = u1, dim: 3, u1 ∈ U) == ConstrainedDiscreteIdentitySystem(3, U)
     @test @system(x1⁺ = x1, dim = 3, x1 ∈ X1) == ConstrainedDiscreteIdentitySystem(3, X1)
 
     # emoij support 😉

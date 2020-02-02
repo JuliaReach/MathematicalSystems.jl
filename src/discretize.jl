@@ -82,7 +82,7 @@ Exact discretization algorithm for affine systems.
 ### Algorithm
 
 This algorithm consists of integrating the continuous differential equation over
-a specified time interval to obtain an difference differential equation.
+a specified time interval to obtain an associated difference equation.
 The algorithm applies to any system of the form `x' = Ax + Bu + c + Dw` where the
 state matrix `A` is invertible, and other system types, e.g. linear systems
 `x' = Ax` which are included in the above formulation.
@@ -114,7 +114,7 @@ Euler discretization algorithm for affine systems.
 ### Algorithm
 
 This algorithm consists of a first-order approximation to obtain an associated
- difference equation. The algorithm applies to any system of the form
+difference equation. The algorithm applies to any system of the form
 `x' = Ax + Bu + c + Dw`, and other system types, e.g. linear systems `x' = Ax`
 which are included in the above formulation.
 

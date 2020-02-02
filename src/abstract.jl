@@ -170,3 +170,50 @@ function isaffine(::AbstractMap) end
 Apply the rule specified by the map to the given arguments.
 """
 function apply end
+
+"""
+    state_matrix(::AbstractSystem)
+
+Return the state matrix of an affine system.
+
+### Notes
+
+The state matrix is the matrix proportional to the state, e.g. the matrix `A`
+in the linear continuous system ``x' = Ax``.
+"""
+state_matrix(::AbstractSystem)
+
+"""
+    input_matrix(::AbstractSystem)
+
+Return the input matrix of a system with linear input.
+
+### Notes
+
+The input matrix is the matrix proportional to the input, e.g. the matrix `B`
+in the linear continuous system with input, ``x' = Ax + Bu``.
+"""
+input_matrix(::AbstractSystem)
+
+"""
+    noise_matrix(::AbstractSystem)
+
+Return the noise matrix of a system with linear noise.
+
+### Notes
+
+The noise matrix is the matrix proportional to the noise, e.g. the matrix `D`
+in the linear system with noise, ``x' = Ax + Dw``.
+"""
+noise_matrix(::AbstractSystem)
+
+"""
+    affine_term(::AbstractSystem)
+
+Return the affine term in an affine system.
+
+### Notes
+
+The affine term is e.g. the vector ``c`` in the affine system ``x' = Ax + c``.
+"""
+affine_term(::AbstractSystem)

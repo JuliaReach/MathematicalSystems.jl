@@ -44,6 +44,10 @@ inputset(ivp::InitialValueProblem) = inputset(ivp.s)
 islinear(ivp::InitialValueProblem) = islinear(ivp.s)
 isaffine(ivp::InitialValueProblem) = isaffine(ivp.s)
 ispolynomial(ivp::InitialValueProblem) = ispolynomial(ivp.s)
+state_matrix(ivp::InitialValueProblem) = state_matrix(ivp.s)
+input_matrix(ivp::InitialValueProblem) = input_matrix(ivp.s)
+noise_matrix(ivp::InitialValueProblem) = noise_matrix(ivp.s)
+affine_term(ivp::InitialValueProblem) = affine_term(ivp.s)
 
 """
     initial_state(ivp::InitialValueProblem)

@@ -32,7 +32,11 @@ export statedim,
        noisedim,
        stateset,
        inputset,
-       noiseset
+       noiseset,
+       state_matrix,
+       input_matrix,
+       noise_matrix,
+       affine_term
 
 # traits
 export islinear,

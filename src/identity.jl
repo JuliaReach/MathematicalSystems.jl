@@ -52,7 +52,7 @@ IdentityMultiple{Rational{Int64}} of value 4//1 and order 2
 ```
 
 To create the matrix with a value different from the default (`1.0`), there are
-two ways. Either pass the value through the callable `I`, as in
+two ways. Either pass the value through the callable `I`, as in:
 
 ```jldoctest identitymultiple
 julia> I2 = I(2.0, 2)
@@ -62,7 +62,7 @@ julia> I2r = I(2//1, 2)
 IdentityMultiple{Rational{Int64}} of value 2//1 and order 2
 ```
 
-Or use the lower level constructor passing the `UniformScaling` (`I`):
+Or use the constructor passing the `UniformScaling` (`I`):
 
 ```jldoctest identitymultiple
 julia> I2 = IdentityMultiple(2.0*I, 2)
@@ -79,12 +79,27 @@ end
 
 Base.IndexStyle(::Type{<:IdentityMultiple}) = IndexLinear()
 Base.size(𝐼::IdentityMultiple) = (𝐼.n, 𝐼.n)
-Base.getindex(𝐼::IdentityMultiple, inds...) = getindex(𝐼.M, inds...)
-Base.getindex(𝐼::IdentityMultiple{T}, ind) where {T} =
-    rem(ind-1, 𝐼.n+1) == 0 ? 𝐼.M.λ : zero(T)
-Base.setindex!(𝐼::IdentityMultiple, X, inds...) = error("cannot store a value in an `Identity`")
+
+function Base.getindex(𝐼::IdentityMultiple, inds...)
+    any(idx -> idx > 𝐼.n, inds) && throw(BoundsError(𝐼, inds))
+    getindex(𝐼.M, inds...)
+end
+
+function Base.getindex(𝐼::IdentityMultiple{T}, ind) where {T}
+    if 1 ≤ ind ≤ 𝐼.n^2
+        return rem(ind-1, 𝐼.n+1) == 0 ? 𝐼.M.λ : zero(T)
+    else
+        throw(BoundsError(𝐼, ind))
+    end
+end
+
+function Base.setindex!(𝐼::IdentityMultiple, X, inds...)
+    error("cannot store a value in an `IdentityMultiple` because this type is immutable")
+end
 
 Base.:(*)(x::Number, 𝐼::IdentityMultiple) = IdentityMultiple(x * 𝐼.M, 𝐼.n)
+Base.:(*)(𝐼::IdentityMultiple, x::Number) = IdentityMultiple(x * 𝐼.M, 𝐼.n)
+Base.:(/)(𝐼::IdentityMultiple, x::Number) = IdentityMultiple(𝐼.M / x, 𝐼.n)
 
 function Base.:(*)(𝐼::IdentityMultiple, v::AbstractVector)
     @assert 𝐼.n == length(v)
@@ -101,9 +116,20 @@ function Base.:(*)(A::AbstractMatrix, 𝐼::IdentityMultiple)
     return A * 𝐼.M.λ
 end
 
+# right-division
+function Base.:(/)(A::AbstractMatrix, 𝐼::IdentityMultiple)
+    @assert size(A, 2) == 𝐼.n
+    return A * inv(𝐼.M.λ)
+end
+
 function Base.:(+)(𝐼1::IdentityMultiple, 𝐼2::IdentityMultiple)
     @assert 𝐼1.n == 𝐼2.n
     return IdentityMultiple(𝐼1.M + 𝐼2.M, 𝐼1.n)
+end
+
+function Base.:(-)(𝐼1::IdentityMultiple, 𝐼2::IdentityMultiple)
+    @assert 𝐼1.n == 𝐼2.n
+    return IdentityMultiple(𝐼1.M - 𝐼2.M, 𝐼1.n)
 end
 
 function Base.:(*)(𝐼1::IdentityMultiple, 𝐼2::IdentityMultiple)
@@ -111,11 +137,31 @@ function Base.:(*)(𝐼1::IdentityMultiple, 𝐼2::IdentityMultiple)
     return IdentityMultiple(𝐼1.M * 𝐼2.M, 𝐼1.n)
 end
 
+function Base.:(*)(𝐼::IdentityMultiple{T}, U::UniformScaling{S}) where {T<:Number, S<:Number}
+    return IdentityMultiple(𝐼.M.λ * U, 𝐼.n)
+end
+
+function Base.:(*)(U::UniformScaling{T}, 𝐼::IdentityMultiple{S}) where {T<:Number, S<:Number}
+    return IdentityMultiple(𝐼.M.λ * U, 𝐼.n)
+end
+
+function Base.:(/)(𝐼::IdentityMultiple{T}, U::UniformScaling{S}) where {T<:Number, S<:Number}
+    @assert !iszero(U.λ)
+    return IdentityMultiple(𝐼.M * inv(U.λ), 𝐼.n)
+end
+
+function Base.:(/)(U::UniformScaling{T}, 𝐼::IdentityMultiple{S}) where {T<:Number, S<:Number}
+    @assert !iszero(𝐼.M.λ)
+    return IdentityMultiple(U * inv(𝐼.M.λ), 𝐼.n)
+end
+
 function Base.show(io::IO, ::MIME"text/plain", 𝐼::IdentityMultiple{T}) where T
     print(io, "$(typeof(𝐼)) of value $(𝐼.M.λ) and order $(𝐼.n)")
 end
 
-# callable identity matrix
-LinearAlgebra.I(n::Int, N=Float64) = IdentityMultiple(one(N)*I, n)
+# callable identity matrix given the size and the numeric type
+LinearAlgebra.I(n::Int, N::DataType=Float64) = IdentityMultiple(one(N)*I, n)
 
+# callable identity matrix given the scaling factor and the size
+IdentityMultiple(λ::Number, n::Int) = IdentityMultiple(λ*I, n)
 LinearAlgebra.I(λ::Number, n::Int) = IdentityMultiple(λ*I, n)

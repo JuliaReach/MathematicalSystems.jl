@@ -268,7 +268,9 @@ function parse_system(exprs)
                 AT = abstract_system_type
                 # if the system has the structure x_ = A_*x_ + B_*u_ ,
                 # handle u_ as input variable
-                if @capture(stripped, (x_ = A_*x_ + B_*u_) | (x_ = A_*x_ + B_*u_ + c_) )
+                if @capture(stripped, (x_ = A_*x_ + B_*u_) |
+                                      (x_ = A_*x_ + B_*u_ + c_) |
+                                      (x_ = f_(x_, u_)) )
                     input_var = u
                 end
 
@@ -655,10 +657,10 @@ Similarly, a noise variable is specified with `noise: var` or `noise=var`.
 
 **Exceptions.** The following exceptions and particular cases apply:
 
-- If the right-hand side has the form `A*x + B*foo` or `A*x + B*foo + c`, the
-  equation is parsed as a controlled linear (affine) system with input `foo`.
-  Note that in this case, `input` variable does not correspond to the default
-  value of `u`, but `foo` is parsed as being the input.
+- If the right-hand side has the form `A*x + B*foo`, `A*x + B*foo + c` or
+  `f(x, foo)`, the equation is parsed as a controlled linear (affine) or controlled
+  black-box system with input `foo`. Note that in this case, `input` variable does
+  not correspond to the default value of `u`, but `foo` is parsed as being the input.
 
 - If the left-hand side contains a multiplicative term in the form `E*x⁺` or `E*x'`,
   the equation is parsed as an algebraic system. In this case, the asterisk

@@ -126,6 +126,9 @@ end
     @test sys == ConstrainedBlackBoxContinuousSystem(f1, 2, X)
     sys = @system(x' = f1(x, u), x ∈ X, u ∈ U, dims=(1, 2))
     @test sys == ConstrainedBlackBoxControlContinuousSystem(f1, 1, 2, X, U)
+    # allow for arbitrary input with definition for rhs of the form f_(x_, u_)
+    sys = @system(x' = f1(x, u123), x ∈ X, u123 ∈ U, dims=(2, 3))
+    @test sys == ConstrainedBlackBoxControlContinuousSystem(f1, 2, 3, X, U)
 end
 
 # ==================

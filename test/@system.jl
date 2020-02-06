@@ -41,7 +41,7 @@ f1(x, u, w) = x'*x + u'*u + w'*w
 @testset "@system for continous identity systems" begin
     @test @system(x' = 0, dim: 2) == ContinuousIdentitySystem(2)
     sys = @system x' = 0 dim: 2
-    @test sys  == ContinuousIdentitySystem(2)
+    @test sys == ContinuousIdentitySystem(2)
 
     @test @system(x₁' = 0, dim=2) == ContinuousIdentitySystem(2)
 

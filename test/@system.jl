@@ -65,7 +65,7 @@ end
     @test @system(x' = A*x, x ∈ X) == ConstrainedLinearContinuousSystem(A,X)
     @test @system(x1' = A1x1, x1 ∈ X1) == ConstrainedLinearContinuousSystem(A1,X1)
     sys = @system x1' =A1x1     x1 ∈ X1
-    @test sys  == ConstrainedLinearContinuousSystem(A1,X1)
+    @test sys == ConstrainedLinearContinuousSystem(A1,X1)
 end
 
 @testset "@system for linear control continuous systems" begin

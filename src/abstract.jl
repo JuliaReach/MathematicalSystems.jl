@@ -60,10 +60,10 @@ linear in ``(x, u)`` for each ``t ∈ \\mathbb{R}``. On the other hand,
 ``x' = f(t, x, u) = A x + B u + c`` is affine but not linear, since it is not
 linear in ``(x, u)``.
 
-This function uses the information of the type, not the value. So, if a system
-type allows an instance that is not linear, it returns `false` by default.
-For example, polynomial systems can be nonlinear; hence `islinear`
-returns `false`.
+The result of this function only depends on the system type, not the value, and
+can also be applied to `typeof(s)`. So, if a system type allows an instance that
+is not linear, it returns `false` by default. For example, polynomial systems
+can be nonlinear; hence `islinear` returns `false`.
 
 [1] Sontag, Eduardo D. *Mathematical control theory: deterministic finite dimensional
 systems.* Vol. 6. Springer Science & Business Media, 2013.
@@ -81,9 +81,10 @@ An affine system is the composition of a linear system and a translation.
 See [`islinear(::AbstractSystem)`](@ref) for the notion of linear system adopted
 in this library.
 
-This function uses the information of the type, not the value. So, if a system
-type allows an instance that is not affine, it returns `false` by default.
-For example, polynomial systems can be nonlinear; hence `isaffine` is `false`.
+The result of this function only depends on the system type, not the value, and
+can also be applied to `typeof(s)`. So, if a system type allows an instance that
+is not affine, it returns `false` by default. For example, polynomial systems
+can be nonlinear; hence `isaffine` is `false`.
 """
 function isaffine(::AbstractSystem) end
 
@@ -92,8 +93,9 @@ function isaffine(::AbstractSystem) end
 
 Specifies if the dynamics of system `s` is specified by polynomial equations.
 
-The criterion refers to the *type* information, not the value. Hence, e.g. a
-`LinearContinuousSystem` is not considered to be of polynomial type.
+The result of this function only depends on the system type, not the value, and
+can also be applied to `typeof(s)`. Hence, e.g. a `LinearContinuousSystem` is not
+considered to be of polynomial type.
 """
 function ispolynomial(::AbstractSystem) end
 
@@ -101,6 +103,9 @@ function ispolynomial(::AbstractSystem) end
     isnoisy(s::AbstractSystem)
 
 Determines if the dynamics of system `s` contains a noise term `w`.
+
+The result of this function only depends on the system type, not the value, and
+can also be applied to `typeof(s)`.
 """
 function isnoisy(::AbstractSystem) end
 
@@ -108,6 +113,9 @@ function isnoisy(::AbstractSystem) end
     iscontrolled(s::AbstractSystem)
 
 Determines if the dynamics of system `s` contains a control input `u`.
+
+The result of this function only depends on the system type, not the value, and
+can also be applied to `typeof(s)`.
 """
 function iscontrolled(::AbstractSystem) end
 
@@ -116,6 +124,9 @@ function iscontrolled(::AbstractSystem) end
 
 Determines if the system `s` has constraints on the state, input and noise,
 respectively (those that are available).
+
+The result of this function only depends on the system type, not the value, and
+can also be applied to `typeof(s)`.
 """
 function isconstrained(::AbstractSystem) end
 

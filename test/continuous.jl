@@ -4,8 +4,10 @@
         @test statedim(s) == sd
         @test inputdim(s) == 0
         @test noisedim(s) == 0
-        @test islinear(s) && isaffine(s) && !ispolynomial(s)
-        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+        for s = [s, typeof(s)]
+            @test islinear(s) && isaffine(s) && !ispolynomial(s)
+            @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+        end
     end
 end
 
@@ -17,8 +19,10 @@ end
         @test inputdim(s) == 0
         @test noisedim(s) == 0
         @test stateset(s) == X
-        @test islinear(s) && isaffine(s) && !ispolynomial(s)
-        @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+        for s = [s, typeof(s)]
+            @test islinear(s) && isaffine(s) && !ispolynomial(s)
+            @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+        end
     end
 end
 
@@ -28,8 +32,10 @@ end
         @test statedim(s) == sd
         @test inputdim(s) == 0
         @test noisedim(s) == 0
-        @test islinear(s) && isaffine(s) && !ispolynomial(s)
-        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+        for s = [s, typeof(s)]
+            @test islinear(s) && isaffine(s) && !ispolynomial(s)
+            @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+        end
     end
 end
 
@@ -38,8 +44,10 @@ end
         s = AffineContinuousSystem(zeros(sd, sd), zeros(sd))
         @test statedim(s) == sd
         @test inputdim(s) == 0
-        @test !islinear(s) && isaffine(s) && !ispolynomial(s)
-        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+        for s = [s, typeof(s)]
+            @test !islinear(s) && isaffine(s) && !ispolynomial(s)
+            @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+        end
     end
 end
 
@@ -49,8 +57,10 @@ end
         @test statedim(s) == sd
         @test inputdim(s) == sd
         @test noisedim(s) == 0
-        @test islinear(s) && isaffine(s) && !ispolynomial(s)
-        @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+        for s = [s, typeof(s)]
+            @test islinear(s) && isaffine(s) && !ispolynomial(s)
+            @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+        end
     end
 end
 
@@ -62,8 +72,10 @@ end
     @test inputdim(s) == 0
     @test noisedim(s) == 0
     @test stateset(s) == X
-    @test islinear(s) && isaffine(s) && !ispolynomial(s)
-    @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+    for s = [s, typeof(s)]
+        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+    end
 end
 
 @testset "Continuous constrained affine system" begin
@@ -75,8 +87,10 @@ end
     @test inputdim(s) == 0
     @test noisedim(s) == 0
     @test stateset(s) == X
-    @test !islinear(s) && isaffine(s) && !ispolynomial(s)
-    @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+    for s = [s, typeof(s)]
+        @test !islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+    end
 end
 
 @testset "Continuous affine control system with state constraints" begin
@@ -91,8 +105,10 @@ end
     @test noisedim(s) == 0
     @test stateset(s) == X
     @test inputset(s) == U
-    @test !islinear(s) && isaffine(s) && !ispolynomial(s)
-    @test !isnoisy(s) && iscontrolled(s) && isconstrained(s)
+    for s = [s, typeof(s)]
+        @test !islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test !isnoisy(s) && iscontrolled(s) && isconstrained(s)
+    end
 end
 
 @testset "Continuous constrained linear control system" begin
@@ -106,9 +122,10 @@ end
     @test noisedim(s) == 0
     @test stateset(s) == X
     @test inputset(s) == U
-    @test islinear(s) && isaffine(s) && !ispolynomial(s)
-    @test !isnoisy(s) && iscontrolled(s) && isconstrained(s)
-
+    for s = [s, typeof(s)]
+        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test !isnoisy(s) && iscontrolled(s) && isconstrained(s)
+    end
     # initial value problem composite type
     x0 = Singleton([1.5, 2.0])
     p = InitialValueProblem(s, x0)
@@ -133,8 +150,10 @@ end
         @test statedim(s) == sd
         @test inputdim(s) == 0
         @test noisedim(s) == 0
-        @test islinear(s) && isaffine(s) && !ispolynomial(s)
-        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+        for s = [s, typeof(s)]
+            @test islinear(s) && isaffine(s) && !ispolynomial(s)
+            @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+        end
     end
 end
 
@@ -147,8 +166,10 @@ end
     @test inputdim(s) == 0
     @test noisedim(s) == 0
     @test stateset(s) == X
-    @test islinear(s) && isaffine(s) && !ispolynomial(s)
-    @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+    for s = [s, typeof(s)]
+        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+    end
 end
 
 @testset "Initial value problem for a continuous constrained linear algebraic system" begin
@@ -160,8 +181,10 @@ end
     @test inputdim(s) == 0
     @test noisedim(s) == 0
     @test stateset(s) == X
-    @test islinear(s) && isaffine(s) && !ispolynomial(s)
-    @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+    for s = [s, typeof(s)]
+        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+    end
 
     x0 = Singleton([1.5, 2.0])
     p = IVP(s, x0)
@@ -178,8 +201,10 @@ end
     @test statedim(s) == 2
     @test inputdim(s) == 0
     @test noisedim(s) == 0
-    @test !islinear(s) && !isaffine(s) && ispolynomial(s)
-    @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+    for s = [s, typeof(s)]
+        @test !islinear(s) && !isaffine(s) && ispolynomial(s)
+        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+    end
 
     @test TypedPolynomials.nvariables(s) == 2
     @test TypedPolynomials.variables(s) == (x, y)
@@ -199,8 +224,10 @@ end
     @test inputdim(s) == 0
     @test noisedim(s) == 0
     @test dim(stateset(s)) == dim(X)
-    @test !islinear(s) && !isaffine(s) && ispolynomial(s)
-    @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+    for s = [s, typeof(s)]
+        @test !islinear(s) && !isaffine(s) && ispolynomial(s)
+        @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+    end
 
     @test TypedPolynomials.nvariables(s) == 2
     @test TypedPolynomials.variables(s) == (x, y)
@@ -219,8 +246,10 @@ end
     dx = similar(x)
     f!(x, dx)
     @test dx ≈ [0.0, -1.0]
-    @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
-    @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+    for s = [s, typeof(s)]
+        @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+    end
 end
 
 @testset "Continuous system defined by a function with state constraints" begin
@@ -232,8 +261,10 @@ end
     f!(x, dx)
     @test dx ≈ [0.0, -1.0]
     @test stateset(s) == H
-    @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
-    @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+    for s = [s, typeof(s)]
+        @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+        @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+    end
 end
 
 function vanderpol_controlled!(x, u, dx)
@@ -256,8 +287,10 @@ end
     @test inputdim(s) == 1
     @test stateset(s) == H
     @test inputset(s) == U
-    @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
-    @test !isnoisy(s) && iscontrolled(s) && isconstrained(s)
+    for s = [s, typeof(s)]
+        @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+        @test !isnoisy(s) && iscontrolled(s) && isconstrained(s)
+    end
 end
 
 # Noisy
@@ -274,8 +307,10 @@ end
     @test noisedim(s) == 2 == dim(W)
     @test stateset(s) == X
     @test noiseset(s) == W
-    @test islinear(s) && isaffine(s) && !ispolynomial(s)
-    @test isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+    for s = [s, typeof(s)]
+        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+    end
 end
 
 @testset "Noisy Continuous constrained control linear system" begin
@@ -295,8 +330,10 @@ end
     @test stateset(s) == X
     @test inputset(s) == U
     @test noiseset(s) == W
-    @test islinear(s) && isaffine(s) && !ispolynomial(s)
-    @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
+    for s = [s, typeof(s)]
+        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
+    end
 end
 
 @testset "Noisy Continuous constrained control affine system" begin
@@ -318,8 +355,10 @@ end
     @test stateset(s) == X
     @test inputset(s) == U
     @test noiseset(s) == W
-    @test isaffine(s) && !islinear(s) && !ispolynomial(s)
-    @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
+    for s = [s, typeof(s)]
+        @test isaffine(s) && !islinear(s) && !ispolynomial(s)
+        @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
+    end
 end
 
 @testset "Noisy Continuous constrained control blackbox system" begin
@@ -338,6 +377,8 @@ end
     @test stateset(s) == X
     @test inputset(s) == U
     @test noiseset(s) == W
-    @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
-    @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
+    for s = [s, typeof(s)]
+        @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+        @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
+    end
 end

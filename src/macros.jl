@@ -244,7 +244,6 @@ function strip_dynamic_equation(expr)
 end
 
 function parse_system(exprs)
-
     # define default dynamic equation, unknown abstract system type,
     # and empty list of constraints
     dynamic_equation = nothing
@@ -256,6 +255,7 @@ function parse_system(exprs)
     input_var = :u
     noise_var = :w
     dimension = nothing
+    initial_state = nothing # for initial-value problems
 
     # main loop to parse the subexpressions in exprs
     for ex in exprs
@@ -288,6 +288,14 @@ function parse_system(exprs)
                                     "see the documentation for valid examples"))
             end
 
+        elseif @capture(ex, x_(0) ∈ X0_)
+            # TODO? handle equality, || @capture(ex, x_(0) = X0_)
+            if x != state_var
+                throw(ArgumentError("the initial state assignment, $x(0), does "*
+                "not correspond to the state variable $state_var"))
+            end
+            initial_state = X0
+
         elseif @capture(ex, state_ ∈ Set_)  # parse a constraint
             push!(constraints, ex)
 
@@ -314,7 +322,7 @@ function parse_system(exprs)
     nsets > 3 && throw(ArgumentError("cannot parse $nsets set constraints"))
 
     return dynamic_equation, AT, constraints,
-           state_var, input_var, noise_var, dimension
+           state_var, input_var, noise_var, dimension, initial_state
 end
 
 # extract the field and value parameter from the dynamic equation `equation`
@@ -588,7 +596,10 @@ end
 # tuple of symbols where the field name is either `:X`, `:U` or `:W` and
 # the variable name is the value parsed as Set_
 function extract_set_parameter(expr, state, input, noise) # input => to check set definitions
-    if @capture(expr, x_ ∈ Set_)
+    if @capture(expr, x_(0) ∈ Set_)
+        return Set, :x0
+
+    elseif @capture(expr, x_ ∈ Set_)
         if x == state
             return  Set, :X
         elseif x == input
@@ -596,8 +607,8 @@ function extract_set_parameter(expr, state, input, noise) # input => to check se
         elseif x == noise
             return  Set, :W
         else
-            error("$expr is not a valid set definition, it does not contain"*
-                  "the state $state, the input $input or noise term $noise")
+            error("$expr is not a valid set constraint definition; it does not contain"*
+                   "the state $state, the input $input or noise term $noise")
         end
     end
     throw(ArgumentError("the set entry $(expr) does not have the correct form `x_ ∈ X_`"))
@@ -721,16 +732,21 @@ ConstrainedBlackBoxControlDiscreteSystem{typeof(f),BallInf{Float64},BallInf{Floa
 macro system(expr...)
     try
         if typeof(expr) == :Expr
-            dyn_eq, AT, constr, state, input, noise, dim = parse_system([expr])
+            dyn_eq, AT, constr, state, input, noise, dim, x0 = parse_system([expr])
         else
-            dyn_eq, AT, constr, state, input, noise, dim = parse_system(expr)
+            dyn_eq, AT, constr, state, input, noise, dim, x0 = parse_system(expr)
         end
         lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, input, noise, dim, AT)
         set = extract_set_parameter.(constr, state, input, noise)
         # TODO: order set variables such that the order is X, U, W
         field_names, var_names = constructor_input(lhs, rhs, set)
         sys_type = _corresponding_type(AT, field_names)
-        return  esc(Expr(:call, :($sys_type), :($(var_names...))))
+        sys = Expr(:call, :($sys_type), :($(var_names...)))
+        if x0 == nothing
+            return esc(sys)
+        else
+            return Expr(:call, InitialValueProblem, esc(:($(sys))), esc(:($(x0))))
+        end
     catch ex
         if  isa(ex, ArgumentError)
             return :(throw($ex))

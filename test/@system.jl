@@ -246,6 +246,15 @@ end
 # =======================
 # Initial value problems
 # =======================
-@testset "@system for an initial-value problem for a continuous system" begin
-    @test @system(x' = -x, x(0) ∈ Interval(-1.0, 1.0)) == InitialValueProblem(LinearContinuousSystem(I(1)), Interval(-1, 1))
+@testset "@system with for an initial-value problem" begin
+    # continuous ivp in floating-point
+    s = IVP(LinearContinuousSystem(I(-1.0, 1)), Interval(-1, 1))
+    @test @system(x' = -1.0x, x(0) ∈ Interval(-1, 1)) == s
+
+    # similar for integers
+    s = IVP(LinearDiscreteSystem(I(-1, 1)), [1])
+    @test @system(x⁺ = -x, x(0) ∈ [1]) == s
+
+    # initial state assignment doesn't match state variable
+    @test_throws ArgumentError @system(x' = -x, t(0) ∈ Interval(-1.0, 1.0))
 end

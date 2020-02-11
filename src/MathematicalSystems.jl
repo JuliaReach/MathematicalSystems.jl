@@ -1,7 +1,7 @@
 __precompile__(true)
 module MathematicalSystems
 
-using LinearAlgebra
+using LinearAlgebra, SparseArrays
 using LinearAlgebra: checksquare
 
 #=======================
@@ -49,6 +49,8 @@ export islinear,
 #====================================
 Concrete Types for Continuous Systems
 ====================================#
+include("systems.jl")
+
 export ContinuousIdentitySystem,
        ConstrainedContinuousIdentitySystem,
        LinearContinuousSystem,
@@ -94,29 +96,28 @@ export DiscreteIdentitySystem,
        NoisyConstrainedAffineControlDiscreteSystem,
        NoisyConstrainedBlackBoxControlDiscreteSystem
 
-include("systems.jl")
-
 #==========================================
 Concrete Types for an Initial Value Problem
 ===========================================#
+include("ivp.jl")
+
 export InitialValueProblem, IVP,
        initial_state
-
-include("ivp.jl")
 
 #=====================
 Input related methods
 =====================#
+include("inputs.jl")
+
 export AbstractInput,
        ConstantInput,
        VaryingInput,
        nextinput
 
-include("inputs.jl")
-
 #==================================
 Maps
 ===================================#
+include("maps.jl")
 
 # types
 export AbstractMap,
@@ -138,36 +139,34 @@ export outputmap,
        outputdim,
        apply
 
-include("maps.jl")
-
 #=========================
 Systems with outputs
 ==========================#
+include("outputs.jl")
+
 export SystemWithOutput,
        LinearTimeInvariantSystem,
        LTISystem
 
-include("outputs.jl")
-
 #=========================
 Macros
 ==========================#
-export @map
-
 include("macros.jl")
+
+export @map
 
 #===================================
 Successor state for discrete systems
 ====================================#
-export successor
-
 include("successor.jl")
+
+export successor
 
 #===================================
 Discretization for affine systems
 ====================================#
-export discretize
-
 include("discretize.jl")
+
+export discretize
 
 end # module

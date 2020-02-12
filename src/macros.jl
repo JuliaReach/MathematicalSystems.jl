@@ -322,7 +322,7 @@ function parse_system(exprs)
     got_noise_var = noise_var != nothing
     if got_state_var && got_input_var && (state_var == input_var)
          throw(ArgumentError("state and input variables have the same name `$(state_var)`"))
-    elseif (got_state_var && got_noise_var) && (state_var == noise_var)
+    elseif got_state_var && got_noise_var && (state_var == noise_var)
          throw(ArgumentError("state and noise variables have the same name `$(state_var)`"))
     elseif (got_input_var && got_noise_var) && (input_var == noise_var)
          throw(ArgumentError("input and noise variables have the same name `$(input_var)`"))

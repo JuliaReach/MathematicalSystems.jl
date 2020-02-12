@@ -1,61 +1,3 @@
-using LinearAlgebra: inv, rank
-using SparseArrays: spzeros
-
-"""
-    typename(system::AbstractSystem)
-
-Returns the base type of `system` without parameter information.
-
-### Input
-
-- `system` -- `AbstractSystem`
-
-### Output
-
-The base type of `system`.
-
-"""
-function typename(system::AbstractSystem)
-    return Base.typename(typeof(system)).wrapper
-end
-
-"""
-    _complementary_type(system_type::Type{<:AbstractSystem})
-
-Return the complementary type of a system type `system_type`.
-
-There are two main subclasses of abstract types: continuous types and discrete
-types. A complementary type of `system_type` has the same fields as `system_type`
-but belongs to the other subclass, e.g. for a `LinearContinuousSystem` which is
-a subtype of `AbstractContinuousSystem` and has the field `:A`, the subtype of
-`AbstractDiscreteSystem` with the field `:A`, i.e.`LinearDiscreteSystem`,
-is returned.
-
-### Input
-
-- `system_type` -- type of `AbstractSystem`
-
-### Ouput
-
-Return complementary type of `system_type`.
-
-### Note
-To get the `_complementary_type` of a `system<:AbstractSystem` use
-`_complementary_type(typename(system))`.
-"""
-@generated function _complementary_type(type::Type{<:AbstractSystem})
-    system_type = type.parameters[1]
-    type_string = string(system_type)
-    if supertype(system_type) == AbstractDiscreteSystem
-        type_string = replace(type_string, "Discrete"=>"Continuous")
-    elseif supertype(system_type) == AbstractContinuousSystem
-        type_string = replace(type_string, "Continuous"=>"Discrete")
-    else
-        error("$system_type <: $(supertype(system_type)) is neither discrete nor continuous")
-    end
-    return Meta.parse(type_string)
-end
-
 """
     AbstractDiscretizationAlgorithm
 
@@ -66,11 +8,12 @@ Abstract supertype for all discretization algorithms.
 For implementing a custom discretization algorithm, a type definition
 `struct NewDiscretizationAlgorithm <: AbstractDiscretizationAlgorithm end`
 and a `_discretize` method
+
 ```julia
 _discretize(::NewDiscretizationAlgorithm, ΔT::Real,
              A::AbstractMatrix, B::AbstractMatrix, c::AbstractVector, D::AbstractMatrix)
 ```
-is required.
+are required.
 """
 abstract type AbstractDiscretizationAlgorithm end
 
@@ -145,9 +88,9 @@ method `algorithm`.
 
 ### Input
 
-- `system` -- an affine continuous system
-- `ΔT` -- sampling time
-- `algorithm` -- (optional, default: `ExactDiscretization()`) discretization algorithm
+- `system`      -- an affine continuous system
+- `ΔT`          -- sampling time
+- `algorithm`   -- (optional, default: `ExactDiscretization()`) discretization algorithm
 - `constructor` -- (optional, default: `_default_complementary_constructor(system)`) construction method
 
 ### Output
@@ -196,20 +139,22 @@ end
 Implementation of the discretization algorithm defined by the first input argument
 with sampling time `ΔT`.
 
-See [`discretize`](@ref) for more details.
-
 ### Input
 
-- `` --  discretization algorithm
+- ``   -- discretization algorithm, used for dispatch
 - `ΔT` -- sampling time
-- `A` -- state matrix
-- `B` -- input matrix
-- `c` -- vector
-- `D` -- noise matrix
+- `A`  -- state matrix
+- `B`  -- input matrix
+- `c`  -- vector
+- `D`  -- noise matrix
 
 ### Output
 
 Returns a vector containing the discretized input arguments `A`, `B`, `c` and `D`.
+
+### Notes
+
+See [`discretize`](@ref) for more details.
 """
 function _discretize(::AbstractDiscretizationAlgorithm, ΔT::Real,
                      A::AbstractMatrix,
@@ -254,17 +199,19 @@ end
 Discretize the state matrix `A` with sampling time `ΔT` and discretization method
 `algorithm`.
 
-See [`discretize`](@ref) for more details.
-
 ### Input
 
-- `A` -- state matrix
-- `ΔT` -- sampling time
+- `A`         -- state matrix
+- `ΔT`        -- sampling time
 - `algorithm` -- (optional, default: `:exact`) discretization algorithm
 
 ### Output
 
 Returns a vector containing the discretized input argument `A`.
+
+### Notes
+
+See [`discretize`](@ref) for more details.
 """
 function _discretize(algorithm::AbstractDiscretizationAlgorithm, ΔT::Real,
                      A::AbstractMatrix)
@@ -282,23 +229,23 @@ end
 Discretize the state matrix `A` and input or noise matrix `B` with sampling time
 `ΔT` and discretization method `algorithm`.
 
-See [`discretize`](@ref) for more details.
-
 ### Input
 
 - `algorithm` -- discretization algorithm
-- `ΔT` -- sampling time
-- `A` -- state matrix
-- `B` -- input or noise matrix
+- `ΔT`        -- sampling time
+- `A`         -- state matrix
+- `B`         -- input or noise matrix
 
 ### Output
 
 Returns a vector containing the discretized input arguments `A` and `B`.
 
-### Note
+### Notes
 
 This method signature with two arguments of type `AbstractMatrix` works both for
 a noisy system with fields `(:A,:D)` and a controlled system with fields `(:A,:B)`.
+
+See [`discretize`](@ref) for more details.
 """
 function _discretize(algorithm::AbstractDiscretizationAlgorithm, ΔT::Real,
                      A::AbstractMatrix, B::AbstractMatrix)
@@ -316,18 +263,20 @@ end
 Discretize the state matrix `A` and vector `c` with sampling time `ΔT` and
 discretization method `algorithm`.
 
-See [`discretize`](@ref) for more details.
-
 ### Input
 
 - `algorithm` -- discretization algorithm
-- `ΔT` -- sampling time
-- `A` -- state matrix
-- `c` -- vector
+- `ΔT`        -- sampling time
+- `A`         -- state matrix
+- `c`         -- vector
 
 ### Output
 
 Returns a vector containing the discretized input arguments `A` and `c`.
+
+### Notes
+
+See [`discretize`](@ref) for more details.
 """
 function _discretize(algorithm::AbstractDiscretizationAlgorithm, ΔT::Real,
                      A::AbstractMatrix,c::AbstractVector)
@@ -344,19 +293,21 @@ end
 Discretize the state matrix `A`, input matrix `B` and vector `c` with sampling
 time `ΔT` and discretization method `algorithm`.
 
-See [`discretize`](@ref) for more details.
-
 ### Input
 
 - `algorithm` -- discretization algorithm
-- `ΔT` -- sampling time
-- `A` -- state matrix
-- `B` -- input matrix
-- `c` -- vector
+- `ΔT`        -- sampling time
+- `A`         -- state matrix
+- `B`         -- input matrix
+- `c`         -- vector
 
 ### Output
 
 Returns a vector containing the discretized input arguments `A`, `B` and `c`.
+
+### Notes
+
+See [`discretize`](@ref) for more details.
 """
 function _discretize(algorithm::AbstractDiscretizationAlgorithm, ΔT::Real,
                      A::AbstractMatrix, B::AbstractMatrix, c::AbstractVector)
@@ -373,19 +324,21 @@ end
 Discretize the state matrix `A`, input matrix `B` and noise matrix `C` with
 sampling time `ΔT` and discretization method `algorithm`.
 
-See [`discretize`](@ref) for more details.
-
 ### Input
 
 - `algorithm` -- discretization algorithm
-- `ΔT` -- sampling time
-- `A` -- state matrix
-- `B` -- input matrix
-- `D` -- noise matrix
+- `ΔT`        -- sampling time
+- `A`         -- state matrix
+- `B`         -- input matrix
+- `D`         -- noise matrix
 
 ### Output
 
 Returns a vector containing the discretized input arguments `A`, `B` and `D`.
+
+### Notes
+
+See [`discretize`](@ref) for more details.
 """
 function _discretize(algorithm::AbstractDiscretizationAlgorithm, ΔT::Real,
                      A::AbstractMatrix, B::AbstractMatrix, D::AbstractMatrix)

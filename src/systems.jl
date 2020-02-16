@@ -126,8 +126,7 @@ for (Z, AZ) in ((:LinearContinuousSystem, :AbstractContinuousSystem),
             end
         end
         function $(Z)(A::Real)
-             MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
-             return $(Z)(MA)
+             return $(Z)(hcat(A))
         end
 
         statedim(s::$Z) = size(s.A, 1)
@@ -189,9 +188,7 @@ for (Z, AZ) in ((:AffineContinuousSystem, :AbstractContinuousSystem),
             end
         end
         function $(Z)(A::Real, c::Real)
-             MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
-             Vc = Vector{typeof(c)}(undef, 1); Vc[1] = c
-             return $(Z)(MA, Vc)
+             return $(Z)(hcat(A), vcat(c))
         end
 
         statedim(s::$Z) = length(s.c)
@@ -256,9 +253,7 @@ for (Z, AZ) in ((:LinearControlContinuousSystem, :AbstractContinuousSystem),
             end
         end
         function $(Z)(A::Real, B::Real)
-             MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
-             MB = Matrix{typeof(B)}(undef, 1, 1); MB[1, 1] = B
-             return $(Z)(MA, MB)
+             return $(Z)(hcat(A), hcat(B))
         end
 
         statedim(s::$Z) = size(s.A, 1)
@@ -323,8 +318,7 @@ for (Z, AZ) in ((:ConstrainedLinearContinuousSystem, :AbstractContinuousSystem),
             end
         end
         function $(Z)(A::Real, X)
-             MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
-             return $(Z)(MA, X)
+             return $(Z)(hcat(A), X)
         end
 
         statedim(s::$Z) = size(s.A, 1)
@@ -390,9 +384,7 @@ for (Z, AZ) in ((:ConstrainedAffineContinuousSystem, :AbstractContinuousSystem),
             end
         end
         function $(Z)(A::Real, c::Real, X)
-             MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
-             Vc = Vector{typeof(c)}(undef, 1); Vc[1] = c
-             return $(Z)(MA, Vc, X)
+             return $(Z)(hcat(A), vcat(c), X)
         end
 
         statedim(s::$Z) = length(s.c)
@@ -463,10 +455,7 @@ for (Z, AZ) in ((:ConstrainedAffineControlContinuousSystem, :AbstractContinuousS
             end
         end
         function $(Z)(A::Real, B::Real, c::Real, X, U)
-             MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
-             MB = Matrix{typeof(B)}(undef, 1, 1); MB[1, 1] = B
-             Vc = Vector{typeof(c)}(undef, 1); Vc[1] = c
-             return $(Z)(MA, MB, Vc, X, U)
+             return $(Z)(hcat(A), hcat(B), vcat(c), X, U)
         end
 
         statedim(s::$Z) = length(s.c)
@@ -544,9 +533,7 @@ for (Z, AZ) in ((:ConstrainedLinearControlContinuousSystem, :AbstractContinuousS
             end
         end
         function $(Z)(A::Real, B::Real, X, U)
-             MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
-             MB = Matrix{typeof(B)}(undef, 1, 1); MB[1, 1] = B
-             return $(Z)(MA, MB, X, U)
+             return $(Z)(hcat(A), hcat(B), X, U)
         end
 
         statedim(s::$Z) = size(s.A, 1)
@@ -616,9 +603,7 @@ for (Z, AZ) in ((:LinearAlgebraicContinuousSystem, :AbstractContinuousSystem),
             end
         end
         function $(Z)(A::Real, E::Real)
-             MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
-             ME = Matrix{typeof(E)}(undef, 1, 1); ME[1, 1] = E
-             return $(Z)(MA, ME)
+             return $(Z)(hcat(A), hcat(E))
         end
 
 
@@ -684,9 +669,7 @@ for (Z, AZ) in ((:ConstrainedLinearAlgebraicContinuousSystem, :AbstractContinuou
             end
         end
         function $(Z)(A::Real, E::Real, X)
-             MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
-             ME = Matrix{typeof(E)}(undef, 1, 1); ME[1, 1] = E
-             return $(Z)(MA, ME, X)
+             return $(Z)(hcat(A), hcat(E), X)
         end
 
         statedim(s::$Z) = size(s.A, 1)
@@ -1073,9 +1056,7 @@ for (Z, AZ) in ((:NoisyConstrainedLinearContinuousSystem, :AbstractContinuousSys
             end
         end
         function $(Z)(A::Real, D::Real, X, W)
-           MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
-           MD = Matrix{typeof(D)}(undef, 1, 1); MD[1, 1] = D
-           return $(Z)(MA, MD, X, W)
+           return $(Z)(hcat(A), hcat(D), X, W)
         end
 
         statedim(s::$Z) = size(s.A,1)
@@ -1150,10 +1131,7 @@ for (Z, AZ) in ((:NoisyConstrainedLinearControlContinuousSystem, :AbstractContin
             end
         end
         function $(Z)(A::Real, B::Real, D::Real, X, U, W)
-           MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
-           MB = Matrix{typeof(B)}(undef, 1, 1); MB[1, 1] = B
-           MD = Matrix{typeof(D)}(undef, 1, 1); MD[1, 1] = D
-           return $(Z)(MA, MB, MD, X, U, W)
+           return $(Z)(hcat(A), hcat(B), hcat(D), X, U, W)
         end
 
         statedim(s::$Z) = size(s.A, 1)
@@ -1237,11 +1215,7 @@ for (Z, AZ) in ((:NoisyConstrainedAffineControlContinuousSystem, :AbstractContin
             end
         end
         function $(Z)(A::Real, B::Real, c::Real, D::Real, X, U, W)
-           MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
-           MB = Matrix{typeof(B)}(undef, 1, 1); MB[1, 1] = B
-           Vc = Vector{typeof(c)}(undef, 1); Vc[1] = c
-           MD = Matrix{typeof(D)}(undef, 1, 1); MD[1, 1] = D
-           return $(Z)(MA, MB, Vc, MD, X, U, W)
+           return $(Z)(hcat(A), hcat(B), vcat(c), hcat(D), X, U, W)
         end
 
         statedim(s::$Z) = length(s.c)

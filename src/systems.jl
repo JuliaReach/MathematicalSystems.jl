@@ -125,6 +125,11 @@ for (Z, AZ) in ((:LinearContinuousSystem, :AbstractContinuousSystem),
                 return new{T, MT}(A)
             end
         end
+        function $(Z)(A::Real)
+             MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
+             return $(Z)(MA)
+        end
+
         statedim(s::$Z) = size(s.A, 1)
         inputdim(::$Z) = 0
         noisedim(::$Z) = 0
@@ -183,6 +188,12 @@ for (Z, AZ) in ((:AffineContinuousSystem, :AbstractContinuousSystem),
                 return new{T, MT, VT}(A, c)
             end
         end
+        function $(Z)(A::Real, c::Real)
+             MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
+             Vc = Vector{typeof(c)}(undef, 1); Vc[1] = c
+             return $(Z)(MA, Vc)
+        end
+
         statedim(s::$Z) = length(s.c)
         inputdim(::$Z) = 0
         noisedim(::$Z) = 0
@@ -244,6 +255,12 @@ for (Z, AZ) in ((:LinearControlContinuousSystem, :AbstractContinuousSystem),
                 return new{T, MTA, MTB}(A, B)
             end
         end
+        function $(Z)(A::Real, B::Real)
+             MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
+             MB = Matrix{typeof(B)}(undef, 1, 1); MB[1, 1] = B
+             return $(Z)(MA, MB)
+        end
+
         statedim(s::$Z) = size(s.A, 1)
         inputdim(s::$Z) = size(s.B, 2)
         noisedim(::$Z) = 0
@@ -305,6 +322,11 @@ for (Z, AZ) in ((:ConstrainedLinearContinuousSystem, :AbstractContinuousSystem),
                 return new{T, MT, ST}(A, X)
             end
         end
+        function $(Z)(A::Real, X)
+             MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
+             return $(Z)(MA, X)
+        end
+
         statedim(s::$Z) = size(s.A, 1)
         inputdim(::$Z) = 0
         noisedim(::$Z) = 0
@@ -367,6 +389,12 @@ for (Z, AZ) in ((:ConstrainedAffineContinuousSystem, :AbstractContinuousSystem),
                 return new{T, MT, VT, ST}(A, c, X)
             end
         end
+        function $(Z)(A::Real, c::Real, X)
+             MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
+             Vc = Vector{typeof(c)}(undef, 1); Vc[1] = c
+             return $(Z)(MA, Vc, X)
+        end
+
         statedim(s::$Z) = length(s.c)
         inputdim(::$Z) = 0
         noisedim(::$Z) = 0
@@ -434,6 +462,13 @@ for (Z, AZ) in ((:ConstrainedAffineControlContinuousSystem, :AbstractContinuousS
                 return new{T, MTA, MTB, VT, ST, UT}(A, B, c, X, U)
             end
         end
+        function $(Z)(A::Real, B::Real, c::Real, X, U)
+             MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
+             MB = Matrix{typeof(B)}(undef, 1, 1); MB[1, 1] = B
+             Vc = Vector{typeof(c)}(undef, 1); Vc[1] = c
+             return $(Z)(MA, MB, Vc, X, U)
+        end
+
         statedim(s::$Z) = length(s.c)
         inputdim(s::$Z) = size(s.B, 2)
         noisedim(::$Z) = 0
@@ -508,6 +543,12 @@ for (Z, AZ) in ((:ConstrainedLinearControlContinuousSystem, :AbstractContinuousS
                 return new{T, MTA, MTB, ST, UT}(A, B, X, U)
             end
         end
+        function $(Z)(A::Real, B::Real, X, U)
+             MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
+             MB = Matrix{typeof(B)}(undef, 1, 1); MB[1, 1] = B
+             return $(Z)(MA, MB, X, U)
+        end
+
         statedim(s::$Z) = size(s.A, 1)
         inputdim(s::$Z) = size(s.B, 2)
         noisedim(::$Z) = 0
@@ -574,6 +615,13 @@ for (Z, AZ) in ((:LinearAlgebraicContinuousSystem, :AbstractContinuousSystem),
                 return new{T, MTA, MTE}(A, E)
             end
         end
+        function $(Z)(A::Real, E::Real)
+             MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
+             ME = Matrix{typeof(E)}(undef, 1, 1); ME[1, 1] = E
+             return $(Z)(MA, ME)
+        end
+
+
         statedim(s::$Z) = size(s.A, 1)
         inputdim(::$Z) = 0
         noisedim(::$Z) = 0
@@ -635,6 +683,12 @@ for (Z, AZ) in ((:ConstrainedLinearAlgebraicContinuousSystem, :AbstractContinuou
                 return new{T, MTA, MTE, ST}(A, E, X)
             end
         end
+        function $(Z)(A::Real, E::Real, X)
+             MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
+             ME = Matrix{typeof(E)}(undef, 1, 1); ME[1, 1] = E
+             return $(Z)(MA, ME, X)
+        end
+
         statedim(s::$Z) = size(s.A, 1)
         inputdim(::$Z) = 0
         noisedim(::$Z) = 0
@@ -1018,6 +1072,12 @@ for (Z, AZ) in ((:NoisyConstrainedLinearContinuousSystem, :AbstractContinuousSys
                 return new{T, MTA, MTD, ST, WT}(A, D, X, W)
             end
         end
+        function $(Z)(A::Real, D::Real, X, W)
+           MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
+           MD = Matrix{typeof(D)}(undef, 1, 1); MD[1, 1] = D
+           return $(Z)(MA, MD, X, W)
+        end
+
         statedim(s::$Z) = size(s.A,1)
         inputdim(::$Z) = 0
         noisedim(s::$Z) = size(s.D, 2)
@@ -1089,6 +1149,13 @@ for (Z, AZ) in ((:NoisyConstrainedLinearControlContinuousSystem, :AbstractContin
                 return new{T, MTA, MTB, MTD, ST, UT, WT}(A, B, D, X, U, W)
             end
         end
+        function $(Z)(A::Real, B::Real, D::Real, X, U, W)
+           MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
+           MB = Matrix{typeof(B)}(undef, 1, 1); MB[1, 1] = B
+           MD = Matrix{typeof(D)}(undef, 1, 1); MD[1, 1] = D
+           return $(Z)(MA, MB, MD, X, U, W)
+        end
+
         statedim(s::$Z) = size(s.A, 1)
         inputdim(s::$Z) = size(s.B, 2)
         noisedim(s::$Z) = size(s.D, 2)
@@ -1169,6 +1236,14 @@ for (Z, AZ) in ((:NoisyConstrainedAffineControlContinuousSystem, :AbstractContin
                 return new{T, MTA, MTB, VT, MTD, ST, UT, WT}(A, B, c, D, X, U, W)
             end
         end
+        function $(Z)(A::Real, B::Real, c::Real, D::Real, X, U, W)
+           MA = Matrix{typeof(A)}(undef, 1, 1); MA[1, 1] = A
+           MB = Matrix{typeof(B)}(undef, 1, 1); MB[1, 1] = B
+           Vc = Vector{typeof(c)}(undef, 1); Vc[1] = c
+           MD = Matrix{typeof(D)}(undef, 1, 1); MD[1, 1] = D
+           return $(Z)(MA, MB, Vc, MD, X, U, W)
+        end
+
         statedim(s::$Z) = length(s.c)
         stateset(s::$Z) = s.X
         inputdim(s::$Z) = size(s.B, 2)

@@ -269,7 +269,9 @@ function parse_system(exprs)
                 # if the system has the structure x_ = A_*x_ + B_*u_ ,
                 # handle u_ as input variable
                 if @capture(stripped, (x_ = A_*x_ + B_*u_) |
+                                      (x_ = x_ + B_*u_) |
                                       (x_ = A_*x_ + B_*u_ + c_) |
+                                      (x_ = x_ + B_*u_ + c_) |
                                       (x_ = f_(x_, u_)) )
                     input_var = u
                 end
@@ -510,13 +512,16 @@ Similiarily, if the element is equal to `noise`, the variable name is
 """
 function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
     params = Tuple{Any,Symbol}[]
-    state_dim = 0
+    state_dim = 1
+    got_state_dim = false
+
     for summand in summands
         if @capture(summand, array_ * var_)
             if state == var
                 push!(params, (array, :A))
                 # obtain "state_dim" for later using in IdentityMultiple
                 state_dim =  Expr(:call, :size, :($array), 1)
+                got_state_dim = true
 
             elseif input == var
                 push!(params, (array, :B))
@@ -530,12 +535,18 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
                 "or the noise term $noise"))
             end
         elseif @capture(summand, array_)
-            # if array == input: input matrix equals identity matrix
-            if input == array
-                push!(params, (:(IdentityMultiple(1.0*MathematicalSystems.I,$state_dim)), :B))
-            # if array == noise: noise matrix equals identity matrix
+            if got_state_dim
+                identity = :(I($state_dim))
+            else
+                identity = 1.0
+            end
+            # if array == variable: field value equals identity
+            if state == array
+                push!(params, (identity, :A))
+            elseif input == array
+                push!(params, (identity, :B))
             elseif noise == array
-                push!(params, (:(IdentityMultiple(1.0*MathematicalSystems.I,$state_dim)), :D))
+                push!(params, (identity, :D))
             else
                 push!(params, (array, :c))
             end

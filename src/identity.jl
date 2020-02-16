@@ -97,7 +97,7 @@ function Base.setindex!(𝐼::IdentityMultiple, X, inds...)
     error("cannot store a value in an `IdentityMultiple` because this type is immutable")
 end
 
-Base.:(-)(I::IdentityMultiple) = IdentityMultiple(-𝐼.M, 𝐼.n)
+Base.:(-)(𝐼::IdentityMultiple) = IdentityMultiple(-𝐼.M, 𝐼.n)
 Base.:(*)(x::Number, 𝐼::IdentityMultiple) = IdentityMultiple(x * 𝐼.M, 𝐼.n)
 Base.:(*)(𝐼::IdentityMultiple, x::Number) = IdentityMultiple(x * 𝐼.M, 𝐼.n)
 Base.:(/)(𝐼::IdentityMultiple, x::Number) = IdentityMultiple(𝐼.M / x, 𝐼.n)

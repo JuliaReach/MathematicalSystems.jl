@@ -330,21 +330,21 @@ containing some elements from the list
 - `(:c_user, :c)`
 - `(:D_user, :D)`
 - `(:f_user, :f)`
-- (:statedim_user :statedim)`
-- (:inputdim_user :inputdim)`
-- (:noisedim_user :noisedim)`
+- `(:statedim_user :statedim)`
+- `(:inputdim_user :inputdim)`
+- `(:noisedim_user :noisedim)`
 and for the left-hand side, it returns either an empty vector `Any[]` or
 `[(:E_user, :E)]` where the first argument of the tuple corresponds to the value
 and the second argument of the tuple corresponds to the field parameter.
 
 ### Input
 
-- `equation` --
-- `state`   -- state variable
-- `input`   -- input variable
-- `noise`   -- noise variable
-- `dim`     -- dimensionality
-- `AT`      -- abstract system type
+- `equation` -- dynamic equation
+- `state`    -- state variable
+- `input`    -- input variable
+- `noise`    -- noise variable
+- `dim`      -- dimensionality
+- `AT`       -- abstract system type
 
 ### Output
 

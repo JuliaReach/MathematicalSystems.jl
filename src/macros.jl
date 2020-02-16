@@ -353,14 +353,14 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
             if AT == AbstractDiscreteSystem
                 push!(rhs_params, (dim, :statedim))
             elseif AT == AbstractContinuousSystem
-                push!(rhs_params, (IdentityMultiple(I, dim), :A))
+                push!(rhs_params, (I(dim), :A))
             end
         elseif rhs == :(0) && AT == AbstractContinuousSystem # x' = 0
             push!(rhs_params, (dim, :statedim))
         else
             if @capture(rhs, -var_) # => rhs = -x
                 if state == var
-                    push!(rhs_params, (-1*IdentityMultiple(I, dim), :A))
+                    push!(rhs_params, (-1.0*I(dim), :A))
                 end
             else
                 rhs = add_asterisk(rhs, state, input, noise)
@@ -370,7 +370,7 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
                         if value == nothing # e.g. => rhs = Ax
                             push!(rhs_params, (array, :A))
                         else # => e.g., rhs = 2x
-                            push!(rhs_params, (value*IdentityMultiple(I,dim), :A))
+                            push!(rhs_params, (value*I(dim), :A))
                         end
                     else
                         throw(ArgumentError("if there is only one term on the "*

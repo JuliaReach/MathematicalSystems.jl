@@ -323,8 +323,8 @@ end
 Extract the value and field parameter from the dynamic equation `equation` according
 to the variable `state`, `input` and `noise`.
 
-For the right-hand side of the dynamic equation, it has returns a vector of tuples
-which consiste one or more of the elements
+For the right-hand side of the dynamic equation, this function returns a vector of tuples
+containing some elements from the list
 - `(:A_user, :A)`
 - `(:B_user, :B)`
 - `(:c_user, :c)`
@@ -333,9 +333,9 @@ which consiste one or more of the elements
 - (:statedim_user :statedim)`
 - (:inputdim_user :inputdim)`
 - (:noisedim_user :noisedim)`
-and for the left-hand side, it returns either a empty vector `Any[]` or
+and for the left-hand side, it returns either an empty vector `Any[]` or
 `[(:E_user, :E)]` where the first argument of the tuple corresponds to the value
-and the second to the field parameter.
+and the second argument of the tuple corresponds to the field parameter.
 
 ### Input
 
@@ -348,7 +348,7 @@ and the second to the field parameter.
 
 ### Output
 
-Two arrays of tuples containing the field and value parameter for the right-hand
+Two arrays of tuples containing the value and field parameters for the right-hand
 and left-hand side of the dynamic equation `equation`.
 """
 function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)

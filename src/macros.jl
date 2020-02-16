@@ -317,9 +317,40 @@ function parse_system(exprs)
            state_var, input_var, noise_var, dimension
 end
 
-# extract the field and value parameter from the dynamic equation `equation`
-# in the form `rhs = [(:A_user, :A), (:B_user, :B), ....]` and
-# `lhs = [(:E_user, :E)]` or `lhs = Any[]`
+"""
+    extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
+
+Extract the value and field parameter from the dynamic equation `equation` according
+to the variable `state`, `input` and `noise`.
+
+For the right-hand side of the dynamic equation, it has returns a vector of tuples
+which consiste one or more of the elements
+- `(:A_user, :A)`
+- `(:B_user, :B)`
+- `(:c_user, :c)`
+- `(:D_user, :D)`
+- `(:f_user, :f)`
+- (:statedim_user :statedim)`
+- (:inputdim_user :inputdim)`
+- (:noisedim_user :noisedim)`
+and for the left-hand side, it returns either a empty vector `Any[]` or
+`[(:E_user, :E)]` where the first argument of the tuple corresponds to the value
+and the second to the field parameter.
+
+### Input
+
+- `equation` --
+- `state`   -- state variable
+- `input`   -- input variable
+- `noise`   -- noise variable
+- `dim`     -- dimensionality
+- `AT`      -- abstract system type
+
+### Output
+
+Two arrays of tuples containing the field and value parameter for the right-hand
+and left-hand side of the dynamic equation `equation`.
+"""
 function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
     @capture(equation, lhs_ = rhscode_)
     lhs_params = Any[]
@@ -393,9 +424,9 @@ If not, `summand` is returned.
 ### Input
 
 - `summand` -- expressions
-- `state` -- state variable
-- `input` -- input variable
-- `noise` -- noise variable, if available
+- `state`   -- state variable
+- `input`   -- input variable
+- `noise`   -- noise variable
 
 ### Output
 
@@ -667,8 +698,8 @@ Similarly, a noise variable is specified with `noise: var` or `noise=var`.
   `*` operator is mandatory.
 
 - Systems of the form `x' = α*x` where `α` is a scalar are parsed as linear
-  systems. The default dimension is `1`; if the system is higher-dimensional, use
-  `dim`, as in `x' = 2x, dim=3`.
+  systems. The default dimension is `1` and `α` is parsed as `Float64`;
+  if the system is higher-dimensional, use `dim`, as in `x' = 2x, dim=3`.
 
 ### Examples
 

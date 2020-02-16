@@ -73,7 +73,7 @@ end
         end
     end
     # Scalar System
-    a = 1.; b=2.
+    a = 1.; b = 2.
     A = [a][:,:]; B = [b][:,:]
     scalar_sys = LinearControlContinuousSystem(a, b)
     @test scalar_sys == LinearControlContinuousSystem(A, B)
@@ -186,8 +186,8 @@ end
         end
     end
     # Scalar System
-    a = 1.; e = 2.;
-    A = [a][:,:]; E = [e][:,:];
+    a = 1.; e = 2.
+    A = [a][:,:]; E = [e][:,:]
     scalar_sys = LinearAlgebraicContinuousSystem(a, e)
     @test scalar_sys == LinearAlgebraicContinuousSystem(A, E)
 end
@@ -207,7 +207,7 @@ end
     end
     # Scalar System
     a = 1.; e = 2.; X = 1
-    A = [a][:,:]; E = [e][:,:];
+    A = [a][:,:]; E = [e][:,:]
     scalar_sys = ConstrainedLinearAlgebraicContinuousSystem(a, e, X)
     @test scalar_sys == ConstrainedLinearAlgebraicContinuousSystem(A, E, X)
 end
@@ -356,7 +356,7 @@ end
     end
     # Scalar System
     a = 1.; d = 3.; X = 1; W = 3
-    A = [a][:,:]; D = [d][:,:];
+    A = [a][:,:]; D = [d][:,:]
     scalar_sys = NoisyConstrainedLinearContinuousSystem(a, d, X, W)
     @test scalar_sys == NoisyConstrainedLinearContinuousSystem(A, D, X, W)
 end
@@ -384,7 +384,7 @@ end
     end
     # Scalar System
     a = 1.; b = 2.; d = 3.; X = 1; U = 2; W = 3
-    A = [a][:,:]; B = [b][:,:]; D = [d][:,:];
+    A = [a][:,:]; B = [b][:,:]; D = [d][:,:]
     scalar_sys = NoisyConstrainedLinearControlContinuousSystem(a, b, d, X, U, W)
     @test scalar_sys == NoisyConstrainedLinearControlContinuousSystem(A, B, D, X, U, W)
 end
@@ -414,7 +414,7 @@ end
     end
     # Scalar System
     a = 1.; b = 2.; c = 0.1; d = 3.; X = 1; U = 2; W = 3
-    A = [a][:,:]; B = [b][:,:]; C = [c]; D = [d][:,:];
+    A = [a][:,:]; B = [b][:,:]; C = [c]; D = [d][:,:]
     scalar_sys = NoisyConstrainedAffineControlContinuousSystem(a, b, c, d, X, U, W)
     @test scalar_sys == NoisyConstrainedAffineControlContinuousSystem(A, B, C, D, X, U, W)
 end

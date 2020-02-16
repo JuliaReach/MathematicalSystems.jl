@@ -24,7 +24,6 @@ end
             @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
         end
     end
-
 end
 
 @testset "Discrete linear system" begin
@@ -75,7 +74,7 @@ end
         end
     end
     # Scalar System
-    a = 1.; b=2.
+    a = 1.; b = 2.
     A = [a][:,:]; B = [b][:,:]
     scalar_sys = LinearControlDiscreteSystem(a, b)
     @test scalar_sys == LinearControlDiscreteSystem(A, B)
@@ -137,7 +136,7 @@ end
     end
     # Scalar System
     a = 1.; b = 2.; X = 1; U = 2
-    A = [a][:,:]; B = [b][:,:];
+    A = [a][:,:]; B = [b][:,:]
     scalar_sys = ConstrainedLinearControlDiscreteSystem(a, b, X, U)
     @test scalar_sys == ConstrainedLinearControlDiscreteSystem(A, B, X, U)
 end
@@ -155,7 +154,7 @@ end
     end
     # Scalar System
     a = 1.; e = 2.;
-    A = [a][:,:]; E = [e][:,:];
+    A = [a][:,:]; E = [e][:,:]
     scalar_sys = LinearAlgebraicDiscreteSystem(a, e)
     @test scalar_sys == LinearAlgebraicDiscreteSystem(A, E)
 end
@@ -175,7 +174,7 @@ end
     end
     # Scalar System
     a = 1.; e = 2.; X = 1
-    A = [a][:,:]; E = [e][:,:];
+    A = [a][:,:]; E = [e][:,:]
     scalar_sys = ConstrainedLinearAlgebraicDiscreteSystem(a, e, X)
     @test scalar_sys == ConstrainedLinearAlgebraicDiscreteSystem(A, E, X)
 end
@@ -242,7 +241,7 @@ end
     end
     # Scalar System
     a = 1.; d = 3.; X = 1; W = 3
-    A = [a][:,:]; D = [d][:,:];
+    A = [a][:,:]; D = [d][:,:]
     scalar_sys = NoisyConstrainedLinearDiscreteSystem(a, d, X, W)
     @test scalar_sys == NoisyConstrainedLinearDiscreteSystem(A, D, X, W)
 end
@@ -270,7 +269,7 @@ end
     end
     # Scalar System
     a = 1.; b = 2.; d = 3.; X = 1; U = 2; W = 3
-    A = [a][:,:]; B = [b][:,:]; D = [d][:,:];
+    A = [a][:,:]; B = [b][:,:]; D = [d][:,:]
     scalar_sys = NoisyConstrainedLinearControlDiscreteSystem(a, b, d, X, U, W)
     @test scalar_sys == NoisyConstrainedLinearControlDiscreteSystem(A, B, D, X, U, W)
 end
@@ -300,7 +299,7 @@ end
     end
     # Scalar System
     a = 1.; b = 2.; c = 0.1; d = 3.; X = 1; U = 2; W = 3
-    A = [a][:,:]; B = [b][:,:]; C = [c]; D = [d][:,:];
+    A = [a][:,:]; B = [b][:,:]; C = [c]; D = [d][:,:]
     scalar_sys = NoisyConstrainedAffineControlDiscreteSystem(a, b, c, d, X, U, W)
     @test scalar_sys == NoisyConstrainedAffineControlDiscreteSystem(A, B, C, D, X, U, W)
 end

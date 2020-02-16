@@ -58,9 +58,9 @@ end
     @test sys == LinearContinuousSystem(A1)
 
     # automatic identification of rhs linearity
-    @test @system(x' = -x) == LinearContinuousSystem(-1*IdentityMultiple(I,1))
-    @test @system(x' = x, dim=3) == LinearContinuousSystem(IdentityMultiple(I, 3))
-    @test @system(x' = 2x, dim=3) == LinearContinuousSystem(2.0*IdentityMultiple(I,3))
+    @test @system(x' = -x) == LinearContinuousSystem(-1.0*IdentityMultiple(I, 1))
+    @test @system(x' = x, dim=3) == LinearContinuousSystem(1.0*IdentityMultiple(I, 3))
+    @test @system(x' = 2x, dim=3) == LinearContinuousSystem(2.0*IdentityMultiple(I, 3))
 
     @test @system(x' = A*x, x ∈ X) == ConstrainedLinearContinuousSystem(A,X)
     @test @system(x1' = A1x1, x1 ∈ X1) == ConstrainedLinearContinuousSystem(A1,X1)

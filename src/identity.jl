@@ -128,6 +128,7 @@ function Base.:(+)(𝐼1::IdentityMultiple, 𝐼2::IdentityMultiple)
     return IdentityMultiple(𝐼1.M + 𝐼2.M, 𝐼1.n)
 end
 
+
 function Base.:(-)(𝐼1::IdentityMultiple, 𝐼2::IdentityMultiple)
     @assert 𝐼1.n == 𝐼2.n
     return IdentityMultiple(𝐼1.M - 𝐼2.M, 𝐼1.n)

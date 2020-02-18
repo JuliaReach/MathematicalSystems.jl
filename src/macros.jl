@@ -745,7 +745,8 @@ macro system(expr...)
         if x0 == nothing
             return esc(sys)
         else
-            return Expr(:call, InitialValueProblem, esc(:($sys)), esc(:($x0)))
+            ivp = Expr(:call, InitialValueProblem, :($sys), :($x0))
+            return esc(ivp)
         end
     catch ex
         if  isa(ex, ArgumentError)

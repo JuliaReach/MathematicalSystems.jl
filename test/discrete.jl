@@ -218,6 +218,17 @@ end
     end
 end
 
+@testset "Discrete control black-box system" begin
+    add_one(x) = x + 1
+    s = BlackBoxControlDiscreteSystem(add_one, 2, 1)
+    @test statedim(s) == 2
+    @test inputdim(s) == 1
+    for s = [s, typeof(s)]
+        @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+        @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+    end
+end
+
 # ==============
 # Noisy systems
 # ==============

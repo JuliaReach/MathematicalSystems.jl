@@ -313,6 +313,17 @@ function vanderpol_controlled!(x, u, dx)
     return dx
 end
 
+@testset "Continuous control black-box system" begin
+    add_one(x) = x + 1
+    s = BlackBoxControlContinuousSystem(add_one, 2, 1)
+    @test statedim(s) == 2
+    @test inputdim(s) == 1
+    for s = [s, typeof(s)]
+        @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+        @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+    end
+end
+
 @testset "Continuous control system defined by a function with state constraints" begin
     H = HalfSpace([1.0, 0.0], 0.0) # x <= 0
     U = Interval(-0.1, 0.1)

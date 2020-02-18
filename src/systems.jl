@@ -974,6 +974,64 @@ of the form:
 """
 ConstrainedBlackBoxDiscreteSystem
 
+for (Z, AZ) in ((:BlackBoxControlContinuousSystem, :AbstractContinuousSystem),
+                (:BlackBoxControlDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){FT} <: $(AZ)
+            f::FT
+            statedim::Int
+            inputdim::Int
+        end
+        statedim(s::$Z) = s.statedim
+        inputdim(s::$Z) = s.inputdim
+        noisedim(::$Z) = 0
+    end
+    for T in [Z, Type{<:eval(Z)}]
+        @eval begin
+            islinear(::$T) = false
+            isaffine(::$T) = false
+            ispolynomial(::$T) = false
+            isnoisy(::$T) = false
+            iscontrolled(::$T) = true
+            isconstrained(::$T) = false
+        end
+    end
+end
+
+@doc """
+    BlackBoxControlContinuousSystem <: AbstractContinuousSystem
+
+Continuous-time control system defined by a right-hand side of the form:
+
+```math
+    x' = f(x(t), u(t)) .
+```
+
+### Fields
+
+- `f`        -- function that holds the right-hand side
+- `statedim` -- number of state variables
+- `inputdim` -- number of input variables
+"""
+BlackBoxControlContinuousSystem
+
+@doc """
+    BlackBoxControlDiscreteSystem <: AbstractDiscreteSystem
+
+Discrete-time control system defined by a right-hand side of the form:
+
+```math
+    x_{k+1} = f(x_k, u_k) .
+```
+
+### Fields
+
+- `f`        -- function that holds the right-hand side
+- `statedim` -- number of state variables
+- `inputdim` -- number of input variables
+"""
+BlackBoxControlDiscreteSystem
+
 for (Z, AZ) in ((:ConstrainedBlackBoxControlContinuousSystem, :AbstractContinuousSystem),
                 (:ConstrainedBlackBoxControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin

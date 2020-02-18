@@ -1140,7 +1140,7 @@ end
 @doc """
     NoisyLinearContinuousSystem
 
-Continuous-time linear system with  additive disturbance of the form:
+Continuous-time linear system with additive disturbance of the form:
 
 ```math
     x' = A x + D w .
@@ -1443,7 +1443,6 @@ Continuous-time affine control system with additive disturbance of the form:
 ```math
     x' = A x + B u + c + D w .
 ```
-
 
 ### Fields
 

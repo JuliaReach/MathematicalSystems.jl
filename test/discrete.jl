@@ -37,6 +37,11 @@ end
             @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
         end
     end
+    # Scalar System
+    a = 1.
+    A = [a][:,:]
+    scalar_sys = LinearDiscreteSystem(a)
+    @test scalar_sys == LinearDiscreteSystem(A)
 end
 
 @testset "Discrete affine system" begin
@@ -50,6 +55,11 @@ end
             @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
         end
     end
+    # Scalar System
+    a = 1.; c = 0.1
+    A = [a][:,:]; C = [c]
+    scalar_sys = AffineDiscreteSystem(a, c)
+    @test scalar_sys == AffineDiscreteSystem(A, C)
 end
 
 @testset "Discrete linear control system" begin
@@ -63,6 +73,11 @@ end
             @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
         end
     end
+    # Scalar System
+    a = 1.; b = 2.
+    A = [a][:,:]; B = [b][:,:]
+    scalar_sys = LinearControlDiscreteSystem(a, b)
+    @test scalar_sys == LinearControlDiscreteSystem(A, B)
 end
 
 @testset "Discrete constrained linear system" begin
@@ -77,6 +92,11 @@ end
         @test islinear(s) && isaffine(s) && !ispolynomial(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
+    # Scalar System
+    a = 1.; X = 1
+    A = [a][:,:]
+    scalar_sys = ConstrainedLinearDiscreteSystem(a, X)
+    @test scalar_sys == ConstrainedLinearDiscreteSystem(A, X)
 end
 
 @testset "Discrete constrained affine system" begin
@@ -92,6 +112,11 @@ end
         @test !islinear(s) && isaffine(s) && !ispolynomial(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
+    # Scalar System
+    a = 1.; c = 0.1; X = 1
+    A = [a][:,:]; C = [c]
+    scalar_sys = ConstrainedAffineDiscreteSystem(a, c, X)
+    @test scalar_sys == ConstrainedAffineDiscreteSystem(A, C, X)
 end
 
 @testset "Discrete constrained linear control system" begin
@@ -109,6 +134,11 @@ end
         @test islinear(s) && isaffine(s) && !ispolynomial(s)
         @test !isnoisy(s) && iscontrolled(s) && isconstrained(s)
     end
+    # Scalar System
+    a = 1.; b = 2.; X = 1; U = 2
+    A = [a][:,:]; B = [b][:,:]
+    scalar_sys = ConstrainedLinearControlDiscreteSystem(a, b, X, U)
+    @test scalar_sys == ConstrainedLinearControlDiscreteSystem(A, B, X, U)
 end
 
 @testset "Discrete linear algebraic system" begin
@@ -122,6 +152,11 @@ end
             @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
         end
     end
+    # Scalar System
+    a = 1.; e = 2.;
+    A = [a][:,:]; E = [e][:,:]
+    scalar_sys = LinearAlgebraicDiscreteSystem(a, e)
+    @test scalar_sys == LinearAlgebraicDiscreteSystem(A, E)
 end
 
 @testset "Discrete constrained linear algebraic system" begin
@@ -137,6 +172,11 @@ end
         @test islinear(s) && isaffine(s) && !ispolynomial(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
+    # Scalar System
+    a = 1.; e = 2.; X = 1
+    A = [a][:,:]; E = [e][:,:]
+    scalar_sys = ConstrainedLinearAlgebraicDiscreteSystem(a, e, X)
+    @test scalar_sys == ConstrainedLinearAlgebraicDiscreteSystem(A, E, X)
 end
 
 @testset "Polynomial system in discrete time" begin
@@ -178,6 +218,10 @@ end
     end
 end
 
+# ==============
+# Noisy systems
+# ==============
+
 @testset "Noisy Discrete constrained linear system" begin
     A = [1. 1; 1 -1]
     D = [1. 2; 0 1]
@@ -195,6 +239,11 @@ end
         @test islinear(s) && isaffine(s) && !ispolynomial(s)
         @test isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
+    # Scalar System
+    a = 1.; d = 3.; X = 1; W = 3
+    A = [a][:,:]; D = [d][:,:]
+    scalar_sys = NoisyConstrainedLinearDiscreteSystem(a, d, X, W)
+    @test scalar_sys == NoisyConstrainedLinearDiscreteSystem(A, D, X, W)
 end
 
 @testset "Noisy Discrete constrained control linear system" begin
@@ -218,6 +267,11 @@ end
         @test islinear(s) && isaffine(s) && !ispolynomial(s)
         @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
     end
+    # Scalar System
+    a = 1.; b = 2.; d = 3.; X = 1; U = 2; W = 3
+    A = [a][:,:]; B = [b][:,:]; D = [d][:,:]
+    scalar_sys = NoisyConstrainedLinearControlDiscreteSystem(a, b, d, X, U, W)
+    @test scalar_sys == NoisyConstrainedLinearControlDiscreteSystem(A, B, D, X, U, W)
 end
 
 @testset "Noisy Discrete constrained control affine system" begin
@@ -243,6 +297,11 @@ end
         @test isaffine(s) && !islinear(s) && !ispolynomial(s)
         @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
     end
+    # Scalar System
+    a = 1.; b = 2.; c = 0.1; d = 3.; X = 1; U = 2; W = 3
+    A = [a][:,:]; B = [b][:,:]; C = [c]; D = [d][:,:]
+    scalar_sys = NoisyConstrainedAffineControlDiscreteSystem(a, b, c, d, X, U, W)
+    @test scalar_sys == NoisyConstrainedAffineControlDiscreteSystem(A, B, C, D, X, U, W)
 end
 
 @testset "Noisy Discrete constrained control blackbox system" begin

@@ -517,19 +517,19 @@ julia> using MathematicalSystems: extract_sum
 
 julia> extract_sum([:(A1*x)], :x, :u, :w)
 1-element Array{Tuple{Any,Symbol},1}:
- (:(hcat(:A1)), :A)
+ (:(hcat(A1)), :A)
 
 julia> extract_sum([:(A1*x), :(B1*u), :c], :x, :u, :w)
 3-element Array{Tuple{Any,Symbol},1}:
- (:(hcat(:A1)), :A)
- (:(hcat(:B1)), :B)
- (:(vcat(:c)), :c)
+ (:(hcat(A1)), :A)
+ (:(hcat(B1)), :B)
+ (:(vcat(c)), :c)
 
 julia> extract_sum([:(A1*x7), :( B1*u7), :( B2*w7)], :x7, :u7, :w7)
 3-element Array{Tuple{Any,Symbol},1}:
- (:(hcat(:A1)), :A)
- (:(hcat(:B1)), :B)
- (:(vcat(:B2)), :D)
+ (:(hcat(A1)), :A)
+ (:(hcat(B1)), :B)
+ (:(vcat(B2)), :D)
 ```
 
 ### Notes

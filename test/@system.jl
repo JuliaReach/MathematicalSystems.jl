@@ -258,8 +258,8 @@ end
     s = IVP(LinearContinuousSystem(I(-1.0, 1)), Interval(-1, 1))
     @test @system(x' = -1.0x, x(0) ∈ Interval(-1, 1)) == s
 
-    # similar for integers
-    s = IVP(LinearDiscreteSystem(I(-1., 1)), [1])
+    # discrete ivp in floating-point
+    s = IVP(LinearDiscreteSystem(I(-1.0, 1)), [1])
     @test @system(x⁺ = -x, x(0) ∈ [1]) == s
 
     # initial state assignment doesn't match state variable

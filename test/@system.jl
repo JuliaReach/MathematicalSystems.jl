@@ -93,6 +93,13 @@ end
     @test @system(w' = A*w + B*u_1) == LinearControlContinuousSystem(A, B)
     # similarily for x_ = A_*x_ + B_*u_ + c_
     @test @system(w' = A*w + B*u_1 + c, w∈X, u_1∈U) == ConstrainedAffineControlContinuousSystem(A, B, c, X, U)
+
+    # scalar cases
+    @test @system(x' = x + u) == LinearControlContinuousSystem(hcat(1.), hcat(1.))
+    @test @system(x' = x + 0.1u) == LinearControlContinuousSystem(hcat(1.), hcat(0.1))
+    @test @system(x' = x + 0.1*u) == LinearControlContinuousSystem(hcat(1.), hcat(0.1))
+    sys = @system(x' = x + 0.1u + 0.2, x∈X, u∈U)
+    @test sys == ConstrainedAffineControlContinuousSystem(hcat(1.), hcat(0.1), vcat(0.2), X, U)
 end
 
 @testset "@system for linear algebraic continous systems" begin
@@ -252,7 +259,7 @@ end
     @test @system(x' = -1.0x, x(0) ∈ Interval(-1, 1)) == s
 
     # similar for integers
-    s = IVP(LinearDiscreteSystem(I(-1, 1)), [1])
+    s = IVP(LinearDiscreteSystem(I(-1., 1)), [1])
     @test @system(x⁺ = -x, x(0) ∈ [1]) == s
 
     # initial state assignment doesn't match state variable

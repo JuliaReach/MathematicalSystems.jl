@@ -316,6 +316,30 @@ end
     @test scalar_sys == NoisyConstrainedLinearControlDiscreteSystem(A, B, D, X, U, W)
 end
 
+@testset "Noisy discrete control affine system" begin
+    A = [1. 1; 1 -1]
+    B = Matrix([0.5 1.5]')
+    c = [1.0, 0.5]
+    D = [1. 2; 0 1]
+    s = NoisyAffineControlDiscreteSystem(A, B, c, D)
+    @test s.A == A
+    @test s.B == B
+    @test s.c == c
+    @test s.D == D
+    @test statedim(s) == 2
+    @test inputdim(s) == 1
+    @test noisedim(s) == 2
+    for s = [s, typeof(s)]
+        @test isaffine(s) && !islinear(s) && !ispolynomial(s)
+        @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+    end
+    # Scalar System
+    a = 1.; b = 2.; c = 0.1; d = 3.; X = 1; U = 2; W = 3
+    A = [a][:,:]; B = [b][:,:]; C = [c]; D = [d][:,:]
+    scalar_sys = NoisyAffineControlDiscreteSystem(a, b, c, d)
+    @test scalar_sys == NoisyAffineControlDiscreteSystem(A, B, C, D)
+end
+
 @testset "Noisy Discrete constrained control affine system" begin
     A = [1. 1; 1 -1]
     B = Matrix([0.5 1.5]')

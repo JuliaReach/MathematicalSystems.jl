@@ -1338,6 +1338,80 @@ Continuous-time noisy linear control system with state constraints of the form:
 """
 NoisyConstrainedLinearControlDiscreteSystem
 
+for (Z, AZ) in ((:NoisyAffineControlContinuousSystem, :AbstractContinuousSystem),
+                (:NoisyAffineControlDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}, MTD <: AbstractMatrix{T}} <: $(AZ)
+            A::MTA
+            B::MTB
+            c::VT
+            D::MTD
+            function $(Z)(A::MTA, B::MTB, c::VT, D::MTD) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}, MTD <: AbstractMatrix{T}}
+                @assert checksquare(A) == length(c) == size(B, 1) == size(D,1)
+                return new{T, MTA, MTB, VT, MTD}(A, B, c, D)
+            end
+        end
+        function $(Z)(A::Number, B::Number, c::Number, D::Number)
+           return $(Z)(hcat(A), hcat(B), vcat(c), hcat(D))
+        end
+
+        statedim(s::$Z) = length(s.c)
+        inputdim(s::$Z) = size(s.B, 2)
+        noisedim(s::$Z) = size(s.D, 2)
+        state_matrix(s::$Z) = s.A
+        input_matrix(s::$Z) = s.B
+        noise_matrix(s::$Z) = s.D
+        affine_term(s::$Z) = s.c
+    end
+    for T in [Z, Type{<:eval(Z)}]
+        @eval begin
+            islinear(::$T) = false
+            isaffine(::$T) = true
+            ispolynomial(::$T) = false
+            isnoisy(::$T) = true
+            iscontrolled(::$T) = true
+            isconstrained(::$T) = false
+        end
+    end
+end
+
+@doc """
+    NoisyAffineControlContinuousSystem
+
+Continuous-time noisy affine control system of the form:
+
+```math
+    x' = A x + B u + c + D w .
+```
+
+
+### Fields
+
+- `A` -- state matrix
+- `B` -- input matrix
+- `c` -- affine term
+- `D` -- noise matrix
+"""
+NoisyAffineControlContinuousSystem
+
+@doc """
+    NoisyAffineControlDiscreteSystem
+
+Continuous-time noisy affine control system of the form:
+
+```math
+    x_{k+1} = A x_k + B u_k + c + D w_k .
+```
+
+### Fields
+
+- `A` -- state matrix
+- `B` -- input matrix
+- `c` -- affine term
+- `D` -- noise matrix
+"""
+NoisyAffineControlDiscreteSystem
+
 for (Z, AZ) in ((:NoisyConstrainedAffineControlContinuousSystem, :AbstractContinuousSystem),
                 (:NoisyConstrainedAffineControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
@@ -1359,10 +1433,10 @@ for (Z, AZ) in ((:NoisyConstrainedAffineControlContinuousSystem, :AbstractContin
         end
 
         statedim(s::$Z) = length(s.c)
-        stateset(s::$Z) = s.X
         inputdim(s::$Z) = size(s.B, 2)
-        inputset(s::$Z) = s.U
         noisedim(s::$Z) = size(s.D, 2)
+        stateset(s::$Z) = s.X
+        inputset(s::$Z) = s.U
         noiseset(s::$Z) = s.W
         state_matrix(s::$Z) = s.A
         input_matrix(s::$Z) = s.B

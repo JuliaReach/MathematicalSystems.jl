@@ -71,6 +71,7 @@ export ContinuousIdentitySystem,
        NoisyConstrainedLinearContinuousSystem,
        NoisyLinearControlContinuousSystem,
        NoisyConstrainedLinearControlContinuousSystem,
+       NoisyAffineControlContinuousSystem,
        NoisyConstrainedAffineControlContinuousSystem,
        NoisyConstrainedBlackBoxControlContinuousSystem
 
@@ -97,6 +98,7 @@ export DiscreteIdentitySystem,
        NoisyConstrainedLinearDiscreteSystem,
        NoisyLinearControlDiscreteSystem,
        NoisyConstrainedLinearControlDiscreteSystem,
+       NoisyAffineControlDiscreteSystem,
        NoisyConstrainedAffineControlDiscreteSystem,
        NoisyConstrainedBlackBoxControlDiscreteSystem
 

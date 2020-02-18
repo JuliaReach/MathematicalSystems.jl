@@ -656,11 +656,6 @@ function extract_set_parameter(expr, state, input, noise) # input => to check se
     throw(ArgumentError("the set entry $(expr) does not have the correct form `x_ ∈ X_`"))
 end
 
-# Sort the parameter `parameters` such that it has the order `order` (e.g. (:X, :U, :W))
-# allowing for arbitrary order of  parameters which is a array of tuple, where the second
-# element of each tuple is the relevant value for the ordering. If a value of `order`
-# is not contained in `parameters` it will be ignored.
-
 """
     sort(parameters::Vector, order::Tuple)
 

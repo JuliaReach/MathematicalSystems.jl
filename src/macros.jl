@@ -325,9 +325,40 @@ function parse_system(exprs)
            state_var, input_var, noise_var, dimension, initial_state
 end
 
-# extract the field and value parameter from the dynamic equation `equation`
-# in the form `rhs = [(:A_user, :A), (:B_user, :B), ....]` and
-# `lhs = [(:E_user, :E)]` or `lhs = Any[]`
+"""
+    extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
+
+Extract the value and field parameter from the dynamic equation `equation` according
+to the variable `state`, `input` and `noise`.
+
+For the right-hand side of the dynamic equation, this function returns a vector of tuples
+containing some elements from the list
+- `(:A_user, :A)`
+- `(:B_user, :B)`
+- `(:c_user, :c)`
+- `(:D_user, :D)`
+- `(:f_user, :f)`
+- `(:statedim_user :statedim)`
+- `(:inputdim_user :inputdim)`
+- `(:noisedim_user :noisedim)`
+and for the left-hand side, it returns either an empty vector `Any[]` or
+`[(:E_user, :E)]` where the first argument of the tuple corresponds to the value
+and the second argument of the tuple corresponds to the field parameter.
+
+### Input
+
+- `equation` -- dynamic equation
+- `state`    -- state variable
+- `input`    -- input variable
+- `noise`    -- noise variable
+- `dim`      -- dimensionality
+- `AT`       -- abstract system type
+
+### Output
+
+Two arrays of tuples containing the value and field parameters for the right-hand
+and left-hand side of the dynamic equation `equation`.
+"""
 function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
     @capture(equation, lhs_ = rhscode_)
     lhs_params = Any[]
@@ -361,14 +392,14 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
             if AT == AbstractDiscreteSystem
                 push!(rhs_params, (dim, :statedim))
             elseif AT == AbstractContinuousSystem
-                push!(rhs_params, (IdentityMultiple(I, dim), :A))
+                push!(rhs_params, (I(dim), :A))
             end
         elseif rhs == :(0) && AT == AbstractContinuousSystem # x' = 0
             push!(rhs_params, (dim, :statedim))
         else
             if @capture(rhs, -var_) # => rhs = -x
                 if state == var
-                    push!(rhs_params, (-1*IdentityMultiple(I, dim), :A))
+                    push!(rhs_params, (-1.0*I(dim), :A))
                 end
             else
                 rhs = add_asterisk(rhs, state, input, noise)
@@ -378,7 +409,7 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
                         if value == nothing # e.g. => rhs = Ax
                             push!(rhs_params, (array, :A))
                         else # => e.g., rhs = 2x
-                            push!(rhs_params, (value*IdentityMultiple(I,dim), :A))
+                            push!(rhs_params, (value*I(dim), :A))
                         end
                     else
                         throw(ArgumentError("if there is only one term on the "*
@@ -401,9 +432,9 @@ If not, `summand` is returned.
 ### Input
 
 - `summand` -- expressions
-- `state` -- state variable
-- `input` -- input variable
-- `noise` -- noise variable, if available
+- `state`   -- state variable
+- `input`   -- input variable
+- `noise`   -- noise variable
 
 ### Output
 
@@ -678,8 +709,8 @@ Similarly, a noise variable is specified with `noise: var` or `noise=var`.
   `*` operator is mandatory.
 
 - Systems of the form `x' = α*x` where `α` is a scalar are parsed as linear
-  systems. The default dimension is `1`; if the system is higher-dimensional, use
-  `dim`, as in `x' = 2x, dim=3`.
+  systems. The default dimension is `1` and `α` is parsed as `Float64`;
+  if the system is higher-dimensional, use `dim`, as in `x' = 2x, dim=3`.
 
 ### Examples
 

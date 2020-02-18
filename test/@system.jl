@@ -97,9 +97,9 @@ end
     # scalar cases
     @test @system(x' = 0.5x + u) == LinearControlContinuousSystem(hcat(0.5), I(1.0, 1))
     @test @system(x' = 0.5x + 1.) == AffineContinuousSystem(hcat(0.5), vcat(1.))
-    @test @system(x' = x + u) == LinearControlContinuousSystem(hcat(1.), hcat(1.))
-    @test @system(x' = x + 0.1u) == LinearControlContinuousSystem(hcat(1.), hcat(0.1))
-    @test @system(x' = x + 0.1*u) == LinearControlContinuousSystem(hcat(1.), hcat(0.1))
+    @test @system(x' = x + u) == LinearControlContinuousSystem(I(1.0, 1), I(1.0, 1))
+    @test @system(x' = x + 0.1u) == LinearControlContinuousSystem(I(1.0, 1), hcat(0.1))
+    @test @system(x' = x + 0.1*u) == LinearControlContinuousSystem(I(1.0, 1), hcat(0.1))
     sys = @system(x' = 0.3x + 0.1u + 0.2, x∈X, u∈U)
     @test sys == ConstrainedAffineControlContinuousSystem(hcat(0.3), hcat(0.1), vcat(0.2), X, U)
 end

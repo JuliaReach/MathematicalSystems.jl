@@ -557,16 +557,16 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
     for summand in summands
         if @capture(summand, array_ * var_)
             if state == var
-                push!(params, (array, :A))
+                push!(params, (Expr(:call, :hcat, array), :A))
                 # obtain "state_dim" for later using in IdentityMultiple
                 state_dim =  Expr(:call, :size, :($array), 1)
                 got_state_dim = true
 
             elseif input == var
-                push!(params, (array, :B))
+                push!(params, (Expr(:call, :hcat, array), :B))
 
             elseif noise == var
-                push!(params, (array, :D))
+                push!(params, (Expr(:call, :hcat, array), :D))
 
             else
                 throw(ArgumentError("in the dynamic equation, the expression "*
@@ -574,11 +574,7 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
                 "or the noise term $noise"))
             end
         elseif @capture(summand, array_)
-            if got_state_dim
-                identity = :(I($state_dim))
-            else
-                identity = 1.0
-            end
+            identity = :(I($state_dim))
             # if array == variable: field value equals identity
             if state == array
                 push!(params, (identity, :A))
@@ -587,7 +583,7 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
             elseif noise == array
                 push!(params, (identity, :D))
             else
-                push!(params, (array, :c))
+                push!(params, (vcat(array), :c))
             end
         end
     end

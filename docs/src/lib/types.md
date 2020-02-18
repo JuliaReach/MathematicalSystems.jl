@@ -48,6 +48,7 @@ NoisyLinearControlContinuousSystem
 NoisyConstrainedLinearControlContinuousSystem
 NoisyAffineControlContinuousSystem
 NoisyConstrainedAffineControlContinuousSystem
+NoisyBlackBoxControlContinuousSystem
 NoisyConstrainedBlackBoxControlContinuousSystem
 ```
 
@@ -77,6 +78,7 @@ NoisyLinearControlDiscreteSystem
 NoisyConstrainedLinearControlDiscreteSystem
 NoisyAffineControlDiscreteSystem
 NoisyConstrainedAffineControlDiscreteSystem
+NoisyBlackBoxControlDiscreteSystem
 NoisyConstrainedBlackBoxControlDiscreteSystem
 ```
 

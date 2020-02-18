@@ -381,6 +381,22 @@ end
     @test scalar_sys == NoisyConstrainedAffineControlDiscreteSystem(A, B, C, D, X, U, W)
 end
 
+@testset "Noisy discrete control black-box system" begin
+    n = 2
+    m = 1
+    l = 2
+    f(x,u,w) = ones(n,n)*x + ones(n,m)*u + ones(n,l)*w
+    s = NoisyBlackBoxControlDiscreteSystem(f, n, m, l)
+    @test s.f == f
+    @test statedim(s) == n
+    @test inputdim(s) == m
+    @test noisedim(s) == l
+    for s = [s, typeof(s)]
+        @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+        @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+    end
+end
+
 @testset "Noisy Discrete constrained control blackbox system" begin
     n = 2
     m = 1
@@ -392,7 +408,7 @@ end
     s = NoisyConstrainedBlackBoxControlDiscreteSystem(f, n, m, l, X, U, W)
     @test s.f == f
     @test statedim(s) == n
-    @test inputdim(s) == dim(U)
+    @test inputdim(s) == m == dim(U)
     @test noisedim(s) == l == dim(W)
     @test stateset(s) == X
     @test inputset(s) == U

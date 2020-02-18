@@ -1558,6 +1558,66 @@ and ``c`` a vector.
 NoisyConstrainedAffineControlDiscreteSystem
 
 
+for (Z, AZ) in ((:NoisyBlackBoxControlContinuousSystem, :AbstractContinuousSystem),
+                (:NoisyBlackBoxControlDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){FT} <: $(AZ)
+            f::FT
+            statedim::Int
+            inputdim::Int
+            noisedim::Int
+        end
+        statedim(s::$Z) = s.statedim
+        inputdim(s::$Z) = s.inputdim
+        noisedim(s::$Z) = s.noisedim
+    end
+    for T in [Z, Type{<:eval(Z)}]
+        @eval begin
+            islinear(::$T) = false
+            isaffine(::$T) = false
+            ispolynomial(::$T) = false
+            isnoisy(::$T) = true
+            iscontrolled(::$T) = true
+            isconstrained(::$T) = false
+        end
+    end
+end
+
+@doc """
+    NoisyBlackBoxControlContinuousSystem <: AbstractContinuousSystem
+
+Continuous-time control system defined by a right-hand side of the form:
+
+```math
+    x' = f(x(t), u(t), w(t)) .
+```
+
+### Fields
+
+- `f`        -- function that holds the right-hand side
+- `statedim` -- number of state variables
+- `inputdim` -- number of input variables
+"""
+NoisyBlackBoxControlContinuousSystem
+
+@doc """
+    NoisyBlackBoxControlDiscreteSystem <: AbstractDiscreteSystem
+
+Discrete-time control system defined by a right-hand side of the form:
+
+```math
+    x_{k+1} = f(x_k, u_k) .
+```
+
+### Fields
+
+- `f`        -- function that holds the right-hand side
+- `statedim` -- number of state variables
+- `inputdim` -- number of input variables
+"""
+NoisyBlackBoxControlDiscreteSystem
+
+
 for (Z, AZ) in ((:NoisyConstrainedBlackBoxControlContinuousSystem, :AbstractContinuousSystem),
                 (:NoisyConstrainedBlackBoxControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin

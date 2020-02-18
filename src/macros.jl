@@ -583,7 +583,7 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
             elseif noise == array
                 push!(params, (identity, :D))
             else
-                push!(params, (vcat(array), :c))
+                push!(params, (Expr(:call, :vcat, array), :c))
             end
         end
     end

@@ -656,6 +656,42 @@ function extract_set_parameter(expr, state, input, noise) # input => to check se
     throw(ArgumentError("the set entry $(expr) does not have the correct form `x_ ∈ X_`"))
 end
 
+# Sort the parameter `parameters` such that it has the order `order` (e.g. (:X, :U, :W))
+# allowing for arbitrary order of  parameters which is a array of tuple, where the second
+# element of each tuple is the relevant value for the ordering. If a value of `order`
+# is not contained in `parameters` it will be ignored.
+
+"""
+    sort(parameters::Vector, order::Tuple)
+
+Returns a sorted vector `parameters` according to `order`.
+`parameters` is a vector that contains tuples where the second element of each
+`Tuple` is considered for the sorting according to `order`.
+
+If a value of `order` is not contained in `parameters` the corresponding entry of
+`order` will be omitted.
+
+### Input
+
+- `parameters` -- vector of tuples
+- `order`    -- tuple of symbols
+
+### Output
+
+Sorted `parameters` vector according to `order`.
+"""
+function sort(parameters::Vector, order::Tuple)
+    order_parameters = []
+    for ordered_element in order
+        for tuple in parameters
+            if tuple[2] == ordered_element
+                push!(order_parameters, tuple)
+            end
+        end
+    end
+    return order_parameters
+end
+
 """
     system(expr...)
 
@@ -779,9 +815,9 @@ macro system(expr...)
             dyn_eq, AT, constr, state, input, noise, dim, x0 = parse_system(expr)
         end
         lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, input, noise, dim, AT)
-        set = extract_set_parameter.(constr, state, input, noise)
-        # TODO: order set variables such that the order is X, U, W
-        field_names, var_names = constructor_input(lhs, rhs, set)
+        ordered_rhs = sort(rhs, (:A, :B, :c, :D, :f, :statedim, :inputdim, :noisedim))
+        ordered_set = sort(extract_set_parameter.(constr, state, input, noise), (:X, :U, :W))
+        field_names, var_names = constructor_input(lhs, ordered_rhs, ordered_set)
         sys_type = _corresponding_type(AT, field_names)
         sys = Expr(:call, :($sys_type), :($(var_names...)))
         if x0 == nothing

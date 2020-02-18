@@ -664,7 +664,7 @@ end
 """
     sort(parameters::Vector, order::Tuple)
 
-Returns a sorted vector `parameters` according to `order`.
+Filter and sort the vector `parameters` according to `order`.
 `parameters` is a vector that contains tuples where the second element of each
 `Tuple` is considered for the sorting according to `order`.
 
@@ -674,11 +674,11 @@ If a value of `order` is not contained in `parameters` the corresponding entry o
 ### Input
 
 - `parameters` -- vector of tuples
-- `order`    -- tuple of symbols
+- `order`      -- tuple of symbols
 
 ### Output
 
-Sorted `parameters` vector according to `order`.
+A new vector corresponding to `parameters` filtered and sorted according to `order`.
 """
 function sort(parameters::Vector, order::Tuple)
     order_parameters = []

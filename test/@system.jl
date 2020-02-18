@@ -255,12 +255,12 @@ end
 # =======================
 @testset "@system with for an initial-value problem" begin
     # continuous ivp in floating-point
-    s = IVP(LinearContinuousSystem(I(-1.0, 1)), Interval(-1, 1))
-    @test @system(x' = -1.0x, x(0) ∈ Interval(-1, 1)) == s && eltype(s.A) == Float64
+    ivp = IVP(LinearContinuousSystem(I(-1.0, 1)), Interval(-1, 1))
+    @test @system(x' = -1.0x, x(0) ∈ Interval(-1, 1)) == ivp && eltype(ivp.s.A) == Float64
 
     # discrete ivp in floating-point
-    s = IVP(LinearDiscreteSystem(I(-1.0, 1)), [1])
-    @test @system(x⁺ = -x, x(0) ∈ [1]) == s && eltype(s.A) == Float64
+    ivp = IVP(LinearDiscreteSystem(I(-1.0, 1)), [1])
+    @test @system(x⁺ = -x, x(0) ∈ [1]) == ivp && eltype(ivp.s.A) == Float64
 
     # initial state assignment doesn't match state variable
     @test_throws ArgumentError @system(x' = -x, t(0) ∈ Interval(-1.0, 1.0))

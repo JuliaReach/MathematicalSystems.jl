@@ -529,7 +529,7 @@ julia> extract_sum([:(A1*x7), :( B1*u7), :( B2*w7)], :x7, :u7, :w7)
 3-element Array{Tuple{Any,Symbol},1}:
  (:(hcat(A1)), :A)
  (:(hcat(B1)), :B)
- (:(vcat(B2)), :D)
+ (:(hcat(B2)), :D)
 ```
 
 ### Notes

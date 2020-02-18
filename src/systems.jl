@@ -1280,7 +1280,7 @@ end
 @doc """
     NoisyLinearControlContinuousSystem
 
-Continuous-time noisy linear control system of the form:
+Continuous-time linear control system with additive disturbance of the form:
 
 ```math
     x' = A x + B u + D w .
@@ -1298,7 +1298,7 @@ NoisyLinearControlContinuousSystem
 @doc """
     NoisyLinearControlDiscreteSystem
 
-Continuous-time noisy linear control system of the form:
+Continuous-time linear control system with additive disturbance of the form:
 
 ```math
     x_{k+1} = A x_k + B u_k + D w_k .
@@ -1357,7 +1357,8 @@ end
 @doc """
     NoisyConstrainedLinearControlContinuousSystem
 
-Continuous-time noisy linear control system with state constraints of the form:
+Continuous-time linear control system with additive disturbance and state constraints
+of the form:
 
 ```math
     x' = A x + B u + D w, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U}, w(t) ∈ \\mathcal{W}.
@@ -1378,7 +1379,8 @@ NoisyConstrainedLinearControlContinuousSystem
 @doc """
     NoisyConstrainedLinearControlDiscreteSystem
 
-Continuous-time noisy linear control system with state constraints of the form:
+Continuous-time linear control system with additive disturbance and state constraints
+of the form:
 
 ```math
     x_{k+1} = A x_k + B u_k + D w_k, x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U}, w_k ∈ \\mathcal{W}.
@@ -1436,7 +1438,7 @@ end
 @doc """
     NoisyAffineControlContinuousSystem
 
-Continuous-time noisy affine control system of the form:
+Continuous-time affine control system with additive disturbance of the form:
 
 ```math
     x' = A x + B u + c + D w .
@@ -1455,7 +1457,7 @@ NoisyAffineControlContinuousSystem
 @doc """
     NoisyAffineControlDiscreteSystem
 
-Continuous-time noisy affine control system of the form:
+Continuous-time affine control system with additive disturbance of the form:
 
 ```math
     x_{k+1} = A x_k + B u_k + c + D w_k .
@@ -1516,12 +1518,12 @@ end
 @doc """
     NoisyConstrainedAffineControlContinuousSystem
 
-Continuous-time affine control system with state constraints of the form:
+Continuous-time affine control system with additive disturbance and state constraints
+of the form:
 
 ```math
-    x' = A x + B u + c + Dw, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U}, w(t) ∈ \\mathcal{W} \\text{ for all } t,
+    x' = A x + B u + c + Dw, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U}, w(t) ∈ \\mathcal{W} \\text{ for all } t.
 ```
-and ``c`` a vector.
 
 ### Fields
 
@@ -1538,12 +1540,12 @@ NoisyConstrainedAffineControlContinuousSystem
 @doc """
     NoisyConstrainedAffineControlDiscreteSystem
 
-Continuous-time affine control system with state constraints of the form:
+Continuous-time affine control system with additive disturbance and state constraints
+of the form:
 
 ```math
-    x_{k+1} = A x_k + B u_k + c + D w_k, x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U}, w_k ∈ \\mathcal{W} \\text{ for all } k,
+    x_{k+1} = A x_k + B u_k + c + D w_k, x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U}, w_k ∈ \\mathcal{W} \\text{ for all } k.
 ```
-and ``c`` a vector.
 
 ### Fields
 
@@ -1586,7 +1588,8 @@ end
 @doc """
     NoisyBlackBoxControlContinuousSystem <: AbstractContinuousSystem
 
-Continuous-time control system defined by a right-hand side of the form:
+Continuous-time disturbance-affected control system defined by a right-hand side
+of the form:
 
 ```math
     x' = f(x(t), u(t), w(t)) .
@@ -1597,13 +1600,15 @@ Continuous-time control system defined by a right-hand side of the form:
 - `f`        -- function that holds the right-hand side
 - `statedim` -- number of state variables
 - `inputdim` -- number of input variables
+- `noisedim` -- number of noise variables
 """
 NoisyBlackBoxControlContinuousSystem
 
 @doc """
     NoisyBlackBoxControlDiscreteSystem <: AbstractDiscreteSystem
 
-Discrete-time control system defined by a right-hand side of the form:
+Discrete-time disturbance-affected control system defined by a right-hand side
+of the form:
 
 ```math
     x_{k+1} = f(x_k, u_k) .
@@ -1614,6 +1619,7 @@ Discrete-time control system defined by a right-hand side of the form:
 - `f`        -- function that holds the right-hand side
 - `statedim` -- number of state variables
 - `inputdim` -- number of input variables
+- `noisedim` -- number of noise variables
 """
 NoisyBlackBoxControlDiscreteSystem
 
@@ -1652,8 +1658,8 @@ end
 @doc """
     NoisyConstrainedBlackBoxControlContinuousSystem <: AbstractContinuousSystem
 
-Continuous-time control system defined by a right-hand side with state constraints
-of the form:
+Continuous-time disturbance-affected control system defined by a right-hand side
+with state constraints of the form:
 
 ```math
     x' = f(x(t), u(t), w(t)), x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U}, w(t) ∈ \\mathcal{W}.
@@ -1664,6 +1670,7 @@ of the form:
 - `f`        -- function that holds the right-hand side
 - `statedim` -- number of state variables
 - `inputdim` -- number of input variables
+- `noisedim` -- number of noise variables
 - `X`        -- state constraints
 - `U`        -- input constraints
 - `W`        -- disturbance set
@@ -1673,8 +1680,8 @@ NoisyConstrainedBlackBoxControlContinuousSystem
 @doc """
     NoisyConstrainedBlackBoxControlDiscreteSystem <: AbstractDiscreteSystem
 
-Discrete-time control system defined by a right-hand side with state constraints
-of the form:
+Discrete-time disturbance-affected control system defined by a right-hand side
+with state constraints of the form:
 
 ```math
     x_{k+1} = f(x_k, u_k), x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U},  w_k ∈ \\mathcal{W}.
@@ -1685,6 +1692,7 @@ of the form:
 - `f`        -- function that holds the right-hand side
 - `statedim` -- number of state variables
 - `inputdim` -- number of input variables
+- `noisedim` -- number of noise variables
 - `X`        -- state constraints
 - `U`        -- input constraints
 - `W`        -- disturbance set

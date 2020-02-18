@@ -222,6 +222,26 @@ end
 # Noisy systems
 # ==============
 
+@testset "Noisy Discrete linear system" begin
+    A = [1. 1; 1 -1]
+    D = [1. 2; 0 1]
+    s = NoisyLinearDiscreteSystem(A, D)
+    @test s.A == A
+    @test s.D == D
+    @test statedim(s) == 2
+    @test inputdim(s) == 0
+    @test noisedim(s) == 2
+    for s = [s, typeof(s)]
+        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+    end
+    # Scalar System
+    a = 1.; d = 3.
+    A = [a][:,:]; D = [d][:,:]
+    scalar_sys = NoisyLinearDiscreteSystem(a, d)
+    @test scalar_sys == NoisyLinearDiscreteSystem(A, D)
+end
+
 @testset "Noisy Discrete constrained linear system" begin
     A = [1. 1; 1 -1]
     D = [1. 2; 0 1]

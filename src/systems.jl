@@ -1042,6 +1042,75 @@ of the form:
 """
 ConstrainedBlackBoxControlDiscreteSystem
 
+# ==============
+# Noisy systems
+# ==============
+
+for (Z, AZ) in ((:NoisyLinearContinuousSystem, :AbstractContinuousSystem),
+                (:NoisyLinearDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MTA <: AbstractMatrix{T}, MTD <: AbstractMatrix{T}} <: $(AZ)
+            A::MTA
+            D::MTD
+            function $(Z)(A::MTA, D::MTD) where {T, MTA <: AbstractMatrix{T}, MTD <: AbstractMatrix{T}}
+                @assert checksquare(A) == size(D,1)
+                return new{T, MTA, MTD}(A, D)
+            end
+        end
+        function $(Z)(A::Number, D::Number)
+           return $(Z)(hcat(A), hcat(D))
+        end
+
+        statedim(s::$Z) = size(s.A,1)
+        inputdim(::$Z) = 0
+        noisedim(s::$Z) = size(s.D, 2)
+        state_matrix(s::$Z) = s.A
+        noise_matrix(s::$Z) = s.D
+    end
+    for T in [Z, Type{<:eval(Z)}]
+        @eval begin
+            islinear(::$T) = true
+            isaffine(::$T) = true
+            ispolynomial(::$T) = false
+            isnoisy(::$T) = true
+            iscontrolled(::$T) = false
+            isconstrained(::$T) = false
+        end
+    end
+end
+
+@doc """
+    NoisyLinearContinuousSystem
+
+Continuous-time linear system with  additive disturbance of the form:
+
+```math
+    x' = A x + D w .
+```
+
+### Fields
+
+- `A` -- state matrix
+- `D` -- noise matrix
+"""
+NoisyLinearContinuousSystem
+
+@doc """
+    NoisyLinearDiscreteSystem
+
+Discrete-time linear system with additive disturbance of the form:
+
+```math
+    x_{k+1} = A x_k + D w_k .
+```
+
+### Fields
+
+- `A` -- state matrix
+- `D` -- noise matrix
+"""
+NoisyLinearDiscreteSystem
+
 for (Z, AZ) in ((:NoisyConstrainedLinearContinuousSystem, :AbstractContinuousSystem),
                 (:NoisyConstrainedLinearDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin

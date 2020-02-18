@@ -251,7 +251,6 @@ function parse_system(exprs)
     constraints = Vector{Expr}()
 
     # define defaults for state, noise and input symbol and default dimension
-    default_state_var = :x
     default_input_var = :u
     default_noise_var = :w
     state_var = nothing
@@ -325,21 +324,18 @@ function parse_system(exprs)
     nsets > 3 && throw(ArgumentError("cannot parse $nsets set constraints"))
 
     # error handling for variable names
-    got_state_var = state_var != nothing
+    state_var == nothing && throw(ArgumentError("the state variable was not found"))
     got_input_var = input_var != nothing
     got_noise_var = noise_var != nothing
-    if got_state_var && got_input_var && (state_var == input_var)
+    if got_input_var && (state_var == input_var)
          throw(ArgumentError("state and input variables have the same name `$(state_var)`"))
-    elseif got_state_var && got_noise_var && (state_var == noise_var)
+    elseif got_noise_var && (state_var == noise_var)
          throw(ArgumentError("state and noise variables have the same name `$(state_var)`"))
     elseif got_input_var && got_noise_var && (input_var == noise_var)
          throw(ArgumentError("input and noise variables have the same name `$(input_var)`"))
     end
 
     # assign default values
-    if !got_state_var
-        state_var = default_state_var
-    end
     if !got_input_var
         input_var = default_input_var
     end

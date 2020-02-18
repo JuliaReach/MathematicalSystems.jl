@@ -381,6 +381,28 @@ end
     @test scalar_sys == NoisyConstrainedLinearContinuousSystem(A, D, X, W)
 end
 
+@testset "Noisy continuous control linear system" begin
+    A = [1. 1; 1 -1]
+    B = Matrix([0.5 1.5]')
+    D = [1. 2; 0 1]
+    s = NoisyLinearControlContinuousSystem(A, B, D)
+    @test s.A == A
+    @test s.B == B
+    @test s.D == D
+    @test statedim(s) == 2
+    @test inputdim(s) == 1
+    @test noisedim(s) == 2
+    for s = [s, typeof(s)]
+        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+    end
+    # Scalar System
+    a = 1.; b = 2.; d = 3.
+    A = [a][:,:]; B = [b][:,:]; D = [d][:,:]
+    scalar_sys = NoisyLinearControlContinuousSystem(a, b, d)
+    @test scalar_sys == NoisyLinearControlContinuousSystem(A, B, D)
+end
+
 @testset "Noisy Continuous constrained control linear system" begin
     A = [1. 1; 1 -1]
     B = Matrix([0.5 1.5]')

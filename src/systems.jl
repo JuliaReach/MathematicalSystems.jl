@@ -1184,6 +1184,77 @@ Discrete-time linear system with additive disturbance and state constraints of t
 """
 NoisyConstrainedLinearDiscreteSystem
 
+for (Z, AZ) in ((:NoisyLinearControlContinuousSystem, :AbstractContinuousSystem),
+                (:NoisyLinearControlDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, MTD <: AbstractMatrix{T}} <: $(AZ)
+            A::MTA
+            B::MTB
+            D::MTD
+            function $(Z)(A::MTA, B::MTB, D::MTD) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, MTD <: AbstractMatrix{T}}
+                @assert checksquare(A) == size(B, 1) == size(D,1)
+                return new{T, MTA, MTB, MTD}(A, B, D)
+            end
+        end
+        function $(Z)(A::Number, B::Number, D::Number)
+           return $(Z)(hcat(A), hcat(B), hcat(D))
+        end
+
+        statedim(s::$Z) = size(s.A, 1)
+        inputdim(s::$Z) = size(s.B, 2)
+        noisedim(s::$Z) = size(s.D, 2)
+        state_matrix(s::$Z) = s.A
+        input_matrix(s::$Z) = s.B
+        noise_matrix(s::$Z) = s.D
+    end
+    for T in [Z, Type{<:eval(Z)}]
+        @eval begin
+            islinear(::$T) = true
+            isaffine(::$T) = true
+            ispolynomial(::$T) = false
+            isnoisy(::$T) = true
+            iscontrolled(::$T) = true
+            isconstrained(::$T) = false
+        end
+    end
+end
+
+@doc """
+    NoisyLinearControlContinuousSystem
+
+Continuous-time noisy linear control system of the form:
+
+```math
+    x' = A x + B u + D w .
+```
+
+
+### Fields
+
+- `A` -- state matrix
+- `B` -- input matrix
+- `D` -- noise matrix
+"""
+NoisyLinearControlContinuousSystem
+
+@doc """
+    NoisyLinearControlDiscreteSystem
+
+Continuous-time noisy linear control system of the form:
+
+```math
+    x_{k+1} = A x_k + B u_k + D w_k .
+```
+
+
+### Fields
+
+- `A` -- state matrix
+- `B` -- input matrix
+- `D` -- noise matrix
+"""
+NoisyLinearControlDiscreteSystem
+
 for (Z, AZ) in ((:NoisyConstrainedLinearControlContinuousSystem, :AbstractContinuousSystem),
                 (:NoisyConstrainedLinearControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
@@ -1228,12 +1299,12 @@ end
 @doc """
     NoisyConstrainedLinearControlContinuousSystem
 
-Continuous-time affine control system with state constraints of the form:
+Continuous-time noisy linear control system with state constraints of the form:
 
 ```math
-    x' = A x + B u + Dw, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U}, w(t) ∈ \\mathcal{W} \\text{ for all } t,
+    x' = A x + B u + D w, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U}, w(t) ∈ \\mathcal{W}.
 ```
-and ``c`` a vector.
+
 
 ### Fields
 
@@ -1249,12 +1320,12 @@ NoisyConstrainedLinearControlContinuousSystem
 @doc """
     NoisyConstrainedLinearControlDiscreteSystem
 
-Continuous-time affine control system with state constraints of the form:
+Continuous-time noisy linear control system with state constraints of the form:
 
 ```math
-    x_{k+1} = A x_k + B u_k + D w_k, x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U}, w_k ∈ \\mathcal{W} \\text{ for all } k,
+    x_{k+1} = A x_k + B u_k + D w_k, x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U}, w_k ∈ \\mathcal{W}.
 ```
-and ``c`` a vector.
+
 
 ### Fields
 

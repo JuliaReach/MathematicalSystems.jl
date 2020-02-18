@@ -125,6 +125,10 @@ for (Z, AZ) in ((:LinearContinuousSystem, :AbstractContinuousSystem),
                 return new{T, MT}(A)
             end
         end
+        function $(Z)(A::Number)
+             return $(Z)(hcat(A))
+        end
+
         statedim(s::$Z) = size(s.A, 1)
         inputdim(::$Z) = 0
         noisedim(::$Z) = 0
@@ -183,6 +187,10 @@ for (Z, AZ) in ((:AffineContinuousSystem, :AbstractContinuousSystem),
                 return new{T, MT, VT}(A, c)
             end
         end
+        function $(Z)(A::Number, c::Number)
+             return $(Z)(hcat(A), vcat(c))
+        end
+
         statedim(s::$Z) = length(s.c)
         inputdim(::$Z) = 0
         noisedim(::$Z) = 0
@@ -244,6 +252,10 @@ for (Z, AZ) in ((:LinearControlContinuousSystem, :AbstractContinuousSystem),
                 return new{T, MTA, MTB}(A, B)
             end
         end
+        function $(Z)(A::Number, B::Number)
+             return $(Z)(hcat(A), hcat(B))
+        end
+
         statedim(s::$Z) = size(s.A, 1)
         inputdim(s::$Z) = size(s.B, 2)
         noisedim(::$Z) = 0
@@ -305,6 +317,10 @@ for (Z, AZ) in ((:ConstrainedLinearContinuousSystem, :AbstractContinuousSystem),
                 return new{T, MT, ST}(A, X)
             end
         end
+        function $(Z)(A::Number, X)
+             return $(Z)(hcat(A), X)
+        end
+
         statedim(s::$Z) = size(s.A, 1)
         inputdim(::$Z) = 0
         noisedim(::$Z) = 0
@@ -367,6 +383,10 @@ for (Z, AZ) in ((:ConstrainedAffineContinuousSystem, :AbstractContinuousSystem),
                 return new{T, MT, VT, ST}(A, c, X)
             end
         end
+        function $(Z)(A::Number, c::Number, X)
+             return $(Z)(hcat(A), vcat(c), X)
+        end
+
         statedim(s::$Z) = length(s.c)
         inputdim(::$Z) = 0
         noisedim(::$Z) = 0
@@ -434,6 +454,10 @@ for (Z, AZ) in ((:ConstrainedAffineControlContinuousSystem, :AbstractContinuousS
                 return new{T, MTA, MTB, VT, ST, UT}(A, B, c, X, U)
             end
         end
+        function $(Z)(A::Number, B::Number, c::Number, X, U)
+             return $(Z)(hcat(A), hcat(B), vcat(c), X, U)
+        end
+
         statedim(s::$Z) = length(s.c)
         inputdim(s::$Z) = size(s.B, 2)
         noisedim(::$Z) = 0
@@ -508,6 +532,10 @@ for (Z, AZ) in ((:ConstrainedLinearControlContinuousSystem, :AbstractContinuousS
                 return new{T, MTA, MTB, ST, UT}(A, B, X, U)
             end
         end
+        function $(Z)(A::Number, B::Number, X, U)
+             return $(Z)(hcat(A), hcat(B), X, U)
+        end
+
         statedim(s::$Z) = size(s.A, 1)
         inputdim(s::$Z) = size(s.B, 2)
         noisedim(::$Z) = 0
@@ -574,6 +602,11 @@ for (Z, AZ) in ((:LinearAlgebraicContinuousSystem, :AbstractContinuousSystem),
                 return new{T, MTA, MTE}(A, E)
             end
         end
+        function $(Z)(A::Number, E::Number)
+             return $(Z)(hcat(A), hcat(E))
+        end
+
+
         statedim(s::$Z) = size(s.A, 1)
         inputdim(::$Z) = 0
         noisedim(::$Z) = 0
@@ -635,6 +668,10 @@ for (Z, AZ) in ((:ConstrainedLinearAlgebraicContinuousSystem, :AbstractContinuou
                 return new{T, MTA, MTE, ST}(A, E, X)
             end
         end
+        function $(Z)(A::Number, E::Number, X)
+             return $(Z)(hcat(A), hcat(E), X)
+        end
+
         statedim(s::$Z) = size(s.A, 1)
         inputdim(::$Z) = 0
         noisedim(::$Z) = 0
@@ -1018,6 +1055,10 @@ for (Z, AZ) in ((:NoisyConstrainedLinearContinuousSystem, :AbstractContinuousSys
                 return new{T, MTA, MTD, ST, WT}(A, D, X, W)
             end
         end
+        function $(Z)(A::Number, D::Number, X, W)
+           return $(Z)(hcat(A), hcat(D), X, W)
+        end
+
         statedim(s::$Z) = size(s.A,1)
         inputdim(::$Z) = 0
         noisedim(s::$Z) = size(s.D, 2)
@@ -1089,6 +1130,10 @@ for (Z, AZ) in ((:NoisyConstrainedLinearControlContinuousSystem, :AbstractContin
                 return new{T, MTA, MTB, MTD, ST, UT, WT}(A, B, D, X, U, W)
             end
         end
+        function $(Z)(A::Number, B::Number, D::Number, X, U, W)
+           return $(Z)(hcat(A), hcat(B), hcat(D), X, U, W)
+        end
+
         statedim(s::$Z) = size(s.A, 1)
         inputdim(s::$Z) = size(s.B, 2)
         noisedim(s::$Z) = size(s.D, 2)
@@ -1169,6 +1214,10 @@ for (Z, AZ) in ((:NoisyConstrainedAffineControlContinuousSystem, :AbstractContin
                 return new{T, MTA, MTB, VT, MTD, ST, UT, WT}(A, B, c, D, X, U, W)
             end
         end
+        function $(Z)(A::Number, B::Number, c::Number, D::Number, X, U, W)
+           return $(Z)(hcat(A), hcat(B), vcat(c), hcat(D), X, U, W)
+        end
+
         statedim(s::$Z) = length(s.c)
         stateset(s::$Z) = s.X
         inputdim(s::$Z) = size(s.B, 2)

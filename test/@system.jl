@@ -58,9 +58,9 @@ end
     @test sys == LinearContinuousSystem(A1)
 
     # automatic identification of rhs linearity
-    @test @system(x' = -x) == LinearContinuousSystem(-1*IdentityMultiple(I,1))
-    @test @system(x' = x, dim=3) == LinearContinuousSystem(IdentityMultiple(I, 3))
-    @test @system(x' = 2x, dim=3) == LinearContinuousSystem(2.0*IdentityMultiple(I,3))
+    @test @system(x' = -x) == LinearContinuousSystem(-1.0*IdentityMultiple(I, 1))
+    @test @system(x' = x, dim=3) == LinearContinuousSystem(1.0*IdentityMultiple(I, 3))
+    @test @system(x' = 2x, dim=3) == LinearContinuousSystem(2.0*IdentityMultiple(I, 3))
 
     @test @system(x' = A*x, x ∈ X) == ConstrainedLinearContinuousSystem(A,X)
     @test @system(x1' = A1x1, x1 ∈ X1) == ConstrainedLinearContinuousSystem(A1,X1)
@@ -244,4 +244,20 @@ end
 
     sys = @system(x⁺ = f1(x, u, w), x ∈ X, u ∈ U, w ∈ W, dims = (2, 2, 2))
     @test sys == NoisyConstrainedBlackBoxControlDiscreteSystem(f1, 2, 2, 2, X, U, W)
+end
+
+# =======================
+# Initial value problems
+# =======================
+@testset "@system with for an initial-value problem" begin
+    # continuous ivp in floating-point
+    s = IVP(LinearContinuousSystem(I(-1.0, 1)), Interval(-1, 1))
+    @test @system(x' = -1.0x, x(0) ∈ Interval(-1, 1)) == s
+
+    # similar for integers
+    s = IVP(LinearDiscreteSystem(I(-1, 1)), [1])
+    @test @system(x⁺ = -x, x(0) ∈ [1]) == s
+
+    # initial state assignment doesn't match state variable
+    @test_throws ArgumentError @system(x' = -x, t(0) ∈ Interval(-1.0, 1.0))
 end

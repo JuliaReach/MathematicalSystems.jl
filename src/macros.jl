@@ -244,7 +244,6 @@ function strip_dynamic_equation(expr)
 end
 
 function parse_system(exprs)
-
     # define default dynamic equation, unknown abstract system type,
     # and empty list of constraints
     dynamic_equation = nothing
@@ -259,6 +258,7 @@ function parse_system(exprs)
     input_var = nothing
     noise_var = nothing
     dimension = nothing
+    initial_state = nothing # for initial-value problems
 
     # main loop to parse the subexpressions in exprs
     for ex in exprs
@@ -290,6 +290,14 @@ function parse_system(exprs)
                 throw(ArgumentError("could not properly parse the equation $ex; " *
                                     "see the documentation for valid examples"))
             end
+
+        elseif @capture(ex, x_(0) ∈ X0_)
+            # TODO? handle equality, || @capture(ex, x_(0) = X0_)
+            if x != state_var
+                throw(ArgumentError("the initial state assignment, $x(0), does "*
+                "not correspond to the state variable $state_var"))
+            end
+            initial_state = X0
 
         elseif @capture(ex, state_ ∈ Set_)  # parse a constraint
             push!(constraints, ex)
@@ -338,12 +346,45 @@ function parse_system(exprs)
     if !got_noise_var
         noise_var = default_noise_var
     end
-    return dynamic_equation, AT, constraints, state_var, input_var, noise_var, dimension
+
+    return dynamic_equation, AT, constraints,
+           state_var, input_var, noise_var, dimension, initial_state
 end
 
-# extract the field and value parameter from the dynamic equation `equation`
-# in the form `rhs = [(:A_user, :A), (:B_user, :B), ....]` and
-# `lhs = [(:E_user, :E)]` or `lhs = Any[]`
+"""
+    extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
+
+Extract the value and field parameter from the dynamic equation `equation` according
+to the variable `state`, `input` and `noise`.
+
+For the right-hand side of the dynamic equation, this function returns a vector of tuples
+containing some elements from the list
+- `(:A_user, :A)`
+- `(:B_user, :B)`
+- `(:c_user, :c)`
+- `(:D_user, :D)`
+- `(:f_user, :f)`
+- `(:statedim_user :statedim)`
+- `(:inputdim_user :inputdim)`
+- `(:noisedim_user :noisedim)`
+and for the left-hand side, it returns either an empty vector `Any[]` or
+`[(:E_user, :E)]` where the first argument of the tuple corresponds to the value
+and the second argument of the tuple corresponds to the field parameter.
+
+### Input
+
+- `equation` -- dynamic equation
+- `state`    -- state variable
+- `input`    -- input variable
+- `noise`    -- noise variable
+- `dim`      -- dimensionality
+- `AT`       -- abstract system type
+
+### Output
+
+Two arrays of tuples containing the value and field parameters for the right-hand
+and left-hand side of the dynamic equation `equation`.
+"""
 function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
     @capture(equation, lhs_ = rhscode_)
     lhs_params = Any[]
@@ -377,14 +418,14 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
             if AT == AbstractDiscreteSystem
                 push!(rhs_params, (dim, :statedim))
             elseif AT == AbstractContinuousSystem
-                push!(rhs_params, (IdentityMultiple(I, dim), :A))
+                push!(rhs_params, (I(dim), :A))
             end
         elseif rhs == :(0) && AT == AbstractContinuousSystem # x' = 0
             push!(rhs_params, (dim, :statedim))
         else
             if @capture(rhs, -var_) # => rhs = -x
                 if state == var
-                    push!(rhs_params, (-1*IdentityMultiple(I, dim), :A))
+                    push!(rhs_params, (-1.0*I(dim), :A))
                 end
             else
                 rhs = add_asterisk(rhs, state, input, noise)
@@ -394,7 +435,7 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
                         if value == nothing # e.g. => rhs = Ax
                             push!(rhs_params, (array, :A))
                         else # => e.g., rhs = 2x
-                            push!(rhs_params, (value*IdentityMultiple(I,dim), :A))
+                            push!(rhs_params, (value*I(dim), :A))
                         end
                     else
                         throw(ArgumentError("if there is only one term on the "*
@@ -417,9 +458,9 @@ If not, `summand` is returned.
 ### Input
 
 - `summand` -- expressions
-- `state` -- state variable
-- `input` -- input variable
-- `noise` -- noise variable, if available
+- `state`   -- state variable
+- `input`   -- input variable
+- `noise`   -- noise variable
 
 ### Output
 
@@ -612,7 +653,10 @@ end
 # tuple of symbols where the field name is either `:X`, `:U` or `:W` and
 # the variable name is the value parsed as Set_
 function extract_set_parameter(expr, state, input, noise) # input => to check set definitions
-    if @capture(expr, x_ ∈ Set_)
+    if @capture(expr, x_(0) ∈ Set_)
+        return Set, :x0
+
+    elseif @capture(expr, x_ ∈ Set_)
         if x == state
             return  Set, :X
         elseif x == input
@@ -620,8 +664,8 @@ function extract_set_parameter(expr, state, input, noise) # input => to check se
         elseif x == noise
             return  Set, :W
         else
-            error("$expr is not a valid set definition, it does not contain"*
-                  "the state $state, the input $input or noise term $noise")
+            error("$expr is not a valid set constraint definition; it does not contain"*
+                   "the state $state, the input $input or noise term $noise")
         end
     end
     throw(ArgumentError("the set entry $(expr) does not have the correct form `x_ ∈ X_`"))
@@ -691,8 +735,8 @@ Similarly, a noise variable is specified with `noise: var` or `noise=var`.
   `*` operator is mandatory.
 
 - Systems of the form `x' = α*x` where `α` is a scalar are parsed as linear
-  systems. The default dimension is `1`; if the system is higher-dimensional, use
-  `dim`, as in `x' = 2x, dim=3`.
+  systems. The default dimension is `1` and `α` is parsed as `Float64`;
+  if the system is higher-dimensional, use `dim`, as in `x' = 2x, dim=3`.
 
 ### Examples
 
@@ -745,16 +789,22 @@ ConstrainedBlackBoxControlDiscreteSystem{typeof(f),BallInf{Float64},BallInf{Floa
 macro system(expr...)
     try
         if typeof(expr) == :Expr
-            dyn_eq, AT, constr, state, input, noise, dim = parse_system([expr])
+            dyn_eq, AT, constr, state, input, noise, dim, x0 = parse_system([expr])
         else
-            dyn_eq, AT, constr, state, input, noise, dim = parse_system(expr)
+            dyn_eq, AT, constr, state, input, noise, dim, x0 = parse_system(expr)
         end
         lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, input, noise, dim, AT)
         set = extract_set_parameter.(constr, state, input, noise)
         # TODO: order set variables such that the order is X, U, W
         field_names, var_names = constructor_input(lhs, rhs, set)
         sys_type = _corresponding_type(AT, field_names)
-        return  esc(Expr(:call, :($sys_type), :($(var_names...))))
+        sys = Expr(:call, :($sys_type), :($(var_names...)))
+        if x0 == nothing
+            return esc(sys)
+        else
+            ivp = Expr(:call, InitialValueProblem, :($sys), :($x0))
+            return esc(ivp)
+        end
     catch ex
         if  isa(ex, ArgumentError)
             return :(throw($ex))

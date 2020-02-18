@@ -20,6 +20,7 @@ end
     @test (I2 + I2).M == UniformScaling(2.0)
     @test (10.0 * I2).M == UniformScaling(10.0)
     @test (I2 * I2).M == I2.M
+    @test (-I2).M == UniformScaling(-1.0)
 
     @test_throws AssertionError I2 + I10
     @test_throws AssertionError I2 * I10

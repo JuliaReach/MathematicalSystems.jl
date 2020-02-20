@@ -243,7 +243,11 @@ function strip_dynamic_equation(expr)
     return (nothing, nothing, nothing)
 end
 
-function parse_system(exprs)
+function parse_system(expr::Expr)
+    return parse_system((expr,))
+end
+
+function parse_system(exprs::NTuple{N, Expr}) where {N}
     # define default dynamic equation, unknown abstract system type,
     # and empty list of constraints
     dynamic_equation = nothing
@@ -795,16 +799,8 @@ ConstrainedBlackBoxControlDiscreteSystem{typeof(f),BallInf{Float64},BallInf{Floa
 """
 macro system(expr...)
     try
-        if typeof(expr) == :Expr
-            dyn_eq, AT, constr, state, input, noise, dim, x0 = parse_system([expr])
-        else
-            dyn_eq, AT, constr, state, input, noise, dim, x0 = parse_system(expr)
-        end
-        lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, input, noise, dim, AT)
-        set = extract_set_parameter.(constr, state, input, noise)
-        # TODO: order set variables such that the order is X, U, W
-        field_names, var_names = constructor_input(lhs, rhs, set)
-        sys_type = _corresponding_type(AT, field_names)
+        dyn_eq, AT, constr, state, input, noise, dim, x0 = parse_system(expr)
+        sys_type, var_names = _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
         sys = Expr(:call, :($sys_type), :($(var_names...)))
         if x0 == nothing
             return esc(sys)
@@ -819,4 +815,34 @@ macro system(expr...)
             throw(ex)
         end
     end
+end
+
+macro ivp(expr...)
+    try
+        dyn_eq, AT, constr, state, input, noise, dim, x0 = parse_system(expr)
+        sys_type, var_names = _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
+        sys = Expr(:call, :($sys_type), :($(var_names...)))
+        if x0 == nothing
+            return :(throw("an initial-value problem should define the " *
+                           "initial states, but such expression was not found"))
+        else
+            ivp = Expr(:call, InitialValueProblem, :($sys), :($x0))
+            return esc(ivp)
+        end
+    catch ex
+        if isa(ex, ArgumentError)
+            return :(throw($ex))
+        else
+            throw(ex)
+        end
+    end
+end
+
+function _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
+    lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, input, noise, dim, AT)
+    set = extract_set_parameter.(constr, state, input, noise)
+    # TODO: order set variables such that the order is X, U, W
+    field_names, var_names = constructor_input(lhs, rhs, set)
+    sys_type = _corresponding_type(AT, field_names)
+    return sys_type, var_names
 end

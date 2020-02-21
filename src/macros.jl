@@ -669,7 +669,7 @@ Filter and sort the vector `parameters` according to `order`.
 
 ### Output
 
-A new vector of tuplescorresponding to `parameters` filtered and sorted according
+A new vector of tuples corresponding to `parameters` filtered and sorted according
 to `order`.
 
 ### Example

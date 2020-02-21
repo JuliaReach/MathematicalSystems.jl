@@ -4,6 +4,7 @@ using MacroTools: @capture
 using InteractiveUtils: subtypes
 export @system
 
+import Base: sort
 
 # ========================
 # @map macro
@@ -661,7 +662,6 @@ end
 
 Filter and sort the vector `parameters` according to `order`.
 
-
 ### Input
 
 - `parameters` -- vector of tuples
@@ -672,28 +672,26 @@ Filter and sort the vector `parameters` according to `order`.
 A new vector of tuples corresponding to `parameters` filtered and sorted according
 to `order`.
 
-### Example
+### Examples
 
 ```jldoctest
-julia> using MathematicalSystems
-
 julia> parameters= [(:U1, :U), (:X1, :X), (:W1, :W)];
 
-julia> MathematicalSystems.sort(parameters, (:X, :U, :W))
+julia> sort(parameters, (:X, :U, :W))
 3-element Array{Tuple{Any,Symbol},1}:
  (:X1, :X)
  (:U1, :U)
  (:W1, :W)
 
-julia>  parameters= [(:const, :c), (:A, :A)];
+julia>  parameters = [(:const, :c), (:A, :A)];
 
-julia> MathematicalSystems.sort(parameters, (:A, :B, :c, :D))
+julia> sort(parameters, (:A, :B, :c, :D))
 2-element Array{Tuple{Any,Symbol},1}:
  (:A, :A)
  (:const, :c)
 ```
 
-### Note
+### Notes
 
 `parameters` is a vector that contains tuples whose second element
 is considered for the sorting according to `order`.

@@ -539,19 +539,19 @@ julia> using MathematicalSystems: extract_sum
 
 julia> extract_sum([:(A1*x)], :x, :u, :w)
 1-element Array{Tuple{Any,Symbol},1}:
- (:A1, :A)
+ (:(hcat(A1)), :A)
 
 julia> extract_sum([:(A1*x), :(B1*u), :c], :x, :u, :w)
 3-element Array{Tuple{Any,Symbol},1}:
- (:A1, :A)
- (:B1, :B)
- (:c, :c)
+ (:(hcat(A1)), :A)
+ (:(hcat(B1)), :B)
+ (:(vcat(c)), :c)
 
 julia> extract_sum([:(A1*x7), :( B1*u7), :( B2*w7)], :x7, :u7, :w7)
 3-element Array{Tuple{Any,Symbol},1}:
- (:A1, :A)
- (:B1, :B)
- (:B2, :D)
+ (:(hcat(A1)), :A)
+ (:(hcat(B1)), :B)
+ (:(hcat(B2)), :D)
 ```
 
 ### Notes
@@ -579,16 +579,16 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
     for summand in summands
         if @capture(summand, array_ * var_)
             if state == var
-                push!(params, (array, :A))
+                push!(params, (Expr(:call, :hcat, array), :A))
                 # obtain "state_dim" for later using in IdentityMultiple
                 state_dim =  Expr(:call, :size, :($array), 1)
                 got_state_dim = true
 
             elseif input == var
-                push!(params, (array, :B))
+                push!(params, (Expr(:call, :hcat, array), :B))
 
             elseif noise == var
-                push!(params, (array, :D))
+                push!(params, (Expr(:call, :hcat, array), :D))
 
             else
                 throw(ArgumentError("in the dynamic equation, the expression "*
@@ -596,11 +596,7 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
                 "or the noise term $noise"))
             end
         elseif @capture(summand, array_)
-            if got_state_dim
-                identity = :(I($state_dim))
-            else
-                identity = 1.0
-            end
+            identity = :(I($state_dim))
             # if array == variable: field value equals identity
             if state == array
                 push!(params, (identity, :A))
@@ -609,7 +605,7 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
             elseif noise == array
                 push!(params, (identity, :D))
             else
-                push!(params, (array, :c))
+                push!(params, (Expr(:call, :vcat, array), :c))
             end
         end
     end

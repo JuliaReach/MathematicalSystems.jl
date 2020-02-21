@@ -675,11 +675,11 @@ to `order`.
 ### Example
 
 ```jldoctest
-julia> using MathematicalSystems: sort
+julia> using MathematicalSystems
 
 julia> parameters= [(:U1, :U), (:X1, :X), (:W1, :W)];
 
-julia> sort(parameters, (:X, :U, :W)
+julia> MathematicalSystems.sort(parameters, (:X, :U, :W))
 3-element Array{Tuple{Any,Symbol},1}:
  (:X1, :X)
  (:U1, :U)
@@ -687,7 +687,7 @@ julia> sort(parameters, (:X, :U, :W)
 
 julia>  parameters= [(:const, :c), (:A, :A)];
 
-julia> sort(parameters, (:A, :B, :c, :D)
+julia> MathematicalSystems.sort(parameters, (:A, :B, :c, :D))
 2-element Array{Tuple{Any,Symbol},1}:
  (:A, :A)
  (:const, :c)

@@ -698,7 +698,7 @@ julia> MathematicalSystems.sort(parameters, (:A, :B, :c, :D))
 `parameters` is a vector that contains tuples whose second element
 `Tuple` is considered for the sorting according to `order`.
 
-If a value of `order` is not contained in `parameters` the corresponding entry of
+If a value of `order` is not contained in `parameters`, the corresponding entry of
 `order` will be omitted.
 """
 function sort(parameters::Vector{<:Tuple{Any, Symbol}}, order::NTuple{N, Symbol}) where {N}

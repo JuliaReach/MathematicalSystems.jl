@@ -66,10 +66,15 @@ export ContinuousIdentitySystem,
        ConstrainedPolynomialContinuousSystem,
        BlackBoxContinuousSystem,
        ConstrainedBlackBoxContinuousSystem,
+       BlackBoxControlContinuousSystem,
        ConstrainedBlackBoxControlContinuousSystem,
+       NoisyLinearContinuousSystem,
        NoisyConstrainedLinearContinuousSystem,
+       NoisyLinearControlContinuousSystem,
        NoisyConstrainedLinearControlContinuousSystem,
+       NoisyAffineControlContinuousSystem,
        NoisyConstrainedAffineControlContinuousSystem,
+       NoisyBlackBoxControlContinuousSystem,
        NoisyConstrainedBlackBoxControlContinuousSystem
 
 #==================================
@@ -90,10 +95,15 @@ export DiscreteIdentitySystem,
        ConstrainedPolynomialDiscreteSystem,
        BlackBoxDiscreteSystem,
        ConstrainedBlackBoxDiscreteSystem,
+       BlackBoxControlDiscreteSystem,
        ConstrainedBlackBoxControlDiscreteSystem,
+       NoisyLinearDiscreteSystem,
        NoisyConstrainedLinearDiscreteSystem,
+       NoisyLinearControlDiscreteSystem,
        NoisyConstrainedLinearControlDiscreteSystem,
+       NoisyAffineControlDiscreteSystem,
        NoisyConstrainedAffineControlDiscreteSystem,
+       NoisyBlackBoxControlDiscreteSystem,
        NoisyConstrainedBlackBoxControlDiscreteSystem
 
 #==========================================

@@ -313,6 +313,17 @@ function vanderpol_controlled!(x, u, dx)
     return dx
 end
 
+@testset "Continuous control black-box system" begin
+    add_one(x) = x + 1
+    s = BlackBoxControlContinuousSystem(add_one, 2, 1)
+    @test statedim(s) == 2
+    @test inputdim(s) == 1
+    for s = [s, typeof(s)]
+        @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+        @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+    end
+end
+
 @testset "Continuous control system defined by a function with state constraints" begin
     H = HalfSpace([1.0, 0.0], 0.0) # x <= 0
     U = Interval(-0.1, 0.1)
@@ -337,6 +348,26 @@ end
 # Noisy systems
 # ==============
 
+@testset "Noisy continuous linear system" begin
+    A = [1. 1; 1 -1]
+    D = [1. 2; 0 1]
+    s = NoisyLinearContinuousSystem(A, D)
+    @test s.A == A
+    @test s.D == D
+    @test statedim(s) == 2
+    @test inputdim(s) == 0
+    @test noisedim(s) == 2
+    for s = [s, typeof(s)]
+        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+    end
+    # Scalar System
+    a = 1.; d = 3.
+    A = [a][:,:]; D = [d][:,:]
+    scalar_sys = NoisyLinearContinuousSystem(a, d)
+    @test scalar_sys == NoisyLinearContinuousSystem(A, D)
+end
+
 @testset "Noisy Continuous constrained linear system" begin
     A = [1. 1; 1 -1]
     D = [1. 2; 0 1]
@@ -359,6 +390,28 @@ end
     A = [a][:,:]; D = [d][:,:]
     scalar_sys = NoisyConstrainedLinearContinuousSystem(a, d, X, W)
     @test scalar_sys == NoisyConstrainedLinearContinuousSystem(A, D, X, W)
+end
+
+@testset "Noisy continuous control linear system" begin
+    A = [1. 1; 1 -1]
+    B = Matrix([0.5 1.5]')
+    D = [1. 2; 0 1]
+    s = NoisyLinearControlContinuousSystem(A, B, D)
+    @test s.A == A
+    @test s.B == B
+    @test s.D == D
+    @test statedim(s) == 2
+    @test inputdim(s) == 1
+    @test noisedim(s) == 2
+    for s = [s, typeof(s)]
+        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+    end
+    # Scalar System
+    a = 1.; b = 2.; d = 3.
+    A = [a][:,:]; B = [b][:,:]; D = [d][:,:]
+    scalar_sys = NoisyLinearControlContinuousSystem(a, b, d)
+    @test scalar_sys == NoisyLinearControlContinuousSystem(A, B, D)
 end
 
 @testset "Noisy Continuous constrained control linear system" begin
@@ -387,6 +440,30 @@ end
     A = [a][:,:]; B = [b][:,:]; D = [d][:,:]
     scalar_sys = NoisyConstrainedLinearControlContinuousSystem(a, b, d, X, U, W)
     @test scalar_sys == NoisyConstrainedLinearControlContinuousSystem(A, B, D, X, U, W)
+end
+
+@testset "Noisy continuous control affine system" begin
+    A = [1. 1; 1 -1]
+    B = Matrix([0.5 1.5]')
+    c = [1.0, 0.5]
+    D = [1. 2; 0 1]
+    s = NoisyAffineControlContinuousSystem(A, B, c, D)
+    @test s.A == A
+    @test s.B == B
+    @test s.c == c
+    @test s.D == D
+    @test statedim(s) == 2
+    @test inputdim(s) == 1
+    @test noisedim(s) == 2
+    for s = [s, typeof(s)]
+        @test isaffine(s) && !islinear(s) && !ispolynomial(s)
+        @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+    end
+    # Scalar System
+    a = 1.; b = 2.; c = 0.1; d = 3.; X = 1; U = 2; W = 3
+    A = [a][:,:]; B = [b][:,:]; C = [c]; D = [d][:,:]
+    scalar_sys = NoisyAffineControlContinuousSystem(a, b, c, d)
+    @test scalar_sys == NoisyAffineControlContinuousSystem(A, B, C, D)
 end
 
 @testset "Noisy Continuous constrained control affine system" begin
@@ -418,6 +495,23 @@ end
     scalar_sys = NoisyConstrainedAffineControlContinuousSystem(a, b, c, d, X, U, W)
     @test scalar_sys == NoisyConstrainedAffineControlContinuousSystem(A, B, C, D, X, U, W)
 end
+
+@testset "Noisy continuous control black-box system" begin
+    n = 2
+    m = 1
+    l = 2
+    f(x,u,w) = ones(n,n)*x + ones(n,m)*u + ones(n,l)*w
+    s = NoisyBlackBoxControlContinuousSystem(f, n, m, l)
+    @test s.f == f
+    @test statedim(s) == n
+    @test inputdim(s) == m
+    @test noisedim(s) == l
+    for s = [s, typeof(s)]
+        @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+        @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+    end
+end
+
 
 @testset "Noisy Continuous constrained control blackbox system" begin
     n = 2

@@ -218,9 +218,40 @@ end
     end
 end
 
+@testset "Discrete control black-box system" begin
+    add_one(x) = x + 1
+    s = BlackBoxControlDiscreteSystem(add_one, 2, 1)
+    @test statedim(s) == 2
+    @test inputdim(s) == 1
+    for s = [s, typeof(s)]
+        @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+        @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+    end
+end
+
 # ==============
 # Noisy systems
 # ==============
+
+@testset "Noisy Discrete linear system" begin
+    A = [1. 1; 1 -1]
+    D = [1. 2; 0 1]
+    s = NoisyLinearDiscreteSystem(A, D)
+    @test s.A == A
+    @test s.D == D
+    @test statedim(s) == 2
+    @test inputdim(s) == 0
+    @test noisedim(s) == 2
+    for s = [s, typeof(s)]
+        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+    end
+    # Scalar System
+    a = 1.; d = 3.
+    A = [a][:,:]; D = [d][:,:]
+    scalar_sys = NoisyLinearDiscreteSystem(a, d)
+    @test scalar_sys == NoisyLinearDiscreteSystem(A, D)
+end
 
 @testset "Noisy Discrete constrained linear system" begin
     A = [1. 1; 1 -1]
@@ -244,6 +275,28 @@ end
     A = [a][:,:]; D = [d][:,:]
     scalar_sys = NoisyConstrainedLinearDiscreteSystem(a, d, X, W)
     @test scalar_sys == NoisyConstrainedLinearDiscreteSystem(A, D, X, W)
+end
+
+@testset "Noisy discrete control linear system" begin
+    A = [1. 1; 1 -1]
+    B = Matrix([0.5 1.5]')
+    D = [1. 2; 0 1]
+    s = NoisyLinearControlDiscreteSystem(A, B, D)
+    @test s.A == A
+    @test s.B == B
+    @test s.D == D
+    @test statedim(s) == 2
+    @test inputdim(s) == 1
+    @test noisedim(s) == 2
+    for s = [s, typeof(s)]
+        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+    end
+    # Scalar System
+    a = 1.; b = 2.; d = 3.
+    A = [a][:,:]; B = [b][:,:]; D = [d][:,:]
+    scalar_sys = NoisyLinearControlDiscreteSystem(a, b, d)
+    @test scalar_sys == NoisyLinearControlDiscreteSystem(A, B, D)
 end
 
 @testset "Noisy Discrete constrained control linear system" begin
@@ -272,6 +325,30 @@ end
     A = [a][:,:]; B = [b][:,:]; D = [d][:,:]
     scalar_sys = NoisyConstrainedLinearControlDiscreteSystem(a, b, d, X, U, W)
     @test scalar_sys == NoisyConstrainedLinearControlDiscreteSystem(A, B, D, X, U, W)
+end
+
+@testset "Noisy discrete control affine system" begin
+    A = [1. 1; 1 -1]
+    B = Matrix([0.5 1.5]')
+    c = [1.0, 0.5]
+    D = [1. 2; 0 1]
+    s = NoisyAffineControlDiscreteSystem(A, B, c, D)
+    @test s.A == A
+    @test s.B == B
+    @test s.c == c
+    @test s.D == D
+    @test statedim(s) == 2
+    @test inputdim(s) == 1
+    @test noisedim(s) == 2
+    for s = [s, typeof(s)]
+        @test isaffine(s) && !islinear(s) && !ispolynomial(s)
+        @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+    end
+    # Scalar System
+    a = 1.; b = 2.; c = 0.1; d = 3.; X = 1; U = 2; W = 3
+    A = [a][:,:]; B = [b][:,:]; C = [c]; D = [d][:,:]
+    scalar_sys = NoisyAffineControlDiscreteSystem(a, b, c, d)
+    @test scalar_sys == NoisyAffineControlDiscreteSystem(A, B, C, D)
 end
 
 @testset "Noisy Discrete constrained control affine system" begin
@@ -304,6 +381,22 @@ end
     @test scalar_sys == NoisyConstrainedAffineControlDiscreteSystem(A, B, C, D, X, U, W)
 end
 
+@testset "Noisy discrete control black-box system" begin
+    n = 2
+    m = 1
+    l = 2
+    f(x,u,w) = ones(n,n)*x + ones(n,m)*u + ones(n,l)*w
+    s = NoisyBlackBoxControlDiscreteSystem(f, n, m, l)
+    @test s.f == f
+    @test statedim(s) == n
+    @test inputdim(s) == m
+    @test noisedim(s) == l
+    for s = [s, typeof(s)]
+        @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+        @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+    end
+end
+
 @testset "Noisy Discrete constrained control blackbox system" begin
     n = 2
     m = 1
@@ -315,7 +408,7 @@ end
     s = NoisyConstrainedBlackBoxControlDiscreteSystem(f, n, m, l, X, U, W)
     @test s.f == f
     @test statedim(s) == n
-    @test inputdim(s) == dim(U)
+    @test inputdim(s) == m == dim(U)
     @test noisedim(s) == l == dim(W)
     @test stateset(s) == X
     @test inputset(s) == U

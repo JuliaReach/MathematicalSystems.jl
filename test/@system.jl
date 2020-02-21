@@ -234,6 +234,9 @@ end
 
     sys = @system(x⁺ = Ax + Bu + c + Dw, x ∈ X, u ∈ U1, w ∈ W1, w:noise, u:input)
     @test sys == NoisyConstrainedAffineControlDiscreteSystem(A, B, c, D, X, U1, W1)
+
+    # check error handling for repeated variable names
+    @test_throws ArgumentError @system(x⁺ = Ax + Bw + Dw, x ∈ X, w ∈ U1, w ∈ W1, noise=w, input=w)
 end
 
 @testset "@system for black-box discrete systems" begin

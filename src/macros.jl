@@ -4,6 +4,7 @@ using MacroTools: @capture
 using InteractiveUtils: subtypes
 export @system
 
+import Base: sort
 
 # ========================
 # @map macro
@@ -385,8 +386,8 @@ and left-hand side of the dynamic equation `equation`.
 """
 function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
     @capture(equation, lhs_ = rhscode_)
-    lhs_params = Any[]
-    rhs_params = Any[]
+    lhs_params = Vector{Tuple{Any, Symbol}}()
+    rhs_params = Vector{Tuple{Any, Symbol}}()
     # if a * is used on the lhs, the rhs is a code-block
     if  @capture(lhs, E_*x_)
         push!(lhs_params, (E, :E))
@@ -675,6 +676,60 @@ function extract_set_parameter(expr, state, input, noise) # input => to check se
 end
 
 """
+    sort(parameters::Vector, order::Tuple)
+
+Filter and sort the vector `parameters` according to `order`.
+
+### Input
+
+- `parameters` -- vector of tuples
+- `order`      -- tuple of symbols
+
+### Output
+
+A new vector of tuples corresponding to `parameters` filtered and sorted according
+to `order`.
+
+### Examples
+
+```jldoctest
+julia> parameters= [(:U1, :U), (:X1, :X), (:W1, :W)];
+
+julia> sort(parameters, (:X, :U, :W))
+3-element Array{Tuple{Any,Symbol},1}:
+ (:X1, :X)
+ (:U1, :U)
+ (:W1, :W)
+
+julia>  parameters = [(:const, :c), (:A, :A)];
+
+julia> sort(parameters, (:A, :B, :c, :D))
+2-element Array{Tuple{Any,Symbol},1}:
+ (:A, :A)
+ (:const, :c)
+```
+
+### Notes
+
+`parameters` is a vector that contains tuples whose second element
+is considered for the sorting according to `order`.
+
+If a value of `order` is not contained in `parameters`, the corresponding entry of
+`order` will be omitted.
+"""
+function sort(parameters::Vector{<:Tuple{Any, Symbol}}, order::NTuple{N, Symbol}) where {N}
+    order_parameters = Vector{Tuple{Any, Symbol}}()
+    for ordered_element in order
+        for tuple in parameters
+            if tuple[2] == ordered_element
+                push!(order_parameters, tuple)
+            end
+        end
+    end
+    return order_parameters
+end
+
+"""
     system(expr...)
 
 Return an instance of the system type corresponding to the given expressions.
@@ -797,9 +852,9 @@ macro system(expr...)
             dyn_eq, AT, constr, state, input, noise, dim, x0 = parse_system(expr)
         end
         lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, input, noise, dim, AT)
-        set = extract_set_parameter.(constr, state, input, noise)
-        # TODO: order set variables such that the order is X, U, W
-        field_names, var_names = constructor_input(lhs, rhs, set)
+        ordered_rhs = sort(rhs, (:A, :B, :c, :D, :f, :statedim, :inputdim, :noisedim))
+        ordered_set = sort(extract_set_parameter.(constr, state, input, noise), (:X, :U, :W))
+        field_names, var_names = constructor_input(lhs, ordered_rhs, ordered_set)
         sys_type = _corresponding_type(AT, field_names)
         sys = Expr(:call, :($sys_type), :($(var_names...)))
         if x0 == nothing

@@ -28,16 +28,29 @@ f1(x, u, w) = x'*x + u'*u + w'*w
 
 
 # ===================
-# Test to fix in next PR
+# Error Handling
 # ===================
+@testset "@system miscellaneous" begin
+    @testset "@system for arbitrary order of set specification" begin
+        sys = @system(x' = Ax + Bu, u∈U, x∈X)
+        @test sys == ConstrainedLinearControlContinuousSystem(A,B,X,U)
+        sys = @system(x' = Ax + Bu + Dw, u∈U, w∈W, x∈X)
+        @test sys == NoisyConstrainedLinearControlContinuousSystem(A,B,D,X,U,W)
+    end
+    @testset "@system for arbitrary order of rhs terms" begin
+        sys = @system(x' = Bu + Ax, u∈U, x∈X)
+        @test sys == ConstrainedLinearControlContinuousSystem(A,B,X,U)
+        sys = @system(x' = Dw + Ax + Bu , u∈U, w∈W, x∈X)
+        @test sys == NoisyConstrainedLinearControlContinuousSystem(A,B,D,X,U,W)
+        sys = @system(x' = c + Ax + Bu , u∈U, x∈X)
+        @test sys == ConstrainedAffineControlContinuousSystem(A,B,c,X,U)
+    end
+end
 
-# sys = @system(x' = Ax + Bu, u∈U, x∈X)
-# sys == ConstrainedLinearControlContinuousSystem(A,B,X,U)
 
 # ===================
 # Continuous systems
 # ===================
-
 @testset "@system for continous identity systems" begin
     @test @system(x' = 0, dim: 2) == ContinuousIdentitySystem(2)
     sys = @system x' = 0 dim: 2

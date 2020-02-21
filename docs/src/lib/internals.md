@@ -21,6 +21,7 @@ _corresponding_type
 _capture_dim
 extract_dyn_equation_parameters
 add_asterisk
+sort
 ```
 
 ## Querying expressions

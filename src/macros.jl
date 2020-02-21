@@ -363,8 +363,8 @@ and left-hand side of the dynamic equation `equation`.
 """
 function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
     @capture(equation, lhs_ = rhscode_)
-    lhs_params = Any[]
-    rhs_params = Any[]
+    lhs_params = Vector{Tuple{Any, Symbol}}()
+    rhs_params = Vector{Tuple{Any, Symbol}}()
     # if a * is used on the lhs, the rhs is a code-block
     if  @capture(lhs, E_*x_)
         push!(lhs_params, (E, :E))
@@ -669,17 +669,40 @@ Filter and sort the vector `parameters` according to `order`.
 
 ### Output
 
-A new vector corresponding to `parameters` filtered and sorted according to `order`.
+A new vector of tuplescorresponding to `parameters` filtered and sorted according
+to `order`.
+
+### Example
+
+```jldoctest
+julia> using MathematicalSystems: sort
+
+julia> parameters= [(:U1, :U), (:X1, :X), (:W1, :W)];
+
+julia> sort(parameters, (:X, :U, :W)
+3-element Array{Tuple{Any,Symbol},1}:
+ (:X1, :X)
+ (:U1, :U)
+ (:W1, :W)
+
+julia>  parameters= [(:const, :c), (:A, :A)];
+
+julia> sort(parameters, (:A, :B, :c, :D)
+2-element Array{Tuple{Any,Symbol},1}:
+ (:A, :A)
+ (:const, :c)
+```
 
 ### Note
+
 `parameters` is a vector that contains tuples where the second element of each
 `Tuple` is considered for the sorting according to `order`.
 
 If a value of `order` is not contained in `parameters` the corresponding entry of
 `order` will be omitted.
 """
-function sort(parameters::Vector, order::Tuple)
-    order_parameters = []
+function sort(parameters::Vector{<:Tuple{Any, Symbol}}, order::NTuple{N, Symbol}) where {N}
+    order_parameters = Vector{Tuple{Any, Symbol}}()
     for ordered_element in order
         for tuple in parameters
             if tuple[2] == ordered_element

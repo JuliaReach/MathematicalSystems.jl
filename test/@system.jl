@@ -161,7 +161,7 @@ end
     @test sys ==BlackBoxControlContinuousSystem(f1, 1,2)
     sys = @system(x' = f1(x, u), x ∈ X, u ∈ U, dims=(1, 2))
     @test sys == ConstrainedBlackBoxControlContinuousSystem(f1, 1, 2, X, U)
-    sys = @system(x' = f1(x, w), x ∈ X, w ∈ W, dims=(1, 2), noise:w, input=u)
+    # sys = @system(x' = f1(x, w), x ∈ X, w ∈ W, dims=(1, 2), noise:w, input=u)
     # @test sys == NoisyConstrainedBlackBoxContinuousSystem(f1, 1, 2, X, W)
     # allow for arbitrary input with definition for rhs of the form f_(x_, u_)
     sys = @system(x' = f1(x, u123), x ∈ X, u123 ∈ U, dims=(2, 3))

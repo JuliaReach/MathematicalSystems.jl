@@ -11,6 +11,9 @@
     end
 
     @test I(3, 3) == IdentityMultiple(3I, 3)
+
+    @test_throws ArgumentError I(-1)
+    @test_throws ArgumentError I(1, 0)
 end
 
 @testset "Operations between identity multiples" begin

@@ -75,6 +75,10 @@ IdentityMultiple{Rational{Int64}} of value 2//1 and order 2
 struct IdentityMultiple{T} <: AbstractMatrix{T}
     M::UniformScaling{T}
     n::Int
+    IdentityMultiple(M::UniformScaling{T}, n::Int) where {T} = begin
+        (n < 1) && throw(ArgumentError("the dimension of IdentityMultiple cannot be negative or zero"))
+        return new{T}(M, n)
+    end
 end
 
 Base.IndexStyle(::Type{<:IdentityMultiple}) = IndexLinear()

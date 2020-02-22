@@ -666,7 +666,7 @@ function extract_blackbox_parameter(rhs, state, input, noise, dim::AbstractVecto
         w != noise && throw(ArgumentError("the noise variable does not coincide "*
                                           "with the third argument of the black-box system"))
         length(dim) != 3 && throw(ArgumentError("the number of entry for `dim` "*
-                "does not coincide with the number of argument of the black-box system"))
+                    "does not coincide with the number of argument of the black-box system"))
         return [(f, :f), (dim[1], :statedim),
                          (dim[2], :inputdim),
                          (dim[3], :noisedim)]

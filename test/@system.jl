@@ -157,6 +157,8 @@ end
     @test sys == BlackBoxContinuousSystem(f1, 3)
     sys =  @system(x' = f1(x), x ∈ X, dim:2)
     @test sys == ConstrainedBlackBoxContinuousSystem(f1, 2, X)
+    sys = @system(x' = f1(x, u), dims=(1, 2))
+    @test sys ==BlackBoxControlContinuousSystem(f1, 1,2)
     sys = @system(x' = f1(x, u), x ∈ X, u ∈ U, dims=(1, 2))
     @test sys == ConstrainedBlackBoxControlContinuousSystem(f1, 1, 2, X, U)
     sys = @system(x' = f1(x, w), x ∈ X, w ∈ W, dims=(1, 2), noise:w, input=u)

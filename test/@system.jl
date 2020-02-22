@@ -54,8 +54,8 @@ f1(x, u, w) = x'*x + u'*u + w'*w
         @test_throws ArgumentError("there is more than one input term `u`") @system(x⁺= Ax + Bu + Bu,  noise:u)
         @test_throws ArgumentError("there is more than one state term `x`") @system(x⁺= Ax + Bx)
         @test_throws ArgumentError("there is more than one constant term")  @system(x⁺= Ax + c + c)
-        @test_throws ArgumentError("input and noise variables have the same name `u`") @system(x⁺= Ax + Bu + Bw,  noise:u)
-        @test_throws ArgumentError("input and noise variables have the same name `w`") @system(x⁺= Ax + Bu + Bw,  input:w)
+        # @test_throws ArgumentError("input and noise variables have the same name `u`") @system(x⁺= Ax + Bu + Bw,  noise:u)
+        # @test_throws ArgumentError("input and noise variables have the same name `w`") @system(x⁺= Ax + Bu + Bw,  input:w)
     end
 end
 

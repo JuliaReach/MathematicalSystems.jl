@@ -407,7 +407,7 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
         # the dimension argument needs to be a iterable
         (dim == nothing) && throw(ArgumentError("for a blackbox system, the dimension has to be defined"))
         dim_vec = [dim...]
-        push!(rhs_params, extract_blackbox_parameter(rhs, dim_vec)...)
+        push!(rhs_params, extract_blackbox_parameter(rhs, state, input, noise, dim_vec)...)
 
     # if rhs is a single term => affine systm (e.g. A*x, Ax, 2x, x or 0)
     else
@@ -613,25 +613,65 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
     return params
 end
 
-# Extract the variable name of the function of the rhs of an equation if it has
-# the form `f_(x_)`, `f_(x_,u_)` or `f_(x_,u_,w_)`.
-# In addition to the variable name of the function and the field name `:f`,
-# depending on the number of input arguments, the field names `:statedim`, `:inputdim`
-# and `:noisedim` with corresponding variable names (which are the number of state,
-# input and noise dimensions provided as input to the macro) is returned.
-function extract_blackbox_parameter(rhs, dim::AbstractVector)
+"""
+    extract_blackbox_parameter(rhs, state, input, noise, dim::AbstractVector)
+
+Extract the parameter for a black-box system from the expression `rhs`.
+
+### Inputs
+- `rhs`   -- right-hand side of dynamic equation
+- `state` -- state variable
+- `input` -- input variable
+- `noise` -- noise variable
+- `dim`   -- dimensionality
+
+### Output
+
+Array of tuples of symbols with variable name and field name.
+
+### Notes
+This function extracts the variable name of the function of the rhs of an equation
+if it has the form `f_(x_)`, `f_(x_,u_)` or `f_(x_,u_,w_)`.
+
+In addition to the variable name of the function and the field name `:f`,
+depending on the number of input arguments, the field names `:statedim`, `:inputdim`
+and `:noisedim` with corresponding variable names (which are the number of state,
+input and noise dimensions provided as input to the macro) is returned.
+"""
+function extract_blackbox_parameter(rhs, state, input, noise, dim::AbstractVector)
     if @capture(rhs, f_(x_))
-        @assert length(dim) == 1
+        x != state && throw(ArgumentError("the state variable does not coincide "*
+                                          "with the argument of the black-box system"))
+        length(dim) != 1 && throw(ArgumentError("the number of entry for `dim` "*
+                "does not coincide with the number of argument of the black-box system"))
         return [(f, :f), (dim[1], :statedim)]
     elseif @capture(rhs, f_(x_,u_))
-        @assert length(dim) == 2
-        return [(f, :f), (dim[1], :statedim),
-                         (dim[2], :inputdim)]
+        x != state && throw(ArgumentError("the state variable does not coincide "*
+                                          "with the first argument of the black-box system"))
+        length(dim) != 2 && throw(ArgumentError("the number of entry for `dim` "*
+                "does not coincide with the number of argument of the black-box system"))
+        if u == input
+            return [(f, :f), (dim[1], :statedim), (dim[2], :inputdim)]
+         elseif u == noise
+            return [(f, :f), (dim[1], :statedim), (dim[2], :noisedim)]
+        else
+            throw(ArgumentError("the second argument of the black-box system coincides "*
+            "neither with the input nor with the noise variable"))
+        end
     elseif @capture(rhs, f_(x_,u_,w_))
-        @assert length(dim) == 3
+        x != state && throw(ArgumentError("the state variable does not coincide "*
+                                          "with the first argument of the black-box system"))
+        u != input && throw(ArgumentError("the input variable does not coincide "*
+                                          "with the second argument of the black-box system"))
+        w != noise && throw(ArgumentError("the noise variable does not coincide "*
+                                          "with the third argument of the black-box system"))
+        length(dim) != 3 && throw(ArgumentError("the number of entry for `dim` "*
+                "does not coincide with the number of argument of the black-box system"))
         return [(f, :f), (dim[1], :statedim),
                          (dim[2], :inputdim),
                          (dim[3], :noisedim)]
+     else
+         throw(ArgumentError("the signature for the black-box system is unknown"))
     end
 end
 

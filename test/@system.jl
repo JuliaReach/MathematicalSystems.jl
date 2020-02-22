@@ -134,7 +134,7 @@ end
 end
 
 @testset "@system for noisy continous systems" begin
-    sys = @system(x' = f1(x, u, w), x ∈ X, u ∈ U, w ∈ W, dims=(1, 2,3))
+    sys = @system(x' = f1(x, u, w), x ∈ X, u ∈ U, w ∈ W, dims=(1,2,3))
     @test sys == NoisyConstrainedBlackBoxControlContinuousSystem(f1, 1, 2, 3, X, U, W)
 
     sys = @system(x' = Ax + Bu + Dw, x ∈ X, u ∈ U1, w ∈ W1)
@@ -151,12 +151,16 @@ end
 @testset "@system for black-box continous systems" begin
     @test_throws ArgumentError @system(x' = f1(x))
     @test_throws ArgumentError @system(x' = f1(x, u))
+    @test_throws ArgumentError @system(x' = f1(a), dim=1)
+    @test_throws ArgumentError @system(x' = f1(x, u), dim=(1,2), input=v)
     sys =  @system(x' = f1(x), dim:3)
     @test sys == BlackBoxContinuousSystem(f1, 3)
     sys =  @system(x' = f1(x), x ∈ X, dim:2)
     @test sys == ConstrainedBlackBoxContinuousSystem(f1, 2, X)
     sys = @system(x' = f1(x, u), x ∈ X, u ∈ U, dims=(1, 2))
     @test sys == ConstrainedBlackBoxControlContinuousSystem(f1, 1, 2, X, U)
+    sys = @system(x' = f1(x, w), x ∈ X, w ∈ W, dims=(1, 2), noise:w, input=u)
+    # @test sys == NoisyConstrainedBlackBoxContinuousSystem(f1, 1, 2, X, W)
     # allow for arbitrary input with definition for rhs of the form f_(x_, u_)
     sys = @system(x' = f1(x, u123), x ∈ X, u123 ∈ U, dims=(2, 3))
     @test sys == ConstrainedBlackBoxControlContinuousSystem(f1, 2, 3, X, U)

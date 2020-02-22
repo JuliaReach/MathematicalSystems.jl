@@ -2,7 +2,6 @@ using Espresso: matchex
 using LinearAlgebra: I
 using MacroTools: @capture
 using InteractiveUtils: subtypes
-export @system
 
 import Base: sort
 
@@ -244,7 +243,11 @@ function strip_dynamic_equation(expr)
     return (nothing, nothing, nothing)
 end
 
-function parse_system(exprs)
+function _parse_system(expr::Expr)
+    return _parse_system((expr,))
+end
+
+function _parse_system(exprs::NTuple{N, Expr}) where {N}
     # define default dynamic equation, unknown abstract system type,
     # and empty list of constraints
     dynamic_equation = nothing
@@ -729,6 +732,15 @@ function sort(parameters::Vector{<:Tuple{Any, Symbol}}, order::NTuple{N, Symbol}
     return order_parameters
 end
 
+function _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
+    lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, input, noise, dim, AT)
+    ordered_rhs = sort(rhs, (:A, :B, :c, :D, :f, :statedim, :inputdim, :noisedim))
+    ordered_set = sort(extract_set_parameter.(constr, state, input, noise), (:X, :U, :W))
+    field_names, var_names = constructor_input(lhs, ordered_rhs, ordered_set)
+    sys_type = _corresponding_type(AT, field_names)
+    return sys_type, var_names
+end
+
 """
     system(expr...)
 
@@ -846,19 +858,67 @@ ConstrainedBlackBoxControlDiscreteSystem{typeof(f),BallInf{Float64},BallInf{Floa
 """
 macro system(expr...)
     try
-        if typeof(expr) == :Expr
-            dyn_eq, AT, constr, state, input, noise, dim, x0 = parse_system([expr])
-        else
-            dyn_eq, AT, constr, state, input, noise, dim, x0 = parse_system(expr)
-        end
-        lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, input, noise, dim, AT)
-        ordered_rhs = sort(rhs, (:A, :B, :c, :D, :f, :statedim, :inputdim, :noisedim))
-        ordered_set = sort(extract_set_parameter.(constr, state, input, noise), (:X, :U, :W))
-        field_names, var_names = constructor_input(lhs, ordered_rhs, ordered_set)
-        sys_type = _corresponding_type(AT, field_names)
+        dyn_eq, AT, constr, state, input, noise, dim, x0 = _parse_system(expr)
+        sys_type, var_names = _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
         sys = Expr(:call, :($sys_type), :($(var_names...)))
         if x0 == nothing
             return esc(sys)
+        else
+            ivp = Expr(:call, InitialValueProblem, :($sys), :($x0))
+            return esc(ivp)
+        end
+    catch ex
+        if  isa(ex, ArgumentError)
+            return :(throw($ex))
+        else
+            throw(ex)
+        end
+    end
+end
+
+"""
+    ivp(expr...)
+
+Return an instance of the initial-value problem type corresponding to the given
+expressions.
+
+### Input
+
+- `expr` -- expressions separated by commas which define the dynamic equation,
+            the constraint sets or the dimensionality of the system, and the set
+            of initial states (required)
+
+### Output
+
+An initial-value problem that best matches the given expressions.
+
+### Notes
+
+This macro behaves like the `@system` macro, the sole difference being that in
+`@ivp` the constraint on the set of initial states is mandatory. For the technical
+details we refer to the documentation of [`@system`](@ref).
+
+### Examples
+
+```jldoctest ivp_macro
+julia> p = @ivp(x' = -x, x(0) ∈ [1.0]);
+
+julia> typeof(p)
+InitialValueProblem{LinearContinuousSystem{Float64,IdentityMultiple{Float64}},Array{Float64,1}}
+
+julia> initial_state(p)
+1-element Array{Float64,1}:
+ 1.0
+```
+"""
+macro ivp(expr...)
+    try
+        dyn_eq, AT, constr, state, input, noise, dim, x0 = _parse_system(expr)
+        sys_type, var_names = _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
+        sys = Expr(:call, :($sys_type), :($(var_names...)))
+        if x0 == nothing
+            return throw(ArgumentError("an initial-value problem should define the " *
+                        "initial states, but such expression was not found"))
         else
             ivp = Expr(:call, InitialValueProblem, :($sys), :($x0))
             return esc(ivp)

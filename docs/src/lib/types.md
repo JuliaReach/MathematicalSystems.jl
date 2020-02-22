@@ -96,6 +96,12 @@ EulerDiscretization
 @system
 ```
 
+## Initial-value problem macro
+
+```@docs
+@ivp
+```
+
 ## Identity operator
 
 ```@docs

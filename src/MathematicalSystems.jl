@@ -163,7 +163,9 @@ Macros
 ==========================#
 include("macros.jl")
 
-export @map
+export @map,
+       @system,
+       @ivp
 
 #===================================
 Successor state for discrete systems

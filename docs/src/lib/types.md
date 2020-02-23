@@ -114,6 +114,7 @@ IdentityMultiple
 InitialValueProblem
 IVP
 initial_state
+system
 ```
 
 ## Input Types

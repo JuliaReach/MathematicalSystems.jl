@@ -169,4 +169,6 @@ LinearAlgebra.I(n::Int, N::DataType=Float64) = IdentityMultiple(one(N)*I, n)
 IdentityMultiple(λ::Number, n::Int) = IdentityMultiple(λ*I, n)
 LinearAlgebra.I(λ::Number, n::Int) = IdentityMultiple(λ*I, n)
 
-LinearAlgebra.Hermitian(𝐼::IdentityMultiple) = Hermitian(convert(Matrix, 𝐼))
+function LinearAlgebra.Hermitian(𝐼::IdentityMultiple)
+    return Hermitian(Diagonal(fill(𝐼.M.λ, 𝐼.n)))
+end

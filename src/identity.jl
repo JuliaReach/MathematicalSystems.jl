@@ -99,7 +99,7 @@ end
 
 Base.:(-)(𝐼::IdentityMultiple) = IdentityMultiple(-𝐼.M, 𝐼.n)
 Base.:(+)(𝐼::IdentityMultiple, M::AbstractMatrix) = 𝐼.M + M
-Base.:(+)(M::AbstractMatrix, 𝐼::IdentityMultiple) = 𝐼 + M
+Base.:(+)(M::AbstractMatrix, 𝐼::IdentityMultiple) = M + 𝐼.M
 Base.:(*)(x::Number, 𝐼::IdentityMultiple) = IdentityMultiple(x * 𝐼.M, 𝐼.n)
 Base.:(*)(𝐼::IdentityMultiple, x::Number) = IdentityMultiple(x * 𝐼.M, 𝐼.n)
 Base.:(/)(𝐼::IdentityMultiple, x::Number) = IdentityMultiple(𝐼.M / x, 𝐼.n)

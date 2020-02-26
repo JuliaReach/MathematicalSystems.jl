@@ -159,6 +159,8 @@ end
     # initial value problem composite type
     x0 = Singleton([1.5, 2.0])
     p = InitialValueProblem(s, x0)
+    @test initial_state(p) == x0
+    @test system(p) == s
     @test inputset(p) == U
     @test statedim(p) == 2
     @test inputdim(p) == 1

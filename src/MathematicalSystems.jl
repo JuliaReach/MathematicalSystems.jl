@@ -112,7 +112,8 @@ Concrete Types for an Initial Value Problem
 include("ivp.jl")
 
 export InitialValueProblem, IVP,
-       initial_state
+       initial_state,
+       system
 
 #=====================
 Input related methods

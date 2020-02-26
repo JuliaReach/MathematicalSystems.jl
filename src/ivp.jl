@@ -65,6 +65,21 @@ The initial state of an initial-value problem.
 initial_state(ivp::InitialValueProblem) = ivp.x0
 
 """
+    system(ivp::InitialValueProblem)
+
+Return the system wrapped by an initial-value problem.
+
+### Input
+
+- `ivp` -- initial-value problem
+
+### Output
+
+The system of the given initial-value problem.
+"""
+system(ivp::InitialValueProblem) = ivp.s
+
+"""
     IVP
 
 `IVP` is an alias for `InitialValueProblem`.

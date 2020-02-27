@@ -54,4 +54,11 @@ end
 
     @test I(2) / I == IdentityMultiple(1.0, 2)
     @test I(2) - I(2) == 0.0I(2)
+
+    @test I(2) + [3 3; 1 2] == [4 3; 1 3.]
+    @test [3 3; 1 2] + I(2) == [4 3; 1 3.]
+end
+
+@testset "Specific methods for IdentityMultiple" begin
+    @test Hermitian(I(2)) == Hermitian([1. 0; 0 1])
 end

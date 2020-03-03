@@ -577,10 +577,10 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
     state_dim = 1
     got_state_dim = false
 
-    num_state_assignements = 0
-    num_input_assignements = 0
-    num_noise_assignements = 0
-    num_const_assignements = 0
+    num_state_assignments = 0
+    num_input_assignments = 0
+    num_noise_assignments = 0
+    num_const_assignments = 0
 
     for summand in summands
         if @capture(summand, array_ * var_)
@@ -589,15 +589,15 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
                 # obtain "state_dim" for later using in IdentityMultiple
                 state_dim =  Expr(:call, :size, :($array), 1)
                 got_state_dim = true
-                num_state_assignements += 1
+                num_state_assignments += 1
 
             elseif input == var
                 push!(params, (Expr(:call, :hcat, array), :B))
-                 num_input_assignements += 1
+                 num_input_assignments += 1
 
             elseif noise == var
                 push!(params, (Expr(:call, :hcat, array), :D))
-                num_noise_assignements += 1
+                num_noise_assignments += 1
 
             else
                 throw(ArgumentError("in the dynamic equation, the expression "*
@@ -609,23 +609,23 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
             # if array == variable: field value equals identity
             if state == array
                 push!(params, (identity, :A))
-                num_state_assignements += 1
+                num_state_assignments += 1
             elseif input == array
                 push!(params, (identity, :B))
-                num_input_assignements += 1
+                num_input_assignments += 1
             elseif noise == array
                 push!(params, (identity, :D))
-                num_noise_assignements += 1
+                num_noise_assignments += 1
             else
                 push!(params, (Expr(:call, :vcat, array), :c))
-                num_const_assignements += 1
+                num_const_assignments += 1
             end
         end
-    end
-    num_const_assignements > 1 && throw(ArgumentError("there is more than one constant term"))
-    num_state_assignements > 1 && throw(ArgumentError("there is more than one state term `$state`"))
-    num_input_assignements > 1 && throw(ArgumentError("there is more than one input term `$input`"))
-    num_noise_assignements > 1 && throw(ArgumentError("there is more than one noise term `$noise`"))
+    end 
+    num_const_assignments > 1 && throw(ArgumentError("there is more than one constant term"))
+    num_state_assignments > 1 && throw(ArgumentError("there is more than one state term `$state`"))
+    num_input_assignments > 1 && throw(ArgumentError("there is more than one input term `$input`"))
+    num_noise_assignments > 1 && throw(ArgumentError("there is more than one noise term `$noise`"))
 
     return params
 end

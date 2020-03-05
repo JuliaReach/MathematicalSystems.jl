@@ -22,6 +22,9 @@
 end
 
 
+# =============================
+# Successor for discrete system
+# =============================
 
 
 """
@@ -71,228 +74,34 @@ function successor(system::ConstrainedDiscreteIdentitySystem, x::AbstractVector;
 end
 
 """
-    successor(system::LinearDiscreteSystem, x::AbstractVector)
-
-Return the successor state of a `LinearDiscreteSystem`.
-
-### Input
-
-- `system` -- `LinearDiscreteSystem`
-- `x`      -- state (it should be any vector type)
-
-### Output
-
-The result of applying the system to `x`.
-"""
-function successor(system::LinearDiscreteSystem, x::AbstractVector)
-    !_is_conformable_state(system, x) && _argument_error(:x)
-    return system.A * x
-end
-
-"""
-    successor(system::AffineDiscreteSystem, x::AbstractVector)
-
-Return the successor state of a `AffineDiscreteSystem`.
-
-### Input
-
-- `system` -- `AffineDiscreteSystem`
-- `x`      -- state (it should be any vector type)
-
-### Output
-
-The result of applying the system to `x`.
-"""
-function successor(system::AffineDiscreteSystem, x::AbstractVector)
-    !_is_conformable_state(system, x) && _argument_error(:x)
-    return system.A * x + system.c
-end
-
-"""
-    successor(system::LinearControlDiscreteSystem, x::AbstractVector, u::AbstractVector)
-
-Return the successor state of a `LinearControlDiscreteSystem`.
-
-### Input
-
-- `system` -- `LinearControlDiscreteSystem`
-- `x`      -- state (it should be any vector type)
-- `u`      -- input (it should be any vector type)
-
-### Output
-
-The result of applying the system to `x`, with input `u`.
-"""
-function successor(system::LinearControlDiscreteSystem, x::AbstractVector, u::AbstractVector)
-    !_is_conformable_state(system, x) && _argument_error(:x)
-    !_is_conformable_input(system, u) && _argument_error(:u)
-    return system.A * x + system.B * u
-end
-
-"""
-    successor(system::ConstrainedLinearDiscreteSystem, x::AbstractVector;
+    successor(system::AbstractDiscreteSystem, x::AbstractVector;
               [check_constraints]=true)
 
-Return the successor state of a `ConstrainedLinearDiscreteSystem`.
+Return the successor state of an `AbstractDiscreteSystem`.
 
 ### Input
 
-- `system`            -- `ConstrainedLinearDiscreteSystem`
+- `system`            -- `AbstractDiscreteSystem`
 - `x`                 -- state (it should be any vector type)
 - `check_constraints` -- (optional, default: `true`) check if the state belongs to
                          the state set
 
 ### Output
 
-The result of applying the system to `x`.
+The result of applying the system to state `x`.
 """
-function successor(system::ConstrainedLinearDiscreteSystem, x::AbstractVector;
-                   check_constraints::Bool=true)
-   !_is_conformable_state(system, x) && _argument_error(:x)
-    if check_constraints
-        !_in_stateset(system, x) && _argument_error(:x,:X)
-    end
-    return system.A * x
-end
+successor(system::AbstractDiscreteSystem, x::AbstractVector; kwargs...) =
+    apply(system, x; kwargs...)
 
 """
-    successor(system::ConstrainedAffineDiscreteSystem, x::AbstractVector;
-              [check_constraints])
-
-Return the successor state of a `ConstrainedAffineDiscreteSystem`.
-
-### Input
-
-- `system`            -- `ConstrainedAffineDiscreteSystem`
-- `x`                 -- state (it should be any vector type)
-- `check_constraints` -- (optional, default: `true`) check if the state belongs to
-                         the state set
-
-### Output
-
-The result of applying the system to `x`.
-"""
-function successor(system::ConstrainedAffineDiscreteSystem, x::AbstractVector;
-                   check_constraints::Bool=true)
-    !_is_conformable_state(system, x) && _argument_error(:x)
-    if check_constraints
-        !_in_stateset(system, x) && _argument_error(:x,:X)
-    end
-    return system.A * x + system.c
-end
-
-"""
-    successor(system::ConstrainedLinearControlDiscreteSystem, x::AbstractVector,
-              u::AbstractVector; [check_constraints]=true)
-
-Return the successor state of a `ConstrainedLinearControlDiscreteSystem`.
-
-### Input
-
-- `system`            -- `ConstrainedLinearControlDiscreteSystem`
-- `x`                 -- state (it should be any vector type)
-- `u`                 -- input (it should be any vector type)
-- `check_constraints` -- (optional, default: `true`) check if the state (resp. input)
-                         belongs to the state set (resp. input set)
-
-### Output
-
-The result of applying the system to `x`, with input `u`.
-"""
-function successor(system::ConstrainedLinearControlDiscreteSystem, x::AbstractVector,
-                   u::AbstractVector; check_constraints::Bool=true)
-    !_is_conformable_state(system, x) && _argument_error(:x)
-    !_is_conformable_input(system, u) && _argument_error(:u)
-    if check_constraints
-        !_in_stateset(system, x) &&_argument_error(:x,:X)
-        !_in_inputset(system, u) && _argument_error(:u,:U)
-    end
-    return system.A * x + system.B * u
-end
-
-"""
-    successor(system::ConstrainedAffineControlDiscreteSystem, x::AbstractVector,
-              u::AbstractVector; [check_constraints]=true)
-
-Return the successor state of a `ConstrainedAffineControlDiscreteSystem`.
-
-### Input
-
-- `system`            -- `ConstrainedAffineControlDiscreteSystem`
-- `x`                 -- state (it should be any vector type)
-- `u`                 -- input (it should be any vector type)
-- `check_constraints` -- (optional, default: `true`) check if the state (resp. input)
-                         belongs to the state set (resp. input set)
-
-### Output
-
-The result of applying the system to `x`, with input `u`.
-"""
-function successor(system::ConstrainedAffineControlDiscreteSystem,
-                   x::AbstractVector, u::AbstractVector; check_constraints::Bool=true)
-    !_is_conformable_state(system, x) && _argument_error(:x)
-    !_is_conformable_input(system, u) && _argument_error(:u)
-    if check_constraints
-        !_in_stateset(system, x) && _argument_error(:x,:X)
-        !_in_inputset(system, u) && _argument_error(:u,:U)
-    end
-    return system.A * x + system.B * u + system.c
-end
-
-"""
-    successor(system::BlackBoxDiscreteSystem, x::AbstractVector)
-
-Return the successor state of a `BlackBoxDiscreteSystem`.
-
-### Input
-
-- `system` -- `BlackBoxDiscreteSystem`
-- `x`      -- state (it should be any vector type)
-
-### Output
-
-The result of applying the system to `x`.
-"""
-function successor(system::BlackBoxDiscreteSystem, x::AbstractVector)
-    !_is_conformable_state(system, x) && _argument_error(:x)
-    return system.f(x)
-end
-
-"""
-    successor(system::ConstrainedBlackBoxDiscreteSystem, x::AbstractVector;
+    successor(system::AbstractDiscreteSystem, x::AbstractVector, u::AbstractVector;
               [check_constraints]=true)
 
-Return the successor state of a `ConstrainedBlackBoxDiscreteSystem`.
+Return the successor state of an `AbstractDiscreteSystem`.
 
 ### Input
 
-- `system`            -- `ConstrainedBlackBoxDiscreteSystem`
-- `x`                 -- state (it should be any vector type)
-- `check_constraints` -- (optional, default: `true`) check if the state belongs to
-                         the state set
-
-### Output
-
-The result of applying the system to `x`.
-"""
-function successor(system::ConstrainedBlackBoxDiscreteSystem, x::AbstractVector;
-                   check_constraints::Bool=true)
-    !_is_conformable_state(system, x) && _argument_error(:x)
-    if check_constraints
-        !_in_stateset(system, x) && _argument_error(:x,:X)
-    end
-    return system.f(x)
-end
-
-"""
-    successor(system::ConstrainedBlackBoxControlDiscreteSystem, x::AbstractVector,
-              u::AbstractVector; [check_constraints]=true)
-
-Return the successor state of a `ConstrainedBlackBoxControlDiscreteSystem`.
-
-### Input
-
-- `system`            -- `ConstrainedBlackBoxControlDiscreteSystem`
+- `system`            -- `AbstractDiscreteSystem`
 - `x`                 -- state (it should be any vector type)
 - `u`                 -- input (it should be any vector type)
 - `check_constraints` -- (optional, default: `true`) check if the state belongs to
@@ -300,125 +109,24 @@ Return the successor state of a `ConstrainedBlackBoxControlDiscreteSystem`.
 
 ### Output
 
-The result of applying the system to `x`, with input `u`.
-"""
-function successor(system::ConstrainedBlackBoxControlDiscreteSystem, x::AbstractVector,
-                   u::AbstractVector; check_constraints::Bool=true)
-    !_is_conformable_state(system, x) && _argument_error(:x)
-    !_is_conformable_input(system, u) && _argument_error(:u)
-    if check_constraints
-        !_in_stateset(system, x) && _argument_error(:x,:X)
-        !_in_inputset(system, u) && _argument_error(:u,:U)
-    end
-    return system.f(x, u)
-end
+The result of applying the system to state `x` and input `u`.
 
+### Notes
+
+If the system is not controlled but noisy, the input `u` is interpreted as noise.
+    """
+successor(system::AbstractDiscreteSystem, x::AbstractVector, u::AbstractVector; kwargs...) =
+    apply(system, x, u; kwargs...)
 
 """
-    successor(system::NoisyConstrainedLinearDiscreteSystem, x::AbstractVector,
-              w::AbstractVector; [check_constraints]=true)
-
-Return the successor state of a `NoisyConstrainedLinearDiscreteSystem`.
-
-### Input
-
-- `system`            -- `NoisyConstrainedLinearDiscreteSystem`
-- `x`                 -- state (it should be any vector type)
-- `w`                 -- noise (it should be any vector type)
-- `check_constraints` -- (optional, default: `true`) check if the state belongs to
-                         the state set
-
-### Output
-
-The result of applying the system to `x`, with noise `w`.
-"""
-function successor(system::NoisyConstrainedLinearDiscreteSystem, x::AbstractVector,
-                   w::AbstractVector; check_constraints::Bool=true)
-   !_is_conformable_state(system, x) && _argument_error(:x)
-   !_is_conformable_noise(system, w) && _argument_error(:w)
-    if check_constraints
-        !_in_stateset(system, x) && _argument_error(:x,:X)
-        !_in_noiseset(system, w) && _argument_error(:w,:W)
-    end
-    return system.A * x + system.D * w
-end
-
-
-"""
-    successor(system::NoisyConstrainedLinearControlDiscreteSystem,
+    successor(system::AbstractDiscreteSystem,
               x::AbstractVector, u::AbstractVector, w::AbstractVector; [check_constraints]=true)
 
-Return the successor state of a `NoisyConstrainedLinearControlDiscreteSystem`.
+Return the successor state of an `AbstractDiscreteSystem`.
 
 ### Input
 
-- `system`            -- `NoisyConstrainedLinearControlDiscreteSystem`
-- `x`                 -- state (it should be any vector type)
-- `u`                 -- input (it should be any vector type)
-- `w`                 -- noise (it should be any vector type)
-- `check_constraints` -- (optional, default: `true`) check if the state (resp. input)
-                         belongs to the state set (resp. input set)
-
-### Output
-
-The result of applying the system to `x`, with input `u` and noise `w`.
-"""
-function successor(system::NoisyConstrainedLinearControlDiscreteSystem,
-                   x::AbstractVector, u::AbstractVector, w::AbstractVector; check_constraints::Bool=true)
-    !_is_conformable_state(system, x) && _argument_error(:x)
-    !_is_conformable_input(system, u) && _argument_error(:u)
-    !_is_conformable_noise(system, w) && _argument_error(:w)
-    if check_constraints
-        !_in_stateset(system, x) && _argument_error(:x,:X)
-        !_in_inputset(system, u) && _argument_error(:u,:U)
-        !_in_noiseset(system, w) && _argument_error(:w,:W)
-    end
-    return system.A * x + system.B * u + system.D * w
-end
-
-
-"""
-    successor(system::NoisyConstrainedAffineControlDiscreteSystem, x::AbstractVector,
-              u::AbstractVector; [check_constraints]=true)
-
-Return the successor state of a `NoisyConstrainedAffineControlDiscreteSystem`.
-
-### Input
-
-- `system`            -- `NoisyConstrainedAffineControlDiscreteSystem`
-- `x`                 -- state (it should be any vector type)
-- `u`                 -- input (it should be any vector type)
-- `w`                 -- noise (it should be any vector type)
-- `check_constraints` -- (optional, default: `true`) check if the state (resp. input)
-                         belongs to the state set (resp. input set)
-
-### Output
-
-The result of applying the system to `x`, with input `u` and noise `w`.
-"""
-function successor(system::NoisyConstrainedAffineControlDiscreteSystem,
-                   x::AbstractVector, u::AbstractVector, w::AbstractVector;
-                   check_constraints::Bool=true)
-    !_is_conformable_state(system, x) && _argument_error(:x)
-    !_is_conformable_input(system, u) && _argument_error(:u)
-    !_is_conformable_noise(system, w) && _argument_error(:w)
-    if check_constraints
-        !_in_stateset(system, x) && _argument_error(:x,:X)
-        !_in_inputset(system, u) && _argument_error(:u,:U)
-        !_in_noiseset(system, w) && _argument_error(:w,:W)
-    end
-    return system.A * x + system.B * u + system.c + system.D * w
-end
-
-"""
-    successor(system::NoisyConstrainedBlackBoxControlDiscreteSystem, x::AbstractVector,
-              u::AbstractVector, w::AbstractVector; [check_constraints]=true)
-
-Return the successor state of a `NoisyConstrainedBlackBoxControlDiscreteSystem`.
-
-### Input
-
-- `system`            -- `NoisyConstrainedBlackBoxControlDiscreteSystem`
+- `system`            -- `AbstractDiscreteSystem`
 - `x`                 -- state (it should be any vector type)
 - `u`                 -- input (it should be any vector type)
 - `w`                 -- noise (it should be any vector type)
@@ -427,17 +135,245 @@ Return the successor state of a `NoisyConstrainedBlackBoxControlDiscreteSystem`.
 
 ### Output
 
-The result of applying the system to `x`, with input `u` and noise `w`.
+The result of applying the system to state `x`, input `u` and noise `w`.
 """
-function successor(system::NoisyConstrainedBlackBoxControlDiscreteSystem,
-                   x::AbstractVector, u::AbstractVector, w::AbstractVector; check_constraints::Bool=true)
-    !_is_conformable_state(system, x) && _argument_error(:x)
-    !_is_conformable_input(system, u) && _argument_error(:u)
-    !_is_conformable_noise(system, w) && _argument_error(:w)
-    if check_constraints
-        !_in_stateset(system, x) && _argument_error(:x,:X)
-        !_in_inputset(system, u) && _argument_error(:u,:U)
-        !_in_noiseset(system, w) && _argument_error(:w,:W)
+successor(system::AbstractDiscreteSystem, x::AbstractVector, u::AbstractVector, w::AbstractVector; kwargs...) =
+    apply(system, x, u, w; kwargs...)
+
+# =============================
+# Vector Field for continuous system
+# =============================
+
+"""
+    vector_field(system::AbstractContinuousSystem, x::AbstractVector;
+              [check_constraints]=true)
+
+Return the vector field of an `AbstractContinuousSystem`.
+
+### Input
+
+- `system`            -- `AbstractContinuousSystem`
+- `x`                 -- state (it should be any vector type)
+- `check_constraints` -- (optional, default: `true`) check if the state belongs to
+                         the state set
+
+### Output
+
+The vector field of the system at state `x`.
+"""
+vector_field(system::AbstractContinuousSystem, x::AbstractVector; kwargs...) =
+    apply(system, x; kwargs...)
+
+"""
+    vector_field(system::AbstractContinuousSystem, x::AbstractVector, u::AbstractVector;
+              [check_constraints]=true)
+
+Return the vector field state of an `AbstractContinuousSystem`.
+
+### Input
+
+- `system`            -- `AbstractContinuousSystem`
+- `x`                 -- state (it should be any vector type)
+- `u`                 -- input (it should be any vector type)
+- `check_constraints` -- (optional, default: `true`) check if the state belongs to
+                         the state set
+
+### Output
+
+The vector field of the system at state `x` and applying input `u`.
+
+### Notes
+
+If the system is not controlled but noisy, the input `u` is interpreted as noise.
+    """
+vector_field(system::AbstractContinuousSystem, x::AbstractVector, u::AbstractVector; kwargs...) =
+    apply(system, x, u; kwargs...)
+
+"""
+    vector_field(system::AbstractContinuousSystem,
+              x::AbstractVector, u::AbstractVector, w::AbstractVector; [check_constraints]=true)
+
+Return the vector field state of an `AbstractContinuousSystem`.
+
+### Input
+
+- `system`            -- `AbstractContinuousSystem`
+- `x`                 -- state (it should be any vector type)
+- `u`                 -- input (it should be any vector type)
+- `w`                 -- noise (it should be any vector type)
+- `check_constraints` -- (optional, default: `true`) check if the state belongs to
+                         the state set
+
+### Output
+
+The vector field of the system at state `x` and applying input `u` and noise `w`.
+"""
+vector_field(system::AbstractContinuousSystem, x::AbstractVector, u::AbstractVector, w::AbstractVector; kwargs...) =
+    apply(system, x, u, w; kwargs...)
+
+
+struct VectorField{T}
+    field::T
+end
+
+# function-like evaluation
+@inline function (V::VectorField)(args...)
+    evaluate(V, args...)
+end
+
+function evaluate(V::VectorField, args...)
+    return V.field(args...)
+end
+
+function VectorField(sys::AbstractContinuousSystem)
+    if inputdim(sys) == 0 && noisedim(sys) == 0
+        field = (x) -> vector_field(sys, x)
+    elseif inputdim(sys) == 0 || noisedim(sys) == 0
+        field = (x, u) -> vector_field(sys, x, u)
+    else
+        field = (x, u, w) -> vector_field(sys, x, u, w)
     end
-    return system.f(x, u, w)
+    return VectorField(field)
+end
+
+
+# ====================
+# Generic apply method
+# ====================
+
+
+"""
+    apply(system::AbstractSystem, x::AbstractVector;
+              [check_constraints]=true)
+
+Return the result of applying the input to an `AbstractSystem`.
+
+### Input
+
+- `system`            -- `AbstractSystem`
+- `x`                 -- state (it should be any vector type)
+- `check_constraints` -- (optional, default: `true`) check if the state belongs to
+                         the state set
+
+### Output
+
+The result of applying the system to state `x`.
+"""
+function apply(system::AbstractSystem, x::AbstractVector;
+                   check_constraints::Bool=true)
+    !_is_conformable_state(system, x) && _argument_error(:x)
+    if isconstrained(system) && check_constraints
+        !_in_stateset(system, x) && _argument_error(:x,:X)
+    end
+
+    if islinear(system)
+        return state_matrix(system) * x
+
+    elseif isaffine(system)
+        return state_matrix(system) * x + affine_term(system)
+
+    elseif ispolynomial(system)
+        return system.p(x)
+
+    else
+        return system.f(x)
+    end
+end
+
+"""
+    apply(system::AbstractSystem, x::AbstractVector, u::AbstractVector;
+              [check_constraints]=true)
+
+Return the result of applying two inputs to an `AbstractSystem`.
+
+### Input
+
+- `system`            -- `AbstractSystem`
+- `x`                 -- state (it should be any vector type)
+- `u`                 -- input (it should be any vector type)
+- `check_constraints` -- (optional, default: `true`) check if the state belongs to
+                         the state set
+
+### Output
+
+The result of applying the system to state `x` and input `u`.
+
+### Notes
+
+If the system is not controlled but noisy, the input `u` is interpreted as noise.
+"""
+function apply(sys::AbstractSystem, x::AbstractVector, u::AbstractVector;
+                   check_constraints::Bool=true)
+
+    if iscontrolled(sys) && !isnoisy(sys)
+        input_var = :u; input_set = :U; matrix = input_matrix
+        _is_conformable = _is_conformable_input
+        _in_set = _in_inputset
+    elseif isnoisy(sys) && !iscontrolled(sys)
+        input_var = :w; input_set = :W; matrix = noise_matrix
+        _is_conformable = _is_conformable_noise
+        _in_set = _in_noiseset
+    else
+        throw(ArgumentError("successor function for $(typeof(sys)) does not have 2 arguments"))
+    end
+
+    !_is_conformable_state(sys, x) && _argument_error(:x)
+    !_is_conformable(sys, u) && _argument_error(input_var)
+
+    if isconstrained(sys) && check_constraints
+        !_in_stateset(sys, x) && _argument_error(:x,:X)
+        !_in_set(sys, u) && _argument_error(input_var, input_set)
+    end
+
+    if islinear(sys)
+        return state_matrix(sys) * x + matrix(sys) * u
+
+    elseif isaffine(sys)
+        return state_matrix(sys) * x + affine_term(sys) + matrix(sys) * u
+
+    else
+        return sys.f(x, u)
+    end
+end
+
+"""
+    apply(system::AbstractSystem,
+              x::AbstractVector, u::AbstractVector, w::AbstractVector; [check_constraints]=true)
+
+Return the result of applying three inputs to an `AbstractSystem`.
+
+### Input
+
+- `system`            -- `AbstractSystem`
+- `x`                 -- state (it should be any vector type)
+- `u`                 -- input (it should be any vector type)
+- `w`                 -- noise (it should be any vector type)
+- `check_constraints` -- (optional, default: `true`) check if the state belongs to
+                         the state set
+
+### Output
+
+The result of applying the system to state `x`, input `u` and noise `w`.
+"""
+function apply(sys::AbstractSystem, x::AbstractVector, u::AbstractVector, w::AbstractVector;
+               check_constraints::Bool=true)
+    !_is_conformable_state(sys, x) && _argument_error(:x)
+    !_is_conformable_input(sys, u) && _argument_error(:u)
+    !_is_conformable_noise(sys, w) && _argument_error(:w)
+
+    if isconstrained(sys) && check_constraints
+        !_in_stateset(sys, x) && _argument_error(:x,:X)
+        !_in_inputset(sys, u) && _argument_error(:u,:U)
+        !_in_noiseset(sys, w) && _argument_error(:w,:W)
+    end
+
+    if islinear(sys)
+        return state_matrix(sys) * x + input_matrix(sys) * u + noise_matrix(sys) * w
+
+    elseif isaffine(sys)
+        return state_matrix(sys) * x + affine_term(sys) + input_matrix(sys) * u + noise_matrix(sys) * w
+
+    else
+        return sys.f(x, u, w)
+    end
 end

@@ -580,6 +580,11 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
     state_dim = 1
     got_state_dim = false
 
+    num_state_assignments = 0
+    num_input_assignments = 0
+    num_noise_assignments = 0
+    num_const_assignments = 0
+
     for summand in summands
         if @capture(summand, array_ * var_)
             if state == var
@@ -587,12 +592,15 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
                 # obtain "state_dim" for later using in IdentityMultiple
                 state_dim =  Expr(:call, :size, :($array), 1)
                 got_state_dim = true
+                num_state_assignments += 1
 
             elseif input == var
                 push!(params, (Expr(:call, :hcat, array), :B))
+                 num_input_assignments += 1
 
             elseif noise == var
                 push!(params, (Expr(:call, :hcat, array), :D))
+                num_noise_assignments += 1
 
             else
                 throw(ArgumentError("in the dynamic equation, the expression "*
@@ -604,15 +612,24 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
             # if array == variable: field value equals identity
             if state == array
                 push!(params, (identity, :A))
+                num_state_assignments += 1
             elseif input == array
                 push!(params, (identity, :B))
+                num_input_assignments += 1
             elseif noise == array
                 push!(params, (identity, :D))
+                num_noise_assignments += 1
             else
                 push!(params, (Expr(:call, :vcat, array), :c))
+                num_const_assignments += 1
             end
         end
     end
+    num_const_assignments > 1 && throw(ArgumentError("there is more than one constant term"))
+    num_state_assignments > 1 && throw(ArgumentError("there is more than one state term `$state`"))
+    num_input_assignments > 1 && throw(ArgumentError("there is more than one input term `$input`"))
+    num_noise_assignments > 1 && throw(ArgumentError("there is more than one noise term `$noise`"))
+
     return params
 end
 
@@ -842,7 +859,7 @@ julia> X = BallInf(zeros(2), 10.);
 julia> U = BallInf(zeros(1), 2.);
 
 julia> @system(x' = A*x + B*u + c, x ∈ X, u ∈ U)
-ConstrainedAffineControlContinuousSystem{Float64,Array{Float64,2},Array{Float64,2},Array{Float64,1},BallInf{Float64},BallInf{Float64}}([1.0 0.0; 0.0 1.0], [1.0; 0.5], [1.0, 1.5], BallInf{Float64}([0.0, 0.0], 10.0), BallInf{Float64}([0.0], 2.0))
+ConstrainedAffineControlContinuousSystem{Float64,Array{Float64,2},Array{Float64,2},Array{Float64,1},BallInf{Float64,Array{Float64,1}},BallInf{Float64,Array{Float64,1}}}([1.0 0.0; 0.0 1.0], [1.0; 0.5], [1.0, 1.5], BallInf{Float64,Array{Float64,1}}([0.0, 0.0], 10.0), BallInf{Float64,Array{Float64,1}}([0.0], 2.0))
 ```
 
 For the creation of a black-box system, the state, input and noise dimensions have
@@ -853,7 +870,7 @@ writes as
 julia> f(x, u) = x + u;
 
 julia> @system(x⁺ = f(x, u), x ∈ X, u ∈ U, dim: (2,2))
-ConstrainedBlackBoxControlDiscreteSystem{typeof(f),BallInf{Float64},BallInf{Float64}}(f, 2, 2, BallInf{Float64}([0.0, 0.0], 10.0), BallInf{Float64}([0.0], 2.0))
+ConstrainedBlackBoxControlDiscreteSystem{typeof(f),BallInf{Float64,Array{Float64,1}},BallInf{Float64,Array{Float64,1}}}(f, 2, 2, BallInf{Float64,Array{Float64,1}}([0.0, 0.0], 10.0), BallInf{Float64,Array{Float64,1}}([0.0], 2.0))
 ```
 """
 macro system(expr...)

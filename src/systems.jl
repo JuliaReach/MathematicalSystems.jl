@@ -35,7 +35,7 @@ end
 Trivial identity continuous-time system of the form:
 
 ```math
-    x' = 0.
+    x(t)' = 0 \\; \\forall t.
 ```
 
 ### Fields
@@ -49,7 +49,7 @@ ContinuousIdentitySystem
 
 Trivial identity discrete-time system of the form:
 ```math
-    x_{k+1} = x_k.
+    x_{k+1} = x_k \\; \\forall k.
 ```
 
 ### Fields
@@ -86,10 +86,10 @@ end
 @doc """
     ConstrainedContinuousIdentitySystem <: AbstractContinuousSystem
 
-Trivial identity continuous-time system with state constraints of the form:
+Trivial identity continuous-time system with domain constraints of the form:
 
 ```math
-    x' = 0, x(t) ∈ \\mathcal{X}.
+    x(t)' = 0, \\; x(t) ∈ \\mathcal{X} \\; \\forall t.
 ```
 
 ### Fields
@@ -102,10 +102,10 @@ ConstrainedContinuousIdentitySystem
 @doc """
     ConstrainedDiscreteIdentitySystem <: AbstractDiscreteSystem
 
-Trivial identity discrete-time system with state constraints of the form:
+Trivial identity discrete-time system with domain constraints of the form:
 
 ```math
-    x_{k+1} = x_k, x_k ∈ \\mathcal{X}.
+    x_{k+1} = x_k, \\; x_k ∈ \\mathcal{X} \\; \\forall k.
 ```
 
 ### Fields
@@ -152,7 +152,7 @@ end
 Continuous-time linear system of the form:
 
 ```math
-    x' = A x.
+    x(t)' = A x(t) \\; \\forall t.
 ```
 
 ### Fields
@@ -167,7 +167,7 @@ LinearContinuousSystem
 Discrete-time linear system of the form:
 
 ```math
-    x_{k+1} = A x_k.
+    x_{k+1} = A x_k \\; \\forall k.
 ```
 
 ### Fields
@@ -215,7 +215,7 @@ end
 Continuous-time affine system of the form:
 
 ```math
-    x' = A x + c.
+    x(t)' = A x(t) + c \\; \\forall t.
 ```
 
 ### Fields
@@ -231,7 +231,7 @@ AffineContinuousSystem
 Discrete-time affine system of the form:
 
 ```math
-    x_{k+1} = A x_k + c.
+    x_{k+1} = A x_k + c \\; \\forall k.
 ```
 
 ### Fields
@@ -280,7 +280,7 @@ end
 Continuous-time linear control system of the form:
 
 ```math
-    x' = A x + B u.
+    x(t)' = A x(t) + B u(t) \\; \\forall t.
 ```
 
 ### Fields
@@ -296,7 +296,7 @@ LinearControlContinuousSystem
 Discrete-time linear control system of the form:
 
 ```math
-    x_{k+1} = A x_k + B u_k.
+    x_{k+1} = A x_k + B u_k \\; \\forall k.
 ```
 
 ### Fields
@@ -342,10 +342,10 @@ end
 @doc """
     ConstrainedLinearContinuousSystem
 
-Continuous-time linear system with state constraints of the form:
+Continuous-time linear system with domain constraints of the form:
 
 ```math
-    x' = A x, x(t) ∈ \\mathcal{X}.
+    x(t)' = A x(t), \\; x(t) ∈ \\mathcal{X} \\; \\forall t.
 ```
 
 ### Fields
@@ -358,10 +358,10 @@ ConstrainedLinearContinuousSystem
 @doc """
     ConstrainedLinearDiscreteSystem
 
-Discrete-time linear system with state constraints of the form:
+Discrete-time linear system with domain constraints of the form:
 
 ```math
-    x_{k+1} = A x_k, x_k ∈ \\mathcal{X}.
+    x_{k+1} = A x_k, \\; x_k ∈ \\mathcal{X} \\; \\forall k.
 ```
 
 ### Fields
@@ -409,10 +409,10 @@ end
 @doc """
     ConstrainedAffineContinuousSystem
 
-Continuous-time affine system with state constraints of the form:
+Continuous-time affine system with domain constraints of the form:
 
 ```math
-    x' = A x + c, x(t) ∈ \\mathcal{X}.
+    x(t)' = A x(t) + c, \\; x(t) ∈ \\mathcal{X} \\; \\forall t.
 ```
 
 ### Fields
@@ -426,10 +426,10 @@ ConstrainedAffineContinuousSystem
 @doc """
     ConstrainedAffineDiscreteSystem
 
-Discrete-time affine system with state constraints of the form:
+Discrete-time affine system with domain constraints of the form:
 
 ```math
-    x_{k+1} = A x_k + c, x_k ∈ \\mathcal{X} \\text{ for all } k.
+    x_{k+1} = A x_k + c, \\; x_k ∈ \\mathcal{X} \\; \\forall k.
 ```
 
 ### Fields
@@ -482,12 +482,11 @@ end
 @doc """
     ConstrainedAffineControlContinuousSystem
 
-Continuous-time affine control system with state constraints of the form:
+Continuous-time affine control system with domain constraints of the form:
 
 ```math
-    x' = A x + B u + c, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U} \\text{ for all } t,
+    x(t)' = A x(t) + B u(t) + c, \\; x(t) ∈ \\mathcal{X}, \\; u(t) ∈ \\mathcal{U} \\; \\forall t.
 ```
-and ``c`` a vector.
 
 ### Fields
 
@@ -502,12 +501,11 @@ ConstrainedAffineControlContinuousSystem
 @doc """
     ConstrainedAffineControlDiscreteSystem
 
-Continuous-time affine control system with state constraints of the form:
+Continuous-time affine control system with domain constraints of the form:
 
 ```math
-    x_{k+1} = A x_k + B u_k + c, x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U} \\text{ for all } k,
+    x_{k+1} = A x_k + B u_k + c, \\; x_k ∈ \\mathcal{X}, \\; u_k ∈ \\mathcal{U} \\; \\forall k.
 ```
-and ``c`` a vector.
 
 ### Fields
 
@@ -559,9 +557,9 @@ end
 @doc """
     ConstrainedLinearControlContinuousSystem
 
-Continuous-time linear control system with state constraints of the form:
+Continuous-time linear control system with domain constraints of the form:
 ```math
-    x' = A x + B u, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U} \\text{ for all } t.
+    x(t)' = A x(t) + B u(t), \\; x(t) ∈ \\mathcal{X}, \\; u(t) ∈ \\mathcal{U} \\; \\forall t.
 ```
 
 ### Fields
@@ -576,10 +574,10 @@ ConstrainedLinearControlContinuousSystem
 @doc """
     ConstrainedLinearControlDiscreteSystem
 
-Discrete-time linear control system with state constraints of the form:
+Discrete-time linear control system with domain constraints of the form:
 
 ```math
-    x_{k+1} = A x_k + B u_k, x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U} \\text{ for all } k.
+    x_{k+1} = A x_k + B u_k, \\; x_k ∈ \\mathcal{X}, \\; u_k ∈ \\mathcal{U} \\; \\forall k.
 ```
 
 ### Fields
@@ -630,7 +628,7 @@ end
 Continuous-time linear algebraic system of the form:
 
 ```math
-    E x' = A x.
+    E x(t)' = A x(t) \\; \\forall t.
 ```
 
 ### Fields
@@ -646,7 +644,7 @@ LinearAlgebraicContinuousSystem
 Discrete-time linear algebraic system of the form:
 
 ```math
-    E x_{k+1} = A x_k.
+    E x_{k+1} = A x_k \\; \\forall k.
 ```
 
 ### Fields
@@ -693,10 +691,10 @@ end
 @doc """
     ConstrainedLinearAlgebraicContinuousSystem
 
-Continuous-time linear system with state constraints of the form:
+Continuous-time linear system with domain constraints of the form:
 
 ```math
-    E x' = A x, x(t) ∈ \\mathcal{X}.
+    E x(t)' = A x(t), \\; x(t) ∈ \\mathcal{X} \\; \\forall t.
 ```
 
 ### Fields
@@ -710,10 +708,10 @@ ConstrainedLinearAlgebraicContinuousSystem
 @doc """
     ConstrainedLinearAlgebraicDiscreteSystem
 
-Discrete-time linear system with state constraints of the form:
+Discrete-time linear system with domain constraints of the form:
 
 ```math
-    E x_{k+1} = A x_k, x_k ∈ \\mathcal{X}.
+    E x_{k+1} = A x_k, \\; x_k ∈ \\mathcal{X} \\; \\forall k.
 ```
 
 ### Fields
@@ -763,7 +761,7 @@ end
 Continuous-time polynomial system of the form:
 
 ```math
-    x' = p(x).
+    x(t)' = p(x(t)) \\; \\forall t.
 ```
 
 ### Fields
@@ -779,7 +777,7 @@ PolynomialContinuousSystem
 Discrete-time polynomial system of the form:
 
 ```math
-    x_{k+1} = p(x_k), x_k ∈ \\mathcal{X}.
+    x_{k+1} = p(x_k) \\; \\forall k.
 ```
 
 ### Fields
@@ -827,10 +825,10 @@ end
 @doc """
     ConstrainedPolynomialContinuousSystem
 
-Continuous-time polynomial system with state constraints:
+Continuous-time polynomial system with domain constraints:
 
 ```math
-    x' = p(x), x(t) ∈ \\mathcal{X}
+    x(t)' = p(x(t)), \\; x(t) ∈ \\mathcal{X} \\; \\forall t.
 ```
 
 ### Fields
@@ -844,10 +842,10 @@ ConstrainedPolynomialContinuousSystem
 @doc """
     ConstrainedPolynomialDiscreteSystem
 
-Discrete-time polynomial system with state constraints:
+Discrete-time polynomial system with domain constraints:
 
 ```math
-    x_{k+1} = p(x_k), x_k ∈ \\mathcal{X}.
+    x_{k+1} = p(x_k), \\;  x_k ∈ \\mathcal{X} \\; \\forall k.
 ```
 
 ### Fields
@@ -887,7 +885,7 @@ end
 Continuous-time system defined by a right-hand side of the form:
 
 ```math
-    x' = f(x(t))
+    x(t)' = f(x(t)) \\; \\forall t.
 ```
 
 ### Fields
@@ -903,7 +901,7 @@ BlackBoxContinuousSystem
 Discrete-time system defined by a right-hand side of the form:
 
 ```math
-    x_{k+1} = f(x_k)
+    x_{k+1} = f(x_k) \\; \\forall k.
 ```
 
 ### Fields
@@ -941,11 +939,11 @@ end
 @doc """
     ConstrainedBlackBoxContinuousSystem <: AbstractContinuousSystem
 
-Continuous-time system defined by a right-hand side with state constraints of the
+Continuous-time system defined by a right-hand side with domain constraints of the
 form:
 
 ```math
-    x' = f(x(t)), x(t) ∈ \\mathcal{X}.
+    x(t)' = f(x(t)), \\; x(t) ∈ \\mathcal{X} \\; \\forall t.
 ```
 
 ### Fields
@@ -959,11 +957,11 @@ ConstrainedBlackBoxContinuousSystem
 @doc """
     ConstrainedBlackBoxDiscreteSystem <: AbstractDiscreteSystem
 
-Discrete-time system defined by a right-hand side with state constraints
+Discrete-time system defined by a right-hand side with domain constraints
 of the form:
 
 ```math
-    x_{k+1} = f(x_k), x_k ∈ \\mathcal{X}.
+    x_{k+1} = f(x_k), \\; x_k ∈ \\mathcal{X} \\; \\forall k.
 ```
 
 ### Fields
@@ -1004,7 +1002,7 @@ end
 Continuous-time control system defined by a right-hand side of the form:
 
 ```math
-    x' = f(x(t), u(t)) .
+    x(t)' = f(x(t), u(t)) \\; \\forall t.
 ```
 
 ### Fields
@@ -1021,7 +1019,7 @@ BlackBoxControlContinuousSystem
 Discrete-time control system defined by a right-hand side of the form:
 
 ```math
-    x_{k+1} = f(x_k, u_k) .
+    x_{k+1} = f(x_k, u_k) \\; \\forall k.
 ```
 
 ### Fields
@@ -1063,11 +1061,11 @@ end
 @doc """
     ConstrainedBlackBoxControlContinuousSystem <: AbstractContinuousSystem
 
-Continuous-time control system defined by a right-hand side with state and input constraints
+Continuous-time control system defined by a right-hand side with domain constraints
 of the form:
 
 ```math
-    x' = f(x(t), u(t)), x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U}.
+    x(t)' = f(x(t), u(t)), \\; x(t) ∈ \\mathcal{X}, \\; u(t) ∈ \\mathcal{U} \\; \\forall t.
 ```
 
 ### Fields
@@ -1083,11 +1081,11 @@ ConstrainedBlackBoxControlContinuousSystem
 @doc """
     ConstrainedBlackBoxControlDiscreteSystem <: AbstractDiscreteSystem
 
-Discrete-time control system defined by a right-hand side with state and input constraints
+Discrete-time control system defined by a right-hand side with domain constraints
 of the form:
 
 ```math
-    x_{k+1} = f(x_k, u_k), x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U}.
+    x_{k+1} = f(x_k, u_k), \\; x_k ∈ \\mathcal{X}, \\;  u_k ∈ \\mathcal{U} \\; \\forall k.
 ```
 
 ### Fields
@@ -1143,7 +1141,7 @@ end
 Continuous-time linear system with additive disturbance of the form:
 
 ```math
-    x' = A x + D w .
+    x(t)' = A x(t) + D w(t) \\; \\forall t.
 ```
 
 ### Fields
@@ -1159,7 +1157,7 @@ NoisyLinearContinuousSystem
 Discrete-time linear system with additive disturbance of the form:
 
 ```math
-    x_{k+1} = A x_k + D w_k .
+    x_{k+1} = A x_k + D w_k \\; \\forall k.
 ```
 
 ### Fields
@@ -1209,10 +1207,10 @@ end
 @doc """
     NoisyConstrainedLinearContinuousSystem
 
-Continuous-time linear system with  additive disturbance and  state constraints of the form:
+Continuous-time linear system with  additive disturbance and domain constraints of the form:
 
 ```math
-    x' = A x + D w, x(t) ∈ \\mathcal{X}, w(t) ∈ \\mathcal{W}.
+    x(t)' = A x(t) + D w(t), \\; x(t) ∈ \\mathcal{X}, \\; w(t) ∈ \\mathcal{W} \\; \\forall t.
 ```
 
 ### Fields
@@ -1227,10 +1225,10 @@ NoisyConstrainedLinearContinuousSystem
 @doc """
     NoisyConstrainedLinearDiscreteSystem
 
-Discrete-time linear system with additive disturbance and state constraints of the form:
+Discrete-time linear system with additive disturbance and domain constraints of the form:
 
 ```math
-    x_{k+1} = A x_k + D w_k, x_k ∈ \\mathcal{X}, w(t) ∈ \\mathcal{W} .
+    x_{k+1} = A x_k + D w_k, \\; x_k ∈ \\mathcal{X}, \\; w(t) ∈ \\mathcal{W} \\; \\forall k.
 ```
 
 ### Fields
@@ -1283,7 +1281,7 @@ end
 Continuous-time linear control system with additive disturbance of the form:
 
 ```math
-    x' = A x + B u + D w .
+    x(t)' = A x(t) + B u(t) + D w(t) \\; \\forall t.
 ```
 
 
@@ -1301,7 +1299,7 @@ NoisyLinearControlContinuousSystem
 Continuous-time linear control system with additive disturbance of the form:
 
 ```math
-    x_{k+1} = A x_k + B u_k + D w_k .
+    x_{k+1} = A x_k + B u_k + D w_k \\; \\forall k.
 ```
 
 
@@ -1357,11 +1355,11 @@ end
 @doc """
     NoisyConstrainedLinearControlContinuousSystem
 
-Continuous-time linear control system with additive disturbance and state constraints
+Continuous-time linear control system with additive disturbance and domain constraints
 of the form:
 
 ```math
-    x' = A x + B u + D w, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U}, w(t) ∈ \\mathcal{W}.
+    x(t)' = A x(t) + B u(t) + D w(t), \\; x(t) ∈ \\mathcal{X}, \\; u(t) ∈ \\mathcal{U}, \\; w(t) ∈ \\mathcal{W} \\; \\forall t.
 ```
 
 
@@ -1379,11 +1377,11 @@ NoisyConstrainedLinearControlContinuousSystem
 @doc """
     NoisyConstrainedLinearControlDiscreteSystem
 
-Continuous-time linear control system with additive disturbance and state constraints
+Continuous-time linear control system with additive disturbance and domain constraints
 of the form:
 
 ```math
-    x_{k+1} = A x_k + B u_k + D w_k, x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U}, w_k ∈ \\mathcal{W}.
+    x_{k+1} = A x_k + B u_k + D w_k, \\; x_k ∈ \\mathcal{X}, \\; u_k ∈ \\mathcal{U}, \\; w_k ∈ \\mathcal{W} \\; \\forall k.
 ```
 
 
@@ -1441,7 +1439,7 @@ end
 Continuous-time affine control system with additive disturbance of the form:
 
 ```math
-    x' = A x + B u + c + D w .
+    x(t)' = A x(t) + B u(t) + c + D w(t) \\; \\forall t.
 ```
 
 ### Fields
@@ -1459,7 +1457,7 @@ NoisyAffineControlContinuousSystem
 Continuous-time affine control system with additive disturbance of the form:
 
 ```math
-    x_{k+1} = A x_k + B u_k + c + D w_k .
+    x_{k+1} = A x_k + B u_k + c + D w_k \\; \\forall k.
 ```
 
 ### Fields
@@ -1517,11 +1515,11 @@ end
 @doc """
     NoisyConstrainedAffineControlContinuousSystem
 
-Continuous-time affine control system with additive disturbance and state constraints
+Continuous-time affine control system with additive disturbance and domain constraints
 of the form:
 
 ```math
-    x' = A x + B u + c + Dw, x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U}, w(t) ∈ \\mathcal{W} \\text{ for all } t.
+    x(t)' = A x(t) + B u(t) + c + D w(t), \\; x(t) ∈ \\mathcal{X}, \\; u(t) ∈ \\mathcal{U}, \\; w(t) ∈ \\mathcal{W} \\; \\forall t.
 ```
 
 ### Fields
@@ -1539,11 +1537,11 @@ NoisyConstrainedAffineControlContinuousSystem
 @doc """
     NoisyConstrainedAffineControlDiscreteSystem
 
-Continuous-time affine control system with additive disturbance and state constraints
+Continuous-time affine control system with additive disturbance and domain constraints
 of the form:
 
 ```math
-    x_{k+1} = A x_k + B u_k + c + D w_k, x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U}, w_k ∈ \\mathcal{W} \\text{ for all } k.
+    x_{k+1} = A x_k + B u_k + c + D w_k, \\; x_k ∈ \\mathcal{X}, \\; u_k ∈ \\mathcal{U}, \\; w_k ∈ \\mathcal{W} \\; \\forall k.
 ```
 
 ### Fields
@@ -1591,7 +1589,7 @@ Continuous-time disturbance-affected control system defined by a right-hand side
 of the form:
 
 ```math
-    x' = f(x(t), u(t), w(t)) .
+    x(t)' = f(x(t), u(t), w(t)) \\; \\forall t.
 ```
 
 ### Fields
@@ -1610,7 +1608,7 @@ Discrete-time disturbance-affected control system defined by a right-hand side
 of the form:
 
 ```math
-    x_{k+1} = f(x_k, u_k) .
+    x_{k+1} = f(x_k, u_k) \\quad \\forall k.
 ```
 
 ### Fields
@@ -1658,10 +1656,10 @@ end
     NoisyConstrainedBlackBoxControlContinuousSystem <: AbstractContinuousSystem
 
 Continuous-time disturbance-affected control system defined by a right-hand side
-with state constraints of the form:
+with domain constraints of the form:
 
 ```math
-    x' = f(x(t), u(t), w(t)), x(t) ∈ \\mathcal{X}, u(t) ∈ \\mathcal{U}, w(t) ∈ \\mathcal{W}.
+    x(t)' = f(x(t), u(t), w(t)), \\quad x(t) ∈ \\mathcal{X}, \\quad u(t) ∈ \\mathcal{U}, \\quad w(t) ∈ \\mathcal{W} \\quad \\forall t.
 ```
 
 ### Fields
@@ -1680,10 +1678,10 @@ NoisyConstrainedBlackBoxControlContinuousSystem
     NoisyConstrainedBlackBoxControlDiscreteSystem <: AbstractDiscreteSystem
 
 Discrete-time disturbance-affected control system defined by a right-hand side
-with state constraints of the form:
+with domain constraints of the form:
 
 ```math
-    x_{k+1} = f(x_k, u_k), x_k ∈ \\mathcal{X}, u_k ∈ \\mathcal{U},  w_k ∈ \\mathcal{W}.
+    x_{k+1} = f(x_k, u_k), \\quad x_k ∈ \\mathcal{X}, \\quad u_k ∈ \\mathcal{U}, \\quad w_k ∈ \\mathcal{W} \\quad \\forall k.
 ```
 
 ### Fields

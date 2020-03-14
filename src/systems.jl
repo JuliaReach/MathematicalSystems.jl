@@ -738,6 +738,7 @@ for (Z, AZ) in ((:PolynomialContinuousSystem, :AbstractContinuousSystem),
         statedim(s::$Z) = s.statedim
         inputdim(::$Z) = 0
         noisedim(::$Z) = 0
+        mapping(s::$Z) = s.p
 
         MultivariatePolynomials.variables(s::$Z) = MultivariatePolynomials.variables(s.p)
         MultivariatePolynomials.nvariables(s::$Z) = s.statedim
@@ -805,6 +806,8 @@ for (Z, AZ) in ((:ConstrainedPolynomialContinuousSystem, :AbstractContinuousSyst
         inputdim(::$Z) = 0
         noisedim(::$Z) = 0
         stateset(s::$Z) = s.X
+        mapping(s::$Z) = s.p
+
 
         MultivariatePolynomials.variables(s::$Z) = MultivariatePolynomials.variables(s.p)
         MultivariatePolynomials.nvariables(s::$Z) = s.statedim
@@ -868,6 +871,7 @@ for (Z, AZ) in ((:BlackBoxContinuousSystem, :AbstractContinuousSystem),
         statedim(s::$Z) = s.statedim
         inputdim(s::$Z) = 0
         noisedim(::$Z) = 0
+        mapping(s::$Z) = s.f
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
@@ -925,6 +929,7 @@ for (Z, AZ) in ((:ConstrainedBlackBoxContinuousSystem, :AbstractContinuousSystem
         inputdim(s::$Z) = 0
         noisedim(::$Z) = 0
         stateset(s::$Z) = s.X
+        mapping(s::$Z) = s.f
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
@@ -985,6 +990,7 @@ for (Z, AZ) in ((:BlackBoxControlContinuousSystem, :AbstractContinuousSystem),
         statedim(s::$Z) = s.statedim
         inputdim(s::$Z) = s.inputdim
         noisedim(::$Z) = 0
+        mapping(s::$Z) = s.f
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
@@ -1047,6 +1053,7 @@ for (Z, AZ) in ((:ConstrainedBlackBoxControlContinuousSystem, :AbstractContinuou
         noisedim(::$Z) = 0
         stateset(s::$Z) = s.X
         inputset(s::$Z) = s.U
+        mapping(s::$Z) = s.f
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
@@ -1571,6 +1578,7 @@ for (Z, AZ) in ((:NoisyBlackBoxControlContinuousSystem, :AbstractContinuousSyste
         statedim(s::$Z) = s.statedim
         inputdim(s::$Z) = s.inputdim
         noisedim(s::$Z) = s.noisedim
+        mapping(s::$Z) = s.f
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
@@ -1641,6 +1649,7 @@ for (Z, AZ) in ((:NoisyConstrainedBlackBoxControlContinuousSystem, :AbstractCont
         stateset(s::$Z) = s.X
         inputset(s::$Z) = s.U
         noiseset(s::$Z) = s.W
+        mapping(s::$Z) = s.f
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin

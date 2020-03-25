@@ -42,6 +42,7 @@ export statedim,
 export islinear,
        isaffine,
        ispolynomial,
+       isblackbox,
        isnoisy,
        iscontrolled,
        isconstrained

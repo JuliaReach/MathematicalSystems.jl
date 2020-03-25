@@ -762,6 +762,7 @@ for (Z, AZ) in ((:PolynomialContinuousSystem, :AbstractContinuousSystem),
             islinear(::$T) = false
             isaffine(::$T) = false
             ispolynomial(::$T) = true
+            isblackbox(::$T) = false
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = false
@@ -831,6 +832,7 @@ for (Z, AZ) in ((:ConstrainedPolynomialContinuousSystem, :AbstractContinuousSyst
             islinear(::$T) = false
             isaffine(::$T) = false
             ispolynomial(::$T) = true
+            isblackbox(::$T) = false
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = true

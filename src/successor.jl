@@ -260,7 +260,7 @@ Return the result of applying the input to an `AbstractSystem`.
 The result of applying the system to state `x`.
 """
 function apply(system::AbstractSystem, x::AbstractVector;
-                   check_constraints::Bool=true)
+               check_constraints::Bool=true)
     !_is_conformable_state(system, x) && _argument_error(:x)
     if isconstrained(system) && check_constraints
         !_in_stateset(system, x) && _argument_error(:x,:X)
@@ -272,11 +272,8 @@ function apply(system::AbstractSystem, x::AbstractVector;
     elseif isaffine(system)
         return state_matrix(system) * x + affine_term(system)
 
-    elseif ispolynomial(system)
-        return system.p(x)
-
     else
-        return system.f(x)
+        return mapping(sys)(x)
     end
 end
 
@@ -303,7 +300,7 @@ The result of applying the system to state `x` and input `u`.
 If the system is not controlled but noisy, the input `u` is interpreted as noise.
 """
 function apply(sys::AbstractSystem, x::AbstractVector, u::AbstractVector;
-                   check_constraints::Bool=true)
+               check_constraints::Bool=true)
 
     if iscontrolled(sys) && !isnoisy(sys)
         input_var = :u; input_set = :U; matrix = input_matrix
@@ -332,7 +329,7 @@ function apply(sys::AbstractSystem, x::AbstractVector, u::AbstractVector;
         return state_matrix(sys) * x + affine_term(sys) + matrix(sys) * u
 
     else
-        return sys.f(x, u)
+        return mapping(sys)(x, u)
     end
 end
 
@@ -374,6 +371,6 @@ function apply(sys::AbstractSystem, x::AbstractVector, u::AbstractVector, w::Abs
         return state_matrix(sys) * x + affine_term(sys) + input_matrix(sys) * u + noise_matrix(sys) * w
 
     else
-        return sys.f(x, u, w)
+        return mapping(sys)(x, u, w)
     end
 end

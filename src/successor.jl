@@ -46,6 +46,7 @@ function successor(system::DiscreteIdentitySystem, x::AbstractVector)
     return x
 end
 
+# Generic Successor methods
 
 """
     successor(system::ConstrainedDiscreteIdentitySystem, x::AbstractVector;
@@ -91,7 +92,7 @@ Return the successor state of an `AbstractDiscreteSystem`.
 The result of applying the system to state `x`.
 """
 successor(system::AbstractDiscreteSystem, x::AbstractVector; kwargs...) =
-    apply(system, x; kwargs...)
+    instantiate(system, x; kwargs...)
 
 """
     successor(system::AbstractDiscreteSystem, x::AbstractVector, u::AbstractVector;
@@ -116,7 +117,7 @@ The result of applying the system to state `x` and input `u`.
 If the system is not controlled but noisy, the input `u` is interpreted as noise.
     """
 successor(system::AbstractDiscreteSystem, x::AbstractVector, u::AbstractVector; kwargs...) =
-    apply(system, x, u; kwargs...)
+    instantiate(system, x, u; kwargs...)
 
 """
     successor(system::AbstractDiscreteSystem,
@@ -138,7 +139,7 @@ Return the successor state of an `AbstractDiscreteSystem`.
 The result of applying the system to state `x`, input `u` and noise `w`.
 """
 successor(system::AbstractDiscreteSystem, x::AbstractVector, u::AbstractVector, w::AbstractVector; kwargs...) =
-    apply(system, x, u, w; kwargs...)
+    instantiate(system, x, u, w; kwargs...)
 
 # =============================
 # Vector Field for continuous system
@@ -162,7 +163,7 @@ Return the vector field of an `AbstractContinuousSystem`.
 The vector field of the system at state `x`.
 """
 vector_field(system::AbstractContinuousSystem, x::AbstractVector; kwargs...) =
-    apply(system, x; kwargs...)
+    instantiate(system, x; kwargs...)
 
 """
     vector_field(system::AbstractContinuousSystem, x::AbstractVector, u::AbstractVector;
@@ -187,7 +188,7 @@ The vector field of the system at state `x` and applying input `u`.
 If the system is not controlled but noisy, the input `u` is interpreted as noise.
     """
 vector_field(system::AbstractContinuousSystem, x::AbstractVector, u::AbstractVector; kwargs...) =
-    apply(system, x, u; kwargs...)
+    instantiate(system, x, u; kwargs...)
 
 """
     vector_field(system::AbstractContinuousSystem,
@@ -209,7 +210,7 @@ Return the vector field state of an `AbstractContinuousSystem`.
 The vector field of the system at state `x` and applying input `u` and noise `w`.
 """
 vector_field(system::AbstractContinuousSystem, x::AbstractVector, u::AbstractVector, w::AbstractVector; kwargs...) =
-    apply(system, x, u, w; kwargs...)
+    instantiate(system, x, u, w; kwargs...)
 
 
 struct VectorField{T}
@@ -238,13 +239,13 @@ end
 
 
 # ====================
-# Generic apply method
+# Generic instantiate method
 # ====================
 
 
 """
-    apply(system::AbstractSystem, x::AbstractVector;
-              [check_constraints]=true)
+    instantiate(system::AbstractSystem, x::AbstractVector;
+                [check_constraints]=true)
 
 Return the result of applying the input to an `AbstractSystem`.
 
@@ -259,8 +260,8 @@ Return the result of applying the input to an `AbstractSystem`.
 
 The result of applying the system to state `x`.
 """
-function apply(system::AbstractSystem, x::AbstractVector;
-               check_constraints::Bool=true)
+function instantiate(system::AbstractSystem, x::AbstractVector;
+                     check_constraints::Bool=true)
     !_is_conformable_state(system, x) && _argument_error(:x)
     if isconstrained(system) && check_constraints
         !_in_stateset(system, x) && _argument_error(:x,:X)
@@ -272,14 +273,17 @@ function apply(system::AbstractSystem, x::AbstractVector;
     elseif isaffine(system)
         return state_matrix(system) * x + affine_term(system)
 
+    elseif ispolynomial(system) || isblackbox(system)
+        return mapping(system)(x)
+
     else
-        return mapping(sys)(x)
+        throw(ArgumentError("instantiate not defined for type `$(typename(sys))`"))
     end
 end
 
 """
-    apply(system::AbstractSystem, x::AbstractVector, u::AbstractVector;
-              [check_constraints]=true)
+    instantiate(system::AbstractSystem, x::AbstractVector, u::AbstractVector;
+                [check_constraints]=true)
 
 Return the result of applying two inputs to an `AbstractSystem`.
 
@@ -299,43 +303,46 @@ The result of applying the system to state `x` and input `u`.
 
 If the system is not controlled but noisy, the input `u` is interpreted as noise.
 """
-function apply(sys::AbstractSystem, x::AbstractVector, u::AbstractVector;
-               check_constraints::Bool=true)
+function instantiate(system::AbstractSystem, x::AbstractVector, u::AbstractVector;
+                     check_constraints::Bool=true)
 
-    if iscontrolled(sys) && !isnoisy(sys)
+    if iscontrolled(system) && !isnoisy(system)
         input_var = :u; input_set = :U; matrix = input_matrix
         _is_conformable = _is_conformable_input
         _in_set = _in_inputset
-    elseif isnoisy(sys) && !iscontrolled(sys)
+    elseif isnoisy(system) && !iscontrolled(system)
         input_var = :w; input_set = :W; matrix = noise_matrix
         _is_conformable = _is_conformable_noise
         _in_set = _in_noiseset
     else
-        throw(ArgumentError("successor function for $(typeof(sys)) does not have 2 arguments"))
+        throw(ArgumentError("successor function for $(typeof(system)) does not have 2 arguments"))
     end
 
-    !_is_conformable_state(sys, x) && _argument_error(:x)
-    !_is_conformable(sys, u) && _argument_error(input_var)
+    !_is_conformable_state(system, x) && _argument_error(:x)
+    !_is_conformable(system, u) && _argument_error(input_var)
 
-    if isconstrained(sys) && check_constraints
-        !_in_stateset(sys, x) && _argument_error(:x,:X)
-        !_in_set(sys, u) && _argument_error(input_var, input_set)
+    if isconstrained(system) && check_constraints
+        !_in_stateset(system, x) && _argument_error(:x,:X)
+        !_in_set(system, u) && _argument_error(input_var, input_set)
     end
 
-    if islinear(sys)
-        return state_matrix(sys) * x + matrix(sys) * u
+    if islinear(system)
+        return state_matrix(system) * x + matrix(system) * u
 
-    elseif isaffine(sys)
-        return state_matrix(sys) * x + affine_term(sys) + matrix(sys) * u
+    elseif isaffine(system)
+        return state_matrix(system) * x + affine_term(system) + matrix(system) * u
+
+    elseif ispolynomial(system) || isblackbox(system)
+        return mapping(system)(x, u)
 
     else
-        return mapping(sys)(x, u)
+        throw(ArgumentError("instantiate not defined for type `$(typename(system))`"))
     end
 end
 
 """
-    apply(system::AbstractSystem,
-              x::AbstractVector, u::AbstractVector, w::AbstractVector; [check_constraints]=true)
+    instantiate(system::AbstractSystem,
+                x::AbstractVector, u::AbstractVector, w::AbstractVector; [check_constraints]=true)
 
 Return the result of applying three inputs to an `AbstractSystem`.
 
@@ -352,25 +359,29 @@ Return the result of applying three inputs to an `AbstractSystem`.
 
 The result of applying the system to state `x`, input `u` and noise `w`.
 """
-function apply(sys::AbstractSystem, x::AbstractVector, u::AbstractVector, w::AbstractVector;
-               check_constraints::Bool=true)
-    !_is_conformable_state(sys, x) && _argument_error(:x)
-    !_is_conformable_input(sys, u) && _argument_error(:u)
-    !_is_conformable_noise(sys, w) && _argument_error(:w)
+function instantiate(system::AbstractSystem, x::AbstractVector, u::AbstractVector, w::AbstractVector;
+                     check_constraints::Bool=true)
+    !_is_conformable_state(system, x) && _argument_error(:x)
+    !_is_conformable_input(system, u) && _argument_error(:u)
+    !_is_conformable_noise(system, w) && _argument_error(:w)
 
-    if isconstrained(sys) && check_constraints
-        !_in_stateset(sys, x) && _argument_error(:x,:X)
-        !_in_inputset(sys, u) && _argument_error(:u,:U)
-        !_in_noiseset(sys, w) && _argument_error(:w,:W)
+    if isconstrained(system) && check_constraints
+        !_in_stateset(system, x) && _argument_error(:x,:X)
+        !_in_inputset(system, u) && _argument_error(:u,:U)
+        !_in_noiseset(system, w) && _argument_error(:w,:W)
     end
 
-    if islinear(sys)
-        return state_matrix(sys) * x + input_matrix(sys) * u + noise_matrix(sys) * w
+    if islinear(system)
+        return state_matrix(system) * x + input_matrix(system) * u + noise_matrix(system) * w
 
-    elseif isaffine(sys)
-        return state_matrix(sys) * x + affine_term(sys) + input_matrix(sys) * u + noise_matrix(sys) * w
+    elseif isaffine(system)
+        return state_matrix(system) * x + affine_term(system) + input_matrix(system) * u + noise_matrix(system) * w
+
+    elseif ispolynomial(system) || isblackbox(system)
+        return mapping(system)(x, u, w)
 
     else
-        return mapping(sys)(x, u, w)
+        throw(ArgumentError("instantiate not defined for type `$(typename(system))`"))
+
     end
 end

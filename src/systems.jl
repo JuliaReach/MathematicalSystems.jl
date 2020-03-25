@@ -22,6 +22,7 @@ for (Z, AZ) in ((:ContinuousIdentitySystem, :AbstractContinuousSystem),
             islinear(::$T) = true
             isaffine(::$T) = true
             ispolynomial(::$T) = false
+            isblackbox(::$T) = false
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = false
@@ -76,6 +77,7 @@ for (Z, AZ) in ((:ConstrainedContinuousIdentitySystem, :AbstractContinuousSystem
             islinear(::$T) = true
             isaffine(::$T) = true
             ispolynomial(::$T) = false
+            isblackbox(::$T) = false
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = true
@@ -139,6 +141,7 @@ for (Z, AZ) in ((:LinearContinuousSystem, :AbstractContinuousSystem),
             islinear(::$T) = true
             isaffine(::$T) = true
             ispolynomial(::$T) = false
+            isblackbox(::$T) = false
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = false
@@ -202,6 +205,7 @@ for (Z, AZ) in ((:AffineContinuousSystem, :AbstractContinuousSystem),
             islinear(::$T) = false
             isaffine(::$T) = true
             ispolynomial(::$T) = false
+            isblackbox(::$T) = false
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = false
@@ -267,6 +271,7 @@ for (Z, AZ) in ((:LinearControlContinuousSystem, :AbstractContinuousSystem),
             islinear(::$T) = true
             isaffine(::$T) = true
             ispolynomial(::$T) = false
+            isblackbox(::$T) = false
             isnoisy(::$T) = false
             iscontrolled(::$T) = true
             isconstrained(::$T) = false
@@ -332,6 +337,7 @@ for (Z, AZ) in ((:ConstrainedLinearContinuousSystem, :AbstractContinuousSystem),
             islinear(::$T) = true
             isaffine(::$T) = true
             ispolynomial(::$T) = false
+            isblackbox(::$T) = false
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = true
@@ -399,6 +405,7 @@ for (Z, AZ) in ((:ConstrainedAffineContinuousSystem, :AbstractContinuousSystem),
             islinear(::$T) = false
             isaffine(::$T) = true
             ispolynomial(::$T) = false
+            isblackbox(::$T) = false
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = true
@@ -472,6 +479,7 @@ for (Z, AZ) in ((:ConstrainedAffineControlContinuousSystem, :AbstractContinuousS
             islinear(::$T) = false
             isaffine(::$T) = true
             ispolynomial(::$T) = false
+            isblackbox(::$T) = false
             isnoisy(::$T) = false
             iscontrolled(::$T) = true
             isconstrained(::$T) = true
@@ -549,6 +557,7 @@ for (Z, AZ) in ((:ConstrainedLinearControlContinuousSystem, :AbstractContinuousS
             islinear(::$T) = true
             isaffine(::$T) = true
             ispolynomial(::$T) = false
+            isblackbox(::$T) = false
             isnoisy(::$T) = false
             iscontrolled(::$T) = true
             isconstrained(::$T) = true
@@ -617,6 +626,7 @@ for (Z, AZ) in ((:LinearAlgebraicContinuousSystem, :AbstractContinuousSystem),
             islinear(::$T) = true
             isaffine(::$T) = true
             ispolynomial(::$T) = false
+            isblackbox(::$T) = false
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = false
@@ -683,6 +693,7 @@ for (Z, AZ) in ((:ConstrainedLinearAlgebraicContinuousSystem, :AbstractContinuou
             islinear(::$T) = true
             isaffine(::$T) = true
             ispolynomial(::$T) = false
+            isblackbox(::$T) = false
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = true
@@ -878,6 +889,7 @@ for (Z, AZ) in ((:BlackBoxContinuousSystem, :AbstractContinuousSystem),
             islinear(::$T) = false
             isaffine(::$T) = false
             ispolynomial(::$T) = false
+            isblackbox(::$T) = true
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = false
@@ -936,6 +948,7 @@ for (Z, AZ) in ((:ConstrainedBlackBoxContinuousSystem, :AbstractContinuousSystem
             islinear(::$T) = false
             isaffine(::$T) = false
             ispolynomial(::$T) = false
+            isblackbox(::$T) = true
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = true
@@ -997,6 +1010,7 @@ for (Z, AZ) in ((:BlackBoxControlContinuousSystem, :AbstractContinuousSystem),
             islinear(::$T) = false
             isaffine(::$T) = false
             ispolynomial(::$T) = false
+            isblackbox(::$T) = true
             isnoisy(::$T) = false
             iscontrolled(::$T) = true
             isconstrained(::$T) = false
@@ -1060,6 +1074,7 @@ for (Z, AZ) in ((:ConstrainedBlackBoxControlContinuousSystem, :AbstractContinuou
             islinear(::$T) = false
             isaffine(::$T) = false
             ispolynomial(::$T) = false
+            isblackbox(::$T) = true
             isnoisy(::$T) = false
             iscontrolled(::$T) = true
             isconstrained(::$T) = true
@@ -1137,6 +1152,7 @@ for (Z, AZ) in ((:NoisyLinearContinuousSystem, :AbstractContinuousSystem),
             islinear(::$T) = true
             isaffine(::$T) = true
             ispolynomial(::$T) = false
+            isblackbox(::$T) = false
             isnoisy(::$T) = true
             iscontrolled(::$T) = false
             isconstrained(::$T) = false
@@ -1206,6 +1222,7 @@ for (Z, AZ) in ((:NoisyConstrainedLinearContinuousSystem, :AbstractContinuousSys
             islinear(::$T) = true
             isaffine(::$T) = true
             ispolynomial(::$T) = false
+            isblackbox(::$T) = false
             isnoisy(::$T) = true
             iscontrolled(::$T) = false
             isconstrained(::$T) = true
@@ -1277,6 +1294,7 @@ for (Z, AZ) in ((:NoisyLinearControlContinuousSystem, :AbstractContinuousSystem)
             islinear(::$T) = true
             isaffine(::$T) = true
             ispolynomial(::$T) = false
+            isblackbox(::$T) = false
             isnoisy(::$T) = true
             iscontrolled(::$T) = true
             isconstrained(::$T) = false
@@ -1354,6 +1372,7 @@ for (Z, AZ) in ((:NoisyConstrainedLinearControlContinuousSystem, :AbstractContin
             islinear(::$T) = true
             isaffine(::$T) = true
             ispolynomial(::$T) = false
+            isblackbox(::$T) = false
             isnoisy(::$T) = true
             iscontrolled(::$T) = true
             isconstrained(::$T) = true
@@ -1435,6 +1454,7 @@ for (Z, AZ) in ((:NoisyAffineControlContinuousSystem, :AbstractContinuousSystem)
             islinear(::$T) = false
             isaffine(::$T) = true
             ispolynomial(::$T) = false
+            isblackbox(::$T) = false
             isnoisy(::$T) = true
             iscontrolled(::$T) = true
             isconstrained(::$T) = false
@@ -1514,6 +1534,7 @@ for (Z, AZ) in ((:NoisyConstrainedAffineControlContinuousSystem, :AbstractContin
             islinear(::$T) = false
             isaffine(::$T) = true
             ispolynomial(::$T) = false
+            isblackbox(::$T) = false
             isnoisy(::$T) = true
             iscontrolled(::$T) = true
             isconstrained(::$T) = true
@@ -1585,6 +1606,7 @@ for (Z, AZ) in ((:NoisyBlackBoxControlContinuousSystem, :AbstractContinuousSyste
             islinear(::$T) = false
             isaffine(::$T) = false
             ispolynomial(::$T) = false
+            isblackbox(::$T) = true
             isnoisy(::$T) = true
             iscontrolled(::$T) = true
             isconstrained(::$T) = false
@@ -1656,6 +1678,7 @@ for (Z, AZ) in ((:NoisyConstrainedBlackBoxControlContinuousSystem, :AbstractCont
             islinear(::$T) = false
             isaffine(::$T) = false
             ispolynomial(::$T) = false
+            isblackbox(::$T) = true
             isnoisy(::$T) = true
             iscontrolled(::$T) = true
             isconstrained(::$T) = true

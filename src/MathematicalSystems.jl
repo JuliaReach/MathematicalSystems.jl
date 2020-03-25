@@ -171,10 +171,12 @@ export @map,
 
 #===================================
 Successor state for discrete systems
+and vector field for continuous systems
 ====================================#
-include("successor.jl")
+include("instantiate.jl")
 
-export successor
+export successor,
+       vector_field
 
 #===================================
 Discretization for affine systems

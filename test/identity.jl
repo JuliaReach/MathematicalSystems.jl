@@ -61,4 +61,5 @@ end
 
 @testset "Specific methods for IdentityMultiple" begin
     @test Hermitian(I(2)) == Hermitian([1. 0; 0 1])
+    @test exp(I(1, 3)) == I(exp(1), 3)
 end

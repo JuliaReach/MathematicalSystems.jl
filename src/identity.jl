@@ -176,3 +176,5 @@ LinearAlgebra.I(λ::Number, n::Int) = IdentityMultiple(λ*I, n)
 function LinearAlgebra.Hermitian(𝐼::IdentityMultiple)
     return Hermitian(Diagonal(fill(𝐼.M.λ, 𝐼.n)))
 end
+
+Base.exp(𝐼::IdentityMultiple) = IdentityMultiple(exp(𝐼.M.λ), 𝐼.n)

@@ -1,6 +1,6 @@
 name = "MathematicalSystems"
 uuid = "d14a8603-c872-5ed3-9ece-53e0e82e39da"
-version = "0.11.1"
+version = "0.11.2"
 
 [deps]
 Espresso = "6912e4f1-e036-58b0-9138-08d1e6358ea9"

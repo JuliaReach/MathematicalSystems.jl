@@ -930,15 +930,23 @@ julia> initial_state(p)
 """
 macro ivp(expr...)
     try
-        dyn_eq, AT, constr, state, input, noise, dim, x0 = _parse_system(expr)
-        sys_type, var_names = _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
-        sys = Expr(:call, :($sys_type), :($(var_names...)))
-        if x0 == nothing
-            return throw(ArgumentError("an initial-value problem should define the " *
-                        "initial states, but such expression was not found"))
-        else
-            ivp = Expr(:call, InitialValueProblem, :($sys), :($x0))
+        # if the @ivp macro is called with a AbstractSystem typed arguement
+        if parses_as_system(expr[1])
+            sys = expr[1]
+            @capture(expr[2], x_(0) ∈ x0_) || throw(ArgumentError("malformed epxpression")) # TODO handle equality
+            ivp = Expr(:call, InitialValueProblem, :($(expr[1])), :($x0))
             return esc(ivp)
+        else
+            dyn_eq, AT, constr, state, input, noise, dim, x0 = _parse_system(expr)
+            sys_type, var_names = _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
+            sys = Expr(:call, :($sys_type), :($(var_names...)))
+            if x0 == nothing
+                return throw(ArgumentError("an initial-value problem should define the " *
+                            "initial states, but such expression was not found"))
+            else
+                ivp = Expr(:call, InitialValueProblem, :($sys), :($x0))
+                return esc(ivp)
+            end
         end
     catch ex
         if  isa(ex, ArgumentError)
@@ -947,4 +955,17 @@ macro ivp(expr...)
             throw(ex)
         end
     end
+end
+
+function parses_as_system(expr)
+    # The argument is a system if
+    # it is directly defined using @system in the macro call
+    if @capture(expr, @system(def_))
+        return true
+    end
+    # if it is a variable, i.e. it is not a dynamic equation
+    if !@capture(expr, a_ = b_)
+        return true
+    end
+    return false
 end

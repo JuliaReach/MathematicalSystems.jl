@@ -26,7 +26,6 @@ end
 # Successor for discrete system
 # =============================
 
-
 """
     successor(system::DiscreteIdentitySystem, x::AbstractVector)
 
@@ -92,7 +91,7 @@ Return the successor state of an `AbstractDiscreteSystem`.
 The result of applying the system to state `x`.
 """
 successor(system::AbstractDiscreteSystem, x::AbstractVector; kwargs...) =
-    instantiate(system, x; kwargs...)
+    _instantiate(system, x; kwargs...)
 
 """
     successor(system::AbstractDiscreteSystem, x::AbstractVector, u::AbstractVector;
@@ -117,7 +116,7 @@ The result of applying the system to state `x` and input `u`.
 If the system is not controlled but noisy, the input `u` is interpreted as noise.
     """
 successor(system::AbstractDiscreteSystem, x::AbstractVector, u::AbstractVector; kwargs...) =
-    instantiate(system, x, u; kwargs...)
+    _instantiate(system, x, u; kwargs...)
 
 """
     successor(system::AbstractDiscreteSystem,
@@ -139,7 +138,7 @@ Return the successor state of an `AbstractDiscreteSystem`.
 The result of applying the system to state `x`, input `u` and noise `w`.
 """
 successor(system::AbstractDiscreteSystem, x::AbstractVector, u::AbstractVector, w::AbstractVector; kwargs...) =
-    instantiate(system, x, u, w; kwargs...)
+    _instantiate(system, x, u, w; kwargs...)
 
 # =============================
 # Vector Field for continuous system
@@ -163,7 +162,7 @@ Return the vector field of an `AbstractContinuousSystem`.
 The vector field of the system at state `x`.
 """
 vector_field(system::AbstractContinuousSystem, x::AbstractVector; kwargs...) =
-    instantiate(system, x; kwargs...)
+    _instantiate(system, x; kwargs...)
 
 """
     vector_field(system::AbstractContinuousSystem, x::AbstractVector, u::AbstractVector;
@@ -188,7 +187,7 @@ The vector field of the system at state `x` and applying input `u`.
 If the system is not controlled but noisy, the input `u` is interpreted as noise.
     """
 vector_field(system::AbstractContinuousSystem, x::AbstractVector, u::AbstractVector; kwargs...) =
-    instantiate(system, x, u; kwargs...)
+    _instantiate(system, x, u; kwargs...)
 
 """
     vector_field(system::AbstractContinuousSystem,
@@ -210,7 +209,7 @@ Return the vector field state of an `AbstractContinuousSystem`.
 The vector field of the system at state `x` and applying input `u` and noise `w`.
 """
 vector_field(system::AbstractContinuousSystem, x::AbstractVector, u::AbstractVector, w::AbstractVector; kwargs...) =
-    instantiate(system, x, u, w; kwargs...)
+    _instantiate(system, x, u, w; kwargs...)
 
 
 struct VectorField{T}
@@ -239,12 +238,12 @@ end
 
 
 # ====================
-# Generic instantiate method
+# Generic _instantiate method
 # ====================
 
 
 """
-    instantiate(system::AbstractSystem, x::AbstractVector;
+    _instantiate(system::AbstractSystem, x::AbstractVector;
                 [check_constraints]=true)
 
 Return the result of applying the input to an `AbstractSystem`.
@@ -260,7 +259,7 @@ Return the result of applying the input to an `AbstractSystem`.
 
 The result of applying the system to state `x`.
 """
-function instantiate(system::AbstractSystem, x::AbstractVector;
+function _instantiate(system::AbstractSystem, x::AbstractVector;
                      check_constraints::Bool=true)
     !_is_conformable_state(system, x) && _argument_error(:x)
     if isconstrained(system) && check_constraints
@@ -277,12 +276,12 @@ function instantiate(system::AbstractSystem, x::AbstractVector;
         return mapping(system)(x)
 
     else
-        throw(ArgumentError("instantiate not defined for type `$(typename(sys))`"))
+        throw(ArgumentError("_instantiate not defined for type `$(typename(sys))`"))
     end
 end
 
 """
-    instantiate(system::AbstractSystem, x::AbstractVector, u::AbstractVector;
+    _instantiate(system::AbstractSystem, x::AbstractVector, u::AbstractVector;
                 [check_constraints]=true)
 
 Return the result of applying two inputs to an `AbstractSystem`.
@@ -303,7 +302,7 @@ The result of applying the system to state `x` and input `u`.
 
 If the system is not controlled but noisy, the input `u` is interpreted as noise.
 """
-function instantiate(system::AbstractSystem, x::AbstractVector, u::AbstractVector;
+function _instantiate(system::AbstractSystem, x::AbstractVector, u::AbstractVector;
                      check_constraints::Bool=true)
 
     if iscontrolled(system) && !isnoisy(system)
@@ -336,12 +335,12 @@ function instantiate(system::AbstractSystem, x::AbstractVector, u::AbstractVecto
         return mapping(system)(x, u)
 
     else
-        throw(ArgumentError("instantiate not defined for type `$(typename(system))`"))
+        throw(ArgumentError("_instantiate not defined for type `$(typename(system))`"))
     end
 end
 
 """
-    instantiate(system::AbstractSystem,
+    _instantiate(system::AbstractSystem,
                 x::AbstractVector, u::AbstractVector, w::AbstractVector; [check_constraints]=true)
 
 Return the result of applying three inputs to an `AbstractSystem`.
@@ -359,7 +358,7 @@ Return the result of applying three inputs to an `AbstractSystem`.
 
 The result of applying the system to state `x`, input `u` and noise `w`.
 """
-function instantiate(system::AbstractSystem, x::AbstractVector, u::AbstractVector, w::AbstractVector;
+function _instantiate(system::AbstractSystem, x::AbstractVector, u::AbstractVector, w::AbstractVector;
                      check_constraints::Bool=true)
     !_is_conformable_state(system, x) && _argument_error(:x)
     !_is_conformable_input(system, u) && _argument_error(:u)
@@ -381,7 +380,7 @@ function instantiate(system::AbstractSystem, x::AbstractVector, u::AbstractVecto
         return mapping(system)(x, u, w)
 
     else
-        throw(ArgumentError("instantiate not defined for type `$(typename(system))`"))
+        throw(ArgumentError("_instantiate not defined for type `$(typename(system))`"))
 
     end
 end

@@ -915,6 +915,9 @@ This macro behaves like the `@system` macro, the sole difference being that in
 `@ivp` the constraint on the set of initial states is mandatory. For the technical
 details we refer to the documentation of [`@system`](@ref).
 
+The macro can also be called with a `system` argument of type `AbstractSystem`
+in the form `@ivp(system, state(0) ∈ initial_set)`.
+
 ### Examples
 
 ```jldoctest ivp_macro
@@ -926,6 +929,11 @@ InitialValueProblem{LinearContinuousSystem{Float64,IdentityMultiple{Float64}},Ar
 julia> initial_state(p)
 1-element Array{Float64,1}:
  1.0
+
+julia> sys = @system(x' = [1 0; 0 1] * x);
+
+julia> @ivp(sys, x(0) ∈ [-1, 1])
+InitialValueProblem{LinearContinuousSystem{Int64,Array{Int64,2}},Array{Int64,1}}(LinearContinuousSystem{Int64,Array{Int64,2}}([1 0; 0 1]), [-1, 1])
 ```
 """
 macro ivp(expr...)

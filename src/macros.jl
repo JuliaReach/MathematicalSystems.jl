@@ -915,6 +915,9 @@ This macro behaves like the `@system` macro, the sole difference being that in
 `@ivp` the constraint on the set of initial states is mandatory. For the technical
 details we refer to the documentation of [`@system`](@ref).
 
+The macro can also be called with a `system` argument of type `AbstractSystem`
+in the form `@ivp(system, state(0) ∈ initial_set)`.
+
 ### Examples
 
 ```jldoctest ivp_macro
@@ -926,19 +929,32 @@ InitialValueProblem{LinearContinuousSystem{Float64,IdentityMultiple{Float64}},Ar
 julia> initial_state(p)
 1-element Array{Float64,1}:
  1.0
+
+julia> sys = @system(x' = [1 0; 0 1] * x);
+
+julia> @ivp(sys, x(0) ∈ [-1, 1])
+InitialValueProblem{LinearContinuousSystem{Int64,Array{Int64,2}},Array{Int64,1}}(LinearContinuousSystem{Int64,Array{Int64,2}}([1 0; 0 1]), [-1, 1])
 ```
 """
 macro ivp(expr...)
     try
-        dyn_eq, AT, constr, state, input, noise, dim, x0 = _parse_system(expr)
-        sys_type, var_names = _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
-        sys = Expr(:call, :($sys_type), :($(var_names...)))
-        if x0 == nothing
-            return throw(ArgumentError("an initial-value problem should define the " *
-                        "initial states, but such expression was not found"))
-        else
-            ivp = Expr(:call, InitialValueProblem, :($sys), :($x0))
+        # check if the @ivp macro is called with an AbstractSystem argument
+        if parses_as_system(expr[1])
+            sys = expr[1]
+            @capture(expr[2], x_(0) ∈ x0_) || throw(ArgumentError("malformed epxpression")) # TODO handle equality
+            ivp = Expr(:call, InitialValueProblem, :($(expr[1])), :($x0))
             return esc(ivp)
+        else
+            dyn_eq, AT, constr, state, input, noise, dim, x0 = _parse_system(expr)
+            sys_type, var_names = _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
+            sys = Expr(:call, :($sys_type), :($(var_names...)))
+            if x0 == nothing
+                return throw(ArgumentError("an initial-value problem should define the " *
+                            "initial states, but such expression was not found"))
+            else
+                ivp = Expr(:call, InitialValueProblem, :($sys), :($x0))
+                return esc(ivp)
+            end
         end
     catch ex
         if  isa(ex, ArgumentError)
@@ -947,4 +963,17 @@ macro ivp(expr...)
             throw(ex)
         end
     end
+end
+
+function parses_as_system(expr)
+    # The argument is a system if
+    # 1) it is directly defined using @system in the macro call
+    if @capture(expr, @system(def_))
+        return true
+    end
+    # 2) it is a variable, i.e. it is not a dynamic equation
+    if !@capture(expr, a_ = b_)
+        return true
+    end
+    return false
 end

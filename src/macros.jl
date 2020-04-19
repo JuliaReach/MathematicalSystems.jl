@@ -971,7 +971,7 @@ function parses_as_system(expr)
     if @capture(expr, @system(def_))
         return true
     end
-    # if it is a variable, i.e. it is not a dynamic equation
+    # 2) it is a variable, i.e. it is not a dynamic equation
     if !@capture(expr, a_ = b_)
         return true
     end

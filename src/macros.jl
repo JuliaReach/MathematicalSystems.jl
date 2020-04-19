@@ -938,7 +938,7 @@ InitialValueProblem{LinearContinuousSystem{Int64,Array{Int64,2}},Array{Int64,1}}
 """
 macro ivp(expr...)
     try
-        # if the @ivp macro is called with a AbstractSystem typed arguement
+        # check if the @ivp macro is called with an AbstractSystem argument
         if parses_as_system(expr[1])
             sys = expr[1]
             @capture(expr[2], x_(0) ∈ x0_) || throw(ArgumentError("malformed epxpression")) # TODO handle equality

@@ -967,7 +967,7 @@ end
 
 function parses_as_system(expr)
     # The argument is a system if
-    # it is directly defined using @system in the macro call
+    # 1) it is directly defined using @system in the macro call
     if @capture(expr, @system(def_))
         return true
     end

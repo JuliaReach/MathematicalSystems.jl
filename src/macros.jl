@@ -47,6 +47,8 @@ For example, an identity map of dimension 5 can be defined as:
 julia> @map(x -> x, dim=5)
 IdentityMap(5)
 ```
+A state constraint on such map can be specified passing the additional argument
+`x ∈ X`.
 
 An identity map can alternatively be created by giving a the size of the identity
 matrix as `I(n)`, for example:
@@ -56,18 +58,24 @@ julia> @map x -> I(5)*x
 IdentityMap(5)
 ```
 """
-macro map(ex, args)
+macro map(ex, args...)
     dimension = nothing
     x = (ex.args)[1]
     rhs = (ex.args)[2].args[2]
     if x == rhs
-        # identity map: x -> x, dim=..
-        if @capture(args, (dim = dim_) | (dim: dim_) )
+        # identity map, eg: @map(x -> x, dim=2)
+        if @capture(args[1], (dim = dim_) | (dim: dim_) )
             dimension = dim
         else
             throw(ArgumentError("cannot parse dimension of identity map"))
         end
-        return  Expr(:call, IdentityMap, esc(:($(dimension))))
+
+        # constrained identity map: @map(x -> x, dim=2, x ∈ X)
+        if length(args) > 1 && @capture(args[2], x ∈ X_)
+            return Expr(:call, ConstrainedIdentityMap, esc(:($(dimension))), esc(:($(X))))
+        else
+            return Expr(:call, IdentityMap, esc(:($(dimension))))
+        end
     end
 
     throw(ArgumentError("unable to match the given expression to a known map type"))

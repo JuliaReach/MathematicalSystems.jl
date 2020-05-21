@@ -15,4 +15,7 @@ end
     identitymap1 = @map(x->x, dim=n)
     identitymap2 = @map(x->x, dim:3)
     @test identitymap1 == identitymap2 == IdentityMap(n)
+    X = BallInf(zeros(3), 1.0)
+    identitymap3 = @map(x->x, dim:3, x ∈ X)
+    @test identitymap3 == ConstrainedIdentityMap(3, X)
 end

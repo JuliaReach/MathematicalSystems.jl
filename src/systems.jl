@@ -1925,6 +1925,9 @@ for (Z, AZ) in ((:SecondOrderConstrainedLinearControlContinuousSystem, :Abstract
         viscosity_matrix(s::$Z) = s.C
         stiffness_matrix(s::$Z) = s.K
         affine_term(s::$Z) = zeros(eltype(s.C), size(s.C, 1))
+        input_matrix(s::$Z) = s.B
+        stateset(s::$Z) = s.X
+        inputset(s::$Z) = s.U
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
@@ -2019,6 +2022,9 @@ for (Z, AZ) in ((:SecondOrderConstrainedAffineControlContinuousSystem, :Abstract
         viscosity_matrix(s::$Z) = s.C
         stiffness_matrix(s::$Z) = s.K
         affine_term(s::$Z) = s.d
+        input_matrix(s::$Z) = s.B
+        stateset(s::$Z) = s.X
+        inputset(s::$Z) = s.U
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin

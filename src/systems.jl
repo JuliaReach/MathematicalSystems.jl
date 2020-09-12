@@ -1750,13 +1750,13 @@ for (Z, AZ) in ((:SecondOrderLinearContinuousSystem, :AbstractContinuousSystem),
              return $(Z)(hcat(M), hcat(C), hcat(K))
         end
 
-        statedim(s::$Z) = size(C, 1)
+        statedim(s::$Z) = size(s.C, 1)
         inputdim(::$Z) = 0
         noisedim(::$Z) = 0
         mass_matrix(s::$Z) = s.M
         viscosity_matrix(s::$Z) = s.C
         stiffness_matrix(s::$Z) = s.K
-        affine_term(s::$Z) = zeros(eltype(s.C), size(C, 1))
+        affine_term(s::$Z) = zeros(eltype(s.C), size(s.C, 1))
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
@@ -1829,7 +1829,7 @@ for (Z, AZ) in ((:SecondOrderAffineContinuousSystem, :AbstractContinuousSystem),
              return $(Z)(hcat(M), hcat(C), hcat(K), [b])
         end
 
-        statedim(s::$Z) = size(C, 1)
+        statedim(s::$Z) = size(s.C, 1)
         inputdim(::$Z) = 0
         noisedim(::$Z) = 0
         mass_matrix(s::$Z) = s.M
@@ -1918,7 +1918,7 @@ for (Z, AZ) in ((:SecondOrderConstrainedLinearControlContinuousSystem, :Abstract
              return $(Z)(hcat(M), hcat(C), hcat(K), hcat(B), X, U)
         end
 
-        statedim(s::$Z) = size(C, 1)
+        statedim(s::$Z) = size(s.C, 1)
         inputdim(::$Z) = size(s.B, 2)
         noisedim(::$Z) = 0
         mass_matrix(s::$Z) = s.M
@@ -2012,7 +2012,7 @@ for (Z, AZ) in ((:SecondOrderConstrainedAffineControlContinuousSystem, :Abstract
              return $(Z)(hcat(M), hcat(C), hcat(K), hcat(B), [d], X, U)
         end
 
-        statedim(s::$Z) = size(C, 1)
+        statedim(s::$Z) = size(s.C, 1)
         inputdim(::$Z) = size(s.B, 2)
         noisedim(::$Z) = 0
         mass_matrix(s::$Z) = s.M

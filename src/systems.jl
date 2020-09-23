@@ -1855,7 +1855,7 @@ end
 Continuous-time second order constrained linear control system of the form:
 
 ```math
-    Mx(t)''(t) + Cx'(t) + Kx(t) = Bu(t), \\; x(t) ∈ \\mathcal{X}, \\; u(t) ∈ \\mathcal{U} \\; \\forall t.
+    Mx''(t) + Cx'(t) + Kx(t) = Bu(t), \\; x(t) ∈ \\mathcal{X}, \\; u(t) ∈ \\mathcal{U} \\; \\forall t.
 ```
 
 ### Fields

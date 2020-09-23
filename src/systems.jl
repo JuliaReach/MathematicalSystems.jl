@@ -1776,7 +1776,7 @@ end
 Continuous-time second order affine system of the form:
 
 ```math
-    Mx(t)''(t) + Cx'(t) + Kx(t) = b\\; \\forall t.
+    Mx''(t) + Cx'(t) + Kx(t) = b\\; \\forall t.
 ```
 
 ### Fields

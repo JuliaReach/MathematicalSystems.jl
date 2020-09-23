@@ -2032,7 +2032,7 @@ for (Z, AZ) in ((:SecondOrderConstrainedAffineControlContinuousSystem, :Abstract
             isaffine(::$T) = true
             ispolynomial(::$T) = false
             isnoisy(::$T) = false
-            iscontrolled(::$T) = false
+            iscontrolled(::$T) = true
             isconstrained(::$T) = true
         end
     end

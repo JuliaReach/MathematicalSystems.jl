@@ -1695,3 +1695,345 @@ with domain constraints of the form:
 - `W`        -- disturbance set
 """
 NoisyConstrainedBlackBoxControlDiscreteSystem
+
+@doc """
+    SecondOrderLinearContinuousSystem
+
+Continuous-time second order linear system of the form:
+
+```math
+    Mx''(t) + Cx'(t) + Kx(t) = 0\\; \\forall t.
+```
+
+### Fields
+
+- `M` -- mass matrix
+- `C` -- viscosity matrix
+- `K` -- stiffness matrix
+"""
+SecondOrderLinearContinuousSystem
+
+@doc """
+    SecondOrderLinearDiscreteSystem
+
+Discrete-time second order linear system of the form:
+
+```math
+    Mx_{k+2} + Cx_{k+1} + Kx_k = 0\\; \\forall k.
+```
+
+### Fields
+
+- `M` -- mass matrix
+- `C` -- viscosity matrix
+- `K` -- stiffness matrix
+"""
+SecondOrderLinearDiscreteSystem
+
+for (Z, AZ) in ((:SecondOrderLinearContinuousSystem, :AbstractContinuousSystem),
+                (:SecondOrderLinearDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MTM <: AbstractMatrix{T},
+                       MTC <: AbstractMatrix{T},
+                       MTK <: AbstractMatrix{T}} <: $(AZ)
+            M::MTM
+            C::MTC
+            K::MTK
+            function $(Z)(M::MTM, C::MTC, K::MTK) where {T, MTM <: AbstractMatrix{T},
+                                                            MTC <: AbstractMatrix{T},
+                                                            MTK <: AbstractMatrix{T}}
+                @assert checksquare(M) == checksquare(C) == checksquare(K)
+                return new{T, MTM, MTC, MTK}(M, C, K)
+            end
+        end
+        function $(Z)(M::Number, C::Number, K::Number)
+             return $(Z)(hcat(M), hcat(C), hcat(K))
+        end
+
+        statedim(s::$Z) = size(s.C, 1)
+        inputdim(::$Z) = 0
+        noisedim(::$Z) = 0
+        mass_matrix(s::$Z) = s.M
+        viscosity_matrix(s::$Z) = s.C
+        stiffness_matrix(s::$Z) = s.K
+        affine_term(s::$Z) = zeros(eltype(s.C), size(s.C, 1))
+    end
+    for T in [Z, Type{<:eval(Z)}]
+        @eval begin
+            islinear(::$T) = true
+            isaffine(::$T) = true
+            ispolynomial(::$T) = false
+            isnoisy(::$T) = false
+            iscontrolled(::$T) = false
+            isconstrained(::$T) = false
+        end
+    end
+end
+
+@doc """
+    SecondOrderAffineContinuousSystem
+
+Continuous-time second order affine system of the form:
+
+```math
+    Mx''(t) + Cx'(t) + Kx(t) = b\\; \\forall t.
+```
+
+### Fields
+
+- `M` -- mass matrix
+- `C` -- viscosity matrix
+- `K` -- stiffness matrix
+- `b` -- affine term
+"""
+SecondOrderAffineContinuousSystem
+
+@doc """
+    SecondOrderAffineDiscreteSystem
+
+Discrete-time second order affine system of the form:
+
+```math
+    Mx_{k+2} + Cx_{k+1} + Kx_k = b\\; \\forall k.
+```
+
+### Fields
+
+- `M` -- mass matrix
+- `C` -- viscosity matrix
+- `K` -- stiffness matrix
+- `b` -- affine term
+"""
+SecondOrderAffineDiscreteSystem
+
+for (Z, AZ) in ((:SecondOrderAffineContinuousSystem, :AbstractContinuousSystem),
+                (:SecondOrderAffineDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MTM <: AbstractMatrix{T},
+                       MTC <: AbstractMatrix{T},
+                       MTK <: AbstractMatrix{T},
+                       VT <: AbstractVector{T}} <: $(AZ)
+            M::MTM
+            C::MTC
+            K::MTK
+            b::VT
+            function $(Z)(M::MTM, C::MTC, K::MTK, b::VT) where {T, MTM <: AbstractMatrix{T},
+                                                                   MTC <: AbstractMatrix{T},
+                                                                   MTK <: AbstractMatrix{T},
+                                                                   VT <: AbstractVector{T}}
+                @assert checksquare(M) == checksquare(C) == checksquare(K) == length(b)
+                return new{T, MTM, MTC, MTK, VT}(M, C, K, b)
+            end
+        end
+        function $(Z)(M::Number, C::Number, K::Number, b::Number)
+             return $(Z)(hcat(M), hcat(C), hcat(K), [b])
+        end
+
+        statedim(s::$Z) = size(s.C, 1)
+        inputdim(::$Z) = 0
+        noisedim(::$Z) = 0
+        mass_matrix(s::$Z) = s.M
+        viscosity_matrix(s::$Z) = s.C
+        stiffness_matrix(s::$Z) = s.K
+        affine_term(s::$Z) = s.b
+    end
+    for T in [Z, Type{<:eval(Z)}]
+        @eval begin
+            islinear(::$T) = true
+            isaffine(::$T) = true
+            ispolynomial(::$T) = false
+            isnoisy(::$T) = false
+            iscontrolled(::$T) = false
+            isconstrained(::$T) = false
+        end
+    end
+end
+
+@doc """
+    SecondOrderConstrainedLinearControlContinuousSystem
+
+Continuous-time second order constrained linear control system of the form:
+
+```math
+    Mx''(t) + Cx'(t) + Kx(t) = Bu(t), \\; x(t) ∈ \\mathcal{X}, \\; u(t) ∈ \\mathcal{U} \\; \\forall t.
+```
+
+### Fields
+
+- `M` -- mass matrix
+- `C` -- viscosity matrix
+- `K` -- stiffness matrix
+- `B` -- input matrix
+- `X` -- state constraints
+- `U` -- input constraints
+"""
+SecondOrderConstrainedLinearControlContinuousSystem
+
+@doc """
+    SecondOrderConstrainedLinearControlDiscreteSystem
+
+Discrete-time second order constrained linear control system of the form:
+
+```math
+    Mx_{k+2} + Cx_{k+1} + Kx_k = Bu_k, \\; x_k ∈ \\mathcal{X}, \\; u_k ∈ \\mathcal{U} \\; \\forall k.
+```
+
+### Fields
+
+- `M` -- mass matrix
+- `C` -- viscosity matrix
+- `K` -- stiffness matrix
+- `B` -- input matrix
+- `X` -- state constraints
+- `U` -- input constraints
+"""
+SecondOrderConstrainedLinearControlDiscreteSystem
+
+for (Z, AZ) in ((:SecondOrderConstrainedLinearControlContinuousSystem, :AbstractContinuousSystem),
+                (:SecondOrderConstrainedLinearControlDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MTM <: AbstractMatrix{T},
+                       MTC <: AbstractMatrix{T},
+                       MTK <: AbstractMatrix{T},
+                       MTB <: AbstractMatrix{T},
+                       ST,
+                       UT} <: $(AZ)
+            M::MTM
+            C::MTC
+            K::MTK
+            B::MTB
+            X::ST
+            U::UT
+            function $(Z)(M::MTM, C::MTC, K::MTK, B::MTB, X::ST, U::UT) where {T, MTM <: AbstractMatrix{T},
+                                                                                  MTC <: AbstractMatrix{T},
+                                                                                  MTK <: AbstractMatrix{T},
+                                                                                  MTB <: AbstractMatrix{T},
+                                                                                  ST,
+                                                                                  UT}
+                @assert checksquare(M) == checksquare(C) == checksquare(K) == size(B, 1)
+                return new{T, MTM, MTC, MTK, MTB, ST, UT}(M, C, K, B, X, U)
+            end
+        end
+        function $(Z)(M::Number, C::Number, K::Number, B::Number, X, U)
+             return $(Z)(hcat(M), hcat(C), hcat(K), hcat(B), X, U)
+        end
+
+        statedim(s::$Z) = size(s.C, 1)
+        inputdim(::$Z) = size(s.B, 2)
+        noisedim(::$Z) = 0
+        mass_matrix(s::$Z) = s.M
+        viscosity_matrix(s::$Z) = s.C
+        stiffness_matrix(s::$Z) = s.K
+        affine_term(s::$Z) = zeros(eltype(s.C), size(s.C, 1))
+        input_matrix(s::$Z) = s.B
+        stateset(s::$Z) = s.X
+        inputset(s::$Z) = s.U
+    end
+    for T in [Z, Type{<:eval(Z)}]
+        @eval begin
+            islinear(::$T) = true
+            isaffine(::$T) = true
+            ispolynomial(::$T) = false
+            isnoisy(::$T) = false
+            iscontrolled(::$T) = true
+            isconstrained(::$T) = true
+        end
+    end
+end
+
+@doc """
+    SecondOrderConstrainedAffineControlContinuousSystem
+
+Continuous-time second order constrained affine control system of the form:
+
+```math
+    Mx''(t) + Cx'(t) + Kx(t) = Bu(t) + d, \\; x(t) ∈ \\mathcal{X}, \\; u(t) ∈ \\mathcal{U} \\; \\forall t.
+```
+
+### Fields
+
+- `M` -- mass matrix
+- `C` -- viscosity matrix
+- `K` -- stiffness matrix
+- `B` -- input matrix
+- `d` -- affine term
+- `X` -- state constraints
+- `U` -- input constraints
+"""
+SecondOrderConstrainedAffineControlContinuousSystem
+
+@doc """
+    SecondOrderConstrainedAffineControlDiscreteSystem
+
+Discrete-time second order constrained affine control system of the form:
+
+```math
+    Mx_{k+2} + Cx_{k+1} + Kx_k = Bu_k + d, \\; x_k ∈ \\mathcal{X}, \\; u_k ∈ \\mathcal{U} \\; \\forall k.
+```
+
+### Fields
+
+- `M` -- mass matrix
+- `C` -- viscosity matrix
+- `K` -- stiffness matrix
+- `B` -- input matrix
+- `d` -- affine term
+- `X` -- state constraints
+- `U` -- input constraints
+"""
+SecondOrderConstrainedAffineControlDiscreteSystem
+
+for (Z, AZ) in ((:SecondOrderConstrainedAffineControlContinuousSystem, :AbstractContinuousSystem),
+                (:SecondOrderConstrainedAffineControlDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MTM <: AbstractMatrix{T},
+                       MTC <: AbstractMatrix{T},
+                       MTK <: AbstractMatrix{T},
+                       MTB <: AbstractMatrix{T},
+                       VT <: AbstractVector{T},
+                       ST,
+                       UT} <: $(AZ)
+            M::MTM
+            C::MTC
+            K::MTK
+            B::MTB
+            d::VT
+            X::ST
+            U::UT
+            function $(Z)(M::MTM, C::MTC, K::MTK, B::MTB, d::VT, X::ST, U::UT) where {T, MTM <: AbstractMatrix{T},
+                                                                                  MTC <: AbstractMatrix{T},
+                                                                                  MTK <: AbstractMatrix{T},
+                                                                                  MTB <: AbstractMatrix{T},
+                                                                                  VT <: AbstractVector{T},
+                                                                                  ST,
+                                                                                  UT}
+                @assert checksquare(M) == checksquare(C) == checksquare(K) == size(B, 1) == length(d)
+                return new{T, MTM, MTC, MTK, MTB, VT, ST, UT}(M, C, K, B, d, X, U)
+            end
+        end
+        function $(Z)(M::Number, C::Number, K::Number, B::Number, d::Number, X, U)
+             return $(Z)(hcat(M), hcat(C), hcat(K), hcat(B), [d], X, U)
+        end
+
+        statedim(s::$Z) = size(s.C, 1)
+        inputdim(::$Z) = size(s.B, 2)
+        noisedim(::$Z) = 0
+        mass_matrix(s::$Z) = s.M
+        viscosity_matrix(s::$Z) = s.C
+        stiffness_matrix(s::$Z) = s.K
+        affine_term(s::$Z) = s.d
+        input_matrix(s::$Z) = s.B
+        stateset(s::$Z) = s.X
+        inputset(s::$Z) = s.U
+    end
+    for T in [Z, Type{<:eval(Z)}]
+        @eval begin
+            islinear(::$T) = true
+            isaffine(::$T) = true
+            ispolynomial(::$T) = false
+            isnoisy(::$T) = false
+            iscontrolled(::$T) = true
+            isconstrained(::$T) = true
+        end
+    end
+end

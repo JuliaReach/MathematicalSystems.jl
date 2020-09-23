@@ -36,7 +36,10 @@ export statedim,
        state_matrix,
        input_matrix,
        noise_matrix,
-       affine_term
+       affine_term,
+       mass_matrix,
+       viscosity_matrix,
+       stiffness_matrix
 
 # traits
 export islinear,
@@ -75,7 +78,11 @@ export ContinuousIdentitySystem,
        NoisyAffineControlContinuousSystem,
        NoisyConstrainedAffineControlContinuousSystem,
        NoisyBlackBoxControlContinuousSystem,
-       NoisyConstrainedBlackBoxControlContinuousSystem
+       NoisyConstrainedBlackBoxControlContinuousSystem,
+       SecondOrderLinearContinuousSystem,
+       SecondOrderAffineContinuousSystem,
+       SecondOrderConstrainedLinearControlContinuousSystem,
+       SecondOrderConstrainedAffineControlContinuousSystem
 
 #==================================
 Concrete Types for Discrete Systems
@@ -104,7 +111,11 @@ export DiscreteIdentitySystem,
        NoisyAffineControlDiscreteSystem,
        NoisyConstrainedAffineControlDiscreteSystem,
        NoisyBlackBoxControlDiscreteSystem,
-       NoisyConstrainedBlackBoxControlDiscreteSystem
+       NoisyConstrainedBlackBoxControlDiscreteSystem,
+       SecondOrderLinearDiscreteSystem,
+       SecondOrderAffineDiscreteSystem,
+       SecondOrderConstrainedLinearControlDiscreteSystem,
+       SecondOrderConstrainedAffineControlDiscreteSystem
 
 #==========================================
 Concrete Types for an Initial Value Problem

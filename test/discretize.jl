@@ -32,9 +32,14 @@ end
                  :X => X, :U => U, :W => W])
     dict_discretized = Dict([:A => A_d, :B => B_d, :b => c_d, :c => c_d, :D => D_d,
                  :X => X, :U => U, :W => W])
+
     # get affine ctypes
     CTYPES = filter(x -> (occursin("Linear", string(x)) || occursin("Affine", string(x))) &&
                          !occursin("Algebraic", string(x)) , subtypes(AbstractContinuousSystem))
+
+    # this test doesn't apply for second order systems
+    filter!(x -> x ∉ SECOND_ORDER_CTYPES, CTYPES)
+
     DTYPES = MathematicalSystems._complementary_type.(CTYPES)
     n_types = length(CTYPES)
     CFIELDS = fieldnames.(CTYPES)
@@ -66,9 +71,14 @@ end
                  :X => X, :U => U, :W => W])
     dict_discretized = Dict([:A => A_d, :B => B_d, :b => c_d, :c => c_d, :D => D_d,
                  :X => X, :U => U, :W => W])
+
     # get affine ctypes
     CTYPES = filter(x -> (occursin("Linear", string(x)) || occursin("Affine", string(x))) &&
                          !occursin("Algebraic", string(x)) , subtypes(AbstractContinuousSystem))
+
+    # this test doesn't apply for second order systems
+    filter!(x -> x ∉ SECOND_ORDER_CTYPES, CTYPES)
+
     DTYPES = MathematicalSystems._complementary_type.(CTYPES)
     n_types = length(CTYPES)
     CFIELDS = fieldnames.(CTYPES)

@@ -6,6 +6,11 @@ using Test
 # fix namespace conflicts with LazySets
 using MathematicalSystems: LinearMap, AffineMap, ResetMap
 
+const SECOND_ORDER_CTYPES = [SecondOrderAffineContinuousSystem,
+                             SecondOrderConstrainedAffineControlContinuousSystem,
+                             SecondOrderConstrainedLinearControlContinuousSystem,
+                             SecondOrderLinearContinuousSystem]
+
 include("continuous.jl")
 include("discrete.jl")
 include("identity.jl")

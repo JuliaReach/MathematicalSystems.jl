@@ -1702,7 +1702,7 @@ NoisyConstrainedBlackBoxControlDiscreteSystem
 Continuous-time second order linear system of the form:
 
 ```math
-    Mx(t)''(t) + Cx'(t) + Kx(t) = 0\\; \\forall t.
+    Mx''(t) + Cx'(t) + Kx(t) = 0\\; \\forall t.
 ```
 
 ### Fields

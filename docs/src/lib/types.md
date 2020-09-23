@@ -50,6 +50,10 @@ NoisyAffineControlContinuousSystem
 NoisyConstrainedAffineControlContinuousSystem
 NoisyBlackBoxControlContinuousSystem
 NoisyConstrainedBlackBoxControlContinuousSystem
+SecondOrderLinearContinuousSystem
+SecondOrderAffineContinuousSystem
+SecondOrderConstrainedAffineControlContinuousSystem
+SecondOrderConstrainedLinearControlContinuousSystem
 ```
 
 ## Discrete Systems
@@ -80,6 +84,10 @@ NoisyAffineControlDiscreteSystem
 NoisyConstrainedAffineControlDiscreteSystem
 NoisyBlackBoxControlDiscreteSystem
 NoisyConstrainedBlackBoxControlDiscreteSystem
+SecondOrderLinearDiscreteSystem
+SecondOrderAffineDiscreteSystem
+SecondOrderConstrainedAffineControlDiscreteSystem
+SecondOrderConstrainedLinearControlDiscreteSystem
 ```
 
 #### Discretization Algorithms

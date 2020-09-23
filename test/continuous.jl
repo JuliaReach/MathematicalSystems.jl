@@ -514,7 +514,6 @@ end
     end
 end
 
-
 @testset "Noisy Continuous constrained control blackbox system" begin
     n = 2
     m = 1
@@ -535,4 +534,30 @@ end
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
         @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
     end
+end
+
+@testset "Second order systems" begin
+    M = [1. 0; 0 2]
+    C = [0.1 0; 0 0.2]
+    K = [2. 1; 0 1]
+    b = [1., 0]
+    B = hcat([1., 0])
+    d = [1., 0]
+    X = BallInf(zeros(2), 1.0)
+    U = Singleton(ones(2))
+
+    sys = SecondOrderLinearContinuousSystem(M, C, K)
+    @test mass_matrix(sys) == M && viscosity_matrix(sys) == C && stiffness_matrix(sys) == K
+
+    sys = SecondOrderAffineContinuousSystem(M, C, K, b)
+    @test mass_matrix(sys) == M && viscosity_matrix(sys) == C && stiffness_matrix(sys) == K
+    @test affine_term(sys) == b
+
+    sys = SecondOrderConstrainedLinearControlContinuousSystem(M, C, K, B, X, U)
+    @test mass_matrix(sys) == M && viscosity_matrix(sys) == C && stiffness_matrix(sys) == K
+    @test input_matrix(sys) == B && stateset(sys) == X && inputset(sys) == U
+
+    sys = SecondOrderConstrainedAffineControlContinuousSystem(M, C, K, B, d, X, U)
+    @test mass_matrix(sys) == M && viscosity_matrix(sys) == C && stiffness_matrix(sys) == K
+    @test affine_term(sys) == d && input_matrix(sys) == B && stateset(sys) == X && inputset(sys) == U
 end

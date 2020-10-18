@@ -45,8 +45,6 @@ function successor(system::DiscreteIdentitySystem, x::AbstractVector)
     return x
 end
 
-# Generic Successor methods
-
 """
     successor(system::ConstrainedDiscreteIdentitySystem, x::AbstractVector;
               [check_constraints]=true)
@@ -103,7 +101,8 @@ Return the successor state of an `AbstractDiscreteSystem`.
 
 - `system`            -- `AbstractDiscreteSystem`
 - `x`                 -- state (it should be any vector type)
-- `u`                 -- input (it should be any vector type)
+- `u`                 -- input (it should be any vector type) or noise, if `system`
+                         is not controlled
 - `check_constraints` -- (optional, default: `true`) check if the state belongs to
                          the state set
 
@@ -148,7 +147,7 @@ successor(system::AbstractDiscreteSystem, x::AbstractVector, u::AbstractVector, 
     vector_field(system::AbstractContinuousSystem, x::AbstractVector;
               [check_constraints]=true)
 
-Return the vector field of an `AbstractContinuousSystem`.
+Return the vector field state of an `AbstractContinuousSystem`.
 
 ### Input
 
@@ -174,7 +173,8 @@ Return the vector field state of an `AbstractContinuousSystem`.
 
 - `system`            -- `AbstractContinuousSystem`
 - `x`                 -- state (it should be any vector type)
-- `u`                 -- input (it should be any vector type)
+- `u`                 -- input (it should be any vector type) or noise, if `system`
+                         is not controlled
 - `check_constraints` -- (optional, default: `true`) check if the state belongs to
                          the state set
 
@@ -211,8 +211,19 @@ The vector field of the system at state `x` and applying input `u` and noise `w`
 vector_field(system::AbstractContinuousSystem, x::AbstractVector, u::AbstractVector, w::AbstractVector; kwargs...) =
     _instantiate(system, x, u, w; kwargs...)
 
+# =============================
+# VectorField type for continuous system
+# =============================
+"""
+    VectorField{T<:Function}
 
-struct VectorField{T}
+Type that computes the vector field of an `AbstractContinuousSystem`.
+
+### Fields
+
+- `field`  -- function for calculating the vector field
+"""
+struct VectorField{T<:Function}
     field::T
 end
 
@@ -225,6 +236,17 @@ function evaluate(V::VectorField, args...)
     return V.field(args...)
 end
 
+"""
+    VectorField(sys::AbstractContinuousSystem)
+
+Constructor for creating a `VectorField` from an `AbstractContinuousSystem`.
+
+### Input
+- `sys` -- `AbstractContinuousSystem`
+
+### Ouptut
+The `VectorField` for the continuous system `sys`.
+"""
 function VectorField(sys::AbstractContinuousSystem)
     if inputdim(sys) == 0 && noisedim(sys) == 0
         field = (x) -> vector_field(sys, x)
@@ -246,7 +268,7 @@ end
     _instantiate(system::AbstractSystem, x::AbstractVector;
                 [check_constraints]=true)
 
-Return the result of applying the input to an `AbstractSystem`.
+Return the result of instantiating an `AbstractSystem` at the current state.
 
 ### Input
 
@@ -284,13 +306,15 @@ end
     _instantiate(system::AbstractSystem, x::AbstractVector, u::AbstractVector;
                 [check_constraints]=true)
 
-Return the result of applying two inputs to an `AbstractSystem`.
+Return the result of instantiating an `AbstractSystem` at the current state and
+applying one input.
 
 ### Input
 
 - `system`            -- `AbstractSystem`
 - `x`                 -- state (it should be any vector type)
-- `u`                 -- input (it should be any vector type)
+- `u`                 -- input (it should be any vector type) or noise, if `system`
+                         is not controlled
 - `check_constraints` -- (optional, default: `true`) check if the state belongs to
                          the state set
 
@@ -304,7 +328,8 @@ If the system is not controlled but noisy, the input `u` is interpreted as noise
 """
 function _instantiate(system::AbstractSystem, x::AbstractVector, u::AbstractVector;
                      check_constraints::Bool=true)
-
+    # Figure out if `system` is a controlled or noisy system and set the function
+    # `matrix` to either `input_matix` or `noise_matrix`
     if iscontrolled(system) && !isnoisy(system)
         input_var = :u; input_set = :U; matrix = input_matrix
         _is_conformable = _is_conformable_input
@@ -343,7 +368,8 @@ end
     _instantiate(system::AbstractSystem,
                 x::AbstractVector, u::AbstractVector, w::AbstractVector; [check_constraints]=true)
 
-Return the result of applying three inputs to an `AbstractSystem`.
+Return the result of instantiating an `AbstractSystem` at the current state and
+applying two inputs to an `AbstractSystem`.
 
 ### Input
 

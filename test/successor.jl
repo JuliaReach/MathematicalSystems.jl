@@ -12,6 +12,7 @@
     x = [0.0; 0.3]
     u = [0.5]
     w = [0.5, 1.0, 1.3]
+
     sys = DiscreteIdentitySystem(size(A, 2))
     @test successor(sys, x) == x
     sys = ConstrainedDiscreteIdentitySystem(size(A, 2), X)
@@ -66,6 +67,7 @@ end
     w = [0.5, 1.0, 1.3]
     w_wrong_dim = [0.5, 1.0, 1.3, 1.0]
     w_not_in_set = [-2.1, 1.0, 1.3]
+
     sys = DiscreteIdentitySystem(size(A,2))
     @test_throws ArgumentError("the state vector has the wrong dimensions") successor(sys, x_wrong_dim)
     sys = ConstrainedDiscreteIdentitySystem(size(A, 2), X)

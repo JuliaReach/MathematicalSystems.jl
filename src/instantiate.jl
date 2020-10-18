@@ -143,6 +143,52 @@ successor(system::AbstractDiscreteSystem, x::AbstractVector, u::AbstractVector, 
 # Vector Field for continuous system
 # =============================
 
+
+"""
+    vector_field(system::ContinuousIdentitySystem, x::AbstractVector)
+
+Return the vector field state of a `ContinuousIdentitySystem`.
+
+### Input
+
+- `system` -- `ContinuousIdentitySystem`
+- `x`      -- state (it should be any vector type)
+
+### Output
+
+A zeros vector of dimension `statedim`.
+"""
+function vector_field(system::ContinuousIdentitySystem, x::AbstractVector)
+    !_is_conformable_state(system, x) && _argument_error(:x)
+    return zeros(statedim(system))
+end
+
+"""
+    vector_field(system::ConstrainedContinuousIdentitySystem, x::AbstractVector;
+              [check_constraints]=true)
+
+Return the vector field state of a `ConstrainedContinuousIdentitySystem`.
+
+### Input
+
+- `system`            -- `ConstrainedContinuousIdentitySystem`
+- `x`                 -- state (it should be any vector type)
+- `check_constraints` -- (optional, default: `true`) check if the state belongs to
+                         the state set
+
+### Output
+
+A zeros vector of dimension `statedim`.
+"""
+function vector_field(system::ConstrainedContinuousIdentitySystem, x::AbstractVector;
+                   check_constraints::Bool=true)
+    !_is_conformable_state(system, x) && _argument_error(:x)
+    if check_constraints
+        !_in_stateset(system, x) && _argument_error(:x,:X)
+    end
+    return zeros(statedim(system))
+end
+
 """
     vector_field(system::AbstractContinuousSystem, x::AbstractVector;
               [check_constraints]=true)

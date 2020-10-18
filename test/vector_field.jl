@@ -13,12 +13,10 @@
     u = [0.5]
     w = [0.5, 1.0, 1.3]
 
-    # Not yet implemented
-    # sys = ContinuousIdentitySystem(size(A, 2))
-    # @test vector_field(sys, x) == x
-    # sys = ConstrainedContinuousIdentitySystem(size(A, 2), X)
-    # @test vector_field(sys, x) == x
-
+    sys = ContinuousIdentitySystem(size(A, 2))
+    @test vector_field(sys, x) == zeros(size(A, 2))
+    sys = ConstrainedContinuousIdentitySystem(size(A, 2), X)
+    @test vector_field(sys, x) == zeros(size(A, 2))
     sys = LinearContinuousSystem(A)
     @test vector_field(sys, x) == A*x
     sys = AffineContinuousSystem(A, c)
@@ -70,12 +68,10 @@ end
     w_wrong_dim = [0.5, 1.0, 1.3, 1.0]
     w_not_in_set = [-2.1, 1.0, 1.3]
 
-    # Not yet implemented
-    # sys = ContinuousIdentitySystem(size(A,2))
-    # @test_throws ArgumentError("the state vector has the wrong dimensions") vector_field(sys, x_wrong_dim)
-    # sys = ConstrainedContinuousIdentitySystem(size(A, 2), X)
-    # @test_throws ArgumentError("the state vector is not contained in the state set")  vector_field(sys, x_not_in_set)
-
+    sys = ContinuousIdentitySystem(size(A,2))
+    @test_throws ArgumentError("the state vector has the wrong dimensions") vector_field(sys, x_wrong_dim)
+    sys = ConstrainedContinuousIdentitySystem(size(A, 2), X)
+    @test_throws ArgumentError("the state vector is not contained in the state set")  vector_field(sys, x_not_in_set)
     sys = LinearContinuousSystem(A)
     @test_throws ArgumentError("the state vector has the wrong dimensions") vector_field(sys, x_wrong_dim)
     sys = AffineContinuousSystem(A, c)

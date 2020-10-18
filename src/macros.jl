@@ -842,9 +842,8 @@ julia> X = BallInf(zeros(2), 10.);
 julia> U = BallInf(zeros(1), 2.);
 
 julia> @system(x' = A*x + B*u + c, x ∈ X, u ∈ U)
-ConstrainedAffineControlContinuousSystem{Float64,Array{Float64,2},Array{Float64,2},Array{Float64,1},BallInf{Float64},BallInf{Float64}}([1.0 0.0; 0.0 1.0], [1.0; 0.5], [1.0, 1.5], BallInf{Float64}([0.0, 0.0], 10.0), BallInf{Float64}([0.0], 2.0))
+ConstrainedAffineControlContinuousSystem{Float64,Array{Float64,2},Array{Float64,2},Array{Float64,1},BallInf{Float64,Array{Float64,1}},BallInf{Float64,Array{Float64,1}}}([1.0 0.0; 0.0 1.0], [1.0; 0.5], [1.0, 1.5], BallInf{Float64,Array{Float64,1}}([0.0, 0.0], 10.0), BallInf{Float64,Array{Float64,1}}([0.0], 2.0))
 ```
-
 For the creation of a black-box system, the state, input and noise dimensions have
 to be defined separately. For a constrained controlled black-box system, the macro
 writes as
@@ -853,7 +852,7 @@ writes as
 julia> f(x, u) = x + u;
 
 julia> @system(x⁺ = f(x, u), x ∈ X, u ∈ U, dim: (2,2))
-ConstrainedBlackBoxControlDiscreteSystem{typeof(f),BallInf{Float64},BallInf{Float64}}(f, 2, 2, BallInf{Float64}([0.0, 0.0], 10.0), BallInf{Float64}([0.0], 2.0))
+ConstrainedBlackBoxControlDiscreteSystem{typeof(f),BallInf{Float64,Array{Float64,1}},BallInf{Float64,Array{Float64,1}}}(f, 2, 2, BallInf{Float64,Array{Float64,1}}([0.0, 0.0], 10.0), BallInf{Float64,Array{Float64,1}}([0.0], 2.0))
 ```
 """
 macro system(expr...)

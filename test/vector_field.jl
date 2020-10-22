@@ -1,4 +1,4 @@
-@testset "vector_field method for continuous systems" begin
+@testset "vector_field method and `VectorField` for continuous systems" begin
     A = [1. 1; 1 -1]
     B = Matrix([0.5 1.5]')
     c = [0.1; 0.3]
@@ -15,36 +15,83 @@
 
     sys = ContinuousIdentitySystem(size(A, 2))
     @test vector_field(sys, x) == zeros(size(A, 2))
+    VF = MathematicalSystems.VectorField(sys)
+    @test VF(x) == vector_field(sys, x)
+
     sys = ConstrainedContinuousIdentitySystem(size(A, 2), X)
     @test vector_field(sys, x) == zeros(size(A, 2))
+    VF = MathematicalSystems.VectorField(sys)
+    @test VF(x) == vector_field(sys, x)
+
     sys = LinearContinuousSystem(A)
     @test vector_field(sys, x) == A*x
+    VF = MathematicalSystems.VectorField(sys)
+    @test VF(x) == vector_field(sys, x)
+
     sys = AffineContinuousSystem(A, c)
     @test vector_field(sys, x) == A*x + c
+    VF = MathematicalSystems.VectorField(sys)
+    @test VF(x) == vector_field(sys, x)
+
     sys = LinearControlContinuousSystem(A, B)
     @test vector_field(sys, x, u) == A*x + B*u
+    VF = MathematicalSystems.VectorField(sys)
+    @test VF(x, u) == vector_field(sys, x, u)
+
     sys = ConstrainedLinearContinuousSystem(A, X)
     @test vector_field(sys, x) == A*x
+    VF = MathematicalSystems.VectorField(sys)
+    @test VF(x) == vector_field(sys, x)
+
     sys = ConstrainedAffineContinuousSystem(A, c, X)
     @test vector_field(sys, x) == A*x + c
+    VF = MathematicalSystems.VectorField(sys)
+    @test VF(x) == vector_field(sys, x)
+
     sys = ConstrainedLinearControlContinuousSystem(A, B, X, U)
     @test vector_field(sys, x, u) == A*x + B*u
+    VF = MathematicalSystems.VectorField(sys)
+    @test VF(x, u) == vector_field(sys, x, u)
+
     sys = ConstrainedAffineControlContinuousSystem(A, B, c, X, U)
     @test vector_field(sys, x, u) == A*x + B*u + c
+    VF = MathematicalSystems.VectorField(sys)
+    @test VF(x, u) == vector_field(sys, x, u)
+
     sys = BlackBoxContinuousSystem(f, size(A, 2))
     @test vector_field(sys, x) == f(x)
+    VF = MathematicalSystems.VectorField(sys)
+    @test VF(x) == vector_field(sys, x)
+
     sys = ConstrainedBlackBoxContinuousSystem(f, size(A, 2), X)
     @test vector_field(sys, x) == f(x)
+    VF = MathematicalSystems.VectorField(sys)
+    @test VF(x) == vector_field(sys, x)
+
     sys = ConstrainedBlackBoxControlContinuousSystem(f, size(A, 2), size(B, 2), X, U)
     @test vector_field(sys, x, u) == f(x, u)
+    VF = MathematicalSystems.VectorField(sys)
+    @test VF(x, u) == vector_field(sys, x, u)
+
     sys = NoisyConstrainedLinearContinuousSystem(A, D, X, W)
     @test vector_field(sys, x, w) == A*x + D*w
+    VF = MathematicalSystems.VectorField(sys)
+    @test VF(x, w) == vector_field(sys, x, w)
+
     sys = NoisyConstrainedLinearControlContinuousSystem(A, B, D, X, U, W)
     @test vector_field(sys, x, u, w) == A*x + B*u + D*w
+    VF = MathematicalSystems.VectorField(sys)
+    @test VF(x, u, w) == vector_field(sys, x, u, w)
+
     sys = NoisyConstrainedAffineControlContinuousSystem(A, B, c, D, X, U, W)
     @test vector_field(sys, x, u, w) == A*x + B*u + c + D*w
+    VF = MathematicalSystems.VectorField(sys)
+    @test VF(x, u, w) == vector_field(sys, x, u, w)
+
     sys = NoisyConstrainedBlackBoxControlContinuousSystem(f, size(A, 2), size(B, 2), size(D, 2), X, U, W)
     @test vector_field(sys, x, u, w) == f(x, u, w)
+    VF = MathematicalSystems.VectorField(sys)
+    @test VF(x, u, w) == vector_field(sys, x, u, w)
 end
 
 @testset "vector_field exception handling" begin

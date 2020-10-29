@@ -5,7 +5,7 @@
         @test inputdim(s) == 0
         @test noisedim(s) == 0
         for s = [s, typeof(s)]
-            @test islinear(s) && isaffine(s) && !ispolynomial(s)
+            @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
             @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
         end
     end
@@ -20,7 +20,7 @@ end
         @test noisedim(s) == 0
         @test stateset(s) == X
         for s = [s, typeof(s)]
-            @test islinear(s) && isaffine(s) && !ispolynomial(s)
+            @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
             @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
         end
     end
@@ -33,7 +33,7 @@ end
         @test inputdim(s) == 0
         @test noisedim(s) == 0
         for s = [s, typeof(s)]
-            @test islinear(s) && isaffine(s) && !ispolynomial(s)
+            @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
             @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
         end
     end
@@ -50,7 +50,7 @@ end
         @test statedim(s) == sd
         @test inputdim(s) == 0
         for s = [s, typeof(s)]
-            @test !islinear(s) && isaffine(s) && !ispolynomial(s)
+            @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
             @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
         end
     end
@@ -68,7 +68,7 @@ end
         @test inputdim(s) == sd
         @test noisedim(s) == 0
         for s = [s, typeof(s)]
-            @test islinear(s) && isaffine(s) && !ispolynomial(s)
+            @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
             @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
         end
     end
@@ -88,7 +88,7 @@ end
     @test noisedim(s) == 0
     @test stateset(s) == X
     for s = [s, typeof(s)]
-        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
     # Scalar System
@@ -108,7 +108,7 @@ end
     @test noisedim(s) == 0
     @test stateset(s) == X
     for s = [s, typeof(s)]
-        @test !islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
     # Scalar System
@@ -131,7 +131,7 @@ end
     @test stateset(s) == X
     @test inputset(s) == U
     for s = [s, typeof(s)]
-        @test !islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && iscontrolled(s) && isconstrained(s)
     end
     # Scalar System
@@ -153,7 +153,7 @@ end
     @test stateset(s) == X
     @test inputset(s) == U
     for s = [s, typeof(s)]
-        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && iscontrolled(s) && isconstrained(s)
     end
     # initial value problem composite type
@@ -183,7 +183,7 @@ end
         @test inputdim(s) == 0
         @test noisedim(s) == 0
         for s = [s, typeof(s)]
-            @test islinear(s) && isaffine(s) && !ispolynomial(s)
+            @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
             @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
         end
     end
@@ -204,7 +204,7 @@ end
     @test noisedim(s) == 0
     @test stateset(s) == X
     for s = [s, typeof(s)]
-        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
     # Scalar System
@@ -224,7 +224,7 @@ end
     @test noisedim(s) == 0
     @test stateset(s) == X
     for s = [s, typeof(s)]
-        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
 
@@ -244,7 +244,7 @@ end
     @test inputdim(s) == 0
     @test noisedim(s) == 0
     for s = [s, typeof(s)]
-        @test !islinear(s) && !isaffine(s) && ispolynomial(s)
+        @test !islinear(s) && !isaffine(s) && ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
 
@@ -267,7 +267,7 @@ end
     @test noisedim(s) == 0
     @test dim(stateset(s)) == dim(X)
     for s = [s, typeof(s)]
-        @test !islinear(s) && !isaffine(s) && ispolynomial(s)
+        @test !islinear(s) && !isaffine(s) && ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
 
@@ -289,7 +289,7 @@ end
     f!(x, dx)
     @test dx ≈ [0.0, -1.0]
     for s = [s, typeof(s)]
-        @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+        @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
 end
@@ -304,7 +304,7 @@ end
     @test dx ≈ [0.0, -1.0]
     @test stateset(s) == H
     for s = [s, typeof(s)]
-        @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+        @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
 end
@@ -321,7 +321,7 @@ end
     @test statedim(s) == 2
     @test inputdim(s) == 1
     for s = [s, typeof(s)]
-        @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+        @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
     end
 end
@@ -341,7 +341,7 @@ end
     @test stateset(s) == H
     @test inputset(s) == U
     for s = [s, typeof(s)]
-        @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+        @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test !isnoisy(s) && iscontrolled(s) && isconstrained(s)
     end
 end
@@ -360,7 +360,7 @@ end
     @test inputdim(s) == 0
     @test noisedim(s) == 2
     for s = [s, typeof(s)]
-        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
     # Scalar System
@@ -384,7 +384,7 @@ end
     @test stateset(s) == X
     @test noiseset(s) == W
     for s = [s, typeof(s)]
-        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
     # Scalar System
@@ -406,7 +406,7 @@ end
     @test inputdim(s) == 1
     @test noisedim(s) == 2
     for s = [s, typeof(s)]
-        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
     end
     # Scalar System
@@ -434,7 +434,7 @@ end
     @test inputset(s) == U
     @test noiseset(s) == W
     for s = [s, typeof(s)]
-        @test islinear(s) && isaffine(s) && !ispolynomial(s)
+        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
     end
     # Scalar System
@@ -458,7 +458,7 @@ end
     @test inputdim(s) == 1
     @test noisedim(s) == 2
     for s = [s, typeof(s)]
-        @test isaffine(s) && !islinear(s) && !ispolynomial(s)
+        @test isaffine(s) && !islinear(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
     end
     # Scalar System
@@ -488,7 +488,7 @@ end
     @test inputset(s) == U
     @test noiseset(s) == W
     for s = [s, typeof(s)]
-        @test isaffine(s) && !islinear(s) && !ispolynomial(s)
+        @test isaffine(s) && !islinear(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
     end
     # Scalar System
@@ -509,7 +509,7 @@ end
     @test inputdim(s) == m
     @test noisedim(s) == l
     for s = [s, typeof(s)]
-        @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+        @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
     end
 end
@@ -531,7 +531,7 @@ end
     @test inputset(s) == U
     @test noiseset(s) == W
     for s = [s, typeof(s)]
-        @test !islinear(s) && !isaffine(s) && !ispolynomial(s)
+        @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
     end
 end

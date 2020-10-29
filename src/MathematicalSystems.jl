@@ -45,6 +45,7 @@ export statedim,
 export islinear,
        isaffine,
        ispolynomial,
+       isblackbox,
        isnoisy,
        iscontrolled,
        isconstrained
@@ -181,10 +182,14 @@ export @map,
 
 #===================================
 Successor state for discrete systems
+and vector field for continuous systems
 ====================================#
+include("instantiate.jl")
 include("successor.jl")
+include("vector_field.jl")
 
-export successor
+export successor,
+       vector_field
 
 #===================================
 Discretization for affine systems

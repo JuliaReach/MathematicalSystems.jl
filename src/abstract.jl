@@ -100,6 +100,16 @@ considered to be of polynomial type.
 function ispolynomial(::AbstractSystem) end
 
 """
+    isblackbox(s::AbstractSystem)
+
+Specifies if no specific structure is assumed for the dynamics of system `s`.
+
+The result of this function only depends on the system type, not the value, and
+can also be applied to `typeof(s)`.
+"""
+function isblackbox(::AbstractSystem) end
+
+"""
     isnoisy(s::AbstractSystem)
 
 Determines if the dynamics of system `s` contains a noise term `w`.

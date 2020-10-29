@@ -31,6 +31,12 @@ is_equation
 extract_sum
 ```
 
+## Evaluation of AbstractSystem at given state
+
+```@docs
+_instantiate
+```
+
 ## Naming convention for systems' fields
 
 Systems' fields should be accessed externally by their respective getter functions.

@@ -29,6 +29,13 @@ inputset
 nextinput
 ```
 
+## Noises
+
+```@docs
+noisedim
+noiseset
+```
+
 ## Output
 
 ```@docs

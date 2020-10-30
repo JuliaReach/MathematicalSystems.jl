@@ -33,3 +33,18 @@
     @test ivp1 ≈ ivp3
     @test !(ivp1 ≈ ivp4)
 end
+
+@testset "Promote Arrays element type" begin
+    A = [1, 2, 3]
+    B = [1.0, 2.0, 3.0]
+    C = [1.0 + 0*im, 2.0 + 0*im, 3 + 0*im]
+    A_prom, B_prom = promote_array(A, B)
+    @test eltype(A_prom) == eltype(A_prom)
+    A_prom, B_prom, C_prom = promote_array(A, B, C)
+    @test eltype(A_prom) == eltype(A_prom) == eltype(C_prom)
+
+    M1 = [1 2; 3 4]
+    M2 = [1.0, 2]
+    M1_prom, M2_prom = promote_array(M1, M2)
+    @test eltype(M1_prom) == eltype(M2_prom)
+end

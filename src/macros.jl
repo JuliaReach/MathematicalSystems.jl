@@ -287,7 +287,11 @@ function _parse_system(exprs::NTuple{N, Expr}) where {N}
                                       (x_ = A_*x_ + B_*u_ + c_) |
                                       (x_ = x_ + B_*u_ + c_) |
                                       (x_ = f_(x_, u_)) )
-                    input_var = u
+                   # (x_ = x_ + B_*u_) triggers for x' = x  + c and x' = x  + [0.5]
+                   # NOTE: x' = A*x  + c works, but not x' = x  + c
+                    if typeof(u) == Symbol && B != nothing
+                        input_var = u
+                    end
                 end
 
             elseif @capture(ex, (dim = (f_dims_)) | (dims = (f_dims_)))
@@ -410,7 +414,8 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
     # if rhs is a sum, =>  affine system which is controlled, noisy or both
     if @capture(rhs, A_ + B__)
         # parse summands of rhs and add * if needed
-        summands = add_asterisk.([A, B...], Ref(state), Ref(input), Ref(noise))
+        @show state, input, noise, dim
+        summands = add_asterisk.([A, B...], Ref(state), Ref(input), Ref(noise), Ref(dim))
         push!(rhs_params, extract_sum(summands, state, input, noise)...)
 
     # If rhs is function call => black-box system
@@ -435,10 +440,10 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
         else
             if @capture(rhs, -var_) # => rhs = -x
                 if state == var
-                    push!(rhs_params, (-1.0*I(dim), :A))
+                    @show push!(rhs_params, (-1.0*I(dim), :A))
                 end
             else
-                rhs = add_asterisk(rhs, state, input, noise)
+                rhs = add_asterisk(rhs, state, input, noise, dim)
                 if @capture(rhs, array_ * var_)
                     if state == var # rhs = A_x_ or rhs= A_*x_
                         value = tryparse(Float64, string(array))
@@ -459,7 +464,7 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
 end
 
 """
-    add_asterisk(summand, state::Symbol, input::Symbol, noise::Symbol)
+    add_asterisk(summand, state::Symbol, input::Symbol, noise::Symbol, dim)
 
 Checks if expression `summand` contains `state`, `input` or `noise` at its end.
 If so, a multiplication expression, e.g. `Expr(:call, :*, :A, :x) is created.
@@ -500,9 +505,24 @@ julia> add_asterisk(:(A1ub), :x, :u, :w)
 :A1ub
 ```
 """
-function add_asterisk(summand, state::Symbol, input::Symbol, noise::Symbol)
+function add_asterisk(summand, state::Symbol, input::Symbol, noise::Symbol, dim)
+    # no changes if there is already an asterisk
     if @capture(summand, A_ * x_)
         return summand
+    end
+    # special case: x => I*x
+    if @capture(summand, x_)
+        approx_dim = figure_out_identity_dim(x, state, input, noise, dim)
+        if approx_dim != 0
+            return :(I(1, $approx_dim)*$x)
+        end
+    end
+    # special case: -x => -I*x (if x is equal to state, input or noise)
+    if @capture(summand, -x_)
+        approx_dim = figure_out_identity_dim(x, state, input, noise, dim)
+        if approx_dim != 0
+            return :(I(-1, $approx_dim)*$x)
+        end
     end
 
     str = string(summand)
@@ -525,6 +545,24 @@ function add_asterisk(summand, state::Symbol, input::Symbol, noise::Symbol)
     else # summand is returned which is either a constant term or the state, input or noise variable
         return summand
     end
+end
+
+function figure_out_identity_dim(x, state::Symbol, input::Symbol, noise::Symbol, dim)
+    (x != state && x != input && x != noise) && return 0
+    n_dims = (dim == nothing) ? 0 : length(dim)
+    (x == state && n_dims >= 1) && return dim[1]
+    (x == input && n_dims == 1) && return dim[1]
+    if (x == input && n_dims >= 2)
+        if dim[1] == dim[2]
+            return dim[1]
+        else
+            error("Prefix of input `$x` cannot be decoded as identity matrix, pleace specify")
+        end
+    end
+    (x == noise && (n_dims == 1 || n_dims ==2)) && return dim[1]
+    (x == noise && n_dims >= 3) && return dim[3]
+    # default case: dimension=1
+    return 1
 end
 
 """
@@ -595,19 +633,24 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
 
     for summand in summands
         if @capture(summand, array_ * var_)
+            # check if array is a IdentityMultiple
+            if @capture(array, I(dummy1_, dummy2_))
+                expression = array
+            else
+                expression = Expr(:call, :hcat, array)
+            end
+            expression =
             if state == var
-                push!(params, (Expr(:call, :hcat, array), :A))
-                # obtain "state_dim" for later using in IdentityMultiple
-                state_dim =  Expr(:call, :size, :($array), 1)
+                push!(params, (expression, :A))
                 got_state_dim = true
                 num_state_assignments += 1
 
             elseif input == var
-                push!(params, (Expr(:call, :hcat, array), :B))
-                 num_input_assignments += 1
+                push!(params, (expression, :B))
+                num_input_assignments += 1
 
             elseif noise == var
-                push!(params, (Expr(:call, :hcat, array), :D))
+                push!(params, (expression, :D))
                 num_noise_assignments += 1
 
             else
@@ -616,7 +659,8 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
                 "or the noise term $noise"))
             end
         elseif @capture(summand, array_)
-            identity = :(I($state_dim))
+            @show  "elseif_extract_loop", summand, array
+            # identity = :(I($state_dim))
             # if array == variable: field value equals identity
             if state == array
                 push!(params, (identity, :A))
@@ -676,8 +720,9 @@ function constructor_input(lhs, rhs, set)
     lhs_var_names = [tuple[1] for tuple in lhs]
     set_var_names = [tuple[1] for tuple in set]
     field_names = (rhs_fields..., lhs_fields..., set_fields...)
-    var_names = (rhs_var_names..., lhs_var_names..., set_var_names...)
-    return field_names, var_names
+    # var_names = (rhs_var_names..., lhs_var_names..., set_var_names...)
+    var_names = (rhs_var_names..., lhs_var_names...)
+    return field_names, var_names, (set_var_names...,)
 end
 
 # extract the variable name and the field name for a set expression. The method
@@ -761,9 +806,9 @@ function _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
     lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, input, noise, dim, AT)
     ordered_rhs = sort(rhs, (:A, :B, :c, :D, :f, :statedim, :inputdim, :noisedim))
     ordered_set = sort(extract_set_parameter.(constr, state, input, noise), (:X, :U, :W))
-    field_names, var_names = constructor_input(lhs, ordered_rhs, ordered_set)
+    field_names, var_names, set_var_names = constructor_input(lhs, ordered_rhs, ordered_set)
     sys_type = _corresponding_type(AT, field_names)
-    return sys_type, var_names
+    return sys_type, var_names, set_var_names
 end
 
 """
@@ -883,8 +928,10 @@ ConstrainedBlackBoxControlDiscreteSystem{typeof(f),BallInf{Float64,Array{Float64
 macro system(expr...)
     try
         dyn_eq, AT, constr, state, input, noise, dim, x0 = _parse_system(expr)
-        sys_type, var_names = _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
-        sys = Expr(:call, :($sys_type), :($(var_names...)))
+        @show sys_type, var_names, set_var_names = _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
+        @show promoted_var_names = :(MathematicalSystems.promote_arguments($(var_names...))...)
+        # sys = Expr(:call, :($sys_type), :($(var_names...)))
+        @show sys = Expr(:call, :($sys_type), promoted_var_names, :($(set_var_names...)))
         if x0 == nothing
             return esc(sys)
         else
@@ -954,7 +1001,8 @@ macro ivp(expr...)
         else
             dyn_eq, AT, constr, state, input, noise, dim, x0 = _parse_system(expr)
             sys_type, var_names = _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
-            sys = Expr(:call, :($sys_type), :($(var_names...)))
+            promoted_var_names = :(MathematicalSystems.promote_array($(var_names...))...)
+            sys = Expr(:call, :($sys_type), promoted_var_names)
             if x0 == nothing
                 return throw(ArgumentError("an initial-value problem should define the " *
                             "initial states, but such expression was not found"))

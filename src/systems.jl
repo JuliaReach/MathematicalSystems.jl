@@ -447,6 +447,76 @@ Discrete-time affine system with domain constraints of the form:
 """
 ConstrainedAffineDiscreteSystem
 
+ for (Z, AZ) in ((:AffineControlContinuousSystem, :AbstractContinuousSystem),
+                 (:AffineControlDiscreteSystem, :AbstractDiscreteSystem))
+     @eval begin
+         struct $(Z){T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}} <: $(AZ)
+             A::MTA
+             B::MTB
+             c::VT
+             function $(Z)(A::MTA, B::MTB, c::VT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}}
+                 @assert checksquare(A) == length(c) == size(B, 1)
+                 return new{T, MTA, MTB, VT}(A, B, c)
+             end
+         end
+         function $(Z)(A::Number, B::Number, c::Number)
+              return $(Z)(hcat(A), hcat(B), vcat(c))
+         end
+
+         statedim(s::$Z) = length(s.c)
+         inputdim(s::$Z) = size(s.B, 2)
+         noisedim(::$Z) = 0
+         state_matrix(s::$Z) = s.A
+         input_matrix(s::$Z) = s.B
+         affine_term(s::$Z) = s.c
+     end
+     for T in [Z, Type{<:eval(Z)}]
+         @eval begin
+             islinear(::$T) = false
+             isaffine(::$T) = true
+             ispolynomial(::$T) = false
+             isblackbox(::$T) = false
+             isnoisy(::$T) = false
+             iscontrolled(::$T) = true
+             isconstrained(::$T) = false
+         end
+     end
+ end
+
+ @doc """
+     AffineControlContinuousSystem
+
+ Continuous-time affine control system of the form:
+
+ ```math
+     x(t)' = A x(t) + B u(t) + c, \\; \\forall t.
+ ```
+
+ ### Fields
+
+ - `A` -- state matrix
+ - `B` -- input matrix
+ - `c` -- affine term
+ """
+ AffineControlContinuousSystem
+
+ @doc """
+     AffineControlDiscreteSystem
+
+ Continuous-time affine control system of the form:
+
+ ```math
+     x_{k+1} = A x_k + B u_k + c, \\; \\forall k.
+ ```
+
+ ### Fields
+
+ - `A` -- state matrix
+ - `B` -- input matrix
+ - `c` -- affine term
+ """
+ AffineControlDiscreteSystem
+
 for (Z, AZ) in ((:ConstrainedAffineControlContinuousSystem, :AbstractContinuousSystem),
                 (:ConstrainedAffineControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin

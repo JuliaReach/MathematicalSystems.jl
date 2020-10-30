@@ -59,6 +59,13 @@ f1(x, u, w) = x'*x + u'*u + w'*w
     end
 end
 
+@testset "Promoting Systems" begin
+    @test @system(x' = x + u) == LinearControlContinuousSystem(I(1,1), I(1,1))
+    @test @system(x' = 1*x + 0.1*u) == LinearControlContinuousSystem(1.0, 0.1)
+    @test @system(x' = 1*x + (1+im)*u) == LinearControlContinuousSystem(1 + 0*im, 1 + im)
+    @test @system(x' = ones(Int,  (3,3))*x +  ones(Float64,  (3,3))*u) ==
+        LinearControlContinuousSystem(ones(Float64, (3,3)), ones(Float64, (3,3)))
+end
 
 # ===================
 # Continuous systems
@@ -83,9 +90,9 @@ end
     @test sys == LinearContinuousSystem(A1)
 
     # automatic identification of rhs linearity
-    @test @system(x' = -x) == LinearContinuousSystem(-1.0*IdentityMultiple(I, 1))
-    @test @system(x' = x, dim=3) == LinearContinuousSystem(1.0*IdentityMultiple(I, 3))
-    @test @system(x' = 2x, dim=3) == LinearContinuousSystem(2.0*IdentityMultiple(I, 3))
+    @test @system(x' = -x) == LinearContinuousSystem(-1*IdentityMultiple(I, 1))
+    @test @system(x' = x, dim=3) == LinearContinuousSystem(1*IdentityMultiple(I, 3))
+    @test @system(x' = 2x, dim=3) == LinearContinuousSystem(2*IdentityMultiple(I, 3))
 
     @test @system(x' = A*x, x ∈ X) == ConstrainedLinearContinuousSystem(A,X)
     @test @system(x1' = A1x1, x1 ∈ X1) == ConstrainedLinearContinuousSystem(A1,X1)
@@ -111,7 +118,7 @@ end
     @test @system(x' = Ax + Bu, x ∈ X, u ∈ U) == ConstrainedLinearControlContinuousSystem(A, B, X, U)
 
     # if variable in front of input is ommitted add identity matrix
-    @system(x' = Ax + u) == LinearControlContinuousSystem(A, IdentityMultiple(1.0*I,n))
+    @system(x' = Ax + u) == LinearControlContinuousSystem(A, I(1.0,n))
 
     # if * are used x_ = A_*x_ + B_*u_, u_ is interpreted as input variable,
     # independent of the name used for u_
@@ -122,7 +129,7 @@ end
     # scalar cases
     @test @system(x' = 0.5x + u) == LinearControlContinuousSystem(hcat(0.5), I(1.0, 1))
     @test @system(x' = 0.5x + 1.) == AffineContinuousSystem(hcat(0.5), vcat(1.))
-    @test @system(x' = x + u) == LinearControlContinuousSystem(I(1.0, 1), I(1.0, 1))
+    @test @system(x' = x + u) == LinearControlContinuousSystem(I(1, 1), I(1, 1))
     @test @system(x' = x + 0.1u) == LinearControlContinuousSystem(I(1.0, 1), hcat(0.1))
     @test @system(x' = x + 0.1*u) == LinearControlContinuousSystem(I(1.0, 1), hcat(0.1))
     sys = @system(x' = 0.3x + 0.1u + 0.2, x∈X, u∈U)
@@ -201,7 +208,7 @@ end
     @test @system(x1⁺ = A*x1) == LinearDiscreteSystem(A)
     @test @system(x1⁺ = Ax1) == LinearDiscreteSystem(A)
 
-    @test @system(x⁺ = 2x, dim=3) == LinearDiscreteSystem(2.0*IdentityMultiple(I,3))
+    @test @system(x⁺ = 2x, dim=3) == LinearDiscreteSystem(2*IdentityMultiple(I,3))
 
     @test @system(x⁺ = A1x, x ∈ X1) == ConstrainedLinearDiscreteSystem(A1, X1)
 end
@@ -286,13 +293,13 @@ end
 @testset "@system with for an initial-value problem" begin
     # continuous ivp in floating-point
     ivp = @system(x' = -1.0x, x(0) ∈ Interval(-1, 1))
-    @test ivp == IVP(LinearContinuousSystem(I(-1.0, 1)), Interval(-1, 1)) &&
+    @test ivp == IVP(LinearContinuousSystem(-1.0), Interval(-1, 1)) &&
           eltype(ivp.s.A) == Float64
 
     # discrete ivp in floating-point
     ivp = @system(x⁺ = -x, x(0) ∈ [1])
-    @test ivp == IVP(LinearDiscreteSystem(I(-1.0, 1)), [1]) &&
-          eltype(ivp.s.A) == Float64
+    @test ivp == IVP(LinearDiscreteSystem(I(-1, 1)), [1]) &&
+          eltype(ivp.s.A) == Int
 
     # initial state assignment doesn't match state variable
     @test_throws ArgumentError @system(x' = -x, t(0) ∈ Interval(-1.0, 1.0))

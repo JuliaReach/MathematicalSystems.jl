@@ -1,6 +1,6 @@
 @testset "@ivp for a continuous system" begin
     P1 = @ivp(x' = -x, x(0) ∈ Interval(-1.0, 1.0))
-    testSystem = InitialValueProblem(LinearContinuousSystem(I(-1.0, 1)), Interval(-1, 1))
+    testSystem = InitialValueProblem(LinearContinuousSystem(I(-1, 1)), Interval(-1, 1))
     @test P1 == testSystem
     # throw error if x(0) is not defined
     @test_throws ArgumentError @ivp(x' = -x)

@@ -81,3 +81,33 @@ To get the complementary type of system type, use
     end
     return Meta.parse(type_string)
 end
+
+"""
+    promote_arguments(arrays::AbstractArray...)
+
+Promote every elements of `arrays` to an array with a common element type.
+
+### Input
+
+- `array` -- collection of arrays
+
+### Output
+
+Collection of arrays promoted to a common element type.
+"""
+function promote_arguments(containers::AbstractArray...)
+  eltype = Base.promote_eltype(containers...)
+  promoted_containers = Vector{AbstractArray}()
+  for container in containers
+      if container isa IdentityMultiple
+          λ = convert(eltype, container.M.λ)
+          push!(promoted_containers, IdentityMultiple(λ, container.n))
+      else
+          push!(promoted_containers, convert(Array{eltype}, container))
+      end
+  end
+  return tuple(promoted_containers...)
+end
+promote_arguments(func...) = func
+promote_arguments(number::Real) = number
+promote_arguments(numbers::Real...) = Base.promote(numbers...)

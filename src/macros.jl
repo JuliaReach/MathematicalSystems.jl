@@ -428,24 +428,24 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
             if AT == AbstractDiscreteSystem
                 push!(rhs_params, (dim, :statedim))
             elseif AT == AbstractContinuousSystem
-                push!(rhs_params, (I(dim), :A))
+                push!(rhs_params, (I(one(Int), dim), :A))
             end
         elseif rhs == :(0) && AT == AbstractContinuousSystem # x' = 0
             push!(rhs_params, (dim, :statedim))
         else
             if @capture(rhs, -var_) # => rhs = -x
                 if state == var
-                    push!(rhs_params, (-1.0*I(dim), :A))
+                    push!(rhs_params, (-1*I(one(Int), dim), :A))
                 end
             else
                 rhs = add_asterisk(rhs, state, input, noise)
                 if @capture(rhs, array_ * var_)
                     if state == var # rhs = A_x_ or rhs= A_*x_
-                        value = tryparse(Float64, string(array))
+                        value = tryparse(Int, string(array))
                         if value == nothing # e.g. => rhs = Ax
                             push!(rhs_params, (array, :A))
                         else # => e.g., rhs = 2x
-                            push!(rhs_params, (value*I(dim), :A))
+                            push!(rhs_params, (value*I(one(Int), dim), :A))
                         end
                     else
                         throw(ArgumentError("if there is only one term on the "*
@@ -616,7 +616,7 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
                 "or the noise term $noise"))
             end
         elseif @capture(summand, array_)
-            identity = :(I($state_dim))
+            identity = :(I(one(Int), $state_dim))
             # if array == variable: field value equals identity
             if state == array
                 push!(params, (identity, :A))
@@ -676,8 +676,8 @@ function constructor_input(lhs, rhs, set)
     lhs_var_names = [tuple[1] for tuple in lhs]
     set_var_names = [tuple[1] for tuple in set]
     field_names = (rhs_fields..., lhs_fields..., set_fields...)
-    var_names = (rhs_var_names..., lhs_var_names..., set_var_names...)
-    return field_names, var_names
+    var_names = (rhs_var_names..., lhs_var_names...)
+    return field_names, var_names, set_var_names
 end
 
 # extract the variable name and the field name for a set expression. The method
@@ -761,9 +761,9 @@ function _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
     lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, input, noise, dim, AT)
     ordered_rhs = sort(rhs, (:A, :B, :c, :D, :f, :statedim, :inputdim, :noisedim))
     ordered_set = sort(extract_set_parameter.(constr, state, input, noise), (:X, :U, :W))
-    field_names, var_names = constructor_input(lhs, ordered_rhs, ordered_set)
+    field_names, var_names, set_var_names = constructor_input(lhs, ordered_rhs, ordered_set)
     sys_type = _corresponding_type(AT, field_names)
-    return sys_type, var_names
+    return sys_type, var_names, set_var_names
 end
 
 """
@@ -883,8 +883,9 @@ ConstrainedBlackBoxControlDiscreteSystem{typeof(f),BallInf{Float64,Array{Float64
 macro system(expr...)
     try
         dyn_eq, AT, constr, state, input, noise, dim, x0 = _parse_system(expr)
-        sys_type, var_names = _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
-        sys = Expr(:call, :($sys_type), :($(var_names...)))
+        sys_type, var_names, set_var_names = _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
+        promoted_var_names = :(MathematicalSystems.promote_arguments($(var_names...))...)
+        sys = Expr(:call, :($sys_type), promoted_var_names, :($(set_var_names...)))
         if x0 == nothing
             return esc(sys)
         else

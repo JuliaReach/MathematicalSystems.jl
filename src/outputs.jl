@@ -1,5 +1,5 @@
 """
-    SystemWithOutput{ST<:AbstractSystem, MT<:AbstractMap}
+    SystemWithOutput{ST<:AbstractSystem, MT<:AbstractMap} <: AbstractSystem
 
 Parametric composite type for systems with outputs. It is parameterized in the
 system's type (`ST`) and in the map's type (`MT`).
@@ -9,7 +9,7 @@ system's type (`ST`) and in the map's type (`MT`).
 - `s`         -- system of type `ST`
 - `outputmap` -- output map of type `MT`
 """
-struct SystemWithOutput{ST<:AbstractSystem, MT<:AbstractMap}
+struct SystemWithOutput{ST<:AbstractSystem, MT<:AbstractMap} <: AbstractSystem
     s::ST
     outputmap::MT
 end

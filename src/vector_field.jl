@@ -163,3 +163,71 @@ function VectorField(sys::AbstractContinuousSystem)
     end
     return VectorField(field)
 end
+
+function _position_value_list(V::VectorField, x, y)
+    x1 = x[1]
+    y1 = y[1]
+    N_POS = typeof(x1)
+    N_VAL = typeof(V([x1, y1])[1])
+    m = length(x) * length(y)
+
+    sx = Vector{N_POS}(undef, m)
+    sy = similar(sx)
+    tx = Vector{N_VAL}(undef, m)
+    ty = similar(tx)
+    k = 1
+    max_entry = N_VAL(-Inf)
+    for xi in x
+        for yj in y
+            sx[k] = xi
+            sy[k] = yj
+            tx_k, ty_k = V([xi, yj])
+            max_entry = max(max_entry, abs(tx_k), abs(ty_k))
+            tx[k] = tx_k
+            ty[k] = ty_k
+            k += 1
+        end
+    end
+
+    # normalize
+    if max_entry > zero(N_VAL)
+        step_x = (maximum(x) - minimum(x)) / length(x)
+        step_y = (maximum(y) - minimum(y)) / length(y)
+        max_entry_x = max_entry / step_x
+        max_entry_y = max_entry / step_y
+        for k in 1:m
+            tx[k] /= max_entry_x
+            ty[k] /= max_entry_y
+        end
+    end
+
+    # filter out (0, 0) entries
+    for k in m:-1:1
+        if tx[k] == ty[k] == zero(N_VAL)
+            deleteat!(sx, k)
+            deleteat!(sy, k)
+            deleteat!(tx, k)
+            deleteat!(ty, k)
+        end
+    end
+
+    # center arrows in the grid points
+    for k in 1:length(sx)
+        sx[k] -= tx[k] / 2
+        sy[k] -= ty[k] / 2
+    end
+
+    return sx, sy, tx, ty
+end
+
+### plot recipe
+@recipe function plot(V::VectorField;
+                      x=range(-3, stop=3, length=21),
+                      y=range(-3, stop=3, length=21))
+    seriestype := :quiver
+
+    sx, sy, tx, ty = _position_value_list(V, x, y)
+    quiver := (tx, ty)
+
+    (sx, sy)
+end

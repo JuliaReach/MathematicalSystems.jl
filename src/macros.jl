@@ -413,12 +413,13 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
         rhs = rhscode
     end
 
-    # if rhs is a sum =>  affine system which is controlled, noisy or both
+    # if rhs is parsed as addition => affine system which is controlled, noisy or both
     if @capture(rhs, A_ + B__)
         # parse summands of rhs and add * if needed
         summands = add_asterisk.([A, B...], Ref(state), Ref(input), Ref(noise))
         push!(rhs_params, extract_sum(summands, state, input, noise)...)
-    elseif @capture(rhs, f_(a__))  && f != :(*) && f != :(-)
+    # if rhs is a function call except `*` or `-`
+    elseif @capture(rhs, f_(a__)) && f != :(*) && f != :(-)
         # the dimension argument needs to be a iterable
         (dim == nothing) && throw(ArgumentError("for a blackbox system, the dimension has to be defined"))
         dim_vec = [dim...]

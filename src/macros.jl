@@ -418,7 +418,7 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
         # parse summands of rhs and add * if needed
         summands = add_asterisk.([A, B...], Ref(state), Ref(input), Ref(noise))
         push!(rhs_params, extract_sum(summands, state, input, noise)...)
-    # if rhs is a function call except `*` or `-`
+    # if rhs is a function call except `*` or `-` => black-box system
     elseif @capture(rhs, f_(a__)) && f != :(*) && f != :(-)
         # the dimension argument needs to be a iterable
         (dim == nothing) && throw(ArgumentError("for a blackbox system, the dimension has to be defined"))

@@ -280,14 +280,20 @@ function _parse_system(exprs::NTuple{N, Expr}) where {N}
                 dynamic_equation = stripped
                 state_var = subject
                 AT = abstract_system_type
-                # if the system has the structure x_ = A_*x_ + B_*u_ ,
-                # handle u_ as input variable
+                # if the stripped system has the structure x_ = A_*x_ + B_*u_ or
+                # one of the other pattern, handle u_ as input variable
                 if @capture(stripped, (x_ = A_*x_ + B_*u_) |
                                       (x_ = x_ + B_*u_) |
                                       (x_ = A_*x_ + B_*u_ + c_) |
                                       (x_ = x_ + B_*u_ + c_) |
                                       (x_ = f_(x_, u_)) )
-                    input_var = u
+                    if (f == :+) || (f == :-) || (f == :*)
+                        # pattern x_ = f_(x_, u_) also catches the cases:
+                        # x_ = x_ + u_, x_ = x_ - u_ and x_ = x_*u_
+                        # where u_ doesn't necessarily needs to be the input
+                    else
+                        input_var = u
+                    end
                 end
 
             elseif @capture(ex, (dim = (f_dims_)) | (dims = (f_dims_)))
@@ -407,13 +413,11 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
         rhs = rhscode
     end
 
-    # if rhs is a sum, =>  affine system which is controlled, noisy or both
+    # if rhs is a sum =>  affine system which is controlled, noisy or both
     if @capture(rhs, A_ + B__)
         # parse summands of rhs and add * if needed
         summands = add_asterisk.([A, B...], Ref(state), Ref(input), Ref(noise))
         push!(rhs_params, extract_sum(summands, state, input, noise)...)
-
-    # If rhs is function call => black-box system
     elseif @capture(rhs, f_(a__))  && f != :(*) && f != :(-)
         # the dimension argument needs to be a iterable
         (dim == nothing) && throw(ArgumentError("for a blackbox system, the dimension has to be defined"))

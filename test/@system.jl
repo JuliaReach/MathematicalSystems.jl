@@ -139,7 +139,9 @@ end
 end
 
 @testset "@system for affine continuous systems" begin
-    @test @system(x' = A*x  + c) == AffineContinuousSystem(A, c)
+    @test @system(x' = x + [1.0]) == AffineContinuousSystem(I(1), [1.0])
+    # @test @system(x' = x - 1.0) == AffineContinuousSystem(I(1), -[1.0])
+    @test @system(x' = A*x + c) == AffineContinuousSystem(A, c)
     sys =  @system(z_1' = A*z_1 + B*v_1 + c1, z_1 ∈ X, v_1 ∈ U1, input:v_1)
     @test sys == ConstrainedAffineControlContinuousSystem(A, B, c1, X, U1)
     @test_throws ArgumentError @system(x' = Ax + Bu + c) # not a system type

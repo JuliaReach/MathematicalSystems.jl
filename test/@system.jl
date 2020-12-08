@@ -142,7 +142,8 @@ end
     @test @system(x' = A*x  + c) == AffineContinuousSystem(A, c)
     sys =  @system(z_1' = A*z_1 + B*v_1 + c1, z_1 ∈ X, v_1 ∈ U1, input:v_1)
     @test sys == ConstrainedAffineControlContinuousSystem(A, B, c1, X, U1)
-    # @test_throws ArgumentError @system(x' = Ax + Bu + c) # not a system type
+   sys =  @system(x' = Ax + Bu + c)
+    @test sys == AffineControlContinuousSystem(A, B, c)
 end
 
 @testset "@system for noisy continous systems" begin

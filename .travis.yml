@@ -28,10 +28,9 @@ branches:
   - /^testing-.*$/  # testing branches
   - /^v[0-9]+\.[0-9]+\.[0-9]+$/  # version tags
 
-matrix:
-  fast_finish: true
-  allow_failures:
-    - julia: nightly
+script:
+ - julia --project --color=yes --check-bounds=yes -e 'using Pkg; ; if VERSION >= v"1.1.0-rc1"; Pkg.build(verbose=true); else Pkg.add(Pkg.PackageSpec("RecipesBase", v"0.7")); Pkg.build(); end; Pkg.test(coverage=true)'
+jobs:
   include:
     - stage: "Documentation"
       julia: 1.4

@@ -3,6 +3,7 @@ module MathematicalSystems
 
 using LinearAlgebra, SparseArrays
 using LinearAlgebra: checksquare
+using RecipesBase
 
 #=======================
 Identity operator

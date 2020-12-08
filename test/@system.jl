@@ -209,7 +209,6 @@ end
 @testset "@system for affine discrete systems" begin
     @test @system(x⁺ = A*x + c) == AffineDiscreteSystem(A, c)
     @test @system(x⁺ = A1*x + c1) == AffineDiscreteSystem(A1, c1)
-    # @test_throws ArgumentError @system(x⁺ = Ax + Bu + c) # not a system type
 end
 
 @testset "@system for linear algebraic discrete systems" begin

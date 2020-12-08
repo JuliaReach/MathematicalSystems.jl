@@ -154,7 +154,7 @@ end
         @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
     end
     # Scalar System
-    a = 1.; b = 2.; c = 0.1; X = 1; U = 2
+    a = 1.; b = 2.; c = 0.1
     A = [a][:,:]; B = [b][:,:]; C = [c]
     scalar_sys = AffineControlContinuousSystem(a, b, c)
     @test scalar_sys == AffineControlContinuousSystem(A, B, C)

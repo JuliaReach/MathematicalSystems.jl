@@ -195,6 +195,25 @@ end
     @test scalar_sys == ConstrainedAffineControlContinuousSystem(As, Bs, Cs, Xs, Us)
 end
 
+@testset "Continuous affine control system with state constraints" begin
+    A = zeros(2, 2)
+    B = Matrix([0.5 1.5]')
+    c = [0.0, 1.0]
+    s = AffineControlContinuousSystem(A, B, c)
+    @test statedim(s) == 2
+    @test inputdim(s) == 1
+    @test noisedim(s) == 0
+    for s = [s, typeof(s)]
+        @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
+        @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+    end
+    # Scalar System
+    a = 1.; b = 2.; c = 0.1
+    A = [a][:,:]; B = [b][:,:]; C = [c]
+    scalar_sys = AffineControlContinuousSystem(a, b, c)
+    @test scalar_sys == AffineControlContinuousSystem(A, B, C)
+end
+
 @testset "Continuous constrained linear control system" begin
     s = ConstrainedLinearControlContinuousSystem(A, B, X, U)
     @test state_matrix(s) == A

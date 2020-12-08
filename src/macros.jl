@@ -281,7 +281,7 @@ function _parse_system(exprs::NTuple{N, Expr}) where {N}
                 state_var = subject
                 AT = abstract_system_type
                 # if the stripped system has the structure x_ = A_*x_ + B_*u_ or
-                # one of the other pattern, handle u_ as input variable
+                # one of the other patterns, handle u_ as input variable
                 if @capture(stripped, (x_ = A_*x_ + B_*u_) |
                                       (x_ = x_ + B_*u_) |
                                       (x_ = A_*x_ + B_*u_ + c_) |
@@ -290,7 +290,7 @@ function _parse_system(exprs::NTuple{N, Expr}) where {N}
                     if (f == :+) || (f == :-) || (f == :*)
                         # pattern x_ = f_(x_, u_) also catches the cases:
                         # x_ = x_ + u_, x_ = x_ - u_ and x_ = x_*u_
-                        # where u_ doesn't necessarily needs to be the input
+                        # where u_ doesn't necessarily need to be the input
                     else
                         input_var = u
                     end

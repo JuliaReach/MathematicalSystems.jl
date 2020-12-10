@@ -11,6 +11,7 @@ makedocs(
                              assets = ["assets/juliareach-light.css"]),
     pages = [
         "Home" => "index.md",
+        "Manual" => Any["Systems" => "man/systems.md"],
         "Library" => Any[
             "Types"     => "lib/types.md",
             "Methods"   => "lib/methods.md",

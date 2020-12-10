@@ -13,6 +13,15 @@ DocTestFilters = [r"[0-9\.]+ seconds \(.*\)"]
   linear algebraic, etc.
 - Iterator interfaces to handle constant or time-varying inputs.
 
+## Manual Outline
+
+```@contents
+Pages = [
+    "man/systems.md"
+]
+Depth = 2
+```
+
 ## Library Outline
 
 ```@contents

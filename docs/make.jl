@@ -8,7 +8,7 @@ makedocs(
     sitename = "MathematicalSystems.jl",
     modules = [MathematicalSystems],
     format = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true",
-                             assets = ["assets/juliareach.css"]),
+                             assets = ["assets/juliareach-light.css"]),
     pages = [
         "Home" => "index.md",
         "Library" => Any[

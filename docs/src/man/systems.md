@@ -37,7 +37,7 @@ constraints on the state, inputs or combinations of these. Other specific classe
 systems such as algebraic, polynomial or general nonlinear systems given by a standard
 Julia function are available as well (see the tables below).
 
-Specifying initial-value problems can be entered with the `@ivp` macro.
+Initial-value problems can be specified with the `@ivp` macro.
 For instance, we can attach an initial condition $z(0) = [0.2, 0.2]$ to
 the previous example:
 

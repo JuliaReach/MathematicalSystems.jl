@@ -5,7 +5,7 @@ the ODE $x'(t) = -2x(t)$ is simply `x' = -2x`, where $x'(t) := dx/dt$ is the der
 of state $x(t)$ with respect to "time":
 
 ```@example system_examples
-using MathematicalSystems, LazySets
+using MathematicalSystems
 
 @system(x' = -2x)
 ```

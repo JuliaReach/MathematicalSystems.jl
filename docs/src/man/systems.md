@@ -53,7 +53,7 @@ for details on each type.
 
 Please note that for each continuous system there is a corresponding discrete system,
 e.g. there is [`ConstrainedAffineContinuousSystem`](@ref) and [`ConstrainedAffineDiscreteSystem`](@ref), etc.
-However in this table we only included continuous system's types for brevity.
+However in this table we only included continuous system types for brevity.
 
 
 |Abbreviation| System type|

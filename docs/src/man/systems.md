@@ -92,6 +92,7 @@ However in this table we only included continuous system types for brevity.
 
 The following table summarizes the equation represented by each system type
 (the names are given in abbreviated form). Again, discrete systems are not included.
+The column *Input constraints* corresponds to input or noise constraints (or both). 
 
 |Equation | State constraints | Input constraints|System type (abbr.)|
 |:-------|-------------|-----------|-----|

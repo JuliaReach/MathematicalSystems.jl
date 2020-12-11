@@ -38,7 +38,7 @@ systems such as algebraic, polynomial or general nonlinear systems given by a st
 Julia function are available as well (see the tables below).
 
 Initial-value problems can be specified with the `@ivp` macro.
-For instance, we can attach an initial condition $z(0) = [0.2, 0.2]$ to
+For instance, we can attach an initial condition $z(0) = (0.2, 0.2])$ to
 the previous example:
 
 ```@example system_examples

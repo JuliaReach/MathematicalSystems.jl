@@ -47,7 +47,7 @@ S0 = Singleton([0.2, 0.2])
 ```
 
 The following table summarizes the different system types names in abbreviated form.
-The abbreviated types names are included here only for reference and they are not exported.
+The abbreviated names are included here only for reference and are not exported.
 See the [Types](@ref) section of this manual, or simply click on the system's name
 for details on each type.
 

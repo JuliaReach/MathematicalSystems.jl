@@ -46,7 +46,7 @@ S0 = Singleton([0.2, 0.2])
 @ivp(z' = A*z + c, z ∈ B, z(0) ∈ S0)
 ```
 
-The following table summarizes the different system types names in abbreviated form.
+The following table summarizes the different system types in abbreviated form.
 The abbreviated names are included here only for reference and are not exported.
 See the [Types](@ref) section of this manual, or simply click on the system's name
 for details on each type.

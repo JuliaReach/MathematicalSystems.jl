@@ -35,7 +35,7 @@ given a defining equation, either in scalar or in vector form, and state constra
 It is possible to define systems with additive input terms or noise terms, with
 constraints on the state, inputs or combinations of these. Other specific classes of
 systems such as algebraic, polynomial or general nonlinear systems given by a standard
-Julia function are available as well, see the tables below.
+Julia function are available as well (see the tables below).
 
 Specifying initial-value problems can be entered with the `@ivp` macro.
 For instance, we can attach an initial condition $z(0) = [0.2, 0.2]$ to

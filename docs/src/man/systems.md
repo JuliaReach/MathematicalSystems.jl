@@ -50,7 +50,11 @@ constraints on the state, inputs or combinations of these. Other specific classe
 systems such as algebraic, polynomial or general nonlinear systems given by a standard
 Julia function are available as well (see the tables below).
 
-Some applications require distinguishing between *controlled* inputs and *uncontrolled* or noise inputs. In this library we make such distinction by noting field names with $u$ and $w$ for (controlled) inputs and noise respectively. Please note that some systems are structurally equivalent, for example `CLCCS` and `NCLCS` being $x' = Ax + Bu$ and $x' = Ax + Dw$ respectively; the difference lies in the resulting value of getter functions such as `inputset` and `noiseset`.
+Some applications require distinguishing between *controlled* inputs and *uncontrolled* or
+noise inputs. In this library we make such distinction by noting field names with $u$ and $w$
+for (controlled) inputs and noise respectively. Please note that some systems are structurally
+equivalent, for example `CLCCS` and `NCLCS` being $x' = Ax + Bu$ and $x' = Ax + Dw$ respectively;
+the difference lies in the resulting value of getter functions such as `inputset` and `noiseset`.
 
 ## Summary tables
 

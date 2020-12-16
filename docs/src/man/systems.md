@@ -1,5 +1,7 @@
 # System types overview
 
+## Using the macro
+
 A convenient way to create a new system is with the `@system` macro. For example,
 the ODE $x'(t) = -2x(t)$ is simply `x' = -2x`, where $x'(t) := dx/dt$ is the derivative
 of state $x(t)$ with respect to "time":
@@ -30,13 +32,6 @@ c = [0.0, 5.0]
 which defines the two-dimensional system $x' = y$, $y' = -x - 2y + 3$, with state
 constraints $z ∈ B = \{ \sqrt{x^2 + y^2} \leq 5\}$.
 
-In the examples introduced so far, the macro has automatically created different system types
-given a defining equation, either in scalar or in vector form, and state constraints.
-It is possible to define systems with additive input terms or noise terms, with
-constraints on the state, inputs or combinations of these. Other specific classes of
-systems such as algebraic, polynomial or general nonlinear systems given by a standard
-Julia function are available as well (see the tables below).
-
 Initial-value problems can be specified with the `@ivp` macro.
 For instance, we can attach an initial condition $z(0) = (0.2, 0.2])$ to
 the previous example:
@@ -46,6 +41,23 @@ S0 = Singleton([0.2, 0.2])
 @ivp(z' = A*z + c, z ∈ B, z(0) ∈ S0)
 ```
 
+## Inputs
+
+In the examples introduced so far, the macro has automatically created different system types
+given a defining equation, either in scalar or in vector form, and state constraints.
+It is possible to define systems with additive input terms or noise terms, with
+constraints on the state, inputs or combinations of these. Other specific classes of
+systems such as algebraic, polynomial or general nonlinear systems given by a standard
+Julia function are available as well (see the tables below).
+
+Some applications require distinguishing between *controlled* inputs and *uncontrolled* or
+noise inputs. In this library we make such distinction by noting field names with $u$ and $w$
+for (controlled) inputs and noise respectively. Please note that some systems are structurally
+equivalent, for example `CLCCS` and `NCLCS` being $x' = Ax + Bu$ and $x' = Ax + Dw$ respectively;
+the difference lies in the resulting value of getter functions such as `inputset` and `noiseset`.
+
+## Summary tables
+
 The following table summarizes the different system types in abbreviated form.
 The abbreviated names are included here only for reference and are not exported.
 See the [Types](@ref) section of this manual, or simply click on the system's name
@@ -54,7 +66,6 @@ for details on each type.
 Please note that for each continuous system there is a corresponding discrete system,
 e.g. there is [`ConstrainedAffineContinuousSystem`](@ref) and [`ConstrainedAffineDiscreteSystem`](@ref), etc.
 However in this table we only included continuous system types for brevity.
-
 
 |Abbreviation| System type|
 |-----------|-------------|
@@ -89,10 +100,8 @@ However in this table we only included continuous system types for brevity.
 |SOCACCS|[`SecondOrderConstrainedAffineControlContinuousSystem`](@ref)|
 |SOCLCCS|[`SecondOrderConstrainedLinearControlContinuousSystem`](@ref)|
 
-
 The following table summarizes the equation represented by each system type
-(the names are given in abbreviated form). Again, discrete systems are not included.
-The column *Input constraints* corresponds to input or noise constraints (or both). 
+(the names are given in abbreviated form). Again, discrete systems are not included. The column *Input constraints* is `yes` if the structure can model input or noise constraints (or both).
 
 |Equation | State constraints | Input constraints|System type (abbr.)|
 |:-------|-------------|-----------|-----|

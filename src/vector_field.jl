@@ -198,9 +198,10 @@ function _position_value_list(V::VectorField, grid, dimx, dimy)
         step_y = (maximum(Y) - minimum(Y)) / length(Y)
         max_entry_x = max_entry / step_x
         max_entry_y = max_entry / step_y
+        max_entry = max(max_entry_x, max_entry_y)
         for k in 1:m
-            vx[k] /= max_entry_x
-            vy[k] /= max_entry_y
+            vx[k] /= max_entry
+            vy[k] /= max_entry
         end
     end
 

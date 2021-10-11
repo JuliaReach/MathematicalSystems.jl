@@ -135,3 +135,5 @@ The following table summarizes the equation represented by each system type
 |$Mx'' + Cx' + Kx = b$|no|no|SOACS|
 |$Mx'' + Cx' + Kx = Bu + d, x ∈ X, u ∈ U$|yes|yes|SOCACCS|
 |$Mx'' + Cx' + Kx = Bu, x ∈ X, u ∈ U$|yes|yes|SOCLCCS|
+|$Mx'' + Cx' + f_i(x) = f_e$|no|no|SONCS|
+|$Mx'' + Cx' + f_i(x) = f_e$, x ∈ X, u ∈ U$|yes|yes|SOCNCS|

@@ -2230,7 +2230,7 @@ end
 @doc """
     SecondOrderConstrainedNonlinearContinuousSystem
 
-Continuous-time constrained second order nonlinear system of the form:
+Continuous-time constrained second-order nonlinear system of the form:
 
 ```math
     Mx''(t) + Cx'(t) + f_i(x) = f_e(t) \\forall t, x ∈ X, f_e(t) ∈ U

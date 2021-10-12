@@ -2295,7 +2295,6 @@ for (Z, AZ) in ((:SecondOrderConstrainedNonlinearContinuousSystem, :AbstractCont
         noisedim(::$Z) = 0
         mass_matrix(s::$Z) = s.M
         viscosity_matrix(s::$Z) = s.C
-        affine_term(s::$Z) = s.d
         stateset(s::$Z) = s.X
         inpuset(s::$Z) = s.U
         end

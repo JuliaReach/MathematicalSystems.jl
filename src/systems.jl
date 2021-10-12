@@ -2146,7 +2146,7 @@ end
 @doc """
     SecondOrderNonlinearContinuousSystem
 
-Continuous-time second order nonlinear system of the form:
+Continuous-time second-order nonlinear system of the form:
 
 ```math
     Mx''(t) + Cx'(t) + f_i(x) = f_e(t) \\forall t

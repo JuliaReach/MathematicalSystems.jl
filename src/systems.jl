@@ -2213,7 +2213,6 @@ for (Z, AZ) in ((:SecondOrderNonlinearContinuousSystem, :AbstractContinuousSyste
         noisedim(::$Z) = 0
         mass_matrix(s::$Z) = s.M
         viscosity_matrix(s::$Z) = s.C
-        affine_term(s::$Z) = s.d
         end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin

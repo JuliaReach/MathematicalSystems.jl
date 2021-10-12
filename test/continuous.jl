@@ -665,5 +665,6 @@ end
     X = Universe(2)
     U = Universe(2)
     sys = SecondOrderConstrainedNonlinearContinuousSystem(M, C, fi, fe, X, U)
-    @test mass_matrix(sys) == M && viscosity_matrix(sys) == C && stateset(sys) == X && inputset(sys) == U
+    @test mass_matrix(sys) == M && viscosity_matrix(sys) == C &&
+        stateset(sys) === X && inputset(sys) === U
 end

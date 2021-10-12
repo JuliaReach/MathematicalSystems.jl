@@ -2161,7 +2161,7 @@ Continuous-time second-order nonlinear system of the form:
 
 ### Notes
 
-Typically a `fi(x)` is state-dependent function, and `fe` is a given vector.
+Typically `fi(x)` is a state-dependent function, and `fe` is a given vector.
 In this implementation, their respective types, `FI` and `FE`, are generic.
 """
 SecondOrderNonlinearContinuousSystem

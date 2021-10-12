@@ -2169,7 +2169,7 @@ SecondOrderNonlinearContinuousSystem
 @doc """
     SecondOrderNonlinearDiscreteSystem
 
-Discrete-time second order nonlinear system of the form:
+Discrete-time second-order nonlinear system of the form:
 
 ```math
     Mx_{k+2} + Cx_{k} + f_i(x_k) = f_e(t_k) \\forall k.

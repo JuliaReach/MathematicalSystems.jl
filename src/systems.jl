@@ -2206,7 +2206,7 @@ for (Z, AZ) in ((:SecondOrderNonlinearContinuousSystem, :AbstractContinuousSyste
             end
         end
         function $(Z)(M::Number, C::Number, fi, fe)
-             return $(Z)(hcat(M), hcat(C), fi, fe)
+            return $(Z)(hcat(M), hcat(C), fi, fe)
         end
 
         statedim(s::$Z) = size(s.M, 1)

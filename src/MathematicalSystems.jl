@@ -86,8 +86,8 @@ export ContinuousIdentitySystem,
        SecondOrderAffineContinuousSystem,
        SecondOrderConstrainedLinearControlContinuousSystem,
        SecondOrderConstrainedAffineControlContinuousSystem,
-       SecondOrderNonlinearContinuousSystem,
-       SecondOrderConstrainedNonlinearContinuousSystem
+       SecondOrderContinuousSystem,
+       SecondOrderConstrainedContinuousSystem
 
 #==================================
 Concrete Types for Discrete Systems
@@ -122,8 +122,8 @@ export DiscreteIdentitySystem,
        SecondOrderAffineDiscreteSystem,
        SecondOrderConstrainedLinearControlDiscreteSystem,
        SecondOrderConstrainedAffineControlDiscreteSystem,
-       SecondOrderNonlinearDiscreteSystem,
-       SecondOrderConstrainedNonlinearDiscreteSystem
+       SecondOrderDiscreteSystem,
+       SecondOrderConstrainedDiscreteSystem
 
 #==========================================
 Concrete Types for an Initial Value Problem

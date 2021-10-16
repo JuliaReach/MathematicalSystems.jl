@@ -2087,7 +2087,6 @@ Discrete-time second order constrained affine control system of the form:
 """
 SecondOrderConstrainedAffineControlDiscreteSystem
 
-
 for (Z, AZ) in ((:SecondOrderConstrainedAffineControlContinuousSystem, :AbstractContinuousSystem),
                 (:SecondOrderConstrainedAffineControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
@@ -2144,9 +2143,9 @@ for (Z, AZ) in ((:SecondOrderConstrainedAffineControlContinuousSystem, :Abstract
 end
 
 @doc """
-    SecondOrderNonlinearContinuousSystem
+    SecondOrderContinuousSystem
 
-Continuous-time second-order nonlinear system of the form:
+Continuous-time second-order system of the form:
 
 ```math
     Mx''(t) + Cx'(t) + f_i(x) = f_e(t) \\forall t
@@ -2164,12 +2163,12 @@ Continuous-time second-order nonlinear system of the form:
 Typically `fi(x)` is a state-dependent function, and `fe` is a given vector.
 In this implementation, their respective types, `FI` and `FE`, are generic.
 """
-SecondOrderNonlinearContinuousSystem
+SecondOrderContinuousSystem
 
 @doc """
-    SecondOrderNonlinearDiscreteSystem
+    SecondOrderDiscreteSystem
 
-Discrete-time second-order nonlinear system of the form:
+Discrete-time second-order system of the form:
 
 ```math
     Mx_{k+2} + Cx_{k} + f_i(x_k) = f_e(t_k) \\forall k.
@@ -2187,10 +2186,10 @@ Discrete-time second-order nonlinear system of the form:
 Typically `fi(x_k)` is a state-dependent function, and `fe` is a given vector.
 In this implementation, their respective types, `FI` and `FE`, are generic.
 """
-SecondOrderNonlinearDiscreteSystem
+SecondOrderDiscreteSystem
 
-for (Z, AZ) in ((:SecondOrderNonlinearContinuousSystem, :AbstractContinuousSystem),
-                (:SecondOrderNonlinearDiscreteSystem, :AbstractDiscreteSystem))
+for (Z, AZ) in ((:SecondOrderContinuousSystem, :AbstractContinuousSystem),
+                (:SecondOrderDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
         struct $(Z){T, MTM <: AbstractMatrix{T},
                        MTC <: AbstractMatrix{T},
@@ -2213,7 +2212,7 @@ for (Z, AZ) in ((:SecondOrderNonlinearContinuousSystem, :AbstractContinuousSyste
         noisedim(::$Z) = 0
         mass_matrix(s::$Z) = s.M
         viscosity_matrix(s::$Z) = s.C
-        end
+    end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
             islinear(::$T) = false
@@ -2227,9 +2226,9 @@ for (Z, AZ) in ((:SecondOrderNonlinearContinuousSystem, :AbstractContinuousSyste
 end
 
 @doc """
-    SecondOrderConstrainedNonlinearContinuousSystem
+    SecondOrderConstrainedContinuousSystem
 
-Continuous-time constrained second-order nonlinear system of the form:
+Continuous-time constrained second-order system of the form:
 
 ```math
     Mx''(t) + Cx'(t) + f_i(x) = f_e(t) \\forall t, x ∈ X, f_e(t) ∈ U
@@ -2244,12 +2243,12 @@ Continuous-time constrained second-order nonlinear system of the form:
 - `X`  -- state set
 - `U`  -- input set
 """
-SecondOrderConstrainedNonlinearContinuousSystem
+SecondOrderConstrainedContinuousSystem
 
 @doc """
-    SecondOrderConstrainedNonlinearDiscreteSystem
+    SecondOrderConstrainedDiscreteSystem
 
-Discrete-time constrained second-order nonlinear system of the form:
+Discrete-time constrained second-order system of the form:
 
 ```math
     Mx_{k+2} + Cx_{k} + f_i(x_k) = f_e(t_k) \\forall k, x_k ∈ X, f_e(t_k) ∈ U
@@ -2264,10 +2263,10 @@ Discrete-time constrained second-order nonlinear system of the form:
 - `X`  -- state set
 - `U`  -- input set
 """
-SecondOrderConstrainedNonlinearDiscreteSystem
+SecondOrderConstrainedDiscreteSystem
 
-for (Z, AZ) in ((:SecondOrderConstrainedNonlinearContinuousSystem, :AbstractContinuousSystem),
-                (:SecondOrderConstrainedNonlinearDiscreteSystem, :AbstractDiscreteSystem))
+for (Z, AZ) in ((:SecondOrderConstrainedContinuousSystem, :AbstractContinuousSystem),
+                (:SecondOrderConstrainedDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
         struct $(Z){T, MTM <: AbstractMatrix{T},
                        MTC <: AbstractMatrix{T},
@@ -2296,8 +2295,8 @@ for (Z, AZ) in ((:SecondOrderConstrainedNonlinearContinuousSystem, :AbstractCont
         mass_matrix(s::$Z) = s.M
         viscosity_matrix(s::$Z) = s.C
         stateset(s::$Z) = s.X
-        inpuset(s::$Z) = s.U
-        end
+        inputset(s::$Z) = s.U
+    end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
             islinear(::$T) = false

@@ -55,6 +55,8 @@ SecondOrderLinearContinuousSystem
 SecondOrderAffineContinuousSystem
 SecondOrderConstrainedAffineControlContinuousSystem
 SecondOrderConstrainedLinearControlContinuousSystem
+SecondOrderContinuousSystem
+SecondOrderConstrainedContinuousSystem
 ```
 
 ## Discrete Systems
@@ -90,6 +92,8 @@ SecondOrderLinearDiscreteSystem
 SecondOrderAffineDiscreteSystem
 SecondOrderConstrainedAffineControlDiscreteSystem
 SecondOrderConstrainedLinearControlDiscreteSystem
+SecondOrderDiscreteSystem
+SecondOrderConstrainedDiscreteSystem
 ```
 
 #### Discretization Algorithms

@@ -2141,3 +2141,170 @@ for (Z, AZ) in ((:SecondOrderConstrainedAffineControlContinuousSystem, :Abstract
         end
     end
 end
+
+@doc """
+    SecondOrderContinuousSystem
+
+Continuous-time second-order system of the form:
+
+```math
+    Mx''(t) + Cx'(t) + f_i(x) = f_e(t) \\forall t
+```
+
+### Fields
+
+- `M`  -- mass matrix
+- `C`  -- viscosity matrix
+- `fi` -- internal forces
+- `fe` -- external forces
+
+### Notes
+
+Typically `fi(x)` is a state-dependent function, and `fe` is a given vector.
+In this implementation, their respective types, `FI` and `FE`, are generic.
+"""
+SecondOrderContinuousSystem
+
+@doc """
+    SecondOrderDiscreteSystem
+
+Discrete-time second-order system of the form:
+
+```math
+    Mx_{k+2} + Cx_{k} + f_i(x_k) = f_e(t_k) \\forall k.
+```
+
+### Fields
+
+- `M`  -- mass matrix
+- `C`  -- viscosity matrix
+- `fi` -- internal forces
+- `fe` -- external forces
+
+### Notes
+
+Typically `fi(x_k)` is a state-dependent function, and `fe` is a given vector.
+In this implementation, their respective types, `FI` and `FE`, are generic.
+"""
+SecondOrderDiscreteSystem
+
+for (Z, AZ) in ((:SecondOrderContinuousSystem, :AbstractContinuousSystem),
+                (:SecondOrderDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MTM <: AbstractMatrix{T},
+                       MTC <: AbstractMatrix{T},
+                       FI,
+                       FE} <: $(AZ)
+            M::MTM
+            C::MTC
+            fi::FI
+            fe::FE
+            function $(Z)(M::MTM, C::MTC, fi::FI, fe::FE) where {T, MTM <: AbstractMatrix{T}, MTC <: AbstractMatrix{T}, FI, FE}
+                @assert checksquare(M) == checksquare(C)
+                return new{T, MTM, MTC, FI, FE}(M, C, fi, fe)
+            end
+        end
+        function $(Z)(M::Number, C::Number, fi, fe)
+            return $(Z)(hcat(M), hcat(C), fi, fe)
+        end
+
+        statedim(s::$Z) = size(s.M, 1)
+        noisedim(::$Z) = 0
+        mass_matrix(s::$Z) = s.M
+        viscosity_matrix(s::$Z) = s.C
+    end
+    for T in [Z, Type{<:eval(Z)}]
+        @eval begin
+            islinear(::$T) = false
+            isaffine(::$T) = false
+            ispolynomial(::$T) = false
+            isnoisy(::$T) = false
+            iscontrolled(::$T) = false
+            isconstrained(::$T) = false
+        end
+    end
+end
+
+@doc """
+    SecondOrderConstrainedContinuousSystem
+
+Continuous-time constrained second-order system of the form:
+
+```math
+    Mx''(t) + Cx'(t) + f_i(x) = f_e(t) \\forall t, x ∈ X, f_e(t) ∈ U
+```
+
+### Fields
+
+- `M`  -- mass matrix
+- `C`  -- viscosity matrix
+- `fi` -- internal forces
+- `fe` -- external forces
+- `X`  -- state set
+- `U`  -- input set
+"""
+SecondOrderConstrainedContinuousSystem
+
+@doc """
+    SecondOrderConstrainedDiscreteSystem
+
+Discrete-time constrained second-order system of the form:
+
+```math
+    Mx_{k+2} + Cx_{k} + f_i(x_k) = f_e(t_k) \\forall k, x_k ∈ X, f_e(t_k) ∈ U
+```
+
+### Fields
+
+- `M`  -- mass matrix
+- `C`  -- viscosity matrix
+- `fi` -- internal forces
+- `fe` -- external forces
+- `X`  -- state set
+- `U`  -- input set
+"""
+SecondOrderConstrainedDiscreteSystem
+
+for (Z, AZ) in ((:SecondOrderConstrainedContinuousSystem, :AbstractContinuousSystem),
+                (:SecondOrderConstrainedDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T, MTM <: AbstractMatrix{T},
+                       MTC <: AbstractMatrix{T},
+                       FI,
+                       FE,
+                       ST,
+                       UT} <: $(AZ)
+            M::MTM
+            C::MTC
+            fi::FI
+            fe::FE
+            X::ST
+            U::UT
+
+            function $(Z)(M::MTM, C::MTC, fi::FI, fe::FE, X::ST, U::UT) where {T, MTM <: AbstractMatrix{T}, MTC <: AbstractMatrix{T}, FI, FE, ST, UT}
+                @assert checksquare(M) == checksquare(C)
+                return new{T, MTM, MTC, FI, FE, ST, UT}(M, C, fi, fe, X, U)
+            end
+        end
+        function $(Z)(M::Number, C::Number, fi, fe, X, U)
+             return $(Z)(hcat(M), hcat(C), fi, fe, X, U)
+        end
+
+        statedim(s::$Z) = size(s.M, 1)
+        noisedim(::$Z) = 0
+        mass_matrix(s::$Z) = s.M
+        viscosity_matrix(s::$Z) = s.C
+        stateset(s::$Z) = s.X
+        inputset(s::$Z) = s.U
+    end
+    for T in [Z, Type{<:eval(Z)}]
+        @eval begin
+            islinear(::$T) = false
+            isaffine(::$T) = false
+            ispolynomial(::$T) = false
+            isnoisy(::$T) = false
+            iscontrolled(::$T) = false
+            isconstrained(::$T) = true
+        end
+    end
+end

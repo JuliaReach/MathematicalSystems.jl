@@ -624,7 +624,7 @@ end
     end
 end
 
-@testset "Second order systems" begin
+@testset "Second order linear systems" begin
     M = [1. 0; 0 2]
     C = [0.1 0; 0 0.2]
     K = [2. 1; 0 1]
@@ -648,4 +648,20 @@ end
     sys = SecondOrderConstrainedAffineControlContinuousSystem(M, C, K, B, d, X, U)
     @test mass_matrix(sys) == M && viscosity_matrix(sys) == C && stiffness_matrix(sys) == K
     @test affine_term(sys) == d && input_matrix(sys) == B && stateset(sys) == X && inputset(sys) == U
+end
+
+@testset "Second order systems" begin
+    M = [1. 0; 0 2]
+    C = [0.1 0; 0 0.2]
+    fi(x) = x + x.^2 + ones(2)
+    fe = zeros(2)
+    sys = SecondOrderContinuousSystem(M, C, fi, fe)
+    @test mass_matrix(sys) == M && viscosity_matrix(sys) == C
+
+    fe = zeros(2)
+    X = Universe(2)
+    U = Universe(2)
+    sys = SecondOrderConstrainedContinuousSystem(M, C, fi, fe, X, U)
+    @test mass_matrix(sys) == M && viscosity_matrix(sys) == C
+    @test stateset(sys) === X && inputset(sys) === U
 end

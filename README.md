@@ -1,6 +1,6 @@
 # MathematicalSystems.jl
 
-[![Build Status](https://travis-ci.org/JuliaReach/MathematicalSystems.jl.svg?branch=master)](https://travis-ci.org/JuliaReach/MathematicalSystems.jl)
+[![Build Status](https://github.com/JuliaReach/MathematicalSystems.jl/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/JuliaReach/MathematicalSystems.jl/actions/workflows/ci.yml?query=branch%3Amaster)
 [![Docs latest](https://img.shields.io/badge/docs-latest-blue.svg)](http://juliareach.github.io/MathematicalSystems.jl/latest/)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/JuliaReach/MathematicalSystems.jl/blob/master/LICENSE.md)
 [![Code coverage](http://codecov.io/github/JuliaReach/MathematicalSystems.jl/coverage.svg?branch=master)](https://codecov.io/github/JuliaReach/MathematicalSystems.jl?branch=master)

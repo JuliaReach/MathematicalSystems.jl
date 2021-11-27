@@ -113,5 +113,5 @@ These persons have contributed to `MathematicalSystems.jl` (in alphabetic order)
 
 - [Marcelo Forets](https://github.com/mforets)
 - [Benoît Legat](https://perso.uclouvain.be/benoit.legat/)
-- [Christian Schilling](http://swt.informatik.uni-freiburg.de/staff/christian_schilling/)
+- [Christian Schilling](https://www.christianschilling.net/)
 - [Ueli Wechsler](https://github.com/ueliwechsler/)

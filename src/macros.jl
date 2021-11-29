@@ -29,14 +29,14 @@ Let us first create a linear map using this macro:
 
 ```jldoctest
 julia> @map x -> [1 0; 0 0]*x
-LinearMap{Int64,Array{Int64,2}}([1 0; 0 0])
+LinearMap{Int64, Matrix{Int64}}([1 0; 0 0])
 ```
 
 We can create an affine system as well:
 
 ```jldoctest
 julia> @map x -> [1 0; 0 0]*x + [2, 0]
-AffineMap{Int64,Array{Int64,2},Array{Int64,1}}([1 0; 0 0], [2, 0])
+AffineMap{Int64, Matrix{Int64}, Vector{Int64}}([1 0; 0 0], [2, 0])
 ```
 
 Additional arguments can be passed to `@map` using the function-call form, i.e.
@@ -555,17 +555,17 @@ Array of tuples of symbols with variable name and field name.
 julia> using MathematicalSystems: extract_sum
 
 julia> extract_sum([:(A1*x)], :x, :u, :w)
-1-element Array{Tuple{Any,Symbol},1}:
+1-element Vector{Tuple{Any, Symbol}}:
  (:(hcat(A1)), :A)
 
 julia> extract_sum([:(A1*x), :(B1*u), :c], :x, :u, :w)
-3-element Array{Tuple{Any,Symbol},1}:
+3-element Vector{Tuple{Any, Symbol}}:
  (:(hcat(A1)), :A)
  (:(hcat(B1)), :B)
  (:(vcat(c)), :c)
 
 julia> extract_sum([:(A1*x7), :( B1*u7), :( B2*w7)], :x7, :u7, :w7)
-3-element Array{Tuple{Any,Symbol},1}:
+3-element Vector{Tuple{Any, Symbol}}:
  (:(hcat(A1)), :A)
  (:(hcat(B1)), :B)
  (:(hcat(B2)), :D)
@@ -589,7 +589,7 @@ Similiarily, if the element is equal to `noise`, the variable name is
 `IdentityMultiple(I, state_dim)` and the field name is `:D`.
 """
 function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
-    params = Tuple{Any,Symbol}[]
+    params = Tuple{Any, Symbol}[]
     state_dim = 1
     got_state_dim = false
 
@@ -729,7 +729,7 @@ to `order`.
 julia> parameters= [(:U1, :U), (:X1, :X), (:W1, :W)];
 
 julia> sort(parameters, (:X, :U, :W))
-3-element Array{Tuple{Any,Symbol},1}:
+3-element Vector{Tuple{Any, Symbol}}:
  (:X1, :X)
  (:U1, :U)
  (:W1, :W)
@@ -737,7 +737,7 @@ julia> sort(parameters, (:X, :U, :W))
 julia>  parameters = [(:const, :c), (:A, :A)];
 
 julia> sort(parameters, (:A, :B, :c, :D))
-2-element Array{Tuple{Any,Symbol},1}:
+2-element Vector{Tuple{Any, Symbol}}:
  (:A, :A)
  (:const, :c)
 ```
@@ -846,14 +846,14 @@ Let us first create a continuous linear system using this macro:
 julia> A = [1. 0; 0 1.];
 
 julia> @system(x' = A*x)
-LinearContinuousSystem{Float64,Array{Float64,2}}([1.0 0.0; 0.0 1.0])
+LinearContinuousSystem{Float64, Matrix{Float64}}([1.0 0.0; 0.0 1.0])
 ```
 
 A discrete system is defined by using `⁺`:
 
 ```jldoctest system_macro
 julia> @system(x⁺ = A*x)
-LinearDiscreteSystem{Float64,Array{Float64,2}}([1.0 0.0; 0.0 1.0])
+LinearDiscreteSystem{Float64, Matrix{Float64}}([1.0 0.0; 0.0 1.0])
 ```
 
 Additionally, a set definition `x ∈ X` can be added to create a constrained system.
@@ -863,16 +863,16 @@ inputs writes as:
 ```jldoctest system_macro
 julia> using LazySets
 
-julia> B = Matrix([1. 0.5]');
+julia> B = Matrix([1.0 0.5]');
 
-julia> c = [1., 1.5];
+julia> c = [1.0, 1.5];
 
-julia> X = BallInf(zeros(2), 10.);
+julia> X = BallInf(zeros(2), 10.0);
 
-julia> U = BallInf(zeros(1), 2.);
+julia> U = BallInf(zeros(1), 2.0);
 
 julia> @system(x' = A*x + B*u + c, x ∈ X, u ∈ U)
-ConstrainedAffineControlContinuousSystem{Float64,Array{Float64,2},Array{Float64,2},Array{Float64,1},BallInf{Float64,Array{Float64,1}},BallInf{Float64,Array{Float64,1}}}([1.0 0.0; 0.0 1.0], [1.0; 0.5], [1.0, 1.5], BallInf{Float64,Array{Float64,1}}([0.0, 0.0], 10.0), BallInf{Float64,Array{Float64,1}}([0.0], 2.0))
+ConstrainedAffineControlContinuousSystem{Float64, Matrix{Float64}, Matrix{Float64}, Vector{Float64}, BallInf{Float64, Vector{Float64}}, BallInf{Float64, Vector{Float64}}}([1.0 0.0; 0.0 1.0], [1.0; 0.5], [1.0, 1.5], BallInf{Float64, Vector{Float64}}([0.0, 0.0], 10.0), BallInf{Float64, Vector{Float64}}([0.0], 2.0))
 ```
 For the creation of a black-box system, the state, input and noise dimensions have
 to be defined separately. For a constrained controlled black-box system, the macro
@@ -882,7 +882,7 @@ writes as
 julia> f(x, u) = x + u;
 
 julia> @system(x⁺ = f(x, u), x ∈ X, u ∈ U, dim: (2,2))
-ConstrainedBlackBoxControlDiscreteSystem{typeof(f),BallInf{Float64,Array{Float64,1}},BallInf{Float64,Array{Float64,1}}}(f, 2, 2, BallInf{Float64,Array{Float64,1}}([0.0, 0.0], 10.0), BallInf{Float64,Array{Float64,1}}([0.0], 2.0))
+ConstrainedBlackBoxControlDiscreteSystem{typeof(f), BallInf{Float64, Vector{Float64}}, BallInf{Float64, Vector{Float64}}}(f, 2, 2, BallInf{Float64, Vector{Float64}}([0.0, 0.0], 10.0), BallInf{Float64, Vector{Float64}}([0.0], 2.0))
 ```
 """
 macro system(expr...)
@@ -936,16 +936,16 @@ in the form `@ivp(system, state(0) ∈ initial_set)`.
 julia> p = @ivp(x' = -x, x(0) ∈ [1.0]);
 
 julia> typeof(p)
-InitialValueProblem{LinearContinuousSystem{Float64,IdentityMultiple{Float64}},Array{Float64,1}}
+InitialValueProblem{LinearContinuousSystem{Float64, IdentityMultiple{Float64}}, Vector{Float64}}
 
 julia> initial_state(p)
-1-element Array{Float64,1}:
+1-element Vector{Float64}:
  1.0
 
 julia> sys = @system(x' = [1 0; 0 1] * x);
 
 julia> @ivp(sys, x(0) ∈ [-1, 1])
-InitialValueProblem{LinearContinuousSystem{Int64,Array{Int64,2}},Array{Int64,1}}(LinearContinuousSystem{Int64,Array{Int64,2}}([1 0; 0 1]), [-1, 1])
+InitialValueProblem{LinearContinuousSystem{Int64, Matrix{Int64}}, Vector{Int64}}(LinearContinuousSystem{Int64, Matrix{Int64}}([1 0; 0 1]), [-1, 1])
 ```
 """
 macro ivp(expr...)

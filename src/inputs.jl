@@ -44,7 +44,7 @@ julia> iterate(c, 2)
 (-1//2, nothing)
 
 julia> collect(nextinput(c, 4))
-4-element Array{Rational{Int64},1}:
+4-element Vector{Rational{Int64}}:
  -1//2
  -1//2
  -1//2
@@ -108,7 +108,7 @@ of elements in the vector. Consider an input given by a vector of rational numbe
 
 ```jldoctest varying_input
 julia> v = VaryingInput([-1//2, 1//2])
-VaryingInput{Rational{Int64},Array{Rational{Int64},1}}(Rational{Int64}[-1//2, 1//2])
+VaryingInput{Rational{Int64}, Vector{Rational{Int64}}}(Rational{Int64}[-1//2, 1//2])
 
 julia> length(v)
 2
@@ -133,14 +133,14 @@ an iterator over the first `n` elements of this input (where `n=1` by default):
 
 ```jldoctest varying_input
 julia> typeof(nextinput(v))
-Base.Iterators.Take{VaryingInput{Rational{Int64},Array{Rational{Int64},1}}}
+Base.Iterators.Take{VaryingInput{Rational{Int64}, Vector{Rational{Int64}}}}
 
 julia> collect(nextinput(v, 1))
-1-element Array{Rational{Int64},1}:
+1-element Vector{Rational{Int64}}:
  -1//2
 
 julia> collect(nextinput(v, 2))
-2-element Array{Rational{Int64},1}:
+2-element Vector{Rational{Int64}}:
  -1//2
   1//2
 ```
@@ -150,12 +150,12 @@ You can collect the inputs in an array, or equivalently use list comprehension,
 
 ```jldoctest varying_input
 julia> collect(v)
-2-element Array{Rational{Int64},1}:
+2-element Vector{Rational{Int64}}:
  -1//2
   1//2
 
 julia> [2*vi for vi in v]
-2-element Array{Rational{Int64},1}:
+2-element Vector{Rational{Int64}}:
  -1//1
   1//1
 ```
@@ -165,7 +165,7 @@ the full vector:
 
 ```jldoctest varying_input
 julia> collect(nextinput(v, 4))
-2-element Array{Rational{Int64},1}:
+2-element Vector{Rational{Int64}}:
  -1//2
   1//2
 ```
@@ -174,7 +174,7 @@ To transform a varying input, you can use `map` as in:
 
 ```jldoctest varying_input
 julia> map(x->2*x, v)
-VaryingInput{Rational{Int64},Array{Rational{Int64},1}}(Rational{Int64}[-1//1, 1//1])
+VaryingInput{Rational{Int64}, Vector{Rational{Int64}}}(Rational{Int64}[-1//1, 1//1])
 ```
 """
 struct VaryingInput{UT, VUT<:AbstractVector{UT}} <: AbstractInput

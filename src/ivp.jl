@@ -21,7 +21,7 @@ julia> x₀ = [-1/2, 1/2];
 julia> p = InitialValueProblem(s, x₀);
 
 julia> initial_state(p) # same as p.x0
-2-element Array{Float64,1}:
+2-element Vector{Float64}:
  -0.5
   0.5
 

@@ -22,5 +22,5 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/JuliaReach/MathematicalSystems.jl.git",
+    repo = "github.com/JuliaReach/MathematicalSystems.jl.git"
 )

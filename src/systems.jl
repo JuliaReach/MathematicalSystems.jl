@@ -30,6 +30,12 @@ for (Z, AZ) in ((:ContinuousIdentitySystem, :AbstractContinuousSystem),
     end
 end
 
+function tryparse(::Type{ContinuousIdentitySystem}, syseq, dim)
+    d = @trymatch dim :(dim = $d) || :(dim: $d) => d
+    isnothing(d) && return
+    @trymatch syseq :(($x)' = 0) => :(ContinuousIdentitySystem($d))
+end
+
 @doc """
     ContinuousIdentitySystem <: AbstractContinuousSystem
 
@@ -146,6 +152,12 @@ for (Z, AZ) in ((:LinearContinuousSystem, :AbstractContinuousSystem),
             iscontrolled(::$T) = false
             isconstrained(::$T) = false
         end
+    end
+end
+
+function tryparse(::Type{LinearContinuousSystem}, syseq)
+    @trymatch syseq begin
+        :(($x)' = ($A)*($x)) => :(LinearContinuousSystem($A)) 
     end
 end
 
@@ -629,6 +641,18 @@ for (Z, AZ) in ((:ConstrainedLinearControlContinuousSystem, :AbstractContinuousS
             isnoisy(::$T) = false
             iscontrolled(::$T) = true
             isconstrained(::$T) = true
+        end
+    end
+end
+
+function tryparse(::Type{ConstrainedLinearControlContinuousSystem}, syseq, statecons, inputcons)
+    (xx, X) = @tryreturn statecons :($x ∈ $X) => (x, X)
+    (uu, U) = @tryreturn inputcons :($u ∈ $U) => (u, U)
+    @trymatch syseq begin
+        :(($x)' = ($A)*($x) + ($B)*($u)) => begin
+            x == xx || throw(ArgumentError("constrained state variable doesn't match equation's variables"))
+            u == uu || throw(ArgumentError("input variable doesn't match equation's variables"))
+            :(ConstrainedLinearControlContinuousSystem($A, $B, $X, $U))
         end
     end
 end
@@ -1871,6 +1895,12 @@ for (Z, AZ) in ((:SecondOrderLinearContinuousSystem, :AbstractContinuousSystem),
             iscontrolled(::$T) = false
             isconstrained(::$T) = false
         end
+    end
+end
+
+function tryparse(::Type{SecondOrderLinearContinuousSystem}, syseq)
+    @trymatch syseq begin
+        :(($M)*($x)'' + ($C)*($x)' + ($K)*($x) = 0) => :(SecondOrderLinearContinuousSystem(M, C, K))
     end
 end
 

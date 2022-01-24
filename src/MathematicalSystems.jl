@@ -182,6 +182,7 @@ export SystemWithOutput,
 Macros
 ==========================#
 include("macros.jl")
+include("new_system_macro.jl")
 
 export @map,
        @system,

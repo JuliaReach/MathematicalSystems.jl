@@ -33,7 +33,7 @@ As = [a][:,:]; Bs = [b][:,:]; Cs = [c]; Ds = [d][:,:]; Es = [e][:,:]
 
 @testset "Discrete identity system" begin
     s = DiscreteIdentitySystem(sd)
-    @test state_matrix(s) == I(sd)
+    @test state_matrix(s) == Id(sd)
     @test input_matrix(s) == nothing
     @test affine_term(s) == nothing
     @test noise_matrix(s) == nothing
@@ -51,7 +51,7 @@ end
 
 @testset "Discrete constrained identity system" begin
     s = ConstrainedDiscreteIdentitySystem(sd, X)
-    @test state_matrix(s) == I(sd)
+    @test state_matrix(s) == Id(sd)
     @test input_matrix(s) == nothing
     @test affine_term(s) == nothing
     @test noise_matrix(s) == nothing

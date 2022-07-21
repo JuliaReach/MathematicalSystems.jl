@@ -2,7 +2,7 @@
     n = 3
     A = rand(2, 2);
     b = rand(2)
-    identitymap = @map x -> I(n)*x
+    identitymap = @map x -> Id(n)*x
     @test identitymap == MathematicalSystems.IdentityMap(n)
     linearmap = @map x -> A*x
     @test linearmap == MathematicalSystems.LinearMap(A)

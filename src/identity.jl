@@ -22,13 +22,14 @@ size of the former is generic, the size of the latter is fixed.
 
 ### Examples
 
-The easiest way to create an identity multiple is to use the callable version
-of `LinearAlgebra.I`:
+Only specifying the matrix size represents an identity matrix:
 
 ```jldoctest identitymultiple
+julia> using LinearAlgebra
+
 julia> using MathematicalSystems: IdentityMultiple
 
-julia> I2 = I(2)
+julia> I2 = Id(2)
 IdentityMultiple{Float64} of value 1.0 and order 2
 
 julia> I2 + I2
@@ -41,7 +42,7 @@ IdentityMultiple{Float64} of value 4.0 and order 2
 The numeric type (default `Float64`) can be passed as a second argument:
 
 ```jldoctest identitymultiple
-julia> I2r = I(2, Rational{Int})
+julia> I2r = Id(2, 1//1)
 IdentityMultiple{Rational{Int64}} of value 1//1 and order 2
 
 julia> I2r + I2r
@@ -52,13 +53,13 @@ IdentityMultiple{Rational{Int64}} of value 4//1 and order 2
 ```
 
 To create the matrix with a value different from the default (`1.0`), there are
-two ways. Either pass the value through the callable `I`, as in:
+two ways. Either pass the value through the `Id` function, as in:
 
 ```jldoctest identitymultiple
-julia> I2 = I(2.0, 2)
+julia> I2 = Id(2, 2.0)
 IdentityMultiple{Float64} of value 2.0 and order 2
 
-julia> I2r = I(2//1, 2)
+julia> I2r = Id(2, 2//1)
 IdentityMultiple{Rational{Int64}} of value 2//1 and order 2
 ```
 
@@ -166,12 +167,26 @@ function Base.show(io::IO, ::MIME"text/plain", 𝐼::IdentityMultiple{T}) where 
     print(io, "$(typeof(𝐼)) of value $(𝐼.M.λ) and order $(𝐼.n)")
 end
 
-# callable identity matrix given the size and the numeric type
-LinearAlgebra.I(n::Int, N::DataType=Float64) = IdentityMultiple(one(N)*I, n)
+"""
+    Id(n::Int, [λ]::Number=1.0)
+
+Convenience constructor of an [`IdentityMultiple`](@ref).
+
+### Input
+
+- `n` -- dimension
+- `λ` -- (optional; default: `1.0`) scaling factor
+
+### Output
+
+An `IdentityMultiple` of the given size and scaling factor.
+"""
+function Id(n::Int, λ::Number=1.0)
+    return IdentityMultiple(λ*I, n)
+end
 
 # callable identity matrix given the scaling factor and the size
 IdentityMultiple(λ::Number, n::Int) = IdentityMultiple(λ*I, n)
-LinearAlgebra.I(λ::Number, n::Int) = IdentityMultiple(λ*I, n)
 
 function LinearAlgebra.Hermitian(𝐼::IdentityMultiple)
     return Hermitian(Diagonal(fill(𝐼.M.λ, 𝐼.n)))

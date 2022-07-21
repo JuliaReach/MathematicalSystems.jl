@@ -35,7 +35,7 @@ As = [a][:,:]; Bs = [b][:,:]; Cs = [c]; Ds = [d][:,:]; Es = [e][:,:]
 
 @testset "Continuous identity system" begin
     s = ContinuousIdentitySystem(sd)
-    @test state_matrix(s) == I(sd)
+    @test state_matrix(s) == Id(sd)
     @test input_matrix(s) == nothing
     @test affine_term(s) == nothing
     @test noise_matrix(s) == nothing
@@ -53,7 +53,7 @@ end
 
 @testset "Continuous constrained identity system" begin
     s = ConstrainedContinuousIdentitySystem(sd, X)
-    @test state_matrix(s) == I(sd)
+    @test state_matrix(s) == Id(sd)
     @test input_matrix(s) == nothing
     @test affine_term(s) == nothing
     @test noise_matrix(s) == nothing

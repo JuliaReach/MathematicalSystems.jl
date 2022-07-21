@@ -51,10 +51,10 @@ A state constraint on such map can be specified passing the additional argument
 `x ∈ X`.
 
 An identity map can alternatively be created by giving a the size of the identity
-matrix as `I(n)`, for example:
+matrix as `Id(n)`, for example:
 
 ```jldoctest
-julia> @map x -> I(5)*x
+julia> @map x -> Id(5)*x
 IdentityMap(5)
 ```
 """
@@ -85,10 +85,10 @@ macro map(ex)
     x = (ex.args)[1]
     rhs = (ex.args)[2].args[2]
 
-    # x -> I(n)*x
+    # x -> Id(n)*x
     # (this rule is more specific than x -> Ax so it should come before it)
     MT = IdentityMap
-    pat = Meta.parse("I(_n) * $x")
+    pat = Meta.parse("Id(_n) * $x")
     matched = matchex(pat, rhs)
     matched != nothing &&
         return Expr(:call, :($MT), esc(:($(matched[:_n]))))
@@ -433,14 +433,14 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
             if AT == AbstractDiscreteSystem
                 push!(rhs_params, (dim, :statedim))
             elseif AT == AbstractContinuousSystem
-                push!(rhs_params, (I(dim), :A))
+                push!(rhs_params, (Id(dim), :A))
             end
         elseif rhs == :(0) && AT == AbstractContinuousSystem # x' = 0
             push!(rhs_params, (dim, :statedim))
         else
             if @capture(rhs, -var_) # => rhs = -x
                 if state == var
-                    push!(rhs_params, (-1.0*I(dim), :A))
+                    push!(rhs_params, (-1.0*Id(dim), :A))
                 end
             else
                 rhs = add_asterisk(rhs, state, input, noise)
@@ -450,7 +450,7 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
                         if value == nothing # e.g. => rhs = Ax
                             push!(rhs_params, (array, :A))
                         else # => e.g., rhs = 2x
-                            push!(rhs_params, (value*I(dim), :A))
+                            push!(rhs_params, (value*Id(dim), :A))
                         end
                     else
                         throw(ArgumentError("if there is only one term on the "*
@@ -621,7 +621,7 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
                 "or the noise term $noise"))
             end
         elseif @capture(summand, array_)
-            identity = :(I($state_dim))
+            identity = :(Id($state_dim))
             # if array == variable: field value equals identity
             if state == array
                 push!(params, (identity, :A))

@@ -25,8 +25,6 @@ size of the former is generic, the size of the latter is fixed.
 Only specifying the matrix size represents an identity matrix:
 
 ```jldoctest identitymultiple
-julia> using LinearAlgebra
-
 julia> using MathematicalSystems: IdentityMultiple
 
 julia> I2 = Id(2)
@@ -39,7 +37,7 @@ julia> 4*I2
 IdentityMultiple{Float64} of value 4.0 and order 2
 ```
 
-The numeric type (default `Float64`) can be passed as a second argument:
+The scaling (default `1.0`) can be passed as the second argument:
 
 ```jldoctest identitymultiple
 julia> I2r = Id(2, 1//1)
@@ -52,20 +50,11 @@ julia> 4*I2r
 IdentityMultiple{Rational{Int64}} of value 4//1 and order 2
 ```
 
-To create the matrix with a value different from the default (`1.0`), there are
-two ways. Either pass the value through the `Id` function, as in:
+Alternatively, use the constructor passing the `UniformScaling` (`I`):
 
 ```jldoctest identitymultiple
-julia> I2 = Id(2, 2.0)
-IdentityMultiple{Float64} of value 2.0 and order 2
+julia> using LinearAlgebra
 
-julia> I2r = Id(2, 2//1)
-IdentityMultiple{Rational{Int64}} of value 2//1 and order 2
-```
-
-Or use the constructor passing the `UniformScaling` (`I`):
-
-```jldoctest identitymultiple
 julia> I2 = IdentityMultiple(2.0*I, 2)
 IdentityMultiple{Float64} of value 2.0 and order 2
 

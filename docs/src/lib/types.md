@@ -120,6 +120,7 @@ EulerDiscretization
 
 ```@docs
 IdentityMultiple
+Id
 ```
 
 ## Initial Value Problems

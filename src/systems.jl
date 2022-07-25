@@ -15,7 +15,7 @@ for (Z, AZ) in ((:ContinuousIdentitySystem, :AbstractContinuousSystem),
         statedim(s::$Z) = s.statedim
         inputdim(s::$Z) = 0
         noisedim(s::$Z) = 0
-        state_matrix(s::$Z) = I(s.statedim)
+        state_matrix(s::$Z) = Id(s.statedim)
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
@@ -70,7 +70,7 @@ for (Z, AZ) in ((:ConstrainedContinuousIdentitySystem, :AbstractContinuousSystem
         inputdim(::$Z) = 0
         noisedim(::$Z) = 0
         stateset(s::$Z) = s.X
-        state_matrix(s::$Z) = I(s.statedim)
+        state_matrix(s::$Z) = Id(s.statedim)
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin

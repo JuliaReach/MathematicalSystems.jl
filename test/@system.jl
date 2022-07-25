@@ -120,11 +120,11 @@ end
     @test @system(w' = A*w + B*u_1 + c, w∈X, u_1∈U) == ConstrainedAffineControlContinuousSystem(A, B, c, X, U)
 
     # scalar cases
-    @test @system(x' = 0.5x + u) == LinearControlContinuousSystem(hcat(0.5), I(1.0, 1))
+    @test @system(x' = 0.5x + u) == LinearControlContinuousSystem(hcat(0.5), Id(1, 1.0))
     @test @system(x' = 0.5x + 1.) == AffineContinuousSystem(hcat(0.5), vcat(1.))
-    @test @system(x' = x + u) == LinearControlContinuousSystem(I(1.0, 1), I(1.0, 1))
-    @test @system(x' = x + 0.1u) == LinearControlContinuousSystem(I(1.0, 1), hcat(0.1))
-    @test @system(x' = x + 0.1*u) == LinearControlContinuousSystem(I(1.0, 1), hcat(0.1))
+    @test @system(x' = x + u) == LinearControlContinuousSystem(Id(1, 1.0), Id(1, 1.0))
+    @test @system(x' = x + 0.1u) == LinearControlContinuousSystem(Id(1, 1.0), hcat(0.1))
+    @test @system(x' = x + 0.1*u) == LinearControlContinuousSystem(Id(1, 1.0), hcat(0.1))
     sys = @system(x' = 0.3x + 0.1u + 0.2, x∈X, u∈U)
     @test sys == ConstrainedAffineControlContinuousSystem(hcat(0.3), hcat(0.1), vcat(0.2), X, U)
 end
@@ -140,7 +140,7 @@ end
 
 @testset "@system for affine continuous systems" begin
     b = [1.0]
-    @test @system(x' = x + b) == AffineContinuousSystem(I(1), b)
+    @test @system(x' = x + b) == AffineContinuousSystem(Id(1), b)
     @test @system(x' = A*x + c) == AffineContinuousSystem(A, c)
     sys =  @system(z_1' = A*z_1 + B*v_1 + c1, z_1 ∈ X, v_1 ∈ U1, input:v_1)
     @test sys == ConstrainedAffineControlContinuousSystem(A, B, c1, X, U1)
@@ -288,12 +288,12 @@ end
 @testset "@system with for an initial-value problem" begin
     # continuous ivp in floating-point
     ivp = @system(x' = -1.0x, x(0) ∈ Interval(-1, 1))
-    @test ivp == IVP(LinearContinuousSystem(I(-1.0, 1)), Interval(-1, 1)) &&
+    @test ivp == IVP(LinearContinuousSystem(Id(1, -1.0)), Interval(-1, 1)) &&
           eltype(ivp.s.A) == Float64
 
     # discrete ivp in floating-point
     ivp = @system(x⁺ = -x, x(0) ∈ [1])
-    @test ivp == IVP(LinearDiscreteSystem(I(-1.0, 1)), [1]) &&
+    @test ivp == IVP(LinearDiscreteSystem(Id(1, -1.0)), [1]) &&
           eltype(ivp.s.A) == Float64
 
     # initial state assignment doesn't match state variable

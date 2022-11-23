@@ -47,7 +47,7 @@ In the examples introduced so far, the macro has automatically created different
 given a defining equation, either in scalar or in vector form, and state constraints.
 It is possible to define systems with additive input terms or noise terms, with
 constraints on the state, inputs or combinations of these. Other specific classes of
-systems such as algebraic, polynomial or general nonlinear systems given by a standard
+systems such as descriptor, polynomial or general nonlinear systems given by a standard
 Julia function are available as well (see the tables below).
 
 Some applications require distinguishing between *controlled* inputs and *uncontrolled* or
@@ -79,8 +79,8 @@ However in this table we only included continuous system types for brevity.
 |CACS|[`ConstrainedAffineContinuousSystem`](@ref)|
 |CACCS|[`ConstrainedAffineControlContinuousSystem`](@ref)|
 |CLCCS|[`ConstrainedLinearControlContinuousSystem`](@ref)|
-|LACS|[`LinearAlgebraicContinuousSystem`](@ref)|
-|CLACS|[`ConstrainedLinearAlgebraicContinuousSystem`](@ref)|
+|LACS|[`LinearDescriptorContinuousSystem`](@ref)|
+|CLACS|[`ConstrainedLinearDescriptorContinuousSystem`](@ref)|
 |PCS|[`PolynomialContinuousSystem`](@ref)|
 |CPCS|[`PolynomialContinuousSystem`](@ref)|
 |BBCS|[`BlackBoxContinuousSystem`](@ref)|

@@ -831,8 +831,8 @@ Similarly, a noise variable is specified with `noise: var` or `noise=var`.
   not correspond to the default value of `u`, but `foo` is parsed as being the input.
 
 - If the left-hand side contains a multiplicative term in the form `E*x⁺` or `E*x'`,
-  the equation is parsed as an algebraic system. In this case, the asterisk
-  `*` operator is mandatory.
+  the equation is parsed as an algebraic equation and hence gives rise to a descriptor
+  system. In this case, the asterisk `*` operator is mandatory.
 
 - Systems of the form `x' = α*x` where `α` is a scalar are parsed as linear
   systems. The default dimension is `1` and `α` is parsed as `Float64`;

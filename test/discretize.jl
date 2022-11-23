@@ -35,7 +35,7 @@ end
 
     # get affine ctypes
     CTYPES = filter(x -> (occursin("Linear", string(x)) || occursin("Affine", string(x))) &&
-                         !occursin("Algebraic", string(x)) , subtypes(AbstractContinuousSystem))
+                         !occursin("Descriptor", string(x)) , subtypes(AbstractContinuousSystem))
 
     # this test doesn't apply for second order systems
     filter!(x -> x ∉ SECOND_ORDER_CTYPES, CTYPES)
@@ -74,7 +74,7 @@ end
 
     # get affine ctypes
     CTYPES = filter(x -> (occursin("Linear", string(x)) || occursin("Affine", string(x))) &&
-                         !occursin("Algebraic", string(x)) , subtypes(AbstractContinuousSystem))
+                         !occursin("Descriptor", string(x)) , subtypes(AbstractContinuousSystem))
 
     # this test doesn't apply for second order systems
     filter!(x -> x ∉ SECOND_ORDER_CTYPES, CTYPES)

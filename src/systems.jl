@@ -668,8 +668,8 @@ Discrete-time linear control system with domain constraints of the form:
 """
 ConstrainedLinearControlDiscreteSystem
 
-for (Z, AZ) in ((:LinearAlgebraicContinuousSystem, :AbstractContinuousSystem),
-                (:LinearAlgebraicDiscreteSystem, :AbstractDiscreteSystem))
+for (Z, AZ) in ((:LinearDescriptorContinuousSystem, :AbstractContinuousSystem),
+                (:LinearDescriptorDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
         struct $(Z){T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}} <: $(AZ)
             A::MTA
@@ -703,9 +703,9 @@ for (Z, AZ) in ((:LinearAlgebraicContinuousSystem, :AbstractContinuousSystem),
 end
 
 @doc """
-    LinearAlgebraicContinuousSystem
+    LinearDescriptorContinuousSystem
 
-Continuous-time linear algebraic system of the form:
+Continuous-time linear descriptor system of the form:
 
 ```math
     E x(t)' = A x(t) \\; \\forall t.
@@ -716,12 +716,12 @@ Continuous-time linear algebraic system of the form:
 - `A` -- state matrix
 - `E` -- matrix, same size as `A`
 """
-LinearAlgebraicContinuousSystem
+LinearDescriptorContinuousSystem
 
 @doc """
-    LinearAlgebraicDiscreteSystem
+    LinearDescriptorDiscreteSystem
 
-Discrete-time linear algebraic system of the form:
+Discrete-time linear descriptor system of the form:
 
 ```math
     E x_{k+1} = A x_k \\; \\forall k.
@@ -732,10 +732,10 @@ Discrete-time linear algebraic system of the form:
 - `A` -- state matrix
 - `E` -- matrix, same size as `A`
 """
-LinearAlgebraicDiscreteSystem
+LinearDescriptorDiscreteSystem
 
-for (Z, AZ) in ((:ConstrainedLinearAlgebraicContinuousSystem, :AbstractContinuousSystem),
-                (:ConstrainedLinearAlgebraicDiscreteSystem, :AbstractDiscreteSystem))
+for (Z, AZ) in ((:ConstrainedLinearDescriptorContinuousSystem, :AbstractContinuousSystem),
+                (:ConstrainedLinearDescriptorDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
         struct $(Z){T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}, ST} <: $(AZ)
             A::MTA
@@ -770,7 +770,7 @@ for (Z, AZ) in ((:ConstrainedLinearAlgebraicContinuousSystem, :AbstractContinuou
 end
 
 @doc """
-    ConstrainedLinearAlgebraicContinuousSystem
+    ConstrainedLinearDescriptorContinuousSystem
 
 Continuous-time linear system with domain constraints of the form:
 
@@ -784,10 +784,10 @@ Continuous-time linear system with domain constraints of the form:
 - `E` -- matrix, same size as `A`
 - `X` -- state constraints
 """
-ConstrainedLinearAlgebraicContinuousSystem
+ConstrainedLinearDescriptorContinuousSystem
 
 @doc """
-    ConstrainedLinearAlgebraicDiscreteSystem
+    ConstrainedLinearDescriptorDiscreteSystem
 
 Discrete-time linear system with domain constraints of the form:
 
@@ -801,7 +801,7 @@ Discrete-time linear system with domain constraints of the form:
 - `E` -- matrix, same size as `A`
 - `X` -- state constraints
 """
-ConstrainedLinearAlgebraicDiscreteSystem
+ConstrainedLinearDescriptorDiscreteSystem
 
 for (Z, AZ) in ((:PolynomialContinuousSystem, :AbstractContinuousSystem),
                 (:PolynomialDiscreteSystem, :AbstractDiscreteSystem))

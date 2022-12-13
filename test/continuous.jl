@@ -252,8 +252,8 @@ end
     s = ConstrainedLinearControlContinuousSystem(A_sparse, B, X, U)
 end
 
-@testset "Continuous linear algebraic system" begin
-    s = LinearAlgebraicContinuousSystem(A, E)
+@testset "Continuous linear descriptor system" begin
+    s = LinearDescriptorContinuousSystem(A, E)
     @test state_matrix(s) == A
     @test input_matrix(s) == nothing
     @test affine_term(s) == nothing
@@ -266,12 +266,12 @@ end
     @test inputset(s) == nothing
     @test noiseset(s) == nothing
     # Scalar System
-    scalar_sys = LinearAlgebraicContinuousSystem(a, e)
-    @test scalar_sys == LinearAlgebraicContinuousSystem(As, Es)
+    scalar_sys = LinearDescriptorContinuousSystem(a, e)
+    @test scalar_sys == LinearDescriptorContinuousSystem(As, Es)
 end
 
-@testset "Continuous constrained linear algebraic system" begin
-    s = ConstrainedLinearAlgebraicContinuousSystem(A, E, X)
+@testset "Continuous constrained linear descriptor system" begin
+    s = ConstrainedLinearDescriptorContinuousSystem(A, E, X)
     @test state_matrix(s) == A
     @test input_matrix(s) == nothing
     @test affine_term(s) == nothing
@@ -288,8 +288,8 @@ end
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
     # Scalar System
-    scalar_sys = ConstrainedLinearAlgebraicContinuousSystem(a, e, Xs)
-    @test scalar_sys == ConstrainedLinearAlgebraicContinuousSystem(As, Es, Xs)
+    scalar_sys = ConstrainedLinearDescriptorContinuousSystem(a, e, Xs)
+    @test scalar_sys == ConstrainedLinearDescriptorContinuousSystem(As, Es, Xs)
 
     @testset "Initial value problem" begin
         x0 = Singleton([1.5, 2.0])

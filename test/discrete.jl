@@ -193,8 +193,8 @@ end
     @test scalar_sys == ConstrainedLinearControlDiscreteSystem(As, Bs, Xs, Us)
 end
 
-@testset "Discrete linear algebraic system" begin
-    s = LinearAlgebraicDiscreteSystem(A, E)
+@testset "Discrete linear descriptor system" begin
+    s = LinearDescriptorDiscreteSystem(A, E)
     @test state_matrix(s) == A
     @test input_matrix(s) == nothing
     @test affine_term(s) == nothing
@@ -211,12 +211,12 @@ end
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
     # Scalar System
-    scalar_sys = LinearAlgebraicDiscreteSystem(a, e)
-    @test scalar_sys == LinearAlgebraicDiscreteSystem(As, Es)
+    scalar_sys = LinearDescriptorDiscreteSystem(a, e)
+    @test scalar_sys == LinearDescriptorDiscreteSystem(As, Es)
 end
 
-@testset "Discrete constrained linear algebraic system" begin
-    s = ConstrainedLinearAlgebraicDiscreteSystem(A, E, X)
+@testset "Discrete constrained linear descriptor system" begin
+    s = ConstrainedLinearDescriptorDiscreteSystem(A, E, X)
     @test state_matrix(s) == A
     @test input_matrix(s) == nothing
     @test affine_term(s) == nothing
@@ -233,8 +233,8 @@ end
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
     # Scalar System
-    scalar_sys = ConstrainedLinearAlgebraicDiscreteSystem(a, e, Xs)
-    @test scalar_sys == ConstrainedLinearAlgebraicDiscreteSystem(As, Es, Xs)
+    scalar_sys = ConstrainedLinearDescriptorDiscreteSystem(a, e, Xs)
+    @test scalar_sys == ConstrainedLinearDescriptorDiscreteSystem(As, Es, Xs)
 end
 
 @testset "Polynomial system in discrete time" begin

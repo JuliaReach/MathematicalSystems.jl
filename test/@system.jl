@@ -129,13 +129,13 @@ end
     @test sys == ConstrainedAffineControlContinuousSystem(hcat(0.3), hcat(0.1), vcat(0.2), X, U)
 end
 
-@testset "@system for linear algebraic continous systems" begin
+@testset "@system for linear descriptor continous systems" begin
     # lhs needs a *
     @test_throws ArgumentError @system(Ex' = Ax)
-    @test@system(E*x' = Ax) == LinearAlgebraicContinuousSystem(A, E)
+    @test@system(E*x' = Ax) == LinearDescriptorContinuousSystem(A, E)
 
-    @test @system(E*x' = A*x) == LinearAlgebraicContinuousSystem(A, E)
-    @test @system(E*x' = A*x, x∈X) == ConstrainedLinearAlgebraicContinuousSystem(A, E, X)
+    @test @system(E*x' = A*x) == LinearDescriptorContinuousSystem(A, E)
+    @test @system(E*x' = A*x, x∈X) == ConstrainedLinearDescriptorContinuousSystem(A, E, X)
 end
 
 @testset "@system for affine continuous systems" begin
@@ -214,13 +214,13 @@ end
     @test @system(x⁺ = A1*x + c1) == AffineDiscreteSystem(A1, c1)
 end
 
-@testset "@system for linear algebraic discrete systems" begin
+@testset "@system for linear descriptor discrete systems" begin
     sys = @system(E*x⁺ = Ax)
-    @test sys == LinearAlgebraicDiscreteSystem(A, E)
+    @test sys == LinearDescriptorDiscreteSystem(A, E)
     @test sys == @system(E1*x⁺ = A1*x)
 
     sys = @system(E*x⁺ = A*x, x ∈ X)
-    @test sys == ConstrainedLinearAlgebraicDiscreteSystem(A, E, X)
+    @test sys == ConstrainedLinearDescriptorDiscreteSystem(A, E, X)
 end
 
 @testset "@system for linear control discrete systems" begin

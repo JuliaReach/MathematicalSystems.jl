@@ -10,7 +10,7 @@ DocTestFilters = [r"[0-9\.]+ seconds \(.*\)"]
 
 - Generic and flexible systems definitions, while being fast and type stable.
 - Types for mathematical systems modeling: continuous, discrete, controlled,
-  linear algebraic, etc.
+  descriptor systems, etc.
 - Iterator interfaces to handle constant or time-varying inputs.
 
 ## Ecosystem

@@ -26,10 +26,3 @@ To install this package, use the following command inside Julia's REPL:
 using Pkg
 Pkg.add("MathematicalSystems")
 ```
-
-## Updating
-
-To checkout the latest version, do
-```julia
-Pkg.checkout("MathematicalSystems")
-````

@@ -72,7 +72,9 @@ end
 Base.eltype(::Type{ConstantInput{UT}}) where {UT} = UT
 Base.iterate(input::ConstantInput, state::Union{Int, Nothing}=nothing) = (input.U, nothing)
 Base.IteratorSize(::Type{<:ConstantInput}) = Base.IsInfinite()
-Base.IteratorEltype(::Type{<:ConstantInput}) = Base.HasEltype()
+
+# the following does not need to be defined because it is the default:
+# Base.IteratorEltype(::Type{<:ConstantInput}) = Base.HasEltype()
 
 Base.map(f::Function, c::ConstantInput) = ConstantInput(f(c.U))
 
@@ -193,8 +195,9 @@ end
 
 Base.length(input::VaryingInput) = length(input.U)
 
-Base.IteratorSize(::Type{<:VaryingInput}) = Base.HasLength()
-Base.IteratorEltype(::Type{<:VaryingInput}) = Base.HasEltype()
+# the following do not need to be defined because they are the default:
+# Base.IteratorSize(::Type{<:VaryingInput}) = Base.HasLength()
+# Base.IteratorEltype(::Type{<:VaryingInput}) = Base.HasEltype()
 
 Base.map(f::Function, v::VaryingInput) = VaryingInput(f.(v.U))
 

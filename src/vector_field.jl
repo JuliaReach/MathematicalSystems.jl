@@ -172,7 +172,7 @@ function _position_value_list(V::VectorField, grid, dimx, dimy)
     N_VAL = typeof(V([x1, y1])[dimx])
     m = length(X) * length(Y)
 
-    x = Vector{N_POS}(undef, m)  # x coordinates of each 
+    x = Vector{N_POS}(undef, m)  # x coordinates of each point
     y = similar(x)
     vx = Vector{N_VAL}(undef, m)
     vy = similar(vx)

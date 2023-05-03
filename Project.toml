@@ -12,17 +12,8 @@ RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [compat]
-julia = "1"
 Espresso = "0.6"
 MacroTools = "0.5"
 MultivariatePolynomials = "0.3, 0.4"
 RecipesBase = "0.6, 0.7, 0.8, 1.0, 1.1, 1.2"
-
-[extras]
-LazySets = "b4f0291d-fe17-52bc-9479-3d1a343d9043"
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
-TypedPolynomials = "afbbf031-7a57-5f58-a1b9-b774a0fad08d"
-InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
-
-[targets]
-test = ["LazySets", "Test", "TypedPolynomials", "InteractiveUtils"]
+julia = "1"

@@ -90,21 +90,21 @@ macro map(ex)
     MT = IdentityMap
     pat = Meta.parse("Id(_n) * $x")
     matched = matchex(pat, rhs)
-    matched != nothing &&
+    !isnothing(matched) &&
         return Expr(:call, :($MT), esc(:($(matched[:_n]))))
 
     # x -> Ax
     MT = LinearMap
     pat = Meta.parse("_A * $x")
     matched = matchex(pat, rhs)
-    matched != nothing &&
+    !isnothing(matched) &&
         return Expr(:call, :($MT), esc(:($(matched[:_A]))))
 
     # x -> Ax + b
     MT = AffineMap
     pat = Meta.parse("_A * $x + _b")
     matched = matchex(pat, rhs)
-    matched != nothing &&
+    !isnothing(matched) &&
         return Expr(:call, :($MT), esc(:($(matched[:_A]))), esc(:($(matched[:_b]))))
 
     throw(ArgumentError("unable to match the given expression to a known map type"))
@@ -276,7 +276,7 @@ function _parse_system(exprs::NTuple{N, Expr}) where {N}
 
         if is_equation(ex)  # parse an equation
             (stripped, abstract_system_type, subject) = strip_dynamic_equation(ex)
-            if subject != nothing
+            if !isnothing(subject)
                 dynamic_equation = stripped
                 state_var = subject
                 AT = abstract_system_type
@@ -337,16 +337,16 @@ function _parse_system(exprs::NTuple{N, Expr}) where {N}
     end
 
     # error handling for the given equations
-    dynamic_equation == nothing && throw(ArgumentError("the dynamic equation was not found"))
+    isnothing(dynamic_equation) && throw(ArgumentError("the dynamic equation was not found"))
 
     # error handling for the given set constraints
     nsets = length(constraints)
     nsets > 3 && throw(ArgumentError("cannot parse $nsets set constraints"))
 
     # error handling for variable names
-    state_var == nothing && throw(ArgumentError("the state variable was not found"))
-    got_input_var = input_var != nothing
-    got_noise_var = noise_var != nothing
+    isnothing(state_var) && throw(ArgumentError("the state variable was not found"))
+    got_input_var = !isnothing(input_var)
+    got_noise_var = !isnothing(noise_var)
     if got_input_var && (state_var == input_var)
          throw(ArgumentError("state and input variables have the same name `$(state_var)`"))
     elseif got_noise_var && (state_var == noise_var)
@@ -421,14 +421,14 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
     # if rhs is a function call except `*` or `-` => black-box system
     elseif @capture(rhs, f_(a__)) && f != :(*) && f != :(-)
         # the dimension argument needs to be a iterable
-        (dim == nothing) && throw(ArgumentError("for a blackbox system, the dimension has to be defined"))
+        isnothing(dim) && throw(ArgumentError("for a blackbox system, the dimension has to be defined"))
         dim_vec = [dim...]
         push!(rhs_params, extract_blackbox_parameter(rhs, dim_vec)...)
 
     # if rhs is a single term => affine systm (e.g. A*x, Ax, 2x, x or 0)
     else
         # if not specified, assume dim = 1
-        dim = (dim == nothing) ? 1 : dim
+        dim = isnothing(dim) ? 1 : dim
         if rhs == state  # => rhs = x
             if AT == AbstractDiscreteSystem
                 push!(rhs_params, (dim, :statedim))
@@ -447,7 +447,7 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
                 if @capture(rhs, array_ * var_)
                     if state == var # rhs = A_x_ or rhs= A_*x_
                         value = tryparse(Float64, string(array))
-                        if value == nothing # e.g. => rhs = Ax
+                        if isnothing(value) # e.g. => rhs = Ax
                             push!(rhs_params, (array, :A))
                         else # => e.g., rhs = 2x
                             push!(rhs_params, (value*Id(dim), :A))
@@ -890,7 +890,7 @@ macro system(expr...)
         dyn_eq, AT, constr, state, input, noise, dim, x0 = _parse_system(expr)
         sys_type, var_names = _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
         sys = Expr(:call, :($sys_type), :($(var_names...)))
-        if x0 == nothing
+        if isnothing(x0)
             return esc(sys)
         else
             ivp = Expr(:call, InitialValueProblem, :($sys), :($x0))
@@ -960,7 +960,7 @@ macro ivp(expr...)
             dyn_eq, AT, constr, state, input, noise, dim, x0 = _parse_system(expr)
             sys_type, var_names = _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
             sys = Expr(:call, :($sys_type), :($(var_names...)))
-            if x0 == nothing
+            if isnothing(x0)
                 return throw(ArgumentError("an initial-value problem should define the " *
                             "initial states, but such expression was not found"))
             else

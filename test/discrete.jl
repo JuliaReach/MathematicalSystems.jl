@@ -1,10 +1,10 @@
 # linear systems
-E = [0. 1; 1 0]
-A = [1. 1; 1 -1]
+E = [0.01; 1 0]
+A = [1.01; 1 -1]
 B = Matrix([0.5 1.5]')
-C = [1.; 1.]
-D = [1. 2; 0 1]
-X = Line([1., -1], 0.) # line x = y
+C = [1.0; 1.0]
+D = [1.02; 0 1]
+X = Line([1.0, -1], 0.0) # line x = y
 U = Interval(0.9, 1.1)
 W = BallInf(zeros(2), 2.0)
 sd = 2
@@ -28,8 +28,19 @@ stateInputPlusOne = add_one(state, input)
 stateInputNoisePlusOne = add_one(state, input, noise)
 
 # Scalar System
-a = 1.; b = 2.; c = 0.1; d = 3.; Xs = 1; Us = 2; Ws = 3; e = 2.;
-As = [a][:,:]; Bs = [b][:,:]; Cs = [c]; Ds = [d][:,:]; Es = [e][:,:]
+a = 1.0;
+b = 2.0;
+c = 0.1;
+d = 3.0;
+Xs = 1;
+Us = 2;
+Ws = 3;
+e = 2.0;
+As = [a][:, :];
+Bs = [b][:, :];
+Cs = [c];
+Ds = [d][:, :];
+Es = [e][:, :];
 
 @testset "Discrete identity system" begin
     s = DiscreteIdentitySystem(sd)
@@ -43,7 +54,7 @@ As = [a][:,:]; Bs = [b][:,:]; Cs = [c]; Ds = [d][:,:]; Es = [e][:,:]
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
@@ -61,7 +72,7 @@ end
     @test stateset(s) == X
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
@@ -79,7 +90,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
@@ -100,7 +111,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
@@ -121,7 +132,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
     end
@@ -142,7 +153,7 @@ end
     @test stateset(s) == X
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
@@ -163,7 +174,7 @@ end
     @test stateset(s) == X
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
@@ -184,7 +195,7 @@ end
     @test stateset(s) == X
     @test inputset(s) == U
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && iscontrolled(s) && isconstrained(s)
     end
@@ -206,7 +217,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
@@ -228,7 +239,7 @@ end
     @test stateset(s) == X
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
@@ -250,7 +261,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
@@ -269,7 +280,7 @@ end
     @test stateset(s) == X
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
@@ -288,7 +299,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
@@ -307,7 +318,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
     end
@@ -329,7 +340,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
@@ -350,7 +361,7 @@ end
     @test stateset(s) == X
     @test isnothing(inputset(s))
     @test noiseset(s) == W
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
@@ -371,7 +382,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
     end
@@ -392,7 +403,7 @@ end
     @test stateset(s) == X
     @test inputset(s) == U
     @test noiseset(s) == W
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
     end
@@ -413,7 +424,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test isaffine(s) && !islinear(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
     end
@@ -434,7 +445,7 @@ end
     @test stateset(s) == X
     @test inputset(s) == U
     @test noiseset(s) == W
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test isaffine(s) && !islinear(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
     end
@@ -456,7 +467,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
     end
@@ -475,15 +486,14 @@ end
     @test stateset(s) == X
     @test inputset(s) == U
     @test noiseset(s) == W
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
     end
 end
 
-
 @testset "Constant input in a discrete constrained linear control system" begin
-    U = ConstantInput(Hyperrectangle(low=[0.9], high=[1.1]))
+    U = ConstantInput(Hyperrectangle(; low=[0.9], high=[1.1]))
     s = ConstrainedLinearControlDiscreteSystem(A, B, X, U)
     s = ConstrainedLinearControlDiscreteSystem(A, B, X, U)
     if VERSION < v"0.7-"
@@ -493,10 +503,9 @@ end
     end
 end
 
-
 @testset "Varying input in a discrete constrained linear control system" begin
-    U = VaryingInput([Hyperrectangle(low=[0.9], high=[1.1]),
-                      Hyperrectangle(low=[0.99], high=[1.0])])
+    U = VaryingInput([Hyperrectangle(; low=[0.9], high=[1.1]),
+                      Hyperrectangle(; low=[0.99], high=[1.0])])
     s = ConstrainedLinearControlDiscreteSystem(A, B, X, U)
     @test length(s.U) == 2
     for ui in s.U

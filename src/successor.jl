@@ -42,7 +42,7 @@ function successor(system::ConstrainedDiscreteIdentitySystem, x::AbstractVector;
                    check_constraints::Bool=true)
     !_is_conformable_state(system, x) && _argument_error(:x)
     if check_constraints
-        !_in_stateset(system, x) && _argument_error(:x,:X)
+        !_in_stateset(system, x) && _argument_error(:x, :X)
     end
     return x
 end
@@ -64,8 +64,9 @@ Return the successor state of an `AbstractDiscreteSystem`.
 
 The result of applying the system to state `x`.
 """
-successor(system::AbstractDiscreteSystem, x::AbstractVector; kwargs...) =
-    _instantiate(system, x; kwargs...)
+function successor(system::AbstractDiscreteSystem, x::AbstractVector; kwargs...)
+    return _instantiate(system, x; kwargs...)
+end
 
 """
     successor(system::AbstractDiscreteSystem, x::AbstractVector, u::AbstractVector;
@@ -90,8 +91,9 @@ The result of applying the system to state `x` and input `u`.
 
 If the system is not controlled but noisy, the input `u` is interpreted as noise.
     """
-successor(system::AbstractDiscreteSystem, x::AbstractVector, u::AbstractVector; kwargs...) =
-    _instantiate(system, x, u; kwargs...)
+function successor(system::AbstractDiscreteSystem, x::AbstractVector, u::AbstractVector; kwargs...)
+    return _instantiate(system, x, u; kwargs...)
+end
 
 """
     successor(system::AbstractDiscreteSystem,
@@ -112,5 +114,7 @@ Return the successor state of an `AbstractDiscreteSystem`.
 
 The result of applying the system to state `x`, input `u` and noise `w`.
 """
-successor(system::AbstractDiscreteSystem, x::AbstractVector, u::AbstractVector, w::AbstractVector; kwargs...) =
-    _instantiate(system, x, u, w; kwargs...)
+function successor(system::AbstractDiscreteSystem, x::AbstractVector, u::AbstractVector,
+                   w::AbstractVector; kwargs...)
+    return _instantiate(system, x, u, w; kwargs...)
+end

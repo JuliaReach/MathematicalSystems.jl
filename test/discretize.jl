@@ -23,19 +23,19 @@ end
     X = BallInf(zeros(2), 1.0)
     U = BallInf(zeros(1), 2.0)
     W = BallInf(zeros(2), 3.0)
-    A_d = exp(A*ΔT)
-    M = inv(A)*(A_d - I)
-    B_d = M*B
-    c_d = M*c
-    D_d = M*D
+    A_d = exp(A * ΔT)
+    M = inv(A) * (A_d - I)
+    B_d = M * B
+    c_d = M * c
+    D_d = M * D
     dict = Dict([:A => A, :B => B, :b => c, :c => c, :D => D,
                  :X => X, :U => U, :W => W])
     dict_discretized = Dict([:A => A_d, :B => B_d, :b => c_d, :c => c_d, :D => D_d,
-                 :X => X, :U => U, :W => W])
+                             :X => X, :U => U, :W => W])
 
     # get affine ctypes
     CTYPES = filter(x -> (occursin("Linear", string(x)) || occursin("Affine", string(x))) &&
-                         !occursin("Descriptor", string(x)) , subtypes(AbstractContinuousSystem))
+                        !occursin("Descriptor", string(x)), subtypes(AbstractContinuousSystem))
 
     # this test doesn't apply for second order systems
     filter!(x -> x ∉ SECOND_ORDER_CTYPES, CTYPES)
@@ -46,8 +46,8 @@ end
     CValues = [getindex.(Ref(dict), type) for type in CFIELDS]
     DValues = [getindex.(Ref(dict_discretized), type) for type in CFIELDS]
     # Create discretized system manually
-    discretized_manually = [DTYPES[i](DValues[i]...) for i=1:n_types]
-    for i=1:n_types
+    discretized_manually = [DTYPES[i](DValues[i]...) for i in 1:n_types]
+    for i in 1:n_types
         discretized_with_method = discretize(CTYPES[i](CValues[i]...), ΔT, algorithm)
         @test discretized_with_method == discretized_manually[i]
     end
@@ -63,18 +63,18 @@ end
     X = BallInf(zeros(2), 1.0)
     U = BallInf(zeros(1), 2.0)
     W = BallInf(zeros(2), 3.0)
-    A_d = I + ΔT*A
-    B_d = ΔT*B
-    c_d = ΔT*c
-    D_d = ΔT*D
+    A_d = I + ΔT * A
+    B_d = ΔT * B
+    c_d = ΔT * c
+    D_d = ΔT * D
     dict = Dict([:A => A, :B => B, :b => c, :c => c, :D => D,
                  :X => X, :U => U, :W => W])
     dict_discretized = Dict([:A => A_d, :B => B_d, :b => c_d, :c => c_d, :D => D_d,
-                 :X => X, :U => U, :W => W])
+                             :X => X, :U => U, :W => W])
 
     # get affine ctypes
     CTYPES = filter(x -> (occursin("Linear", string(x)) || occursin("Affine", string(x))) &&
-                         !occursin("Descriptor", string(x)) , subtypes(AbstractContinuousSystem))
+                        !occursin("Descriptor", string(x)), subtypes(AbstractContinuousSystem))
 
     # this test doesn't apply for second order systems
     filter!(x -> x ∉ SECOND_ORDER_CTYPES, CTYPES)
@@ -85,8 +85,8 @@ end
     CValues = [getindex.(Ref(dict), type) for type in CFIELDS]
     DValues = [getindex.(Ref(dict_discretized), type) for type in CFIELDS]
     # Create discretized system manually
-    discretized_manually = [DTYPES[i](DValues[i]...) for i=1:n_types]
-    for i=1:n_types
+    discretized_manually = [DTYPES[i](DValues[i]...) for i in 1:n_types]
+    for i in 1:n_types
         discretized_with_method = discretize(CTYPES[i](CValues[i]...), ΔT, algorithm)
         @test discretized_with_method == discretized_manually[i]
     end

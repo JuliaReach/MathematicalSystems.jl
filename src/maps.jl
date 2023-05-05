@@ -60,7 +60,7 @@ A linear map,
 
 - `A` -- matrix
 """
-struct LinearMap{T, MT<:AbstractMatrix{T}} <: AbstractMap
+struct LinearMap{T,MT<:AbstractMatrix{T}} <: AbstractMap
     A::MT
 end
 statedim(m::LinearMap) = size(m.A, 2)
@@ -84,7 +84,7 @@ A linear map with state constraints of the form:
 - `A` -- matrix
 - `X` -- state constraints
 """
-struct ConstrainedLinearMap{T, MT<:AbstractMatrix{T}, ST} <: AbstractMap
+struct ConstrainedLinearMap{T,MT<:AbstractMatrix{T},ST} <: AbstractMap
     A::MT
     X::ST
 end
@@ -110,12 +110,12 @@ An affine map,
 - `A` -- matrix
 - `c` -- vector
 """
-struct AffineMap{T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}} <: AbstractMap
+struct AffineMap{T,MT<:AbstractMatrix{T},VT<:AbstractVector{T}} <: AbstractMap
     A::MT
     c::VT
-    function AffineMap(A::MT, c::VT) where {T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}}
+    function AffineMap(A::MT, c::VT) where {T,MT<:AbstractMatrix{T},VT<:AbstractVector{T}}
         @assert size(A, 1) == length(c)
-        return new{T, MT, VT}(A, c)
+        return new{T,MT,VT}(A, c)
     end
 end
 statedim(m::AffineMap) = size(m.A, 2)
@@ -140,13 +140,14 @@ An affine map with state constraints of the form:
 - `c` -- vector
 - `X` -- state constraints
 """
-struct ConstrainedAffineMap{T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}, ST} <: AbstractMap
+struct ConstrainedAffineMap{T,MT<:AbstractMatrix{T},VT<:AbstractVector{T},ST} <: AbstractMap
     A::MT
     c::VT
     X::ST
-    function ConstrainedAffineMap(A::MT, c::VT, X::ST) where {T, MT<:AbstractMatrix{T}, VT<:AbstractVector{T}, ST}
+    function ConstrainedAffineMap(A::MT, c::VT,
+                                  X::ST) where {T,MT<:AbstractMatrix{T},VT<:AbstractVector{T},ST}
         @assert size(A, 1) == length(c)
-        return new{T, MT, VT, ST}(A, c, X)
+        return new{T,MT,VT,ST}(A, c, X)
     end
 end
 statedim(m::ConstrainedAffineMap) = size(m.A, 2)
@@ -171,12 +172,13 @@ A linear control map,
 - `A` -- matrix
 - `B` -- matrix
 """
-struct LinearControlMap{T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatrix{T}} <: AbstractMap
+struct LinearControlMap{T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T}} <: AbstractMap
     A::MTA
     B::MTB
-    function LinearControlMap(A::MTA, B::MTB) where {T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatrix{T}}
+    function LinearControlMap(A::MTA,
+                              B::MTB) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T}}
         @assert size(A, 1) == size(B, 1)
-        return new{T, MTA, MTB}(A, B)
+        return new{T,MTA,MTB}(A, B)
     end
 end
 statedim(m::LinearControlMap) = size(m.A, 2)
@@ -202,14 +204,17 @@ A linear control map with state and input constraints,
 - `X` -- state constraints
 - `U` -- input constraints
 """
-struct ConstrainedLinearControlMap{T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, ST, UT} <: AbstractMap
+struct ConstrainedLinearControlMap{T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},ST,UT} <:
+       AbstractMap
     A::MTA
     B::MTB
     X::ST
     U::UT
-    function ConstrainedLinearControlMap(A::MTA, B::MTB, X::ST, U::UT) where {T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatrix{T}, ST, UT}
+    function ConstrainedLinearControlMap(A::MTA, B::MTB, X::ST,
+                                         U::UT) where {T,MTA<:AbstractMatrix{T},
+                                                       MTB<:AbstractMatrix{T},ST,UT}
         @assert size(A, 1) == size(B, 1)
-        return new{T, MTA, MTB, ST, UT}(A, B, X, U)
+        return new{T,MTA,MTB,ST,UT}(A, B, X, U)
     end
 end
 statedim(m::ConstrainedLinearControlMap) = size(m.A, 2)
@@ -236,13 +241,16 @@ An affine control map,
 - `B` -- matrix
 - `c` -- vector
 """
-struct AffineControlMap{T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT<:AbstractVector{T}} <: AbstractMap
+struct AffineControlMap{T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},VT<:AbstractVector{T}} <:
+       AbstractMap
     A::MTA
     B::MTB
     c::VT
-    function AffineControlMap(A::MTA, B::MTB, c::VT) where {T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatrix{T}, VT<:AbstractVector{T}}
+    function AffineControlMap(A::MTA, B::MTB,
+                              c::VT) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},
+                                            VT<:AbstractVector{T}}
         @assert size(A, 1) == size(B, 1) == length(c)
-        return new{T, MTA, MTB, VT}(A, B, c)
+        return new{T,MTA,MTB,VT}(A, B, c)
     end
 end
 statedim(m::AffineControlMap) = size(m.A, 2)
@@ -269,15 +277,19 @@ An affine control map with state and input constraints,
 - `X` -- state constraints
 - `U` -- input constraints
 """
-struct ConstrainedAffineControlMap{T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatrix{T}, VT<:AbstractVector{T}, ST, UT} <: AbstractMap
+struct ConstrainedAffineControlMap{T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},
+                                   VT<:AbstractVector{T},ST,UT} <: AbstractMap
     A::MTA
     B::MTB
     c::VT
     X::ST
     U::UT
-    function ConstrainedAffineControlMap(A::MTA, B::MTB, c::VT, X::ST, U::UT) where {T, MTA<:AbstractMatrix{T}, MTB<:AbstractMatrix{T}, VT<:AbstractVector{T}, ST, UT}
+    function ConstrainedAffineControlMap(A::MTA, B::MTB, c::VT, X::ST,
+                                         U::UT) where {T,MTA<:AbstractMatrix{T},
+                                                       MTB<:AbstractMatrix{T},VT<:AbstractVector{T},
+                                                       ST,UT}
         @assert size(A, 1) == size(B, 1) == length(c)
-        return new{T, MTA, MTB, VT, ST, UT}(A, B, c, X, U)
+        return new{T,MTA,MTB,VT,ST,UT}(A, B, c, X, U)
     end
 end
 statedim(m::ConstrainedAffineControlMap) = size(m.A, 2)
@@ -308,7 +320,7 @@ are unchanged.
 """
 struct ResetMap{N} <: AbstractMap
     dim::Int
-    dict::Dict{Int, N}
+    dict::Dict{Int,N}
 end
 statedim(m::ResetMap) = m.dim
 inputdim(::ResetMap) = 0
@@ -317,7 +329,7 @@ islinear(::ResetMap) = false
 isaffine(::ResetMap) = true
 
 # convenience constructor for a list of pairs instead of a dictionary
-ResetMap(dim::Int, args::Pair{Int, <:N}...) where {N} = ResetMap(dim, Dict{Int, N}(args))
+ResetMap(dim::Int, args::Pair{Int,<:N}...) where {N} = ResetMap(dim, Dict{Int,N}(args))
 
 """
     ConstrainedResetMap
@@ -337,10 +349,10 @@ variables are unchanged.
 - `dict` -- dictionary whose keys are the indices of the variables that are
             reset, and whose values are the new values
 """
-struct ConstrainedResetMap{N, ST} <: AbstractMap
+struct ConstrainedResetMap{N,ST} <: AbstractMap
     dim::Int
     X::ST
-    dict::Dict{Int, N}
+    dict::Dict{Int,N}
 end
 statedim(m::ConstrainedResetMap) = m.dim
 stateset(m::ConstrainedResetMap) = m.X
@@ -350,10 +362,11 @@ islinear(::ConstrainedResetMap) = false
 isaffine(::ConstrainedResetMap) = true
 
 # convenience constructor for a list of pairs instead of a dictionary
-ConstrainedResetMap(dim::Int, X::ST, args::Pair{Int, <:N}...) where {N, ST} =
-    ConstrainedResetMap(dim, X, Dict{Int, N}(args))
+function ConstrainedResetMap(dim::Int, X::ST, args::Pair{Int,<:N}...) where {N,ST}
+    return ConstrainedResetMap(dim, X, Dict{Int,N}(args))
+end
 
-function apply(m::Union{ResetMap, ConstrainedResetMap}, x)
+function apply(m::Union{ResetMap,ConstrainedResetMap}, x)
     y = copy(x)
     for (index, value) in pairs(m.dict)
         y[index] = value

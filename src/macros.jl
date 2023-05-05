@@ -64,7 +64,7 @@ macro map(ex, args...)
     rhs = (ex.args)[2].args[2]
     if x == rhs
         # identity map, eg: @map(x -> x, dim=2)
-        if @capture(args[1], (dim = dim_) | (dim: dim_) )
+        if @capture(args[1], (dim = dim_) | (dim:dim_))
             dimension = dim
         else
             throw(ArgumentError("cannot parse dimension of identity map"))
@@ -197,11 +197,10 @@ function _capture_dim(expr)
         dims = x
     else
         throw(ArgumentError("the dimensions in expression $expr could not be parsed; " *
-            "see the documentation for valid examples"))
+                            "see the documentation for valid examples"))
     end
     return dims
 end
-
 
 """
     is_equation(expr)
@@ -234,17 +233,17 @@ function strip_dynamic_equation(expr)
     stripped_equation = ""
     if occursin("'", expr_str)
         AT = AbstractContinuousSystem
-        stripped_equation =  replace(expr_str, "'" => "")
+        stripped_equation = replace(expr_str, "'" => "")
     elseif occursin("⁺", expr_str)
         AT = AbstractDiscreteSystem
-        stripped_equation =  replace(expr_str, "⁺" => "")
+        stripped_equation = replace(expr_str, "⁺" => "")
     end
     stripped_expr = Meta.parse(stripped_equation)
     # check if `stripped_expr` is an equation and extract `lhs` and `rhs` if so
     !@capture(stripped_expr, lhs_ = rhs_) && return (nothing, nothing, nothing)
 
     # extract the name of the state variable from the lhs
-    if @capture(lhs, (E_*x_)) || @capture(lhs, (x_))
+    if @capture(lhs, (E_ * x_)) || @capture(lhs, (x_))
         state = x
         return (stripped_expr, AT, state)
     end
@@ -255,7 +254,7 @@ function _parse_system(expr::Expr)
     return _parse_system((expr,))
 end
 
-function _parse_system(exprs::NTuple{N, Expr}) where {N}
+function _parse_system(exprs::NTuple{N,Expr}) where {N}
     # define default dynamic equation, unknown abstract system type,
     # and empty list of constraints
     dynamic_equation = nothing
@@ -273,7 +272,6 @@ function _parse_system(exprs::NTuple{N, Expr}) where {N}
 
     # main loop to parse the subexpressions in exprs
     for ex in exprs
-
         if is_equation(ex)  # parse an equation
             (stripped, abstract_system_type, subject) = strip_dynamic_equation(ex)
             if !isnothing(subject)
@@ -282,11 +280,12 @@ function _parse_system(exprs::NTuple{N, Expr}) where {N}
                 AT = abstract_system_type
                 # if the stripped system has the structure x_ = A_*x_ + B_*u_ or
                 # one of the other patterns, handle u_ as input variable
-                if @capture(stripped, (x_ = A_*x_ + B_*u_) |
-                                      (x_ = x_ + B_*u_) |
-                                      (x_ = A_*x_ + B_*u_ + c_) |
-                                      (x_ = x_ + B_*u_ + c_) |
-                                      (x_ = f_(x_, u_)) )
+                if @capture(stripped,
+                            (x_ = A_ * x_ + B_ * u_) |
+                            (x_ = x_ + B_ * u_) |
+                            (x_ = A_ * x_ + B_ * u_ + c_) |
+                            (x_ = x_ + B_ * u_ + c_) |
+                            (x_ = f_(x_, u_)))
                     if (f == :+) || (f == :-) || (f == :*)
                         # pattern x_ = f_(x_, u_) also catches the cases:
                         # x_ = x_ + u_, x_ = x_ - u_ and x_ = x_*u_
@@ -313,21 +312,21 @@ function _parse_system(exprs::NTuple{N, Expr}) where {N}
         elseif @capture(ex, x_(0) ∈ X0_)
             # TODO? handle equality, || @capture(ex, x_(0) = X0_)
             if x != state_var
-                throw(ArgumentError("the initial state assignment, $x(0), does "*
-                "not correspond to the state variable $state_var"))
+                throw(ArgumentError("the initial state assignment, $x(0), does " *
+                                    "not correspond to the state variable $state_var"))
             end
             initial_state = X0
 
         elseif @capture(ex, state_ ∈ Set_)  # parse a constraint
             push!(constraints, ex)
 
-        elseif @capture(ex, (input: u_) | (u_: input))  # parse an input symbol
+        elseif @capture(ex, (input:u_) | (u_:input))  # parse an input symbol
             input_var = u
 
-        elseif @capture(ex, (noise: w_) | (w_: noise))  # parse a noise symbol
+        elseif @capture(ex, (noise:w_) | (w_:noise))  # parse a noise symbol
             noise_var = w
 
-        elseif @capture(ex, (dim: (f_dims_)) | (dims: (f_dims_)))  # parse a dimension
+        elseif @capture(ex, (dim:(f_dims_)) | (dims:(f_dims_)))  # parse a dimension
             dimension = _capture_dim(f_dims)
 
         else
@@ -348,11 +347,11 @@ function _parse_system(exprs::NTuple{N, Expr}) where {N}
     got_input_var = !isnothing(input_var)
     got_noise_var = !isnothing(noise_var)
     if got_input_var && (state_var == input_var)
-         throw(ArgumentError("state and input variables have the same name `$(state_var)`"))
+        throw(ArgumentError("state and input variables have the same name `$(state_var)`"))
     elseif got_noise_var && (state_var == noise_var)
-         throw(ArgumentError("state and noise variables have the same name `$(state_var)`"))
+        throw(ArgumentError("state and noise variables have the same name `$(state_var)`"))
     elseif got_input_var && got_noise_var && (input_var == noise_var)
-         throw(ArgumentError("input and noise variables have the same name `$(input_var)`"))
+        throw(ArgumentError("input and noise variables have the same name `$(input_var)`"))
     end
 
     # assign default values
@@ -403,10 +402,10 @@ and left-hand side of the dynamic equation `equation`.
 """
 function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
     @capture(equation, lhs_ = rhscode_)
-    lhs_params = Vector{Tuple{Any, Symbol}}()
-    rhs_params = Vector{Tuple{Any, Symbol}}()
+    lhs_params = Vector{Tuple{Any,Symbol}}()
+    rhs_params = Vector{Tuple{Any,Symbol}}()
     # if a * is used on the lhs, the rhs is a code-block
-    if  @capture(lhs, E_*x_)
+    if @capture(lhs, E_ * x_)
         push!(lhs_params, (E, :E))
         rhs = rhscode.args[end]
     else
@@ -418,14 +417,15 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
         # parse summands of rhs and add * if needed
         summands = add_asterisk.([A, B...], Ref(state), Ref(input), Ref(noise))
         push!(rhs_params, extract_sum(summands, state, input, noise)...)
-    # if rhs is a function call except `*` or `-` => black-box system
+        # if rhs is a function call except `*` or `-` => black-box system
     elseif @capture(rhs, f_(a__)) && f != :(*) && f != :(-)
         # the dimension argument needs to be a iterable
-        isnothing(dim) && throw(ArgumentError("for a blackbox system, the dimension has to be defined"))
+        isnothing(dim) &&
+            throw(ArgumentError("for a blackbox system, the dimension has to be defined"))
         dim_vec = [dim...]
         push!(rhs_params, extract_blackbox_parameter(rhs, dim_vec)...)
 
-    # if rhs is a single term => affine systm (e.g. A*x, Ax, 2x, x or 0)
+        # if rhs is a single term => affine systm (e.g. A*x, Ax, 2x, x or 0)
     else
         # if not specified, assume dim = 1
         dim = isnothing(dim) ? 1 : dim
@@ -440,7 +440,7 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
         else
             if @capture(rhs, -var_) # => rhs = -x
                 if state == var
-                    push!(rhs_params, (-1.0*Id(dim), :A))
+                    push!(rhs_params, (-1.0 * Id(dim), :A))
                 end
             else
                 rhs = add_asterisk(rhs, state, input, noise)
@@ -450,11 +450,11 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
                         if isnothing(value) # e.g. => rhs = Ax
                             push!(rhs_params, (array, :A))
                         else # => e.g., rhs = 2x
-                            push!(rhs_params, (value*Id(dim), :A))
+                            push!(rhs_params, (value * Id(dim), :A))
                         end
                     else
-                        throw(ArgumentError("if there is only one term on the "*
-                                  "right-hand side, the state needs to be contained"))
+                        throw(ArgumentError("if there is only one term on the " *
+                                            "right-hand side, the state needs to be contained"))
                     end
                 end
             end
@@ -511,21 +511,24 @@ function add_asterisk(summand, state::Symbol, input::Symbol, noise::Symbol)
     end
 
     str = string(summand)
-    statestr = string(state); lenstate = length(statestr)
-    inputstr = string(input); leninput = length(inputstr)
-    noisestr = string(noise); lennoise = length(noisestr)
+    statestr = string(state)
+    lenstate = length(statestr)
+    inputstr = string(input)
+    leninput = length(inputstr)
+    noisestr = string(noise)
+    lennoise = length(noisestr)
 
     # if summand contains the state, input or noise variable at the end and has
     # one or more additional characters (i.e. length(str) > length(state) for the state)
     # a `*` is added in between
-    if lenstate < length(str) && str[(end-lenstate+1):end] == statestr
-        return Meta.parse(str[1:end-length(statestr)]*"*$state")
+    if lenstate < length(str) && str[(end - lenstate + 1):end] == statestr
+        return Meta.parse(str[1:(end - length(statestr))] * "*$state")
 
-    elseif leninput < length(str) && str[(end-leninput+1):end] == inputstr
-        return Meta.parse(str[1:end-length(inputstr)]*"*$input")
+    elseif leninput < length(str) && str[(end - leninput + 1):end] == inputstr
+        return Meta.parse(str[1:(end - length(inputstr))] * "*$input")
 
-    elseif lennoise < length(str) && str[(end-lennoise+1):end] == noisestr
-        return Meta.parse(str[1:end-length(noisestr)]*"*$noise")
+    elseif lennoise < length(str) && str[(end - lennoise + 1):end] == noisestr
+        return Meta.parse(str[1:(end - length(noisestr))] * "*$noise")
 
     else # summand is returned which is either a constant term or the state, input or noise variable
         return summand
@@ -589,7 +592,7 @@ Similiarily, if the element is equal to `noise`, the variable name is
 `IdentityMultiple(I, state_dim)` and the field name is `:D`.
 """
 function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
-    params = Tuple{Any, Symbol}[]
+    params = Tuple{Any,Symbol}[]
     state_dim = 1
     got_state_dim = false
 
@@ -603,22 +606,22 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
             if state == var
                 push!(params, (Expr(:call, :hcat, array), :A))
                 # obtain "state_dim" for later using in IdentityMultiple
-                state_dim =  Expr(:call, :size, :($array), 1)
+                state_dim = Expr(:call, :size, :($array), 1)
                 got_state_dim = true
                 num_state_assignments += 1
 
             elseif input == var
                 push!(params, (Expr(:call, :hcat, array), :B))
-                 num_input_assignments += 1
+                num_input_assignments += 1
 
             elseif noise == var
                 push!(params, (Expr(:call, :hcat, array), :D))
                 num_noise_assignments += 1
 
             else
-                throw(ArgumentError("in the dynamic equation, the expression "*
-                "$summand does not contain the state $state, the input $input "*
-                "or the noise term $noise"))
+                throw(ArgumentError("in the dynamic equation, the expression " *
+                                    "$summand does not contain the state $state, the input $input " *
+                                    "or the noise term $noise"))
             end
         elseif @capture(summand, array_)
             identity = :(Id($state_dim))
@@ -656,15 +659,15 @@ function extract_blackbox_parameter(rhs, dim::AbstractVector)
     if @capture(rhs, f_(x_))
         @assert length(dim) == 1
         return [(f, :f), (dim[1], :statedim)]
-    elseif @capture(rhs, f_(x_,u_))
+    elseif @capture(rhs, f_(x_, u_))
         @assert length(dim) == 2
         return [(f, :f), (dim[1], :statedim),
-                         (dim[2], :inputdim)]
-    elseif @capture(rhs, f_(x_,u_,w_))
+                (dim[2], :inputdim)]
+    elseif @capture(rhs, f_(x_, u_, w_))
         @assert length(dim) == 3
         return [(f, :f), (dim[1], :statedim),
-                         (dim[2], :inputdim),
-                         (dim[3], :noisedim)]
+                (dim[2], :inputdim),
+                (dim[3], :noisedim)]
     end
 end
 
@@ -695,14 +698,14 @@ function extract_set_parameter(expr, state, input, noise) # input => to check se
 
     elseif @capture(expr, x_ ∈ Set_)
         if x == state
-            return  Set, :X
+            return Set, :X
         elseif x == input
-            return  Set, :U
+            return Set, :U
         elseif x == noise
-            return  Set, :W
+            return Set, :W
         else
-            error("$expr is not a valid set constraint definition; it does not contain"*
-                   "the state $state, the input $input or noise term $noise")
+            error("$expr is not a valid set constraint definition; it does not contain" *
+                  "the state $state, the input $input or noise term $noise")
         end
     end
     throw(ArgumentError("the set entry $(expr) does not have the correct form `x_ ∈ X_`"))
@@ -750,8 +753,8 @@ is considered for the sorting according to `order`.
 If a value of `order` is not contained in `parameters`, the corresponding entry of
 `order` will be omitted.
 """
-function sort(parameters::Vector{<:Tuple{Any, Symbol}}, order::NTuple{N, Symbol}) where {N}
-    order_parameters = Vector{Tuple{Any, Symbol}}()
+function sort(parameters::Vector{<:Tuple{Any,Symbol}}, order::NTuple{N,Symbol}) where {N}
+    order_parameters = Vector{Tuple{Any,Symbol}}()
     for ordered_element in order
         for tuple in parameters
             if tuple[2] == ordered_element
@@ -897,7 +900,7 @@ macro system(expr...)
             return esc(ivp)
         end
     catch ex
-        if  isa(ex, ArgumentError)
+        if isa(ex, ArgumentError)
             return :(throw($ex))
         else
             throw(ex)
@@ -962,14 +965,14 @@ macro ivp(expr...)
             sys = Expr(:call, :($sys_type), :($(var_names...)))
             if isnothing(x0)
                 return throw(ArgumentError("an initial-value problem should define the " *
-                            "initial states, but such expression was not found"))
+                                           "initial states, but such expression was not found"))
             else
                 ivp = Expr(:call, InitialValueProblem, :($sys), :($x0))
                 return esc(ivp)
             end
         end
     catch ex
-        if  isa(ex, ArgumentError)
+        if isa(ex, ArgumentError)
             return :(throw($ex))
         else
             throw(ex)

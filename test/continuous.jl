@@ -1,10 +1,10 @@
 # linear systems
-E = [0. 1; 1 0]
-A = [1. 1; 1 -1]
+E = [0.01; 1 0]
+A = [1.01; 1 -1]
 B = Matrix([0.5 1.5]')
-C = [1.; 1.]
-D = [1. 2; 0 1]
-X = Line([1., -1], 0.) # line x = y
+C = [1.0; 1.0]
+D = [1.02; 0 1]
+X = Line([1.0, -1], 0.0) # line x = y
 U = Interval(0.9, 1.1)
 W = BallInf(zeros(2), 2.0)
 sd = 2
@@ -28,10 +28,19 @@ stateInputPlusOne = add_one(state, input)
 stateInputNoisePlusOne = add_one(state, input, noise)
 
 # Scalar System
-a = 1.; b = 2.; c = 0.1; d = 3.; Xs = 1; Us = 2; Ws = 3; e = 2.;
-As = [a][:,:]; Bs = [b][:,:]; Cs = [c]; Ds = [d][:,:]; Es = [e][:,:]
-
-
+a = 1.0;
+b = 2.0;
+c = 0.1;
+d = 3.0;
+Xs = 1;
+Us = 2;
+Ws = 3;
+e = 2.0;
+As = [a][:, :];
+Bs = [b][:, :];
+Cs = [c];
+Ds = [d][:, :];
+Es = [e][:, :];
 
 @testset "Continuous identity system" begin
     s = ContinuousIdentitySystem(sd)
@@ -45,7 +54,7 @@ As = [a][:,:]; Bs = [b][:,:]; Cs = [c]; Ds = [d][:,:]; Es = [e][:,:]
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
@@ -63,7 +72,7 @@ end
     @test stateset(s) == X
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
@@ -81,7 +90,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
@@ -102,7 +111,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
@@ -123,7 +132,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
     end
@@ -144,7 +153,7 @@ end
     @test stateset(s) == X
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
@@ -165,7 +174,7 @@ end
     @test stateset(s) == X
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
@@ -186,7 +195,7 @@ end
     @test stateset(s) == X
     @test inputset(s) == U
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && iscontrolled(s) && isconstrained(s)
     end
@@ -203,13 +212,17 @@ end
     @test statedim(s) == 2
     @test inputdim(s) == 1
     @test noisedim(s) == 0
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
     end
     # Scalar System
-    a = 1.; b = 2.; c = 0.1
-    A = [a][:,:]; B = [b][:,:]; C = [c]
+    a = 1.0
+    b = 2.0
+    c = 0.1
+    A = [a][:, :]
+    B = [b][:, :]
+    C = [c]
     scalar_sys = AffineControlContinuousSystem(a, b, c)
     @test scalar_sys == AffineControlContinuousSystem(A, B, C)
 end
@@ -226,7 +239,7 @@ end
     @test stateset(s) == X
     @test inputset(s) == U
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && iscontrolled(s) && isconstrained(s)
     end
@@ -283,7 +296,7 @@ end
     @test stateset(s) == X
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
@@ -299,8 +312,6 @@ end
     end
 end
 
-
-
 @testset "Polynomial system in continuous time" begin
     # default constructor for scalar p and
     s = PolynomialContinuousSystem(p)
@@ -315,7 +326,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
@@ -341,7 +352,7 @@ end
     @test stateset(s) == X
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
@@ -352,7 +363,7 @@ end
 
 function vanderpol!(x, dx)
     dx[1] = x[2]
-    dx[2] = x[2] * (1-x[1]^2) - x[1]
+    dx[2] = x[2] * (1 - x[1]^2) - x[1]
     return dx
 end
 
@@ -374,7 +385,7 @@ end
     f!(x, dx)
     @test dx ≈ [0.0, -1.0]
 
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
@@ -399,7 +410,7 @@ end
     f!(x, dx)
     @test dx ≈ [0.0, -1.0]
     @test stateset(s) == H
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
@@ -407,7 +418,7 @@ end
 
 function vanderpol_controlled!(x, u, dx)
     dx[1] = x[2]
-    dx[2] = x[2] * (1-x[1]^2) - x[1] + u[1]
+    dx[2] = x[2] * (1 - x[1]^2) - x[1] + u[1]
     return dx
 end
 
@@ -424,7 +435,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
     end
@@ -450,7 +461,7 @@ end
     dx = similar(x)
     f!(x, u, dx)
     @test dx ≈ [0.0, -1.0 + u[1]]
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test !isnoisy(s) && iscontrolled(s) && isconstrained(s)
     end
@@ -472,7 +483,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
     end
@@ -493,7 +504,7 @@ end
     @test stateset(s) == X
     @test isnothing(inputset(s))
     @test noiseset(s) == W
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && !iscontrolled(s) && isconstrained(s)
     end
@@ -514,7 +525,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
     end
@@ -535,7 +546,7 @@ end
     @test stateset(s) == X
     @test inputset(s) == U
     @test noiseset(s) == W
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
     end
@@ -556,7 +567,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test isaffine(s) && !islinear(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
     end
@@ -577,7 +588,7 @@ end
     @test stateset(s) == X
     @test inputset(s) == U
     @test noiseset(s) == W
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test isaffine(s) && !islinear(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
     end
@@ -599,7 +610,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
     end
@@ -618,19 +629,19 @@ end
     @test stateset(s) == X
     @test inputset(s) == U
     @test noiseset(s) == W
-    for s = [s, typeof(s)]
+    for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
     end
 end
 
 @testset "Second order linear systems" begin
-    M = [1. 0; 0 2]
+    M = [1.00; 0 2]
     C = [0.1 0; 0 0.2]
-    K = [2. 1; 0 1]
-    b = [1., 0]
-    B = hcat([1., 0])
-    d = [1., 0]
+    K = [2.01; 0 1]
+    b = [1.0, 0]
+    B = hcat([1.0, 0])
+    d = [1.0, 0]
     X = BallInf(zeros(2), 1.0)
     U = Singleton(ones(2))
 
@@ -647,13 +658,14 @@ end
 
     sys = SecondOrderConstrainedAffineControlContinuousSystem(M, C, K, B, d, X, U)
     @test mass_matrix(sys) == M && viscosity_matrix(sys) == C && stiffness_matrix(sys) == K
-    @test affine_term(sys) == d && input_matrix(sys) == B && stateset(sys) == X && inputset(sys) == U
+    @test affine_term(sys) == d && input_matrix(sys) == B && stateset(sys) == X &&
+          inputset(sys) == U
 end
 
 @testset "Second order systems" begin
-    M = [1. 0; 0 2]
+    M = [1.00; 0 2]
     C = [0.1 0; 0 0.2]
-    fi(x) = x + x.^2 + ones(2)
+    fi(x) = x + x .^ 2 + ones(2)
     fe = zeros(2)
     sys = SecondOrderContinuousSystem(M, C, fi, fe)
     @test mass_matrix(sys) == M && viscosity_matrix(sys) == C

@@ -1,9 +1,9 @@
 @testset "Equality of systems" begin
-    A = [1. 1; 1 -1]
+    A = [1.01; 1 -1]
     A2 = [1.0 1+1e-8; 1 -1]
-    c = [1.; 1.]
-    X = Line([1., -1], 0.) # line x = y
-    Y = Singleton([0., 0.])
+    c = [1.0; 1.0]
+    X = Line([1.0, -1], 0.0) # line x = y
+    Y = Singleton([0.0, 0.0])
     s1 = ConstrainedAffineDiscreteSystem(A, c, X)
     s2 = ConstrainedAffineContinuousSystem(A, c, X)
     s3 = ConstrainedAffineDiscreteSystem(A2, c, X)

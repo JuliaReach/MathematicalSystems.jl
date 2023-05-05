@@ -13,16 +13,16 @@
     end
     @test i == 11
 
-    @test  length(nextinput(c, 2)) == 2
+    @test length(nextinput(c, 2)) == 2
     i = 1
     for val in nextinput(c, 2)
         @test i <= 2 && val == 1.0
         i += 1
     end
 
-    c2 = map(x->x^2, c)
+    c2 = map(x -> x^2, c)
     @test c2.U == (c.U)^2
- end
+end
 
 @testset "Varying input" begin
     v = VaryingInput([1.0, 2.0, 3.0])
@@ -34,17 +34,17 @@
     @test length(v) == 3
     @test collect(v) == [1.0, 2.0, 3.0]
 
-    @test  length(nextinput(v, 2)) == 2
+    @test length(nextinput(v, 2)) == 2
     i = 1
     for val in nextinput(v, 2)
         @test i <= 2 && val == v.U[i]
         i += 1
     end
 
-    v2 = map(x->x.^2, v)
+    v2 = map(x -> x .^ 2, v)
     @test all([v2.U[i] == vi^2 for (i, vi) in enumerate(v)])
 
-    v = VaryingInput([1:3., 4:6.])
-    v3 = map(x->norm(x, Inf), v)
+    v = VaryingInput([1:3.0, 4:6.0])
+    v3 = map(x -> norm(x, Inf), v)
     @test all([v3.U[i] == maximum(vi) for (i, vi) in enumerate(v)])
- end
+end

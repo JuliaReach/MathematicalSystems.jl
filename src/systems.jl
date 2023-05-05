@@ -120,15 +120,15 @@ ConstrainedDiscreteIdentitySystem
 for (Z, AZ) in ((:LinearContinuousSystem, :AbstractContinuousSystem),
                 (:LinearDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MT <: AbstractMatrix{T}} <: $(AZ)
+        struct $(Z){T,MT<:AbstractMatrix{T}} <: $(AZ)
             A::MT
-            function $(Z)(A::MT) where {T, MT <: AbstractMatrix{T}}
+            function $(Z)(A::MT) where {T,MT<:AbstractMatrix{T}}
                 @assert issquare(A)
-                return new{T, MT}(A)
+                return new{T,MT}(A)
             end
         end
         function $(Z)(A::Number)
-             return $(Z)(hcat(A))
+            return $(Z)(hcat(A))
         end
 
         statedim(s::$Z) = size(s.A, 1)
@@ -182,16 +182,16 @@ LinearDiscreteSystem
 for (Z, AZ) in ((:AffineContinuousSystem, :AbstractContinuousSystem),
                 (:AffineDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}} <: $(AZ)
+        struct $(Z){T,MT<:AbstractMatrix{T},VT<:AbstractVector{T}} <: $(AZ)
             A::MT
             c::VT
-            function $(Z)(A::MT, c::VT) where {T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}}
+            function $(Z)(A::MT, c::VT) where {T,MT<:AbstractMatrix{T},VT<:AbstractVector{T}}
                 @assert checksquare(A) == length(c)
-                return new{T, MT, VT}(A, c)
+                return new{T,MT,VT}(A, c)
             end
         end
         function $(Z)(A::Number, c::Number)
-             return $(Z)(hcat(A), vcat(c))
+            return $(Z)(hcat(A), vcat(c))
         end
 
         statedim(s::$Z) = length(s.c)
@@ -248,16 +248,16 @@ AffineDiscreteSystem
 for (Z, AZ) in ((:LinearControlContinuousSystem, :AbstractContinuousSystem),
                 (:LinearControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}} <: $(AZ)
+        struct $(Z){T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T}} <: $(AZ)
             A::MTA
             B::MTB
-            function $(Z)(A::MTA, B::MTB) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}}
+            function $(Z)(A::MTA, B::MTB) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T}}
                 @assert checksquare(A) == size(B, 1)
-                return new{T, MTA, MTB}(A, B)
+                return new{T,MTA,MTB}(A, B)
             end
         end
         function $(Z)(A::Number, B::Number)
-             return $(Z)(hcat(A), hcat(B))
+            return $(Z)(hcat(A), hcat(B))
         end
 
         statedim(s::$Z) = size(s.A, 1)
@@ -314,16 +314,16 @@ LinearControlDiscreteSystem
 for (Z, AZ) in ((:ConstrainedLinearContinuousSystem, :AbstractContinuousSystem),
                 (:ConstrainedLinearDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MT <: AbstractMatrix{T}, ST} <: $(AZ)
+        struct $(Z){T,MT<:AbstractMatrix{T},ST} <: $(AZ)
             A::MT
             X::ST
-            function $(Z)(A::MT, X::ST) where {T, MT <: AbstractMatrix{T}, ST}
+            function $(Z)(A::MT, X::ST) where {T,MT<:AbstractMatrix{T},ST}
                 @assert issquare(A)
-                return new{T, MT, ST}(A, X)
+                return new{T,MT,ST}(A, X)
             end
         end
         function $(Z)(A::Number, X)
-             return $(Z)(hcat(A), X)
+            return $(Z)(hcat(A), X)
         end
 
         statedim(s::$Z) = size(s.A, 1)
@@ -380,17 +380,18 @@ ConstrainedLinearDiscreteSystem
 for (Z, AZ) in ((:ConstrainedAffineContinuousSystem, :AbstractContinuousSystem),
                 (:ConstrainedAffineDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST} <: $(AZ)
+        struct $(Z){T,MT<:AbstractMatrix{T},VT<:AbstractVector{T},ST} <: $(AZ)
             A::MT
             c::VT
             X::ST
-            function $(Z)(A::MT, c::VT, X::ST) where {T, MT <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST}
+            function $(Z)(A::MT, c::VT,
+                          X::ST) where {T,MT<:AbstractMatrix{T},VT<:AbstractVector{T},ST}
                 @assert checksquare(A) == length(c)
-                return new{T, MT, VT, ST}(A, c, X)
+                return new{T,MT,VT,ST}(A, c, X)
             end
         end
         function $(Z)(A::Number, c::Number, X)
-             return $(Z)(hcat(A), vcat(c), X)
+            return $(Z)(hcat(A), vcat(c), X)
         end
 
         statedim(s::$Z) = length(s.c)
@@ -447,92 +448,97 @@ Discrete-time affine system with domain constraints of the form:
 """
 ConstrainedAffineDiscreteSystem
 
- for (Z, AZ) in ((:AffineControlContinuousSystem, :AbstractContinuousSystem),
-                 (:AffineControlDiscreteSystem, :AbstractDiscreteSystem))
-     @eval begin
-         struct $(Z){T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}} <: $(AZ)
-             A::MTA
-             B::MTB
-             c::VT
-             function $(Z)(A::MTA, B::MTB, c::VT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}}
-                 @assert checksquare(A) == length(c) == size(B, 1)
-                 return new{T, MTA, MTB, VT}(A, B, c)
-             end
-         end
-         function $(Z)(A::Number, B::Number, c::Number)
-              return $(Z)(hcat(A), hcat(B), vcat(c))
-         end
+for (Z, AZ) in ((:AffineControlContinuousSystem, :AbstractContinuousSystem),
+                (:AffineControlDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},VT<:AbstractVector{T}} <: $(AZ)
+            A::MTA
+            B::MTB
+            c::VT
+            function $(Z)(A::MTA, B::MTB,
+                          c::VT) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},
+                                        VT<:AbstractVector{T}}
+                @assert checksquare(A) == length(c) == size(B, 1)
+                return new{T,MTA,MTB,VT}(A, B, c)
+            end
+        end
+        function $(Z)(A::Number, B::Number, c::Number)
+            return $(Z)(hcat(A), hcat(B), vcat(c))
+        end
 
-         statedim(s::$Z) = length(s.c)
-         inputdim(s::$Z) = size(s.B, 2)
-         noisedim(::$Z) = 0
-         state_matrix(s::$Z) = s.A
-         input_matrix(s::$Z) = s.B
-         affine_term(s::$Z) = s.c
-     end
-     for T in [Z, Type{<:eval(Z)}]
-         @eval begin
-             islinear(::$T) = false
-             isaffine(::$T) = true
-             ispolynomial(::$T) = false
-             isblackbox(::$T) = false
-             isnoisy(::$T) = false
-             iscontrolled(::$T) = true
-             isconstrained(::$T) = false
-         end
-     end
- end
+        statedim(s::$Z) = length(s.c)
+        inputdim(s::$Z) = size(s.B, 2)
+        noisedim(::$Z) = 0
+        state_matrix(s::$Z) = s.A
+        input_matrix(s::$Z) = s.B
+        affine_term(s::$Z) = s.c
+    end
+    for T in [Z, Type{<:eval(Z)}]
+        @eval begin
+            islinear(::$T) = false
+            isaffine(::$T) = true
+            ispolynomial(::$T) = false
+            isblackbox(::$T) = false
+            isnoisy(::$T) = false
+            iscontrolled(::$T) = true
+            isconstrained(::$T) = false
+        end
+    end
+end
 
- @doc """
-     AffineControlContinuousSystem
+@doc """
+    AffineControlContinuousSystem
 
- Continuous-time affine control system of the form:
+Continuous-time affine control system of the form:
 
- ```math
-     x(t)' = A x(t) + B u(t) + c, \\; \\forall t.
- ```
+```math
+    x(t)' = A x(t) + B u(t) + c, \\; \\forall t.
+```
 
- ### Fields
+### Fields
 
- - `A` -- state matrix
- - `B` -- input matrix
- - `c` -- affine term
- """
- AffineControlContinuousSystem
+- `A` -- state matrix
+- `B` -- input matrix
+- `c` -- affine term
+"""
+AffineControlContinuousSystem
 
- @doc """
-     AffineControlDiscreteSystem
+@doc """
+    AffineControlDiscreteSystem
 
- Continuous-time affine control system of the form:
+Continuous-time affine control system of the form:
 
- ```math
-     x_{k+1} = A x_k + B u_k + c, \\; \\forall k.
- ```
+```math
+    x_{k+1} = A x_k + B u_k + c, \\; \\forall k.
+```
 
- ### Fields
+### Fields
 
- - `A` -- state matrix
- - `B` -- input matrix
- - `c` -- affine term
- """
- AffineControlDiscreteSystem
+- `A` -- state matrix
+- `B` -- input matrix
+- `c` -- affine term
+"""
+AffineControlDiscreteSystem
 
 for (Z, AZ) in ((:ConstrainedAffineControlContinuousSystem, :AbstractContinuousSystem),
                 (:ConstrainedAffineControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST, UT} <: $(AZ)
+        struct $(Z){T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},VT<:AbstractVector{T},ST,UT} <:
+               $(AZ)
             A::MTA
             B::MTB
             c::VT
             X::ST
             U::UT
-            function $(Z)(A::MTA, B::MTB, c::VT, X::ST, U::UT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}, ST, UT}
+            function $(Z)(A::MTA, B::MTB, c::VT, X::ST,
+                          U::UT) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},
+                                        VT<:AbstractVector{T},ST,UT}
                 @assert checksquare(A) == length(c) == size(B, 1)
-                return new{T, MTA, MTB, VT, ST, UT}(A, B, c, X, U)
+                return new{T,MTA,MTB,VT,ST,UT}(A, B, c, X, U)
             end
         end
         function $(Z)(A::Number, B::Number, c::Number, X, U)
-             return $(Z)(hcat(A), hcat(B), vcat(c), X, U)
+            return $(Z)(hcat(A), hcat(B), vcat(c), X, U)
         end
 
         statedim(s::$Z) = length(s.c)
@@ -598,18 +604,19 @@ ConstrainedAffineControlDiscreteSystem
 for (Z, AZ) in ((:ConstrainedLinearControlContinuousSystem, :AbstractContinuousSystem),
                 (:ConstrainedLinearControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, ST, UT} <: $(AZ)
+        struct $(Z){T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},ST,UT} <: $(AZ)
             A::MTA
             B::MTB
             X::ST
             U::UT
-            function $(Z)(A::MTA, B::MTB, X::ST, U::UT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, ST, UT}
+            function $(Z)(A::MTA, B::MTB, X::ST,
+                          U::UT) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},ST,UT}
                 @assert checksquare(A) == size(B, 1)
-                return new{T, MTA, MTB, ST, UT}(A, B, X, U)
+                return new{T,MTA,MTB,ST,UT}(A, B, X, U)
             end
         end
         function $(Z)(A::Number, B::Number, X, U)
-             return $(Z)(hcat(A), hcat(B), X, U)
+            return $(Z)(hcat(A), hcat(B), X, U)
         end
 
         statedim(s::$Z) = size(s.A, 1)
@@ -671,18 +678,17 @@ ConstrainedLinearControlDiscreteSystem
 for (Z, AZ) in ((:LinearDescriptorContinuousSystem, :AbstractContinuousSystem),
                 (:LinearDescriptorDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}} <: $(AZ)
+        struct $(Z){T,MTA<:AbstractMatrix{T},MTE<:AbstractMatrix{T}} <: $(AZ)
             A::MTA
             E::MTE
-            function $(Z)(A::MTA, E::MTE) where {T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}}
+            function $(Z)(A::MTA, E::MTE) where {T,MTA<:AbstractMatrix{T},MTE<:AbstractMatrix{T}}
                 @assert size(A) == size(E)
-                return new{T, MTA, MTE}(A, E)
+                return new{T,MTA,MTE}(A, E)
             end
         end
         function $(Z)(A::Number, E::Number)
-             return $(Z)(hcat(A), hcat(E))
+            return $(Z)(hcat(A), hcat(E))
         end
-
 
         statedim(s::$Z) = size(s.A, 1)
         inputdim(::$Z) = 0
@@ -737,17 +743,18 @@ LinearDescriptorDiscreteSystem
 for (Z, AZ) in ((:ConstrainedLinearDescriptorContinuousSystem, :AbstractContinuousSystem),
                 (:ConstrainedLinearDescriptorDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}, ST} <: $(AZ)
+        struct $(Z){T,MTA<:AbstractMatrix{T},MTE<:AbstractMatrix{T},ST} <: $(AZ)
             A::MTA
             E::MTE
             X::ST
-            function $(Z)(A::MTA, E::MTE, X::ST) where {T, MTA <: AbstractMatrix{T}, MTE <: AbstractMatrix{T}, ST}
+            function $(Z)(A::MTA, E::MTE,
+                          X::ST) where {T,MTA<:AbstractMatrix{T},MTE<:AbstractMatrix{T},ST}
                 @assert size(A) == size(E)
-                return new{T, MTA, MTE, ST}(A, E, X)
+                return new{T,MTA,MTE,ST}(A, E, X)
             end
         end
         function $(Z)(A::Number, E::Number, X)
-             return $(Z)(hcat(A), hcat(E), X)
+            return $(Z)(hcat(A), hcat(E), X)
         end
 
         statedim(s::$Z) = size(s.A, 1)
@@ -806,12 +813,14 @@ ConstrainedLinearDescriptorDiscreteSystem
 for (Z, AZ) in ((:PolynomialContinuousSystem, :AbstractContinuousSystem),
                 (:PolynomialDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, PT <: AbstractPolynomialLike{T}, VPT <: AbstractVector{PT}} <: $(AZ)
+        struct $(Z){T,PT<:AbstractPolynomialLike{T},VPT<:AbstractVector{PT}} <: $(AZ)
             p::VPT
             statedim::Int
-            function $(Z)(p::VPT, statedim::Int) where {T, PT <: AbstractPolynomialLike{T}, VPT <: AbstractVector{PT}}
+            function $(Z)(p::VPT,
+                          statedim::Int) where {T,PT<:AbstractPolynomialLike{T},
+                                                VPT<:AbstractVector{PT}}
                 @assert statedim == MultivariatePolynomials.nvariables(p) "the state dimension $(statedim) does not match the number of state variables"
-                return new{T, PT, VPT}(p, statedim)
+                return new{T,PT,VPT}(p, statedim)
             end
         end
         statedim(s::$Z) = s.statedim
@@ -822,7 +831,9 @@ for (Z, AZ) in ((:PolynomialContinuousSystem, :AbstractContinuousSystem),
         MultivariatePolynomials.variables(s::$Z) = MultivariatePolynomials.variables(s.p)
         MultivariatePolynomials.nvariables(s::$Z) = s.statedim
 
-        $(Z)(p::AbstractVector{<:AbstractPolynomialLike}) = $(Z)(p, MultivariatePolynomials.nvariables(p))
+        function $(Z)(p::AbstractVector{<:AbstractPolynomialLike})
+            return $(Z)(p, MultivariatePolynomials.nvariables(p))
+        end
         $(Z)(p::AbstractPolynomialLike) = $(Z)([p])
     end
     for T in [Z, Type{<:eval(Z)}]
@@ -873,13 +884,14 @@ PolynomialDiscreteSystem
 for (Z, AZ) in ((:ConstrainedPolynomialContinuousSystem, :AbstractContinuousSystem),
                 (:ConstrainedPolynomialDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, PT <: AbstractPolynomialLike{T}, VPT <: AbstractVector{PT}, ST} <: $(AZ)
+        struct $(Z){T,PT<:AbstractPolynomialLike{T},VPT<:AbstractVector{PT},ST} <: $(AZ)
             p::VPT
             statedim::Int
             X::ST
-            function $(Z)(p::VPT, statedim::Int, X::ST) where {T, PT <: AbstractPolynomialLike{T}, VPT <: AbstractVector{PT}, ST}
+            function $(Z)(p::VPT, statedim::Int,
+                          X::ST) where {T,PT<:AbstractPolynomialLike{T},VPT<:AbstractVector{PT},ST}
                 @assert statedim == MultivariatePolynomials.nvariables(p) "the state dimension $(statedim) does not match the number of state variables"
-                return new{T, PT, VPT, ST}(p, statedim, X)
+                return new{T,PT,VPT,ST}(p, statedim, X)
             end
         end
         statedim(s::$Z) = s.statedim
@@ -888,11 +900,12 @@ for (Z, AZ) in ((:ConstrainedPolynomialContinuousSystem, :AbstractContinuousSyst
         stateset(s::$Z) = s.X
         mapping(s::$Z) = s.p
 
-
         MultivariatePolynomials.variables(s::$Z) = MultivariatePolynomials.variables(s.p)
         MultivariatePolynomials.nvariables(s::$Z) = s.statedim
 
-        $Z(p::AbstractVector{<:AbstractPolynomialLike}, X::ST) where {ST} = $(Z)(p, MultivariatePolynomials.nvariables(p), X)
+        function $Z(p::AbstractVector{<:AbstractPolynomialLike}, X::ST) where {ST}
+            return $(Z)(p, MultivariatePolynomials.nvariables(p), X)
+        end
         $Z(p::AbstractPolynomialLike, X::ST) where {ST} = $(Z)([p], X)
     end
     for T in [Z, Type{<:eval(Z)}]
@@ -1002,7 +1015,7 @@ BlackBoxDiscreteSystem
 for (Z, AZ) in ((:ConstrainedBlackBoxContinuousSystem, :AbstractContinuousSystem),
                 (:ConstrainedBlackBoxDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){FT, ST} <: $(AZ)
+        struct $(Z){FT,ST} <: $(AZ)
             f::FT
             statedim::Int
             X::ST
@@ -1125,7 +1138,7 @@ BlackBoxControlDiscreteSystem
 for (Z, AZ) in ((:ConstrainedBlackBoxControlContinuousSystem, :AbstractContinuousSystem),
                 (:ConstrainedBlackBoxControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){FT, ST, UT} <: $(AZ)
+        struct $(Z){FT,ST,UT} <: $(AZ)
             f::FT
             statedim::Int
             inputdim::Int
@@ -1199,19 +1212,19 @@ ConstrainedBlackBoxControlDiscreteSystem
 for (Z, AZ) in ((:NoisyLinearContinuousSystem, :AbstractContinuousSystem),
                 (:NoisyLinearDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MTA <: AbstractMatrix{T}, MTD <: AbstractMatrix{T}} <: $(AZ)
+        struct $(Z){T,MTA<:AbstractMatrix{T},MTD<:AbstractMatrix{T}} <: $(AZ)
             A::MTA
             D::MTD
-            function $(Z)(A::MTA, D::MTD) where {T, MTA <: AbstractMatrix{T}, MTD <: AbstractMatrix{T}}
-                @assert checksquare(A) == size(D,1)
-                return new{T, MTA, MTD}(A, D)
+            function $(Z)(A::MTA, D::MTD) where {T,MTA<:AbstractMatrix{T},MTD<:AbstractMatrix{T}}
+                @assert checksquare(A) == size(D, 1)
+                return new{T,MTA,MTD}(A, D)
             end
         end
         function $(Z)(A::Number, D::Number)
-           return $(Z)(hcat(A), hcat(D))
+            return $(Z)(hcat(A), hcat(D))
         end
 
-        statedim(s::$Z) = size(s.A,1)
+        statedim(s::$Z) = size(s.A, 1)
         inputdim(::$Z) = 0
         noisedim(s::$Z) = size(s.D, 2)
         state_matrix(s::$Z) = s.A
@@ -1265,21 +1278,22 @@ NoisyLinearDiscreteSystem
 for (Z, AZ) in ((:NoisyConstrainedLinearContinuousSystem, :AbstractContinuousSystem),
                 (:NoisyConstrainedLinearDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MTA <: AbstractMatrix{T}, MTD <: AbstractMatrix{T}, ST, WT} <: $(AZ)
+        struct $(Z){T,MTA<:AbstractMatrix{T},MTD<:AbstractMatrix{T},ST,WT} <: $(AZ)
             A::MTA
             D::MTD
             X::ST
             W::WT
-            function $(Z)(A::MTA, D::MTD, X::ST, W::WT) where {T, MTA <: AbstractMatrix{T}, MTD <: AbstractMatrix{T}, ST, WT}
-                @assert checksquare(A) == size(D,1)
-                return new{T, MTA, MTD, ST, WT}(A, D, X, W)
+            function $(Z)(A::MTA, D::MTD, X::ST,
+                          W::WT) where {T,MTA<:AbstractMatrix{T},MTD<:AbstractMatrix{T},ST,WT}
+                @assert checksquare(A) == size(D, 1)
+                return new{T,MTA,MTD,ST,WT}(A, D, X, W)
             end
         end
         function $(Z)(A::Number, D::Number, X, W)
-           return $(Z)(hcat(A), hcat(D), X, W)
+            return $(Z)(hcat(A), hcat(D), X, W)
         end
 
-        statedim(s::$Z) = size(s.A,1)
+        statedim(s::$Z) = size(s.A, 1)
         inputdim(::$Z) = 0
         noisedim(s::$Z) = size(s.D, 2)
         stateset(s::$Z) = s.X
@@ -1339,17 +1353,19 @@ NoisyConstrainedLinearDiscreteSystem
 for (Z, AZ) in ((:NoisyLinearControlContinuousSystem, :AbstractContinuousSystem),
                 (:NoisyLinearControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, MTD <: AbstractMatrix{T}} <: $(AZ)
+        struct $(Z){T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},MTD<:AbstractMatrix{T}} <: $(AZ)
             A::MTA
             B::MTB
             D::MTD
-            function $(Z)(A::MTA, B::MTB, D::MTD) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, MTD <: AbstractMatrix{T}}
-                @assert checksquare(A) == size(B, 1) == size(D,1)
-                return new{T, MTA, MTB, MTD}(A, B, D)
+            function $(Z)(A::MTA, B::MTB,
+                          D::MTD) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},
+                                         MTD<:AbstractMatrix{T}}
+                @assert checksquare(A) == size(B, 1) == size(D, 1)
+                return new{T,MTA,MTB,MTD}(A, B, D)
             end
         end
         function $(Z)(A::Number, B::Number, D::Number)
-           return $(Z)(hcat(A), hcat(B), hcat(D))
+            return $(Z)(hcat(A), hcat(B), hcat(D))
         end
 
         statedim(s::$Z) = size(s.A, 1)
@@ -1411,20 +1427,23 @@ NoisyLinearControlDiscreteSystem
 for (Z, AZ) in ((:NoisyConstrainedLinearControlContinuousSystem, :AbstractContinuousSystem),
                 (:NoisyConstrainedLinearControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, MTD <: AbstractMatrix{T}, ST, UT, WT} <: $(AZ)
+        struct $(Z){T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},MTD<:AbstractMatrix{T},ST,UT,
+                    WT} <: $(AZ)
             A::MTA
             B::MTB
             D::MTD
             X::ST
             U::UT
             W::WT
-            function $(Z)(A::MTA, B::MTB, D::MTD, X::ST, U::UT, W::WT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, MTD <: AbstractMatrix{T}, ST, UT, WT}
-                @assert checksquare(A) == size(B, 1) == size(D,1)
-                return new{T, MTA, MTB, MTD, ST, UT, WT}(A, B, D, X, U, W)
+            function $(Z)(A::MTA, B::MTB, D::MTD, X::ST, U::UT,
+                          W::WT) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},
+                                        MTD<:AbstractMatrix{T},ST,UT,WT}
+                @assert checksquare(A) == size(B, 1) == size(D, 1)
+                return new{T,MTA,MTB,MTD,ST,UT,WT}(A, B, D, X, U, W)
             end
         end
         function $(Z)(A::Number, B::Number, D::Number, X, U, W)
-           return $(Z)(hcat(A), hcat(B), hcat(D), X, U, W)
+            return $(Z)(hcat(A), hcat(B), hcat(D), X, U, W)
         end
 
         statedim(s::$Z) = size(s.A, 1)
@@ -1497,18 +1516,21 @@ NoisyConstrainedLinearControlDiscreteSystem
 for (Z, AZ) in ((:NoisyAffineControlContinuousSystem, :AbstractContinuousSystem),
                 (:NoisyAffineControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}, MTD <: AbstractMatrix{T}} <: $(AZ)
+        struct $(Z){T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},VT<:AbstractVector{T},
+                    MTD<:AbstractMatrix{T}} <: $(AZ)
             A::MTA
             B::MTB
             c::VT
             D::MTD
-            function $(Z)(A::MTA, B::MTB, c::VT, D::MTD) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}, MTD <: AbstractMatrix{T}}
-                @assert checksquare(A) == length(c) == size(B, 1) == size(D,1)
-                return new{T, MTA, MTB, VT, MTD}(A, B, c, D)
+            function $(Z)(A::MTA, B::MTB, c::VT,
+                          D::MTD) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},
+                                         VT<:AbstractVector{T},MTD<:AbstractMatrix{T}}
+                @assert checksquare(A) == length(c) == size(B, 1) == size(D, 1)
+                return new{T,MTA,MTB,VT,MTD}(A, B, c, D)
             end
         end
         function $(Z)(A::Number, B::Number, c::Number, D::Number)
-           return $(Z)(hcat(A), hcat(B), vcat(c), hcat(D))
+            return $(Z)(hcat(A), hcat(B), vcat(c), hcat(D))
         end
 
         statedim(s::$Z) = length(s.c)
@@ -1571,7 +1593,8 @@ NoisyAffineControlDiscreteSystem
 for (Z, AZ) in ((:NoisyConstrainedAffineControlContinuousSystem, :AbstractContinuousSystem),
                 (:NoisyConstrainedAffineControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}, MTD <: AbstractMatrix{T}, ST, UT, WT} <: $(AZ)
+        struct $(Z){T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},VT<:AbstractVector{T},
+                    MTD<:AbstractMatrix{T},ST,UT,WT} <: $(AZ)
             A::MTA
             B::MTB
             c::VT
@@ -1579,13 +1602,15 @@ for (Z, AZ) in ((:NoisyConstrainedAffineControlContinuousSystem, :AbstractContin
             X::ST
             U::UT
             W::WT
-            function $(Z)(A::MTA, B::MTB, c::VT, D::MTD, X::ST, U::UT, W::WT) where {T, MTA <: AbstractMatrix{T}, MTB <: AbstractMatrix{T}, VT <: AbstractVector{T}, MTD <: AbstractMatrix{T}, ST, UT, WT}
-                @assert checksquare(A) == length(c) == size(B, 1) == size(D,1)
-                return new{T, MTA, MTB, VT, MTD, ST, UT, WT}(A, B, c, D, X, U, W)
+            function $(Z)(A::MTA, B::MTB, c::VT, D::MTD, X::ST, U::UT,
+                          W::WT) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},
+                                        VT<:AbstractVector{T},MTD<:AbstractMatrix{T},ST,UT,WT}
+                @assert checksquare(A) == length(c) == size(B, 1) == size(D, 1)
+                return new{T,MTA,MTB,VT,MTD,ST,UT,WT}(A, B, c, D, X, U, W)
             end
         end
         function $(Z)(A::Number, B::Number, c::Number, D::Number, X, U, W)
-           return $(Z)(hcat(A), hcat(B), vcat(c), hcat(D), X, U, W)
+            return $(Z)(hcat(A), hcat(B), vcat(c), hcat(D), X, U, W)
         end
 
         statedim(s::$Z) = length(s.c)
@@ -1656,7 +1681,6 @@ of the form:
 """
 NoisyConstrainedAffineControlDiscreteSystem
 
-
 for (Z, AZ) in ((:NoisyBlackBoxControlContinuousSystem, :AbstractContinuousSystem),
                 (:NoisyBlackBoxControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
@@ -1722,11 +1746,10 @@ of the form:
 """
 NoisyBlackBoxControlDiscreteSystem
 
-
 for (Z, AZ) in ((:NoisyConstrainedBlackBoxControlContinuousSystem, :AbstractContinuousSystem),
                 (:NoisyConstrainedBlackBoxControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){FT, ST, UT,WT} <: $(AZ)
+        struct $(Z){FT,ST,UT,WT} <: $(AZ)
             f::FT
             statedim::Int
             inputdim::Int
@@ -1837,21 +1860,22 @@ SecondOrderLinearDiscreteSystem
 for (Z, AZ) in ((:SecondOrderLinearContinuousSystem, :AbstractContinuousSystem),
                 (:SecondOrderLinearDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MTM <: AbstractMatrix{T},
-                       MTC <: AbstractMatrix{T},
-                       MTK <: AbstractMatrix{T}} <: $(AZ)
+        struct $(Z){T,MTM<:AbstractMatrix{T},
+                    MTC<:AbstractMatrix{T},
+                    MTK<:AbstractMatrix{T}} <: $(AZ)
             M::MTM
             C::MTC
             K::MTK
-            function $(Z)(M::MTM, C::MTC, K::MTK) where {T, MTM <: AbstractMatrix{T},
-                                                            MTC <: AbstractMatrix{T},
-                                                            MTK <: AbstractMatrix{T}}
+            function $(Z)(M::MTM, C::MTC,
+                          K::MTK) where {T,MTM<:AbstractMatrix{T},
+                                         MTC<:AbstractMatrix{T},
+                                         MTK<:AbstractMatrix{T}}
                 @assert checksquare(M) == checksquare(C) == checksquare(K)
-                return new{T, MTM, MTC, MTK}(M, C, K)
+                return new{T,MTM,MTC,MTK}(M, C, K)
             end
         end
         function $(Z)(M::Number, C::Number, K::Number)
-             return $(Z)(hcat(M), hcat(C), hcat(K))
+            return $(Z)(hcat(M), hcat(C), hcat(K))
         end
 
         statedim(s::$Z) = size(s.C, 1)
@@ -1913,24 +1937,25 @@ SecondOrderAffineDiscreteSystem
 for (Z, AZ) in ((:SecondOrderAffineContinuousSystem, :AbstractContinuousSystem),
                 (:SecondOrderAffineDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MTM <: AbstractMatrix{T},
-                       MTC <: AbstractMatrix{T},
-                       MTK <: AbstractMatrix{T},
-                       VT <: AbstractVector{T}} <: $(AZ)
+        struct $(Z){T,MTM<:AbstractMatrix{T},
+                    MTC<:AbstractMatrix{T},
+                    MTK<:AbstractMatrix{T},
+                    VT<:AbstractVector{T}} <: $(AZ)
             M::MTM
             C::MTC
             K::MTK
             b::VT
-            function $(Z)(M::MTM, C::MTC, K::MTK, b::VT) where {T, MTM <: AbstractMatrix{T},
-                                                                   MTC <: AbstractMatrix{T},
-                                                                   MTK <: AbstractMatrix{T},
-                                                                   VT <: AbstractVector{T}}
+            function $(Z)(M::MTM, C::MTC, K::MTK,
+                          b::VT) where {T,MTM<:AbstractMatrix{T},
+                                        MTC<:AbstractMatrix{T},
+                                        MTK<:AbstractMatrix{T},
+                                        VT<:AbstractVector{T}}
                 @assert checksquare(M) == checksquare(C) == checksquare(K) == length(b)
-                return new{T, MTM, MTC, MTK, VT}(M, C, K, b)
+                return new{T,MTM,MTC,MTK,VT}(M, C, K, b)
             end
         end
         function $(Z)(M::Number, C::Number, K::Number, b::Number)
-             return $(Z)(hcat(M), hcat(C), hcat(K), [b])
+            return $(Z)(hcat(M), hcat(C), hcat(K), [b])
         end
 
         statedim(s::$Z) = size(s.C, 1)
@@ -1996,30 +2021,31 @@ SecondOrderConstrainedLinearControlDiscreteSystem
 for (Z, AZ) in ((:SecondOrderConstrainedLinearControlContinuousSystem, :AbstractContinuousSystem),
                 (:SecondOrderConstrainedLinearControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MTM <: AbstractMatrix{T},
-                       MTC <: AbstractMatrix{T},
-                       MTK <: AbstractMatrix{T},
-                       MTB <: AbstractMatrix{T},
-                       ST,
-                       UT} <: $(AZ)
+        struct $(Z){T,MTM<:AbstractMatrix{T},
+                    MTC<:AbstractMatrix{T},
+                    MTK<:AbstractMatrix{T},
+                    MTB<:AbstractMatrix{T},
+                    ST,
+                    UT} <: $(AZ)
             M::MTM
             C::MTC
             K::MTK
             B::MTB
             X::ST
             U::UT
-            function $(Z)(M::MTM, C::MTC, K::MTK, B::MTB, X::ST, U::UT) where {T, MTM <: AbstractMatrix{T},
-                                                                                  MTC <: AbstractMatrix{T},
-                                                                                  MTK <: AbstractMatrix{T},
-                                                                                  MTB <: AbstractMatrix{T},
-                                                                                  ST,
-                                                                                  UT}
+            function $(Z)(M::MTM, C::MTC, K::MTK, B::MTB, X::ST,
+                          U::UT) where {T,MTM<:AbstractMatrix{T},
+                                        MTC<:AbstractMatrix{T},
+                                        MTK<:AbstractMatrix{T},
+                                        MTB<:AbstractMatrix{T},
+                                        ST,
+                                        UT}
                 @assert checksquare(M) == checksquare(C) == checksquare(K) == size(B, 1)
-                return new{T, MTM, MTC, MTK, MTB, ST, UT}(M, C, K, B, X, U)
+                return new{T,MTM,MTC,MTK,MTB,ST,UT}(M, C, K, B, X, U)
             end
         end
         function $(Z)(M::Number, C::Number, K::Number, B::Number, X, U)
-             return $(Z)(hcat(M), hcat(C), hcat(K), hcat(B), X, U)
+            return $(Z)(hcat(M), hcat(C), hcat(K), hcat(B), X, U)
         end
 
         statedim(s::$Z) = size(s.C, 1)
@@ -2090,13 +2116,13 @@ SecondOrderConstrainedAffineControlDiscreteSystem
 for (Z, AZ) in ((:SecondOrderConstrainedAffineControlContinuousSystem, :AbstractContinuousSystem),
                 (:SecondOrderConstrainedAffineControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MTM <: AbstractMatrix{T},
-                       MTC <: AbstractMatrix{T},
-                       MTK <: AbstractMatrix{T},
-                       MTB <: AbstractMatrix{T},
-                       VT <: AbstractVector{T},
-                       ST,
-                       UT} <: $(AZ)
+        struct $(Z){T,MTM<:AbstractMatrix{T},
+                    MTC<:AbstractMatrix{T},
+                    MTK<:AbstractMatrix{T},
+                    MTB<:AbstractMatrix{T},
+                    VT<:AbstractVector{T},
+                    ST,
+                    UT} <: $(AZ)
             M::MTM
             C::MTC
             K::MTK
@@ -2104,19 +2130,21 @@ for (Z, AZ) in ((:SecondOrderConstrainedAffineControlContinuousSystem, :Abstract
             d::VT
             X::ST
             U::UT
-            function $(Z)(M::MTM, C::MTC, K::MTK, B::MTB, d::VT, X::ST, U::UT) where {T, MTM <: AbstractMatrix{T},
-                                                                                  MTC <: AbstractMatrix{T},
-                                                                                  MTK <: AbstractMatrix{T},
-                                                                                  MTB <: AbstractMatrix{T},
-                                                                                  VT <: AbstractVector{T},
-                                                                                  ST,
-                                                                                  UT}
-                @assert checksquare(M) == checksquare(C) == checksquare(K) == size(B, 1) == length(d)
-                return new{T, MTM, MTC, MTK, MTB, VT, ST, UT}(M, C, K, B, d, X, U)
+            function $(Z)(M::MTM, C::MTC, K::MTK, B::MTB, d::VT, X::ST,
+                          U::UT) where {T,MTM<:AbstractMatrix{T},
+                                        MTC<:AbstractMatrix{T},
+                                        MTK<:AbstractMatrix{T},
+                                        MTB<:AbstractMatrix{T},
+                                        VT<:AbstractVector{T},
+                                        ST,
+                                        UT}
+                @assert checksquare(M) == checksquare(C) == checksquare(K) == size(B, 1) ==
+                        length(d)
+                return new{T,MTM,MTC,MTK,MTB,VT,ST,UT}(M, C, K, B, d, X, U)
             end
         end
         function $(Z)(M::Number, C::Number, K::Number, B::Number, d::Number, X, U)
-             return $(Z)(hcat(M), hcat(C), hcat(K), hcat(B), [d], X, U)
+            return $(Z)(hcat(M), hcat(C), hcat(K), hcat(B), [d], X, U)
         end
 
         statedim(s::$Z) = size(s.C, 1)
@@ -2191,17 +2219,18 @@ SecondOrderDiscreteSystem
 for (Z, AZ) in ((:SecondOrderContinuousSystem, :AbstractContinuousSystem),
                 (:SecondOrderDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MTM <: AbstractMatrix{T},
-                       MTC <: AbstractMatrix{T},
-                       FI,
-                       FE} <: $(AZ)
+        struct $(Z){T,MTM<:AbstractMatrix{T},
+                    MTC<:AbstractMatrix{T},
+                    FI,
+                    FE} <: $(AZ)
             M::MTM
             C::MTC
             fi::FI
             fe::FE
-            function $(Z)(M::MTM, C::MTC, fi::FI, fe::FE) where {T, MTM <: AbstractMatrix{T}, MTC <: AbstractMatrix{T}, FI, FE}
+            function $(Z)(M::MTM, C::MTC, fi::FI,
+                          fe::FE) where {T,MTM<:AbstractMatrix{T},MTC<:AbstractMatrix{T},FI,FE}
                 @assert checksquare(M) == checksquare(C)
-                return new{T, MTM, MTC, FI, FE}(M, C, fi, fe)
+                return new{T,MTM,MTC,FI,FE}(M, C, fi, fe)
             end
         end
         function $(Z)(M::Number, C::Number, fi, fe)
@@ -2268,12 +2297,12 @@ SecondOrderConstrainedDiscreteSystem
 for (Z, AZ) in ((:SecondOrderConstrainedContinuousSystem, :AbstractContinuousSystem),
                 (:SecondOrderConstrainedDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T, MTM <: AbstractMatrix{T},
-                       MTC <: AbstractMatrix{T},
-                       FI,
-                       FE,
-                       ST,
-                       UT} <: $(AZ)
+        struct $(Z){T,MTM<:AbstractMatrix{T},
+                    MTC<:AbstractMatrix{T},
+                    FI,
+                    FE,
+                    ST,
+                    UT} <: $(AZ)
             M::MTM
             C::MTC
             fi::FI
@@ -2281,13 +2310,14 @@ for (Z, AZ) in ((:SecondOrderConstrainedContinuousSystem, :AbstractContinuousSys
             X::ST
             U::UT
 
-            function $(Z)(M::MTM, C::MTC, fi::FI, fe::FE, X::ST, U::UT) where {T, MTM <: AbstractMatrix{T}, MTC <: AbstractMatrix{T}, FI, FE, ST, UT}
+            function $(Z)(M::MTM, C::MTC, fi::FI, fe::FE, X::ST,
+                          U::UT) where {T,MTM<:AbstractMatrix{T},MTC<:AbstractMatrix{T},FI,FE,ST,UT}
                 @assert checksquare(M) == checksquare(C)
-                return new{T, MTM, MTC, FI, FE, ST, UT}(M, C, fi, fe, X, U)
+                return new{T,MTM,MTC,FI,FE,ST,UT}(M, C, fi, fe, X, U)
             end
         end
         function $(Z)(M::Number, C::Number, fi, fe, X, U)
-             return $(Z)(hcat(M), hcat(C), fi, fe, X, U)
+            return $(Z)(hcat(M), hcat(C), fi, fe, X, U)
         end
 
         statedim(s::$Z) = size(s.M, 1)

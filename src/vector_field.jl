@@ -39,10 +39,10 @@ Return the vector field state of a `ConstrainedContinuousIdentitySystem`.
 A zeros vector of dimension `statedim`.
 """
 function vector_field(system::ConstrainedContinuousIdentitySystem, x::AbstractVector;
-                   check_constraints::Bool=true)
+                      check_constraints::Bool=true)
     !_is_conformable_state(system, x) && _argument_error(:x)
     if check_constraints
-        !_in_stateset(system, x) && _argument_error(:x,:X)
+        !_in_stateset(system, x) && _argument_error(:x, :X)
     end
     return zeros(statedim(system))
 end
@@ -64,8 +64,9 @@ Return the vector field state of an `AbstractContinuousSystem`.
 
 The vector field of the system at state `x`.
 """
-vector_field(system::AbstractContinuousSystem, x::AbstractVector; kwargs...) =
-    _instantiate(system, x; kwargs...)
+function vector_field(system::AbstractContinuousSystem, x::AbstractVector; kwargs...)
+    return _instantiate(system, x; kwargs...)
+end
 
 """
     vector_field(system::AbstractContinuousSystem, x::AbstractVector, u::AbstractVector;
@@ -90,8 +91,10 @@ The vector field of the system at state `x` and applying input `u`.
 
 If the system is not controlled but noisy, the input `u` is interpreted as noise.
     """
-vector_field(system::AbstractContinuousSystem, x::AbstractVector, u::AbstractVector; kwargs...) =
-    _instantiate(system, x, u; kwargs...)
+function vector_field(system::AbstractContinuousSystem, x::AbstractVector, u::AbstractVector;
+                      kwargs...)
+    return _instantiate(system, x, u; kwargs...)
+end
 
 """
     vector_field(system::AbstractContinuousSystem,
@@ -112,8 +115,10 @@ Return the vector field state of an `AbstractContinuousSystem`.
 
 The vector field of the system at state `x` and applying input `u` and noise `w`.
 """
-vector_field(system::AbstractContinuousSystem, x::AbstractVector, u::AbstractVector, w::AbstractVector; kwargs...) =
-    _instantiate(system, x, u, w; kwargs...)
+function vector_field(system::AbstractContinuousSystem, x::AbstractVector, u::AbstractVector,
+                      w::AbstractVector; kwargs...)
+    return _instantiate(system, x, u, w; kwargs...)
+end
 
 # =============================
 # VectorField type for continuous system
@@ -133,7 +138,7 @@ end
 
 # function-like evaluation
 @inline function (V::VectorField)(args...)
-    evaluate(V, args...)
+    return evaluate(V, args...)
 end
 
 function evaluate(V::VectorField, args...)
@@ -231,13 +236,13 @@ end
 #   `[-1, 2], [0, 2], [1, 2], [-1, 3], [0, 3], [1, 3]`
 # - dims: the two dimensions to plot
 @recipe function plot(V::VectorField;
-                      grid_points=[range(-3, stop=3, length=21),
-                                   range(-3, stop=3, length=21)],
+                      grid_points=[range(-3; stop=3, length=21),
+                                   range(-3; stop=3, length=21)],
                       dims=[1, 2])
     seriestype := :quiver
 
     x, y, vx, vy = _position_value_list(V, grid_points, dims[1], dims[2])
     quiver := (vx, vy)
 
-    (x, y)
+    return (x, y)
 end

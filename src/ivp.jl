@@ -32,7 +32,7 @@ julia> inputdim(p)
 0
 ```
 """
-struct InitialValueProblem{S <: AbstractSystem, XT} <: AbstractSystem
+struct InitialValueProblem{S<:AbstractSystem,XT} <: AbstractSystem
     s::S
     x0::XT
 end

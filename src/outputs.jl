@@ -9,7 +9,7 @@ system's type (`ST`) and in the map's type (`MT`).
 - `s`         -- system of type `ST`
 - `outputmap` -- output map of type `MT`
 """
-struct SystemWithOutput{ST<:AbstractSystem, MT<:AbstractMap} <: AbstractSystem
+struct SystemWithOutput{ST<:AbstractSystem,MT<:AbstractMap} <: AbstractSystem
     s::ST
     outputmap::MT
 end

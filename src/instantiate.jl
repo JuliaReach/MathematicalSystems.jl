@@ -48,10 +48,10 @@ The `_instantiate` method generalizes the `successor` of an `AbstractDiscreteSys
 and the `vector_field` of an `AbstractContinuousSystem` into a single method.
 """
 function _instantiate(system::AbstractSystem, x::AbstractVector;
-                     check_constraints::Bool=true)
+                      check_constraints::Bool=true)
     !_is_conformable_state(system, x) && _argument_error(:x)
     if isconstrained(system) && check_constraints
-        !_in_stateset(system, x) && _argument_error(:x,:X)
+        !_in_stateset(system, x) && _argument_error(:x, :X)
     end
 
     if islinear(system)
@@ -96,15 +96,19 @@ The `_instantiate` method generalizes the `successor` of an `AbstractDiscreteSys
 and the `vector_field` of an `AbstractContinuousSystem` into a single method.
 """
 function _instantiate(system::AbstractSystem, x::AbstractVector, u::AbstractVector;
-                     check_constraints::Bool=true)
+                      check_constraints::Bool=true)
     # Figure out if `system` is a controlled or noisy system and set the function
     # `matrix` to either `input_matix` or `noise_matrix`
     if iscontrolled(system) && !isnoisy(system)
-        input_var = :u; input_set = :U; matrix = input_matrix
+        input_var = :u
+        input_set = :U
+        matrix = input_matrix
         _is_conformable = _is_conformable_input
         _in_set = _in_inputset
     elseif isnoisy(system) && !iscontrolled(system)
-        input_var = :w; input_set = :W; matrix = noise_matrix
+        input_var = :w
+        input_set = :W
+        matrix = noise_matrix
         _is_conformable = _is_conformable_noise
         _in_set = _in_noiseset
     else
@@ -115,7 +119,7 @@ function _instantiate(system::AbstractSystem, x::AbstractVector, u::AbstractVect
     !_is_conformable(system, u) && _argument_error(input_var)
 
     if isconstrained(system) && check_constraints
-        !_in_stateset(system, x) && _argument_error(:x,:X)
+        !_in_stateset(system, x) && _argument_error(:x, :X)
         !_in_set(system, u) && _argument_error(input_var, input_set)
     end
 
@@ -158,29 +162,30 @@ The result of applying the system to state `x`, input `u` and noise `w`.
 The `_instantiate` method generalizes the `successor` of an `AbstractDiscreteSystem`
 and the `vector_field` of an `AbstractContinuousSystem` into a single method.
 """
-function _instantiate(system::AbstractSystem, x::AbstractVector, u::AbstractVector, w::AbstractVector;
-                     check_constraints::Bool=true)
+function _instantiate(system::AbstractSystem, x::AbstractVector, u::AbstractVector,
+                      w::AbstractVector;
+                      check_constraints::Bool=true)
     !_is_conformable_state(system, x) && _argument_error(:x)
     !_is_conformable_input(system, u) && _argument_error(:u)
     !_is_conformable_noise(system, w) && _argument_error(:w)
 
     if isconstrained(system) && check_constraints
-        !_in_stateset(system, x) && _argument_error(:x,:X)
-        !_in_inputset(system, u) && _argument_error(:u,:U)
-        !_in_noiseset(system, w) && _argument_error(:w,:W)
+        !_in_stateset(system, x) && _argument_error(:x, :X)
+        !_in_inputset(system, u) && _argument_error(:u, :U)
+        !_in_noiseset(system, w) && _argument_error(:w, :W)
     end
 
     if islinear(system)
         return state_matrix(system) * x + input_matrix(system) * u + noise_matrix(system) * w
 
     elseif isaffine(system)
-        return state_matrix(system) * x + affine_term(system) + input_matrix(system) * u + noise_matrix(system) * w
+        return state_matrix(system) * x + affine_term(system) + input_matrix(system) * u +
+               noise_matrix(system) * w
 
     elseif ispolynomial(system) || isblackbox(system)
         return mapping(system)(x, u, w)
 
     else
         throw(ArgumentError("_instantiate not defined for type `$(typename(system))`"))
-
     end
 end

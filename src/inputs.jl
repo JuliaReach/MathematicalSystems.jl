@@ -70,7 +70,7 @@ struct ConstantInput{UT} <: AbstractInput
 end
 
 Base.eltype(::Type{ConstantInput{UT}}) where {UT} = UT
-Base.iterate(input::ConstantInput, state::Union{Int, Nothing}=nothing) = (input.U, nothing)
+Base.iterate(input::ConstantInput, state::Union{Int,Nothing}=nothing) = (input.U, nothing)
 Base.IteratorSize(::Type{<:ConstantInput}) = Base.IsInfinite()
 Base.IteratorEltype(::Type{<:ConstantInput}) = Base.HasEltype()
 
@@ -177,11 +177,11 @@ julia> map(x->2*x, v)
 VaryingInput{Rational{Int64}, Vector{Rational{Int64}}}(Rational{Int64}[-1//1, 1//1])
 ```
 """
-struct VaryingInput{UT, VUT<:AbstractVector{UT}} <: AbstractInput
+struct VaryingInput{UT,VUT<:AbstractVector{UT}} <: AbstractInput
     U::VUT  # input sequence
 end
 
-Base.eltype(::Type{VaryingInput{UT, VUT}}) where {UT, VUT} = UT
+Base.eltype(::Type{VaryingInput{UT,VUT}}) where {UT,VUT} = UT
 
 function Base.iterate(input::VaryingInput, state::Int=1)
     if state > length(input.U)

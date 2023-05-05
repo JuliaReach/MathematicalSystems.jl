@@ -73,9 +73,9 @@ To get the complementary type of system type, use
     system_type = type.parameters[1]
     type_string = string(system_type)
     if supertype(system_type) == AbstractDiscreteSystem
-        type_string = replace(type_string, "Discrete"=>"Continuous")
+        type_string = replace(type_string, "Discrete" => "Continuous")
     elseif supertype(system_type) == AbstractContinuousSystem
-        type_string = replace(type_string, "Continuous"=>"Discrete")
+        type_string = replace(type_string, "Continuous" => "Discrete")
     else
         error("$system_type <: $(supertype(system_type)) is neither discrete nor continuous")
     end

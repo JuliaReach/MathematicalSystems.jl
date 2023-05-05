@@ -101,11 +101,10 @@ Returns a discretization of the input system `system` with discretization method
 function discretize(system::AbstractContinuousSystem, ΔT::Real,
                     algorithm::AbstractDiscretizationAlgorithm=ExactDiscretization(),
                     constructor=_default_complementary_constructor(system))
-
     (!isaffine(system)) && throw(ArgumentError("system needs to be affine"))
 
-    sets(x) = x ∈ [:X,:U,:W]
-    matrices(x) = x ∈ [:A,:B,:b,:c,:D]
+    sets(x) = x ∈ [:X, :U, :W]
+    matrices(x) = x ∈ [:A, :B, :b, :c, :D]
 
     # get all fields from system
     fields = collect(fieldnames(typeof(system)))
@@ -168,14 +167,14 @@ function _discretize(::ExactDiscretization, ΔT::Real,
                      B::AbstractMatrix,
                      c::AbstractVector,
                      D::AbstractMatrix)
-    if  rank(A) == size(A, 1)
-        A_d = exp(A*ΔT)
-        Matr = inv(A)*(A_d - I)
-        B_d = Matr*B
-        c_d = Matr*c
-        D_d = Matr*D
+    if rank(A) == size(A, 1)
+        A_d = exp(A * ΔT)
+        Matr = inv(A) * (A_d - I)
+        B_d = Matr * B
+        c_d = Matr * c
+        D_d = Matr * D
     else
-        error("exact discretization for singular state matrix, i.e. A is non-invertible,"*
+        error("exact discretization for singular state matrix, i.e. A is non-invertible," *
               " not implemented yet, please use algorithm `EulerDiscretization`")
     end
     return [A_d, B_d, c_d, D_d]
@@ -186,10 +185,10 @@ function _discretize(::EulerDiscretization, ΔT::Real,
                      B::AbstractMatrix,
                      c::AbstractVector,
                      D::AbstractMatrix)
-    A_d = I + ΔT*A
-    B_d = ΔT*B
-    c_d = ΔT*c
-    D_d = ΔT*D
+    A_d = I + ΔT * A
+    B_d = ΔT * B
+    c_d = ΔT * c
+    D_d = ΔT * D
     return [A_d, B_d, c_d, D_d]
 end
 
@@ -215,7 +214,7 @@ See [`discretize`](@ref) for more details.
 """
 function _discretize(algorithm::AbstractDiscretizationAlgorithm, ΔT::Real,
                      A::AbstractMatrix)
-    n = size(A,1)
+    n = size(A, 1)
     mzero = spzeros(n, n)
     vzero = spzeros(n)
     A_d, _, _, _ = _discretize(algorithm, ΔT, A, mzero, vzero, mzero)
@@ -249,7 +248,7 @@ See [`discretize`](@ref) for more details.
 """
 function _discretize(algorithm::AbstractDiscretizationAlgorithm, ΔT::Real,
                      A::AbstractMatrix, B::AbstractMatrix)
-    n = size(A,1)
+    n = size(A, 1)
     mzero = spzeros(n, n)
     vzero = spzeros(n)
     A_d, B_d, _, _ = _discretize(algorithm, ΔT, A, B, vzero, mzero)
@@ -279,8 +278,8 @@ Returns a vector containing the discretized input arguments `A` and `c`.
 See [`discretize`](@ref) for more details.
 """
 function _discretize(algorithm::AbstractDiscretizationAlgorithm, ΔT::Real,
-                     A::AbstractMatrix,c::AbstractVector)
-    n = size(A,1)
+                     A::AbstractMatrix, c::AbstractVector)
+    n = size(A, 1)
     mzero = spzeros(n, n)
     A_d, _, c_d, _ = _discretize(algorithm, ΔT, A, mzero, c, mzero)
     return [A_d, c_d]
@@ -311,7 +310,7 @@ See [`discretize`](@ref) for more details.
 """
 function _discretize(algorithm::AbstractDiscretizationAlgorithm, ΔT::Real,
                      A::AbstractMatrix, B::AbstractMatrix, c::AbstractVector)
-    n = size(A,1)
+    n = size(A, 1)
     mzero = spzeros(n, n)
     A_d, B_d, c_d, _ = _discretize(algorithm, ΔT, A, B, c, mzero)
     return [A_d, B_d, c_d]
@@ -342,7 +341,7 @@ See [`discretize`](@ref) for more details.
 """
 function _discretize(algorithm::AbstractDiscretizationAlgorithm, ΔT::Real,
                      A::AbstractMatrix, B::AbstractMatrix, D::AbstractMatrix)
-    n = size(A,1)
+    n = size(A, 1)
     vzero = spzeros(n)
     A_d, B_d, _, D_d = _discretize(algorithm, ΔT, A, B, vzero, D)
     return [A_d, B_d, D_d]

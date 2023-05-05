@@ -15,7 +15,7 @@ end
 end
 
 @testset "Linear map" begin
-    A = [1.01; 1 -1]
+    A = [1.0 1; 1 -1]
     m = LinearMap(A)
     @test outputdim(m) == 2
     @test islinear(m) && isaffine(m)
@@ -29,7 +29,7 @@ end
 end
 
 @testset "Constrained linear map" begin
-    A = [1.01; 1 -1]
+    A = [1.0 1; 1 -1]
     X = Line([1.0, -1], 0.0) # line x = y
     m = ConstrainedLinearMap(A, X)
     @test outputdim(m) == 2
@@ -45,7 +45,7 @@ end
 end
 
 @testset "Affine map" begin
-    A = [1.01; 1 -1]
+    A = [1.0 1; 1 -1]
     b = [0.5, 0.5]
     m = AffineMap(A, b)
     @test outputdim(m) == 2
@@ -61,7 +61,7 @@ end
 end
 
 @testset "Constrained affine map" begin
-    A = [1.01; 1 -1]
+    A = [1.0 1; 1 -1]
     b = [0.5, 0.5]
     X = Line([1.0, -1], 0.0) # line x = y
     m = ConstrainedAffineMap(A, b, X)
@@ -79,7 +79,7 @@ end
 end
 
 @testset "Linear control map" begin
-    A = [1.01; 1 -1]
+    A = [1.0 1; 1 -1]
     B = Matrix([0.5 1.5]')
     m = LinearControlMap(A, B)
     @test outputdim(m) == 2
@@ -92,7 +92,7 @@ end
 end
 
 @testset "Constrained linear control map" begin
-    A = [1.01; 1 -1]
+    A = [1.0 1; 1 -1]
     B = Matrix([0.5 1.5]')
     X = Line([1.0, -1], 0.0) # line x = y
     U = Interval(-1, 1)
@@ -108,7 +108,7 @@ end
 end
 
 @testset "Affine control map" begin
-    A = [1.01; 1 -1]
+    A = [1.0 1; 1 -1]
     B = Matrix([0.5 1.5]')
     c = [0.5, 0.5]
     m = AffineControlMap(A, B, c)
@@ -122,7 +122,7 @@ end
 end
 
 @testset "Constrained affine control map" begin
-    A = [1.01; 1 -1]
+    A = [1.0 1; 1 -1]
     B = Matrix([0.5 1.5]')
     X = Line([1.0, -1], 0.0) # line x = y
     c = [0.5, 0.5]

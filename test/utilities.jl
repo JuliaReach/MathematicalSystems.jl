@@ -1,5 +1,5 @@
 @testset "Equality of systems" begin
-    A = [1.01; 1 -1]
+    A = [1.0 1; 1 -1]
     A2 = [1.0 1+1e-8; 1 -1]
     c = [1.0; 1.0]
     X = Line([1.0, -1], 0.0) # line x = y

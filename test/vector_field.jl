@@ -1,8 +1,8 @@
 @testset "vector_field method and `VectorField` for continuous systems" begin
-    A = [1.01; 1 -1]
+    A = [1.0 1; 1 -1]
     B = Matrix([0.5 1.5]')
     c = [0.1; 0.3]
-    D = [1.01 1; 1 -1 1]
+    D = [1.0 1 1; 1 -1 1]
     X = Hyperrectangle([0.0, 0.3], [2.0, 2.0])
     U = Interval(0.0, 1.0)
     W = Hyperrectangle([0.0, 0.3, 0.5], [2.0, 2.0, 2.0])
@@ -96,10 +96,10 @@
 end
 
 @testset "vector_field exception handling" begin
-    A = [1.01; 1 -1]
+    A = [1.0 1; 1 -1]
     B = Matrix([0.5 1.5]')
     c = [0.1; 0.3]
-    D = [1.01 1; 1 -1 1]
+    D = [1.0 1 1; 1 -1 1]
     X = Hyperrectangle([0.0, 0.3], [2.0, 2.0])
     U = Interval(0.0, 1.0)
     W = Hyperrectangle([0.0, 0.3, 0.5], [2.0, 2.0, 2.0])

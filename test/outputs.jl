@@ -1,5 +1,5 @@
 @testset "Unconstrained LTI system" begin
-    A = [1.01; 1 -1]
+    A = [1.0 1; 1 -1]
     B = Matrix([0.5 1.5]')
     C = Matrix([0.5 1.5])
     D = Matrix([1.0]')
@@ -24,7 +24,7 @@
 end
 
 @testset "Constrained LTI system" begin
-    A = [1.01; 1 -1]
+    A = [1.0 1; 1 -1]
     B = Matrix([0.5 1.5]')
     C = Matrix([0.5 1.5])
     D = Matrix([1.0]')

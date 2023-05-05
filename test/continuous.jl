@@ -1,9 +1,9 @@
 # linear systems
-E = [0.01; 1 0]
-A = [1.01; 1 -1]
+E = [0.0 1; 1 0]
+A = [1.0 1; 1 -1]
 B = Matrix([0.5 1.5]')
 C = [1.0; 1.0]
-D = [1.02; 0 1]
+D = [1.0 2; 0 1]
 X = Line([1.0, -1], 0.0) # line x = y
 U = Interval(0.9, 1.1)
 W = BallInf(zeros(2), 2.0)
@@ -636,9 +636,9 @@ end
 end
 
 @testset "Second order linear systems" begin
-    M = [1.00; 0 2]
+    M = [1.0 0; 0 2]
     C = [0.1 0; 0 0.2]
-    K = [2.01; 0 1]
+    K = [2.0 1; 0 1]
     b = [1.0, 0]
     B = hcat([1.0, 0])
     d = [1.0, 0]
@@ -663,7 +663,7 @@ end
 end
 
 @testset "Second order systems" begin
-    M = [1.00; 0 2]
+    M = [1.0 0; 0 2]
     C = [0.1 0; 0 0.2]
     fi(x) = x + x .^ 2 + ones(2)
     fe = zeros(2)

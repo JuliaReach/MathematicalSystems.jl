@@ -201,7 +201,7 @@ end
     @test @system(u⁺ = u, dim:3, u ∈ U) == ConstrainedDiscreteIdentitySystem(3, U)
     @test @system(x1⁺ = x1, dim = 3, x1 ∈ X1) == ConstrainedDiscreteIdentitySystem(3, X1)
 
-    # emoij support 😉
+    # emoji support 😉
     🚈 = X
     sys = @system(👨⁺ = 👨, dim:2, 👨 ∈ 🚈)
     @test sys == ConstrainedDiscreteIdentitySystem(2, X)

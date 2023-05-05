@@ -32,7 +32,7 @@ end
 @testset "Outputs" begin
     include("outputs.jl")
 end
-@testset "Succesor of discrete system" begin
+@testset "Successor of discrete system" begin
     include("successor.jl")
 end
 @testset "Vector field of continuous system" begin
@@ -41,7 +41,7 @@ end
 @testset "Discretize continuous system" begin
     include("discretize.jl")
 end
-@testset "@sytem macro" begin
+@testset "@system macro" begin
     include("@system.jl")
 end
 @testset "@ivp macro" begin

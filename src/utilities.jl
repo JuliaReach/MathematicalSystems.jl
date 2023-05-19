@@ -77,7 +77,7 @@ To get the complementary type of system type, use
     elseif supertype(system_type) == AbstractContinuousSystem
         type_string = replace(type_string, "Continuous" => "Discrete")
     else
-        error("$system_type <: $(supertype(system_type)) is neither discrete nor continuous")
+        throw(ArgumentError("$system_type <: $(supertype(system_type)) is neither discrete nor continuous"))
     end
     return Meta.parse(type_string)
 end

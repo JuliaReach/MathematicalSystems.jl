@@ -1,3 +1,5 @@
+using MathematicalSystems: mapping
+
 # linear systems
 E = [0.0 1; 1 0]
 A = [1.0 1; 1 -1]
@@ -212,6 +214,9 @@ end
     @test statedim(s) == 2
     @test inputdim(s) == 1
     @test noisedim(s) == 0
+    @test state_matrix(s) == A
+    @test input_matrix(s) == B
+    @test affine_term(s) == c
     for s in [s, typeof(s)]
         @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
@@ -319,13 +324,13 @@ end
     @test isnothing(input_matrix(s))
     @test isnothing(affine_term(s))
     @test isnothing(noise_matrix(s))
-    # @test s.p == p
     @test statedim(s) == sdp
     @test inputdim(s) == 0
     @test noisedim(s) == 0
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
+    @test mapping(s) == [p]
     for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
@@ -352,6 +357,7 @@ end
     @test stateset(s) == X
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
+    @test mapping(s) == [p]
     for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
@@ -435,6 +441,7 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
+    @test mapping(s) == vanderpol_controlled!
     for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
@@ -610,13 +617,14 @@ end
     @test isnothing(stateset(s))
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
+    @test mapping(s) == add_one
     for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
     end
 end
 
-@testset "Noisy Continuous constrained control blackbox system" begin
+@testset "Noisy continuous constrained control blackbox system" begin
     s = NoisyConstrainedBlackBoxControlContinuousSystem(add_one, sd, id, nd, X, U, W)
     @test isnothing(state_matrix(s))
     @test isnothing(input_matrix(s))
@@ -635,7 +643,7 @@ end
     end
 end
 
-@testset "Second order linear systems" begin
+@testset "Second-order linear and affine systems" begin
     M = [1.0 0; 0 2]
     C = [0.1 0; 0 0.2]
     K = [2.0 1; 0 1]
@@ -644,36 +652,134 @@ end
     d = [1.0, 0]
     X = BallInf(zeros(2), 1.0)
     U = Singleton(ones(2))
+    X1 = BallInf(zeros(1), 1.0)
+    U1 = Singleton(ones(1))
 
-    sys = SecondOrderLinearContinuousSystem(M, C, K)
-    @test mass_matrix(sys) == M && viscosity_matrix(sys) == C && stiffness_matrix(sys) == K
+    s = SecondOrderLinearContinuousSystem(M, C, K)
+    @test mass_matrix(s) == M && viscosity_matrix(s) == C && stiffness_matrix(s) == K
+    @test statedim(s) == 2
+    @test inputdim(s) == 0
+    @test noisedim(s) == 0
+    @test affine_term(s) == zeros(2)
+    @test islinear(s)
+    @test isaffine(s)
+    @test !ispolynomial(s)
+    @test !isnoisy(s)
+    @test !iscontrolled(s)
+    @test !isconstrained(s)
 
-    sys = SecondOrderAffineContinuousSystem(M, C, K, b)
-    @test mass_matrix(sys) == M && viscosity_matrix(sys) == C && stiffness_matrix(sys) == K
-    @test affine_term(sys) == b
+    s = SecondOrderLinearContinuousSystem(2, 3, 4)
+    @test mass_matrix(s) == hcat(2)
+    @test viscosity_matrix(s) == hcat(3)
+    @test stiffness_matrix(s) == hcat(4)
 
-    sys = SecondOrderConstrainedLinearControlContinuousSystem(M, C, K, B, X, U)
-    @test mass_matrix(sys) == M && viscosity_matrix(sys) == C && stiffness_matrix(sys) == K
-    @test input_matrix(sys) == B && stateset(sys) == X && inputset(sys) == U
+    s = SecondOrderAffineContinuousSystem(M, C, K, b)
+    @test mass_matrix(s) == M && viscosity_matrix(s) == C && stiffness_matrix(s) == K
+    @test statedim(s) == 2
+    @test inputdim(s) == 0
+    @test noisedim(s) == 0
+    @test affine_term(s) == b
+    @test islinear(s)
+    @test isaffine(s)
+    @test !ispolynomial(s)
+    @test !isnoisy(s)
+    @test !iscontrolled(s)
+    @test !isconstrained(s)
 
-    sys = SecondOrderConstrainedAffineControlContinuousSystem(M, C, K, B, d, X, U)
-    @test mass_matrix(sys) == M && viscosity_matrix(sys) == C && stiffness_matrix(sys) == K
-    @test affine_term(sys) == d && input_matrix(sys) == B && stateset(sys) == X &&
-          inputset(sys) == U
+    s = SecondOrderAffineContinuousSystem(2, 3, 4, 6)
+    @test mass_matrix(s) == hcat(2)
+    @test viscosity_matrix(s) == hcat(3)
+    @test stiffness_matrix(s) == hcat(4)
+    @test affine_term(s) == [6]
+
+    s = SecondOrderConstrainedLinearControlContinuousSystem(M, C, K, B, X, U)
+    @test mass_matrix(s) == M && viscosity_matrix(s) == C && stiffness_matrix(s) == K
+    @test input_matrix(s) == B && stateset(s) == X && inputset(s) == U
+    @test statedim(s) == 2
+    @test inputdim(s) == 1
+    @test noisedim(s) == 0
+    @test affine_term(s) == zeros(2)
+    @test islinear(s)
+    @test isaffine(s)
+    @test !ispolynomial(s)
+    @test !isnoisy(s)
+    @test iscontrolled(s)
+    @test isconstrained(s)
+
+    s = SecondOrderConstrainedLinearControlContinuousSystem(2, 3, 4, 5, X1, U1)
+    @test mass_matrix(s) == hcat(2)
+    @test viscosity_matrix(s) == hcat(3)
+    @test stiffness_matrix(s) == hcat(4)
+    @test stateset(s) == X1
+    @test inputset(s) == U1
+
+    s = SecondOrderConstrainedAffineControlContinuousSystem(M, C, K, B, d, X, U)
+    @test mass_matrix(s) == M && viscosity_matrix(s) == C && stiffness_matrix(s) == K
+    @test affine_term(s) == d && input_matrix(s) == B && stateset(s) == X &&
+          inputset(s) == U
+    @test statedim(s) == 2
+    @test inputdim(s) == 1
+    @test noisedim(s) == 0
+    @test affine_term(s) == d
+    @test islinear(s)
+    @test isaffine(s)
+    @test !ispolynomial(s)
+    @test !isnoisy(s)
+    @test iscontrolled(s)
+    @test isconstrained(s)
+
+    s = SecondOrderConstrainedAffineControlContinuousSystem(2, 3, 4, 5, 6, X1, U1)
+    @test mass_matrix(s) == hcat(2)
+    @test viscosity_matrix(s) == hcat(3)
+    @test stiffness_matrix(s) == hcat(4)
+    @test affine_term(s) == [6]
+    @test stateset(s) == X1
+    @test inputset(s) == U1
 end
 
-@testset "Second order systems" begin
+@testset "Second-order polynomial systems" begin
     M = [1.0 0; 0 2]
     C = [0.1 0; 0 0.2]
     fi(x) = x + x .^ 2 + ones(2)
     fe = zeros(2)
-    sys = SecondOrderContinuousSystem(M, C, fi, fe)
-    @test mass_matrix(sys) == M && viscosity_matrix(sys) == C
+    s = SecondOrderContinuousSystem(M, C, fi, fe)
+    @test mass_matrix(s) == M && viscosity_matrix(s) == C
+    @test statedim(s) == 2
+    @test isnothing(inputdim(s))
+    @test noisedim(s) == 0
+    @test isnothing(affine_term(s))
+    @test !islinear(s)
+    @test !isaffine(s)
+    @test !ispolynomial(s)
+    @test !isnoisy(s)
+    @test !iscontrolled(s)
+    @test !isconstrained(s)
+
+    s = SecondOrderContinuousSystem(2, 3, fi, fe)
+    @test mass_matrix(s) == hcat(2)
+    @test viscosity_matrix(s) == hcat(3)
+    @test s.fi == fi && s.fe == fe
 
     fe = zeros(2)
     X = Universe(2)
     U = Universe(2)
-    sys = SecondOrderConstrainedContinuousSystem(M, C, fi, fe, X, U)
-    @test mass_matrix(sys) == M && viscosity_matrix(sys) == C
-    @test stateset(sys) === X && inputset(sys) === U
+    s = SecondOrderConstrainedContinuousSystem(M, C, fi, fe, X, U)
+    @test mass_matrix(s) == M && viscosity_matrix(s) == C
+    @test stateset(s) === X && inputset(s) === U
+    @test statedim(s) == 2
+    @test isnothing(inputdim(s))
+    @test noisedim(s) == 0
+    @test isnothing(affine_term(s))
+    @test !islinear(s)
+    @test !isaffine(s)
+    @test !ispolynomial(s)
+    @test !isnoisy(s)
+    @test !iscontrolled(s)
+    @test isconstrained(s)
+
+    s = SecondOrderConstrainedContinuousSystem(2, 3, fi, fe, X, U)
+    @test mass_matrix(s) == hcat(2)
+    @test viscosity_matrix(s) == hcat(3)
+    @test stateset(s) === X && inputset(s) === U
+    @test s.fi == fi && s.fe == fe
 end

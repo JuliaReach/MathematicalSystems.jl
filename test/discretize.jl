@@ -51,6 +51,8 @@ end
         discretized_with_method = discretize(CTYPES[i](CValues[i]...), ΔT, algorithm)
         @test discretized_with_method == discretized_manually[i]
     end
+    s = LinearContinuousSystem(hcat([0]))
+    @test_throws ArgumentError discretize(s, ΔT, algorithm)
 end
 
 @testset "Euler discretization of affine continous systems" begin

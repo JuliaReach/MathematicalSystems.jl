@@ -7,6 +7,7 @@
     @test statedim(s) == 2
     @test inputdim(s) == 1
     @test outputmap(s) isa LinearControlMap
+    @test outputdim(s) == 1
 
     # check alias
     s = LTISystem(A, B, C, D)
@@ -33,7 +34,9 @@ end
     s = LinearTimeInvariantSystem(A, B, C, D, X, U)
     @test statedim(s) == 2
     @test inputdim(s) == 1
+    @test inputset(s) == U
     @test outputmap(s) isa ConstrainedLinearControlMap
+    @test outputdim(s) == 1
 
     # check alias
     s = LTISystem(A, B, C, D, X, U)

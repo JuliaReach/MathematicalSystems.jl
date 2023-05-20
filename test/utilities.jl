@@ -1,3 +1,5 @@
+using MathematicalSystems: _complementary_type
+
 @testset "Equality of systems" begin
     A = [1.0 1; 1 -1]
     A2 = [1.0 1+1e-8; 1 -1]
@@ -38,4 +40,10 @@
     @test ivp1 ≈ ivp3
     @test !(ivp1 ≈ ivp4)
     @test ivp1 ≈ ivp5
+end
+
+@testset "Complementary types" begin
+    @test _complementary_type(ConstrainedAffineDiscreteSystem) == ConstrainedAffineContinuousSystem
+    @test _complementary_type(ConstrainedAffineContinuousSystem) == ConstrainedAffineDiscreteSystem
+    @test_throws ArgumentError _complementary_type(AbstractSystem)
 end

@@ -21,9 +21,9 @@
     end
 end
 
-# ====================
+# ===========================
 # Generic _instantiate method
-# ====================
+# ===========================
 
 """
     _instantiate(system::AbstractSystem, x::AbstractVector;

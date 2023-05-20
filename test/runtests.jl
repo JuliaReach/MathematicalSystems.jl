@@ -14,13 +14,16 @@ const SECOND_ORDER_CTYPES = [SecondOrderAffineContinuousSystem,
 @testset "Utilities" begin
     include("utilities.jl")
 end
-@testset "Continuous Systems" begin
+@testset "Abstract systems" begin
+    include("abstract.jl")
+end
+@testset "Continuous systems" begin
     include("continuous.jl")
 end
-@testset "Discrete Systems" begin
+@testset "Discrete systems" begin
     include("discrete.jl")
 end
-@testset "Identity Multiple" begin
+@testset "Identity multiple" begin
     include("identity.jl")
 end
 @testset "Inputs" begin
@@ -40,6 +43,12 @@ end
 end
 @testset "Discretize continuous system" begin
     include("discretize.jl")
+end
+@testset "Instantiate" begin
+    include("instantiate.jl")
+end
+@testset "Initial-value problem" begin
+    include("ivp.jl")
 end
 @testset "@system macro" begin
     include("@system.jl")

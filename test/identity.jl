@@ -1,8 +1,11 @@
 @testset "Creation of an identity multiple" begin
     I1 = IdentityMultiple(1.0I, 1)
+    @test_throws ArgumentError IdentityMultiple(1.0I, 0)
     @test size(I1) == (1, 1)
     @test I1[1, 1] == 1.0
     @test_throws BoundsError I1[1, 2]
+    @test_throws BoundsError I1[3]
+    @test_throws ErrorException I1[1] = 2
 
     for n in [2, 1000]
         In = IdentityMultiple(1.0I, n) # same as IdentityMultiple(UniformScaling(1.0), n))
@@ -12,21 +15,32 @@
 
     @test Id(3, 4) == IdentityMultiple(4I, 3)
 
+    @test IdentityMultiple(1.0, 2) == IdentityMultiple(1.0I, 2)
+
     @test_throws ArgumentError Id(-1)
     @test_throws ArgumentError Id(0, 1)
+
+    # printing
+    show(IOBuffer(), MIME"text/plain"(), I1)
 end
 
 @testset "Operations between identity multiples" begin
     I2 = IdentityMultiple(UniformScaling(1.0), 2)
     I10 = IdentityMultiple(UniformScaling(1.0), 10)
 
+    @test -I2 == IdentityMultiple(-1.0I, 2)
     @test (I2 + I2).M == UniformScaling(2.0)
-    @test (10.0 * I2).M == UniformScaling(10.0)
+    @test (10.0 * I2).M == (I2 * 10.0).M == UniformScaling(10.0)
     @test (I2 * I2).M == I2.M
+    @test IdentityMultiple(6.0I, 2) / 3 == IdentityMultiple(2.0I, 2)
     @test (-I2).M == UniformScaling(-1.0)
 
     @test_throws AssertionError I2 + I10
     @test_throws AssertionError I2 * I10
+
+    s2 = IdentityMultiple(UniformScaling(2.0), 2)
+    s3 = UniformScaling(3.0)
+    @test s2 * s3 == s3 * s2 == IdentityMultiple(6.0I, 2)
 end
 
 @testset "Create a continuous system with one matrix being a multiple of the identity" begin
@@ -52,7 +66,9 @@ end
     A = I2 * rand(2, 2)
     @test A isa Matrix && size(A) == (2, 2)
 
-    @test Id(2) / I == IdentityMultiple(1.0, 2)
+    @test A * I2 == A
+    @test A / I2 == A
+    @test I2 / I == I / I2 == IdentityMultiple(1.0, 2)
     @test Id(2) - Id(2) == 0.0Id(2)
 
     @test Id(2) + [3 3; 1 2] == [4 3; 1 3.0]

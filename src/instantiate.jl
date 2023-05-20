@@ -64,7 +64,7 @@ function _instantiate(system::AbstractSystem, x::AbstractVector;
         return mapping(system)(x)
 
     else
-        throw(ArgumentError("_instantiate not defined for type `$(typename(sys))`"))
+        throw(ArgumentError("_instantiate not defined for type `$(typename(system))`"))
     end
 end
 

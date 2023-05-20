@@ -2049,7 +2049,7 @@ for (Z, AZ) in ((:SecondOrderConstrainedLinearControlContinuousSystem, :Abstract
         end
 
         statedim(s::$Z) = size(s.C, 1)
-        inputdim(::$Z) = size(s.B, 2)
+        inputdim(s::$Z) = size(s.B, 2)
         noisedim(::$Z) = 0
         mass_matrix(s::$Z) = s.M
         viscosity_matrix(s::$Z) = s.C
@@ -2148,7 +2148,7 @@ for (Z, AZ) in ((:SecondOrderConstrainedAffineControlContinuousSystem, :Abstract
         end
 
         statedim(s::$Z) = size(s.C, 1)
-        inputdim(::$Z) = size(s.B, 2)
+        inputdim(s::$Z) = size(s.B, 2)
         noisedim(::$Z) = 0
         mass_matrix(s::$Z) = s.M
         viscosity_matrix(s::$Z) = s.C

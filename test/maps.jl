@@ -1,5 +1,7 @@
 @testset "Identity map" begin
     m = IdentityMap(2)
+    @test statedim(m) == 2
+    @test inputdim(m) == 0
     @test outputdim(m) == 2
     @test islinear(m) && isaffine(m)
     @test apply(m, ones(2)) == ones(2)
@@ -8,6 +10,8 @@ end
 @testset "Constrained identity map" begin
     X = Line([1.0, -1], 0.0) # line x = y
     m = ConstrainedIdentityMap(2, X)
+    @test statedim(m) == 2
+    @test inputdim(m) == 0
     @test outputdim(m) == 2
     @test islinear(m) && isaffine(m)
     @test stateset(m) == X
@@ -17,6 +21,8 @@ end
 @testset "Linear map" begin
     A = [1.0 1; 1 -1]
     m = LinearMap(A)
+    @test statedim(m) == 2
+    @test inputdim(m) == 0
     @test outputdim(m) == 2
     @test islinear(m) && isaffine(m)
 
@@ -32,6 +38,8 @@ end
     A = [1.0 1; 1 -1]
     X = Line([1.0, -1], 0.0) # line x = y
     m = ConstrainedLinearMap(A, X)
+    @test statedim(m) == 2
+    @test inputdim(m) == 0
     @test outputdim(m) == 2
     @test stateset(m) == X
     @test islinear(m) && isaffine(m)
@@ -48,6 +56,8 @@ end
     A = [1.0 1; 1 -1]
     b = [0.5, 0.5]
     m = AffineMap(A, b)
+    @test statedim(m) == 2
+    @test inputdim(m) == 0
     @test outputdim(m) == 2
 
     # applying the affine map on a vector
@@ -65,6 +75,8 @@ end
     b = [0.5, 0.5]
     X = Line([1.0, -1], 0.0) # line x = y
     m = ConstrainedAffineMap(A, b, X)
+    @test statedim(m) == 2
+    @test inputdim(m) == 0
     @test outputdim(m) == 2
     @test stateset(m) == X
 
@@ -82,6 +94,8 @@ end
     A = [1.0 1; 1 -1]
     B = Matrix([0.5 1.5]')
     m = LinearControlMap(A, B)
+    @test statedim(m) == 2
+    @test inputdim(m) == 1
     @test outputdim(m) == 2
     @test islinear(m) && isaffine(m)
 
@@ -97,7 +111,10 @@ end
     X = Line([1.0, -1], 0.0) # line x = y
     U = Interval(-1, 1)
     m = ConstrainedLinearControlMap(A, B, X, U)
+    @test statedim(m) == 2
+    @test inputdim(m) == 1
     @test outputdim(m) == 2
+    @test inputset(m) == U
     @test islinear(m) && isaffine(m)
 
     # applying the affine map on a vector
@@ -112,6 +129,8 @@ end
     B = Matrix([0.5 1.5]')
     c = [0.5, 0.5]
     m = AffineControlMap(A, B, c)
+    @test statedim(m) == 2
+    @test inputdim(m) == 1
     @test outputdim(m) == 2
     @test !islinear(m) && isaffine(m)
 
@@ -128,8 +147,11 @@ end
     c = [0.5, 0.5]
     U = Interval(-1, 1)
     m = ConstrainedAffineControlMap(A, B, c, X, U)
+    @test statedim(m) == 2
+    @test inputdim(m) == 1
     @test outputdim(m) == 2
     @test stateset(m) == X
+    @test inputset(m) == U
     @test !islinear(m) && isaffine(m)
 
     # applying the affine map on a vector
@@ -140,6 +162,8 @@ end
 
 @testset "Reset map" begin
     m = ResetMap(10, Dict(9 => 0.0))
+    @test statedim(m) == 10
+    @test inputdim(m) == 0
     @test outputdim(m) == 10
 
     m = ResetMap(10, 2 => -1.0, 5 => 1.0)
@@ -155,6 +179,8 @@ end
     X = BallInf(zeros(10), 1.0)
 
     m = ConstrainedResetMap(10, X, Dict(9 => 0.0))
+    @test statedim(m) == 10
+    @test inputdim(m) == 0
     @test outputdim(m) == 10
     @test stateset(m) == X
 

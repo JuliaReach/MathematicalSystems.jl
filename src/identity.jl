@@ -66,11 +66,10 @@ struct IdentityMultiple{T} <: AbstractMatrix{T}
     M::UniformScaling{T}
     n::Int
     function IdentityMultiple(M::UniformScaling{T}, n::Int) where {T}
-        begin
-            (n < 1) &&
-                throw(ArgumentError("the dimension of `IdentityMultiple` cannot be negative or zero"))
-            return new{T}(M, n)
+        if n < 1
+            throw(ArgumentError("the dimension of `IdentityMultiple` cannot be negative or zero"))
         end
+        return new{T}(M, n)
     end
 end
 

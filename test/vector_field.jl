@@ -171,3 +171,18 @@ end
     @test_throws ArgumentError("the noise vector has the wrong dimensions") vector_field(sys, x, u,
                                                                                          w_wrong_dim)
 end
+
+@testset "Vector-field plotting" begin
+    # define `plot` function as `RecipesBase.apply_recipe`
+    import RecipesBase
+    struct DummyBackend <: RecipesBase.AbstractBackend end
+    struct DummyPlot <: RecipesBase.AbstractPlot{DummyBackend} end
+    Base.length(::DummyPlot) = 0
+    dict = Dict{Symbol,Any}(:plot_object => DummyPlot())
+    plot(args...; kwargs...) = RecipesBase.apply_recipe(dict, args...; kwargs...)
+    RecipesBase.is_key_supported(::Symbol) = true
+
+    f(x) = [2*x[2], -x[1]]
+    VF = MathematicalSystems.VectorField(f)
+    plot(VF)
+end

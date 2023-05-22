@@ -10,42 +10,96 @@ abstract type AbstractSystem end
 
 Returns the dimension of the state space of system `s`.
 """
-statedim(::AbstractSystem) = nothing
+function statedim(::AbstractSystem) end
 
 """
     stateset(s::AbstractSystem)
 
 Returns the set of allowed states of system `s`.
 """
-stateset(::AbstractSystem) = nothing
+function stateset(::AbstractSystem) end
 
 """
     inputdim(s::AbstractSystem)
 
 Returns the dimension of the input space of system `s`.
 """
-inputdim(::AbstractSystem) = nothing
+function inputdim(::AbstractSystem) end
 
 """
     inputset(s::AbstractSystem)
 
 Returns the set of allowed inputs of system `s`.
 """
-inputset(::AbstractSystem) = nothing
+function inputset(::AbstractSystem) end
 
 """
     noisedim(s::AbstractSystem)
 
 Returns the dimension of the noise space of system `s`.
 """
-noisedim(::AbstractSystem) = nothing
+function noisedim(::AbstractSystem) end
 
 """
     noiseset(s::AbstractSystem)
 
 Returns the set of allowed noises of system `s`.
 """
-noiseset(::AbstractSystem) = nothing
+function noiseset(::AbstractSystem) end
+
+"""
+    state_matrix(s::AbstractSystem)
+
+Return the state matrix of an affine system.
+
+### Notes
+
+The state matrix is the matrix proportional to the state, e.g. the matrix `A`
+in the linear continuous system ``x' = Ax``.
+"""
+function state_matrix(::AbstractSystem) end
+
+"""
+    input_matrix(s::AbstractSystem)
+
+Return the input matrix of a system with linear input.
+
+### Notes
+
+The input matrix is the matrix proportional to the input, e.g. the matrix `B`
+in the linear continuous system with input, ``x' = Ax + Bu``.
+"""
+function input_matrix(::AbstractSystem) end
+
+"""
+    noise_matrix(s::AbstractSystem)
+
+Return the noise matrix of a system with linear noise.
+
+### Notes
+
+The noise matrix is the matrix proportional to the noise, e.g. the matrix `D`
+in the linear system with noise, ``x' = Ax + Dw``.
+"""
+function noise_matrix(::AbstractSystem) end
+
+"""
+    affine_term(s::AbstractSystem)
+
+Return the affine term in an affine system.
+
+### Notes
+
+The affine term is e.g. the vector ``c`` in the affine system ``x' = Ax + c``.
+"""
+function affine_term(::AbstractSystem) end
+
+"""
+    outputmap(s::AbstractSystem)
+
+Returns the output map of a system with output.
+"""
+function outputmap(::AbstractSystem) end
 
 """
     AbstractDiscreteSystem
@@ -166,14 +220,7 @@ abstract type AbstractMap end
 
 Returns the dimension of the output space of the map `m`.
 """
-outputdim(::AbstractMap) = nothing
-
-"""
-    outputmap(s::SystemWithOutput)
-
-Returns the output map of a system with output.
-"""
-outputmap(::AbstractSystem) = nothing
+function outputdim(::AbstractMap) end
 
 """
     islinear(m::AbstractMap)
@@ -204,51 +251,4 @@ function isaffine(::AbstractMap) end
 
 Apply the rule specified by the map to the given arguments.
 """
-function apply end
-
-"""
-    state_matrix(s::AbstractSystem)
-
-Return the state matrix of an affine system.
-
-### Notes
-
-The state matrix is the matrix proportional to the state, e.g. the matrix `A`
-in the linear continuous system ``x' = Ax``.
-"""
-state_matrix(::AbstractSystem) = nothing
-
-"""
-    input_matrix(s::AbstractSystem)
-
-Return the input matrix of a system with linear input.
-
-### Notes
-
-The input matrix is the matrix proportional to the input, e.g. the matrix `B`
-in the linear continuous system with input, ``x' = Ax + Bu``.
-"""
-input_matrix(::AbstractSystem) = nothing
-
-"""
-    noise_matrix(s::AbstractSystem)
-
-Return the noise matrix of a system with linear noise.
-
-### Notes
-
-The noise matrix is the matrix proportional to the noise, e.g. the matrix `D`
-in the linear system with noise, ``x' = Ax + Dw``.
-"""
-noise_matrix(::AbstractSystem) = nothing
-
-"""
-    affine_term(s::AbstractSystem)
-
-Return the affine term in an affine system.
-
-### Notes
-
-The affine term is e.g. the vector ``c`` in the affine system ``x' = Ax + c``.
-"""
-affine_term(::AbstractSystem) = nothing
+function apply(::AbstractMap) end

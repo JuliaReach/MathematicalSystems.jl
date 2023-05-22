@@ -2,7 +2,7 @@ import Base: ==
 
 # syntactic equality of systems
 function ==(sys1::AbstractSystem, sys2::AbstractSystem)
-    if typeof(sys1) != typeof(sys2)
+    if typename(sys1) != typename(sys2)
         return false
     end
     for field in fieldnames(typeof(sys1))
@@ -15,7 +15,7 @@ end
 
 # approximate equality of systems
 function Base.isapprox(sys1::AbstractSystem, sys2::AbstractSystem; kwargs...)
-    if typeof(sys1) != typeof(sys2)
+    if typename(sys1) != typename(sys2)
         return false
     end
     for field in fieldnames(typeof(sys1))
@@ -77,7 +77,7 @@ To get the complementary type of system type, use
     elseif supertype(system_type) == AbstractContinuousSystem
         type_string = replace(type_string, "Continuous" => "Discrete")
     else
-        error("$system_type <: $(supertype(system_type)) is neither discrete nor continuous")
+        throw(ArgumentError("$system_type <: $(supertype(system_type)) is neither discrete nor continuous"))
     end
     return Meta.parse(type_string)
 end

@@ -174,8 +174,9 @@ function _discretize(::ExactDiscretization, ΔT::Real,
         c_d = Matr * c
         D_d = Matr * D
     else
-        error("exact discretization for singular state matrix, i.e. A is non-invertible," *
-              " not implemented yet, please use algorithm `EulerDiscretization`")
+        throw(ArgumentError("exact discretization for singular state matrix " *
+                            "(i.e., A is non-invertible) is not implemented; " *
+                            "use the `EulerDiscretization` algorithm"))
     end
     return [A_d, B_d, c_d, D_d]
 end

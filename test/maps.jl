@@ -193,3 +193,57 @@ end
     x = zeros(10)
     @test apply(m, x) == [0, -1.0, 0, 0, 1.0, 0, 0, 0, 0, 0]
 end
+
+@testset "Black-box map" begin
+    h(x) = [x[1] * x[2], x[2] * x[3]]
+
+    m = BlackBoxMap(3, 2, h)
+    @test statedim(m) == 3
+    @test inputdim(m) == 0
+    @test outputdim(m) == 2
+    @test !islinear(m)
+    @test !isaffine(m)
+    @test apply(m, [2, 3, 4]) == [6, 12]
+end
+
+@testset "Constrained black-box map" begin
+    h(x) = [x[1] * x[2], x[2] * x[3]]
+    X = BallInf(zeros(3), 1.0)
+
+    m = ConstrainedBlackBoxMap(3, 2, h, X)
+    @test statedim(m) == 3
+    @test inputdim(m) == 0
+    @test outputdim(m) == 2
+    @test !islinear(m)
+    @test !isaffine(m)
+    @test apply(m, [2, 3, 4]) == [6, 12]
+    @test stateset(m) == X
+end
+
+@testset "Black-box control map" begin
+    h(x, u) = [x[1] * x[2] + u, x[2] * x[3]]
+
+    m = BlackBoxControlMap(3, 1, 2, h)
+    @test statedim(m) == 3
+    @test inputdim(m) == 1
+    @test outputdim(m) == 2
+    @test !islinear(m)
+    @test !isaffine(m)
+    @test apply(m, [2, 3, 4], 4) == [10, 12]
+end
+
+@testset "Constrained black-box control map" begin
+    h(x, u) = [x[1] * x[2] + u, x[2] * x[3]]
+    X = BallInf(zeros(3), 1.0)
+    U = Interval(0, 5)
+
+    m = ConstrainedBlackBoxControlMap(3, 1, 2, h, X, U)
+    @test statedim(m) == 3
+    @test inputdim(m) == 1
+    @test outputdim(m) == 2
+    @test !islinear(m)
+    @test !isaffine(m)
+    @test apply(m, [2, 3, 4], 4) == [10, 12]
+    @test stateset(m) == X
+    @test inputset(m) == U
+end

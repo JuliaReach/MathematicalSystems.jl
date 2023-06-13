@@ -182,7 +182,7 @@ end
     plot(args...; kwargs...) = RecipesBase.apply_recipe(dict, args...; kwargs...)
     RecipesBase.is_key_supported(::Symbol) = true
 
-    f(x) = [2*x[2], -x[1]]
+    f(x) = [2 * x[2], -x[1]]
     VF = MathematicalSystems.VectorField(f)
     plot(VF)
 end

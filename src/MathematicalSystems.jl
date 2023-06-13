@@ -162,7 +162,11 @@ export AbstractMap,
        AffineControlMap,
        ConstrainedAffineControlMap,
        ResetMap,
-       ConstrainedResetMap
+       ConstrainedResetMap,
+       BlackBoxMap,
+       ConstrainedBlackBoxMap,
+       BlackBoxControlMap,
+       ConstrainedBlackBoxControlMap
 
 # methods
 export outputmap,

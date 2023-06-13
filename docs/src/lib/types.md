@@ -156,6 +156,10 @@ AffineControlMap
 ConstrainedAffineControlMap
 ResetMap
 ConstrainedResetMap
+BlackBoxMap
+ConstrainedBlackBoxMap
+BlackBoxControlMap
+ConstrainedBlackBoxControlMap
 ```
 
 ### Macros

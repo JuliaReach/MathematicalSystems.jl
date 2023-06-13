@@ -201,8 +201,8 @@ end
     @test statedim(m) == 3
     @test inputdim(m) == 0
     @test outputdim(m) == 2
-    @test islinear(m) == false
-    @test isaffine(m) == false
+    @test !islinear(m)
+    @test !isaffine(m)
     @test apply(m, [2, 3, 4]) == [6, 12]
 end
 
@@ -214,8 +214,8 @@ end
     @test statedim(m) == 3
     @test inputdim(m) == 0
     @test outputdim(m) == 2
-    @test islinear(m) == false
-    @test isaffine(m) == false
+    @test !islinear(m)
+    @test !isaffine(m)
     @test apply(m, [2, 3, 4]) == [6, 12]
     @test stateset(m) == X
 end
@@ -227,8 +227,8 @@ end
     @test statedim(m) == 3
     @test inputdim(m) == 1
     @test outputdim(m) == 2
-    @test islinear(m) == false
-    @test isaffine(m) == false
+    @test !islinear(m)
+    @test !isaffine(m)
     @test apply(m, [2, 3, 4], 4) == [10, 12]
 end
 
@@ -241,8 +241,8 @@ end
     @test statedim(m) == 3
     @test inputdim(m) == 1
     @test outputdim(m) == 2
-    @test islinear(m) == false
-    @test isaffine(m) == false
+    @test !islinear(m)
+    @test !isaffine(m)
     @test apply(m, [2, 3, 4], 4) == [10, 12]
     @test stateset(m) == X
     @test inputset(m) == U

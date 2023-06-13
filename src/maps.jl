@@ -1,7 +1,7 @@
 """
     IdentityMap
 
-An identity map,
+An identity map
 
 ```math
     x ↦ x.
@@ -24,7 +24,7 @@ apply(m::IdentityMap, x) = x
 """
     ConstrainedIdentityMap
 
-An identity map with state constraints of the form:
+An identity map with state constraints of the form
 
 ```math
     x ↦ x, x ∈ \\mathcal{X}.
@@ -50,7 +50,7 @@ apply(::ConstrainedIdentityMap, x) = x
 """
     LinearMap
 
-A linear map,
+A linear map
 
 ```math
     x ↦ Ax
@@ -73,7 +73,7 @@ apply(m::LinearMap, x) = m.A * x
 """
     ConstrainedLinearMap
 
-A linear map with state constraints of the form:
+A linear map with state constraints of the form
 
 ```math
     x ↦ Ax, x ∈ \\mathcal{X}.
@@ -99,7 +99,7 @@ apply(m::ConstrainedLinearMap, x) = m.A * x
 """
     AffineMap
 
-An affine map,
+An affine map
 
 ```math
     x ↦ Ax + c.
@@ -128,7 +128,7 @@ apply(m::AffineMap, x) = m.A * x + m.c
 """
     ConstrainedAffineMap
 
-An affine map with state constraints of the form:
+An affine map with state constraints of the form
 
 ```math
     x ↦ Ax + c, x ∈ \\mathcal{X}.
@@ -161,7 +161,7 @@ apply(m::ConstrainedAffineMap, x) = m.A * x + m.c
 """
     LinearControlMap
 
-A linear control map,
+A linear control map
 
 ```math
     (x, u) ↦ Ax + Bu.
@@ -191,7 +191,7 @@ apply(m::LinearControlMap, x, u) = m.A * x + m.B * u
 """
     ConstrainedLinearControlMap
 
-A linear control map with state and input constraints,
+A linear control map with state and input constraints
 
 ```math
     (x, u) ↦ Ax + Bu, x ∈ \\mathcal{X}, u ∈ \\mathcal{U}.
@@ -229,7 +229,7 @@ apply(m::ConstrainedLinearControlMap, x, u) = m.A * x + m.B * u
 """
     AffineControlMap
 
-An affine control map,
+An affine control map
 
 ```math
     (x, u) ↦ Ax + Bu + c.
@@ -263,7 +263,7 @@ apply(m::AffineControlMap, x, u) = m.A * x + m.B * u + m.c
 """
     ConstrainedAffineControlMap
 
-An affine control map with state and input constraints,
+An affine control map with state and input constraints
 
 ```math
     (x, u) ↦ Ax + Bu + c, x ∈ \\mathcal{X}, u ∈ \\mathcal{U}.
@@ -304,7 +304,7 @@ apply(m::ConstrainedAffineControlMap, x, u) = m.A * x + m.B * u + m.c
 """
     ResetMap
 
-A reset map,
+A reset map
 
 ```math
     x ↦ R(x),
@@ -334,7 +334,7 @@ ResetMap(dim::Int, args::Pair{Int,<:N}...) where {N} = ResetMap(dim, Dict{Int,N}
 """
     ConstrainedResetMap
 
-A reset map with state constraints of the form:
+A reset map with state constraints of the form
 
 ```math
     x ↦ R(x), x ∈ \\mathcal{X},
@@ -377,7 +377,7 @@ end
 """
     BlackBoxMap
 
-A black-box map of the form,
+A black-box map of the form
 
 ```math
     x ↦ h(x).
@@ -405,7 +405,7 @@ apply(m::BlackBoxMap, x) = m.h(x)
 """
     ConstrainedBlackBoxMap
 
-A constrained black-box map of the form,
+A constrained black-box map of the form
 
 ```math
     x ↦ h(x), x ∈ \\mathcal{X}.
@@ -436,7 +436,7 @@ apply(m::ConstrainedBlackBoxMap, x) = m.h(x)
 """
     BlackBoxControlMap
 
-A black-box control map of the form,
+A black-box control map of the form
 
 ```math
     (x, u) ↦ h(x, u).
@@ -466,7 +466,7 @@ apply(m::BlackBoxControlMap, x, u) = m.h(x, u)
 """
     ConstrainedBlackBoxControlMap
 
-A constrained black-box control map of the form,
+A constrained black-box control map of the form
 
 ```math
     (x, u) ↦ h(x, u), x ∈ \\mathcal{X}, u ∈ \\mathcal{U}.

@@ -27,7 +27,7 @@ apply(m::IdentityMap, x) = x
 An identity map with state constraints of the form:
 
 ```math
-    x ↦ x, x(t) ∈ \\mathcal{X}.
+    x ↦ x, x ∈ \\mathcal{X}.
 ```
 
 ### Fields
@@ -76,7 +76,7 @@ apply(m::LinearMap, x) = m.A * x
 A linear map with state constraints of the form:
 
 ```math
-    x ↦ Ax, x(t) ∈ \\mathcal{X}.
+    x ↦ Ax, x ∈ \\mathcal{X}.
 ```
 
 ### Fields
@@ -131,7 +131,7 @@ apply(m::AffineMap, x) = m.A * x + m.c
 An affine map with state constraints of the form:
 
 ```math
-    x ↦ Ax + c, x(t) ∈ \\mathcal{X}.
+    x ↦ Ax + c, x ∈ \\mathcal{X}.
 ```
 
 ### Fields
@@ -373,3 +373,128 @@ function apply(m::Union{ResetMap,ConstrainedResetMap}, x)
     end
     return y
 end
+
+"""
+    BlackBoxMap
+
+A black-box map of the form,
+
+```math
+    x ↦ h(x).
+```
+
+### Fields
+
+- `dim`  -- state dimension
+- `output_dim` -- output dimension
+- `h` -- output function
+"""
+struct BlackBoxMap{FT} <: AbstractMap
+    dim::Int
+    output_dim::Int
+    h::FT
+end
+
+statedim(m::BlackBoxMap) = m.dim
+inputdim(::BlackBoxMap) = 0
+outputdim(m::BlackBoxMap) = m.output_dim
+islinear(::BlackBoxMap) = false
+isaffine(::BlackBoxMap) = false
+apply(m::BlackBoxMap, x) = m.h(x)
+
+"""
+    ConstrainedBlackBoxMap
+
+A constrained black-box map of the form,
+
+```math
+    x ↦ h(x), x ∈ \\mathcal{X}.
+```
+
+### Fields
+
+- `dim`  -- state dimension
+- `output_dim` -- output dimension
+- `h` -- output function
+- `X` -- state constraints
+"""
+struct ConstrainedBlackBoxMap{FT, ST} <: AbstractMap
+    dim::Int
+    output_dim::Int
+    h::FT
+    X::ST
+end
+
+statedim(m::ConstrainedBlackBoxMap) = m.dim
+stateset(m::ConstrainedBlackBoxMap) = m.X
+inputdim(::ConstrainedBlackBoxMap) = 0
+outputdim(m::ConstrainedBlackBoxMap) = m.output_dim
+islinear(::ConstrainedBlackBoxMap) = false
+isaffine(::ConstrainedBlackBoxMap) = false
+apply(m::ConstrainedBlackBoxMap, x) = m.h(x)
+
+"""
+    BlackBoxControlMap
+
+A black-box control map of the form,
+
+```math
+    (x, u) ↦ h(x, u).
+```
+
+### Fields
+
+- `dim`  -- state dimension
+- `input_dim` -- input dimension
+- `output_dim` -- output dimension
+- `h` -- output function
+"""
+struct BlackBoxControlMap{FT} <: AbstractMap
+    dim::Int
+    input_dim::Int
+    output_dim::Int
+    h::FT
+end
+
+statedim(m::BlackBoxControlMap) = m.dim
+inputdim(m::BlackBoxControlMap) = m.input_dim
+outputdim(m::BlackBoxControlMap) = m.output_dim
+islinear(::BlackBoxControlMap) = false
+isaffine(::BlackBoxControlMap) = false
+apply(m::BlackBoxControlMap, x, u) = m.h(x, u)
+
+"""
+    ConstrainedBlackBoxControlMap
+
+A constrained black-box control map of the form,
+
+```math
+    (x, u) ↦ h(x, u), x ∈ \\mathcal{X}, u ∈ \\mathcal{U}.
+```
+
+### Fields
+
+- `dim`  -- state dimension
+- `input_dim` -- input dimension
+- `output_dim` -- output dimension
+- `h` -- output function
+- `X` -- state constraints
+- `U` -- input constraints
+"""
+struct ConstrainedBlackBoxControlMap{FT, ST, UT} <: AbstractMap
+    dim::Int
+    input_dim::Int
+    output_dim::Int
+    h::FT
+    X::ST
+    U::UT
+end
+
+statedim(m::ConstrainedBlackBoxControlMap) = m.dim
+stateset(m::ConstrainedBlackBoxControlMap) = m.X
+inputdim(m::ConstrainedBlackBoxControlMap) = m.input_dim
+inputset(m::ConstrainedBlackBoxControlMap) = m.U
+outputdim(m::ConstrainedBlackBoxControlMap) = m.output_dim
+islinear(::ConstrainedBlackBoxControlMap) = false
+isaffine(::ConstrainedBlackBoxControlMap) = false
+apply(m::ConstrainedBlackBoxControlMap, x, u) = m.h(x, u)

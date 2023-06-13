@@ -221,7 +221,7 @@ end
 end
 
 @testset "Black-box control map" begin
-    h(x, u) = [x[1] * x[2] + u, x[2] * x[3]] 
+    h(x, u) = [x[1] * x[2] + u, x[2] * x[3]]
 
     m = BlackBoxControlMap(3, 1, 2, h)
     @test statedim(m) == 3
@@ -233,7 +233,7 @@ end
 end
 
 @testset "Constrained black-box control map" begin
-    h(x, u) = [x[1] * x[2] + u, x[2] * x[3]] 
+    h(x, u) = [x[1] * x[2] + u, x[2] * x[3]]
     X = BallInf(zeros(3), 1.0)
     U = Interval(0, 5)
 

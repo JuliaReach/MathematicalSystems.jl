@@ -418,7 +418,7 @@ A constrained black-box map of the form,
 - `h` -- output function
 - `X` -- state constraints
 """
-struct ConstrainedBlackBoxMap{FT, ST} <: AbstractMap
+struct ConstrainedBlackBoxMap{FT,ST} <: AbstractMap
     dim::Int
     output_dim::Int
     h::FT
@@ -481,7 +481,7 @@ A constrained black-box control map of the form,
 - `X` -- state constraints
 - `U` -- input constraints
 """
-struct ConstrainedBlackBoxControlMap{FT, ST, UT} <: AbstractMap
+struct ConstrainedBlackBoxControlMap{FT,ST,UT} <: AbstractMap
     dim::Int
     input_dim::Int
     output_dim::Int

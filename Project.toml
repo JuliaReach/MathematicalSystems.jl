@@ -14,6 +14,6 @@ SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 [compat]
 Espresso = "0.6"
 MacroTools = "0.5"
-MultivariatePolynomials = "0.3, 0.4"
+MultivariatePolynomials = "0.3, 0.4, 0.5"
 RecipesBase = "0.6, 0.7, 0.8, 1.0, 1.1, 1.2"
 julia = "1"

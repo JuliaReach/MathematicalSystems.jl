@@ -45,7 +45,7 @@ The resulting discretization writes as
 
 The algorithm described above is a well known result from the literature [1].
 
-[1] https://en.wikipedia.org/wiki/Discretization#Discretization_of_linear_state_space_models
+[1] [Wikipedia](https://en.wikipedia.org/wiki/Discretization#Discretization_of_linear_state_space_models)
 """
 struct ExactDiscretization <: AbstractDiscretizationAlgorithm end
 
@@ -71,9 +71,9 @@ The resulting discretization writes as
 where  ``A^d = I + ΔT ~ A``, ``B^d = ΔT ~ B``,
 ``c^d = ΔT ~ c`` and ``D^d = ΔT ~ D``.
 
-The algorithm described above is a well known result from the literature [1].
+The algorithm described above is a well-known result from the literature [1].
 
-[1] https://en.wikipedia.org/wiki/Discretization#Approximations
+[1] [Wikipedia](https://en.wikipedia.org/wiki/Discretization#Approximations)
 """
 struct EulerDiscretization <: AbstractDiscretizationAlgorithm end
 

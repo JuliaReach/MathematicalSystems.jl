@@ -14,7 +14,7 @@ DocTestSetup = quote
 end
 ```
 
-## Expression handling
+## Expression Handling
 
 ```@docs
 _corresponding_type
@@ -24,20 +24,20 @@ add_asterisk
 sort
 ```
 
-## Querying expressions
+## Querying Expressions
 
 ```@docs
 is_equation
 extract_sum
 ```
 
-## Evaluation of AbstractSystem at given state
+## Evaluation of AbstractSystem at Given State
 
 ```@docs
 _instantiate
 ```
 
-## Naming convention for systems' fields
+## Naming Convention for Systems' Fields
 
 Systems' fields should be accessed externally by their respective getter functions.
 Internally to the library, the following naming conventions are used.

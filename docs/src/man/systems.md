@@ -1,6 +1,6 @@
-# System types overview
+# Overview of System Types
 
-## Using the macro
+## Using the `@system` Macro
 
 A convenient way to create a new system is with the `@system` macro. For example,
 the ODE $x'(t) = -2x(t)$ is simply `x' = -2x`, where $x'(t) := dx/dt$ is the derivative
@@ -56,7 +56,7 @@ for (controlled) inputs and noise respectively. Please note that some systems ar
 equivalent, for example `CLCCS` and `NCLCS` being $x' = Ax + Bu$ and $x' = Ax + Dw$ respectively;
 the difference lies in the resulting value of getter functions such as `inputset` and `noiseset`.
 
-## Summary tables
+## Summary Tables
 
 The following table summarizes the different system types in abbreviated form.
 The abbreviated names are included here only for reference and are not exported.

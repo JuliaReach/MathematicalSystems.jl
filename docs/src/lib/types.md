@@ -104,25 +104,6 @@ ExactDiscretization
 EulerDiscretization
 ```
 
-## System macro
-
-```@docs
-@system
-```
-
-## Initial-value problem macro
-
-```@docs
-@ivp
-```
-
-## Identity operator
-
-```@docs
-IdentityMultiple
-Id
-```
-
 ## Initial Value Problems
 
 ```@docs
@@ -130,6 +111,13 @@ InitialValueProblem
 IVP
 initial_state
 system
+```
+
+## Identity Operator
+
+```@docs
+IdentityMultiple
+Id
 ```
 
 ## Input Types
@@ -162,13 +150,7 @@ BlackBoxControlMap
 ConstrainedBlackBoxControlMap
 ```
 
-### Macros
-
-```@docs
-@map
-```
-
-## Systems with output
+## Systems with Output
 
 ```@docs
 SystemWithOutput
@@ -176,8 +158,15 @@ LinearTimeInvariantSystem
 LTISystem
 ```
 
-
-## Vector Field
+## Vector Fields
 ```@docs
 VectorField
+```
+
+## Macros
+
+```@docs
+@system
+@ivp
+@map
 ```

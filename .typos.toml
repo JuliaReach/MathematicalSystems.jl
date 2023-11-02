@@ -1,0 +1,3 @@
+[default.extend-words]
+# do not correct the following strings:
+nd = "nd"

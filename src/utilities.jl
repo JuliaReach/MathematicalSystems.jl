@@ -53,9 +53,9 @@ Return the complementary type of a system type `system_type`.
 
 - `system_type` -- type of `AbstractSystem`
 
-### Ouput
+### Output
 
-Return complementary type of `system_type`.
+The complementary type of `system_type`.
 
 ### Notes
 

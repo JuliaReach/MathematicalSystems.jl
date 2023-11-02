@@ -13,7 +13,7 @@
     end
 end
 
-@testset "Exact discretization of affine continous systems" begin
+@testset "Exact discretization of affine continuous systems" begin
     algorithm = MathematicalSystems.ExactDiscretization()
     ΔT = 0.1
     A = [0.5 1; 0.0 0.5]
@@ -55,7 +55,7 @@ end
     @test_throws ArgumentError discretize(s, ΔT, algorithm)
 end
 
-@testset "Euler discretization of affine continous systems" begin
+@testset "Euler discretization of affine continuous systems" begin
     algorithm = MathematicalSystems.EulerDiscretization()
     ΔT = 0.1
     A = [0.5 1; 0.0 0.5]

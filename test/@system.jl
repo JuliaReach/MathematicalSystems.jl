@@ -73,7 +73,7 @@ end
 # ===================
 # Continuous systems
 # ===================
-@testset "@system for continous identity systems" begin
+@testset "@system for continuous identity systems" begin
     @test @system(x' = 0, dim:2) == ContinuousIdentitySystem(2)
     sys = @system x' = 0 dim:2
     @test sys == ContinuousIdentitySystem(2)
@@ -86,7 +86,7 @@ end
     @test sys == ConstrainedContinuousIdentitySystem(2, X)
 end
 
-@testset "@system for linear continous systems" begin
+@testset "@system for linear continuous systems" begin
     @test @system(x' = A * x) == LinearContinuousSystem(A)
     @test @system(x1' = A1x1) == LinearContinuousSystem(A1)
     sys = @system x1' = A1x1
@@ -121,13 +121,13 @@ end
     @test @system(x' = Ax + Bu, x ∈ X, u ∈ U) ==
           ConstrainedLinearControlContinuousSystem(A, B, X, U)
 
-    # if variable in front of input is ommitted add identity matrix
+    # if variable in front of input is omitted add identity matrix
     @system(x' = Ax + u) == LinearControlContinuousSystem(A, IdentityMultiple(1.0 * I, n))
 
     # if * are used x_ = A_*x_ + B_*u_, u_ is interpreted as input variable,
     # independent of the name used for u_
     @test @system(w' = A * w + B * u_1) == LinearControlContinuousSystem(A, B)
-    # similarily for x_ = A_*x_ + B_*u_ + c_
+    # similarly for x_ = A_*x_ + B_*u_ + c_
     @test @system(w' = A * w + B * u_1 + c, w ∈ X, u_1 ∈ U) ==
           ConstrainedAffineControlContinuousSystem(A, B, c, X, U)
 
@@ -141,7 +141,7 @@ end
     @test sys == ConstrainedAffineControlContinuousSystem(hcat(0.3), hcat(0.1), vcat(0.2), X, U)
 end
 
-@testset "@system for linear descriptor continous systems" begin
+@testset "@system for linear descriptor continuous systems" begin
     # lhs needs a *
     @test_throws ArgumentError @system(Ex' = Ax)
     @test@system(E * x' = Ax) == LinearDescriptorContinuousSystem(A, E)
@@ -160,7 +160,7 @@ end
     @test sys == AffineControlContinuousSystem(A, B, c)
 end
 
-@testset "@system for noisy continous systems" begin
+@testset "@system for noisy continuous systems" begin
     sys = @system(x' = f1(x, u, w), x ∈ X, u ∈ U, w ∈ W, dims = (1, 2, 3))
     @test sys == NoisyConstrainedBlackBoxControlContinuousSystem(f1, 1, 2, 3, X, U, W)
 
@@ -176,7 +176,7 @@ end
                                                          IdentityMultiple(1.0 * I, n), X, U, W)
 end
 
-@testset "@system for black-box continous systems" begin
+@testset "@system for black-box continuous systems" begin
     @test_throws ArgumentError @system(x' = f1(x))
     @test_throws ArgumentError @system(x' = f1(x, u))
     sys = @system(x' = f1(x), dim:3)

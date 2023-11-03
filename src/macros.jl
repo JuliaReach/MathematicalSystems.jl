@@ -139,7 +139,7 @@ Return the system type whose field names match those in `fields`.
 
 ### Output
 
-The system type (either discrete or continous, depending on `AT`) whose fields
+The system type (either discrete or continuous, depending on `AT`) whose fields
 names correspond to those in `fields`, or an error if the `fields` do not match
 any known system type.
 
@@ -425,7 +425,7 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
         dim_vec = [dim...]
         push!(rhs_params, extract_blackbox_parameter(rhs, dim_vec)...)
 
-        # if rhs is a single term => affine systm (e.g. A*x, Ax, 2x, x or 0)
+        # if rhs is a single term => affine system (e.g. A*x, Ax, 2x, x or 0)
     else
         # if not specified, assume dim = 1
         dim = isnothing(dim) ? 1 : dim
@@ -689,7 +689,7 @@ function constructor_input(lhs, rhs, set)
 end
 
 # extract the variable name and the field name for a set expression. The method
-# checks wether the set belongs to the `state`, `input` or `noise` and returns a
+# checks whether the set belongs to the `state`, `input` or `noise` and returns a
 # tuple of symbols where the field name is either `:X`, `:U` or `:W` and
 # the variable name is the value parsed as Set_
 function extract_set_parameter(expr, state, input, noise) # input => to check set definitions

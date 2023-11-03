@@ -98,7 +98,7 @@ and the `vector_field` of an `AbstractContinuousSystem` into a single method.
 function _instantiate(system::AbstractSystem, x::AbstractVector, u::AbstractVector;
                       check_constraints::Bool=true)
     # Figure out if `system` is a controlled or noisy system and set the function
-    # `matrix` to either `input_matix` or `noise_matrix`
+    # `matrix` to either `input_matrix` or `noise_matrix`
     if iscontrolled(system) && !isnoisy(system)
         input_var = :u
         input_set = :U

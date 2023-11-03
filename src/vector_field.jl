@@ -154,7 +154,7 @@ Constructor for creating a `VectorField` from an `AbstractContinuousSystem`.
 
 - `sys` -- `AbstractContinuousSystem`
 
-### Ouptut
+### Output
 
 The `VectorField` for the continuous system `sys`.
 """

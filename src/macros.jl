@@ -191,9 +191,9 @@ function _capture_dim(expr)
     # `@capture(expr, (x_, u_, w_))` is a particular case of `@capture(expr, (x_))`.
     if @capture(expr, (x_, u_, w_))
         dims = [x, u, w]
-    elseif @capture(expr, (x_, u_))
+    elseif @capture(expr, (x_, u_))  # COV_EXCL_LINE
         dims = [x, u]
-    elseif @capture(expr, (x_))
+    elseif @capture(expr, (x_))  # COV_EXCL_LINE
         dims = x
     else
         throw(ArgumentError("the dimensions in expression $expr could not be parsed; " *
@@ -295,13 +295,13 @@ function _parse_system(exprs::NTuple{N,Expr}) where {N}
                     end
                 end
 
-            elseif @capture(ex, (dim = (f_dims_)) | (dims = (f_dims_)))
+            elseif @capture(ex, (dim = (f_dims_)) | (dims = (f_dims_)))  # COV_EXCL_LINE
                 dimension = _capture_dim(f_dims)
 
-            elseif @capture(ex, (input = u_) | (u_ = input))
+            elseif @capture(ex, (input = u_) | (u_ = input))  # COV_EXCL_LINE
                 input_var = u
 
-            elseif @capture(ex, (noise = w_) | (w_ = noise))
+            elseif @capture(ex, (noise = w_) | (w_ = noise))  # COV_EXCL_LINE
                 noise_var = w
 
             else
@@ -309,7 +309,7 @@ function _parse_system(exprs::NTuple{N,Expr}) where {N}
                                     "see the documentation for valid examples"))
             end
 
-        elseif @capture(ex, x_(0) ∈ X0_)
+        elseif @capture(ex, x_(0) ∈ X0_)  # COV_EXCL_LINE
             # TODO? handle equality, || @capture(ex, x_(0) = X0_)
             if x != state_var
                 throw(ArgumentError("the initial state assignment, $x(0), does " *
@@ -317,17 +317,17 @@ function _parse_system(exprs::NTuple{N,Expr}) where {N}
             end
             initial_state = X0
 
-        elseif @capture(ex, state_ ∈ Set_)  # parse a constraint
-            push!(constraints, ex)
+        elseif @capture(ex, state_ ∈ Set_)  # COV_EXCL_LINE
+            push!(constraints, ex)  # parse a constraint
 
-        elseif @capture(ex, (input:u_) | (u_:input))  # parse an input symbol
-            input_var = u
+        elseif @capture(ex, (input:u_) | (u_:input))  # COV_EXCL_LINE
+            input_var = u  # parse an input symbol
 
-        elseif @capture(ex, (noise:w_) | (w_:noise))  # parse a noise symbol
-            noise_var = w
+        elseif @capture(ex, (noise:w_) | (w_:noise))  # COV_EXCL_LINE
+            noise_var = w  # parse a noise symbol
 
-        elseif @capture(ex, (dim:(f_dims_)) | (dims:(f_dims_)))  # parse a dimension
-            dimension = _capture_dim(f_dims)
+        elseif @capture(ex, (dim:(f_dims_)) | (dims:(f_dims_)))  # COV_EXCL_LINE
+            dimension = _capture_dim(f_dims)  # parse a dimension
 
         else
             throw(ArgumentError("the expression $ex could not be parsed; " *
@@ -623,7 +623,7 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
                                     "$summand does not contain the state $state, the input $input " *
                                     "or the noise term $noise"))
             end
-        elseif @capture(summand, array_)
+        elseif @capture(summand, array_)  # COV_EXCL_LINE
             identity = :(Id($state_dim))
             # if array == variable: field value equals identity
             if state == array
@@ -659,11 +659,11 @@ function extract_blackbox_parameter(rhs, dim::AbstractVector)
     if @capture(rhs, f_(x_))
         @assert length(dim) == 1
         return [(f, :f), (dim[1], :statedim)]
-    elseif @capture(rhs, f_(x_, u_))
+    elseif @capture(rhs, f_(x_, u_))  # COV_EXCL_LINE
         @assert length(dim) == 2
         return [(f, :f), (dim[1], :statedim),
                 (dim[2], :inputdim)]
-    elseif @capture(rhs, f_(x_, u_, w_))
+    elseif @capture(rhs, f_(x_, u_, w_))  # COV_EXCL_LINE
         @assert length(dim) == 3
         return [(f, :f), (dim[1], :statedim),
                 (dim[2], :inputdim),
@@ -696,7 +696,7 @@ function extract_set_parameter(expr, state, input, noise) # input => to check se
     if @capture(expr, x_(0) ∈ Set_)
         return Set, :x0
 
-    elseif @capture(expr, x_ ∈ Set_)
+    elseif @capture(expr, x_ ∈ Set_)  # COV_EXCL_LINE
         if x == state
             return Set, :X
         elseif x == input

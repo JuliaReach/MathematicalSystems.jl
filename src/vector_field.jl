@@ -235,7 +235,7 @@ end
 #   example: the pair `([-1, 0, 1], [2, 3])` represents the grid of points
 #   `[-1, 2], [0, 2], [1, 2], [-1, 3], [0, 3], [1, 3]`
 # - dims: the two dimensions to plot
-@recipe function plot(V::VectorField;
+@recipe function plot(V::VectorField;  # COV_EXCL_LINE
                       grid_points=[range(-3; stop=3, length=21),
                                    range(-3; stop=3, length=21)],
                       dims=[1, 2])

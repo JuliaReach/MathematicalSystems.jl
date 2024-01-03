@@ -422,7 +422,11 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
         # the dimension argument needs to be a iterable
         isnothing(dim) &&
             throw(ArgumentError("for a blackbox system, the dimension has to be defined"))
-        dim_vec = [dim...]
+        if dim isa Symbol
+            dim_vec = [dim]
+        else
+            dim_vec = [dim...]
+        end
         push!(rhs_params, extract_blackbox_parameter(rhs, dim_vec)...)
 
         # if rhs is a single term => affine system (e.g. A*x, Ax, 2x, x or 0)

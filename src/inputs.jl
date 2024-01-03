@@ -156,10 +156,10 @@ julia> collect(v)
  -1//2
   1//2
 
-julia> [2*vi for vi in v]
+julia> [3*vi for vi in v]
 2-element Vector{Rational{Int64}}:
- -1//1
-  1//1
+ -3//2
+  3//2
 ```
 
 Since this input type is finite, querying more elements than its length returns
@@ -175,8 +175,8 @@ julia> collect(nextinput(v, 4))
 To transform a varying input, you can use `map` as in:
 
 ```jldoctest varying_input
-julia> map(x->2*x, v)
-VaryingInput{Rational{Int64}, Vector{Rational{Int64}}}(Rational{Int64}[-1//1, 1//1])
+julia> map(x->3*x, v)
+VaryingInput{Rational{Int64}, Vector{Rational{Int64}}}(Rational{Int64}[-3//2, 3//2])
 ```
 """
 struct VaryingInput{UT,VUT<:AbstractVector{UT}} <: AbstractInput

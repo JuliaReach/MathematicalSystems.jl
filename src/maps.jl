@@ -362,7 +362,7 @@ islinear(::ConstrainedResetMap) = false
 isaffine(::ConstrainedResetMap) = true
 
 # convenience constructor for a list of pairs instead of a dictionary
-function ConstrainedResetMap(dim::Int, X::ST, args::Pair{Int,<:N}...) where {N,ST}
+function ConstrainedResetMap(dim::Int, X, args::Pair{Int,<:N}...) where {N}
     return ConstrainedResetMap(dim, X, Dict{Int,N}(args))
 end
 

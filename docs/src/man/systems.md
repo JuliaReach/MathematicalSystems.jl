@@ -3,8 +3,8 @@
 ## Using the `@system` Macro
 
 A convenient way to create a new system is with the `@system` macro. For example,
-the ODE $x'(t) = -2x(t)$ is simply `x' = -2x`, where $x'(t) := dx/dt$ is the derivative
-of state $x(t)$ with respect to "time":
+the ODE ``x'(t) = -2x(t)`` is simply `x' = -2x`, where ``x'(t) := dx/dt`` is the derivative
+of state ``x(t)`` with respect to "time":
 
 ```@example system_examples
 using MathematicalSystems
@@ -12,7 +12,7 @@ using MathematicalSystems
 @system(x' = -2x)
 ```
 
-We can also add state constraints, say $x(t) ≥ 0.5$,
+We can also add state constraints, say ``x(t) ≥ 0.5``,
 
 ```@example system_examples
 using LazySets
@@ -29,11 +29,11 @@ B = Ball2(zeros(2), 1.0)
 c = [0.0, 5.0]
 @system(z' = A*z + c, z ∈ B)
 ```
-which defines the two-dimensional system $x' = y$, $y' = -x - 2y + 3$, with state
-constraints $z ∈ B = \{ \sqrt{x^2 + y^2} \leq 5\}$.
+which defines the two-dimensional system ``x' = y``, ``y' = -x - 2y + 3``, with state
+constraints ``z ∈ B = \{ \sqrt{x^2 + y^2} \leq 5\}``.
 
 Initial-value problems can be specified with the `@ivp` macro.
-For instance, we can attach an initial condition $z(0) = (0.2, 0.2])$ to
+For instance, we can attach an initial condition ``z(0) = (0.2, 0.2])`` to
 the previous example:
 
 ```@example system_examples
@@ -51,9 +51,9 @@ systems such as descriptor, polynomial or general nonlinear systems given by a s
 Julia function are available as well (see the tables below).
 
 Some applications require distinguishing between *controlled* inputs and *uncontrolled* or
-noise inputs. In this library we make such distinction by noting field names with $u$ and $w$
+noise inputs. In this library we make such distinction by noting field names with ``u`` and ``w``
 for (controlled) inputs and noise respectively. Please note that some systems are structurally
-equivalent, for example `CLCCS` and `NCLCS` being $x' = Ax + Bu$ and $x' = Ax + Dw$ respectively;
+equivalent, for example `CLCCS` and `NCLCS` being ``x' = Ax + Bu`` and ``x' = Ax + Dw`` respectively;
 the difference lies in the resulting value of getter functions such as `inputset` and `noiseset`.
 
 ## Summary Tables
@@ -105,35 +105,35 @@ The following table summarizes the equation represented by each system type
 
 |Equation | State constraints | Input constraints|System type (abbr.)|
 |:-------|-------------|-----------|-----|
-|$x' = 0$|no |no| CIS|
-|$x' = 0, x ∈ X$|yes|no|CCIS|
-|$x' = Ax$| no|no|LCS|
-|$x' = Ax + c$|no|no |ACS|
-|$x' = Ax + Bu$|no | no|LCCS|
-|$x' = Ax + Bu + c$|no|no|ACCS|
-|$x' = Ax, x ∈ X$|yes|no|CLCS||
-|$x' = Ax + c, x ∈ X$|yes|no|CACS|
-|$x' = Ax + Bu + c, x ∈ X, u ∈ U$|yes|yes|CACCS|
-|$x' = Ax + Bu, x ∈ X, u ∈ U$|yes|yes|CLCCS|
-|$Ex' = Ax$|no|no|LACS|
-|$Ex' = Ax, x ∈ X$|yes|no|CLACS|
-|$x' = p(x)$|no|no|PCS|
-|$x' = p(x), x ∈ X$|yes|no|CPCS|
-|$x' = f(x)$|no|no|BBCS|
-|$x' = f(x), x ∈ X$|yes|no|CBBCS|
-|$x' = f(x, u)$|no|no|BBCCS|
-|$x' = f(x, u), x ∈ X, u ∈ U$|yes|yes|CBBCCS|
-|$x' = Ax + Dw$|no|no|NLCS|
-|$x' = Ax + Dw, x ∈ X, w ∈ W$|yes|yes|NCLCS |
-|$x' = Ax + Bu + Dw$|no|no|NLCCS|
-|$x' = Ax + Bu + Dw, x ∈ X, u ∈ U, w ∈ W$|yes|yes|NCLCCS |
-|$x' = Ax + Bu + c + Dw$|no|no|NACCS|
-|$x' = Ax + Bu + c + Dw, x ∈ X, u ∈ U, w ∈ W$|yes|yes|NCALCCS |
-|$x' = f(x, u, w)$|no|no|NBBCCS|
-|$x' = f(x, u, w), x ∈ X, u ∈ U, w ∈ W$|yes|yes|NCBBCCS|
-|$Mx'' + Cx' + Kx = 0$|no|no|SOLCS|
-|$Mx'' + Cx' + Kx = b$|no|no|SOACS|
-|$Mx'' + Cx' + Kx = Bu + d, x ∈ X, u ∈ U$|yes|yes|SOCACCS|
-|$Mx'' + Cx' + Kx = Bu, x ∈ X, u ∈ U$|yes|yes|SOCLCCS|
-|$Mx'' + Cx' + f_i(x) = f_e$|no|no|SOCS|
-|$Mx'' + Cx' + f_i(x) = f_e$, x ∈ X, u ∈ U$|yes|yes|SOCCS|
+|``x' = 0``|no |no| CIS|
+|``x' = 0, x ∈ X``|yes|no|CCIS|
+|``x' = Ax``| no|no|LCS|
+|``x' = Ax + c``|no|no |ACS|
+|``x' = Ax + Bu``|no | no|LCCS|
+|``x' = Ax + Bu + c``|no|no|ACCS|
+|``x' = Ax, x ∈ X``|yes|no|CLCS||
+|``x' = Ax + c, x ∈ X``|yes|no|CACS|
+|``x' = Ax + Bu + c, x ∈ X, u ∈ U``|yes|yes|CACCS|
+|``x' = Ax + Bu, x ∈ X, u ∈ U``|yes|yes|CLCCS|
+|``Ex' = Ax``|no|no|LACS|
+|``Ex' = Ax, x ∈ X``|yes|no|CLACS|
+|``x' = p(x)``|no|no|PCS|
+|``x' = p(x), x ∈ X``|yes|no|CPCS|
+|``x' = f(x)``|no|no|BBCS|
+|``x' = f(x), x ∈ X``|yes|no|CBBCS|
+|``x' = f(x, u)``|no|no|BBCCS|
+|``x' = f(x, u), x ∈ X, u ∈ U``|yes|yes|CBBCCS|
+|``x' = Ax + Dw``|no|no|NLCS|
+|``x' = Ax + Dw, x ∈ X, w ∈ W``|yes|yes|NCLCS |
+|``x' = Ax + Bu + Dw``|no|no|NLCCS|
+|``x' = Ax + Bu + Dw, x ∈ X, u ∈ U, w ∈ W``|yes|yes|NCLCCS |
+|``x' = Ax + Bu + c + Dw``|no|no|NACCS|
+|``x' = Ax + Bu + c + Dw, x ∈ X, u ∈ U, w ∈ W``|yes|yes|NCALCCS |
+|``x' = f(x, u, w)``|no|no|NBBCCS|
+|``x' = f(x, u, w), x ∈ X, u ∈ U, w ∈ W``|yes|yes|NCBBCCS|
+|``Mx'' + Cx' + Kx = 0``|no|no|SOLCS|
+|``Mx'' + Cx' + Kx = b``|no|no|SOACS|
+|``Mx'' + Cx' + Kx = Bu + d, x ∈ X, u ∈ U``|yes|yes|SOCACCS|
+|``Mx'' + Cx' + Kx = Bu, x ∈ X, u ∈ U``|yes|yes|SOCLCCS|
+|``Mx'' + Cx' + f_i(x) = f_e``|no|no|SOCS|
+|``Mx'' + Cx' + f_i(x) = f_e``, x ∈ X, u ∈ U``|yes|yes|SOCCS|

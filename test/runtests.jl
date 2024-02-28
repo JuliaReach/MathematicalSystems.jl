@@ -59,3 +59,5 @@ end
 @testset "Other macros" begin
     include("macros.jl")
 end
+
+include("Aqua.jl")

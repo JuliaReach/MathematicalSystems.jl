@@ -19,7 +19,7 @@ outputdim(m::IdentityMap) = m.dim
 inputdim(::IdentityMap) = 0
 islinear(::IdentityMap) = true
 isaffine(::IdentityMap) = true
-apply(m::IdentityMap, x) = x
+apply(::IdentityMap, x) = x
 
 """
     ConstrainedIdentityMap

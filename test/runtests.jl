@@ -17,6 +17,7 @@ end
 @testset "Abstract systems" begin
     include("abstract.jl")
 end
+include("helper_functions.jl")
 @testset "Continuous systems" begin
     include("continuous.jl")
 end

@@ -14,11 +14,6 @@ import Aqua
                   # the piracy of `sort` should be resolved in the future
                   piracies=(broken=true,))
 
-    @static if VERSION < v"1.6"
-        # do not warn about ambiguities in dependencies
-        Aqua.test_ambiguities(MathematicalSystems)
-    else
-        # the ambiguities should be resolved in the future
-        Aqua.test_ambiguities(MathematicalSystems; broken=true)
-    end
+    # do not warn about ambiguities in dependencies
+    Aqua.test_ambiguities(MathematicalSystems)
 end

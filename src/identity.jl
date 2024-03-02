@@ -105,20 +105,34 @@ function Base.:(*)(𝐼::IdentityMultiple, v::AbstractVector)
     return 𝐼.M.λ * v
 end
 
-function Base.:(*)(𝐼::IdentityMultiple, A::AbstractMatrix)
-    @assert 𝐼.n == size(A, 1)
-    return 𝐼.M.λ * A
-end
+# beside `AbstractMatrix`, we need some disambiguations with LinearAlgebra since v1.6
+for M in @static VERSION < v"1.6" ? [:AbstractMatrix] :
+                 (:AbstractMatrix, :Diagonal, :(Transpose{<:Any,<:AbstractVector}),
+                  :(Adjoint{<:Any,<:AbstractVector}), :(LinearAlgebra.AbstractTriangular))
+    @eval begin
+        function Base.:(*)(𝐼::IdentityMultiple, A::$M)
+            @assert 𝐼.n == size(A, 1)
+            return 𝐼.M.λ * A
+        end
 
-function Base.:(*)(A::AbstractMatrix, 𝐼::IdentityMultiple)
-    @assert size(A, 2) == 𝐼.n
-    return A * 𝐼.M.λ
+        function Base.:(*)(A::$M, 𝐼::IdentityMultiple)
+            @assert size(A, 2) == 𝐼.n
+            return A * 𝐼.M.λ
+        end
+    end
 end
 
 # right-division
-function Base.:(/)(A::AbstractMatrix, 𝐼::IdentityMultiple)
-    @assert size(A, 2) == 𝐼.n
-    return A * inv(𝐼.M.λ)
+# beside `AbstractMatrix`, we need some disambiguations with LinearAlgebra since v1.6
+for M in @static VERSION < v"1.6" ? [:AbstractMatrix] :
+                 (:AbstractMatrix, :(Transpose{<:Any,<:AbstractVector}),
+                  :(Adjoint{<:Any,<:AbstractVector}))
+    @eval begin
+        function Base.:(/)(A::$M, 𝐼::IdentityMultiple)
+            @assert size(A, 2) == 𝐼.n
+            return A * inv(𝐼.M.λ)
+        end
+    end
 end
 
 function Base.:(+)(𝐼1::IdentityMultiple, 𝐼2::IdentityMultiple)

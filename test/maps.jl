@@ -173,6 +173,8 @@ end
     @test !islinear(m) && isaffine(m)
     # alternative constructor from pairs
     @test m.dict == ResetMap(10, 2 => -1.0, 5 => 1.0).dict
+    # alternative constructor from pairs with mixed numeric types
+    @test ResetMap(10, 2 => -1.0, 5 => 1).dict == Dict(2 => -1.0, 5 => 1)
 
     # applying the affine map on a vector
     x = zeros(10)
@@ -196,6 +198,8 @@ end
     @test !islinear(m) && isaffine(m)
     # alternative constructor from pairs
     @test m.dict == ConstrainedResetMap(10, X, 2 => -1.0, 5 => 1.0).dict
+    # alternative constructor from pairs with mixed numeric types
+    @test ConstrainedResetMap(10, X, 2 => -1.0, 5 => 1).dict == Dict(2 => -1.0, 5 => 1)
 
     # applying the affine map on a vector
     x = zeros(10)

@@ -3,8 +3,6 @@ using LinearAlgebra: I
 using MacroTools: @capture
 using InteractiveUtils: subtypes
 
-import Base: sort
-
 # ========================
 # @map macro
 # ========================
@@ -716,7 +714,7 @@ function extract_set_parameter(expr, state, input, noise) # input => to check se
 end
 
 """
-    sort(parameters::Vector, order::Tuple)
+    _sort(parameters::Vector, order::Tuple)
 
 Filter and sort the vector `parameters` according to `order`.
 
@@ -733,9 +731,11 @@ to `order`.
 ### Examples
 
 ```jldoctest
+julia> using MathematicalSystems: _sort
+
 julia> parameters= [(:U1, :U), (:X1, :X), (:W1, :W)];
 
-julia> sort(parameters, (:X, :U, :W))
+julia> _sort(parameters, (:X, :U, :W))
 3-element Vector{Tuple{Any, Symbol}}:
  (:X1, :X)
  (:U1, :U)
@@ -743,7 +743,7 @@ julia> sort(parameters, (:X, :U, :W))
 
 julia>  parameters = [(:const, :c), (:A, :A)];
 
-julia> sort(parameters, (:A, :B, :c, :D))
+julia> _sort(parameters, (:A, :B, :c, :D))
 2-element Vector{Tuple{Any, Symbol}}:
  (:A, :A)
  (:const, :c)
@@ -757,7 +757,7 @@ is considered for the sorting according to `order`.
 If a value of `order` is not contained in `parameters`, the corresponding entry of
 `order` will be omitted.
 """
-function sort(parameters::Vector{<:Tuple{Any,Symbol}}, order::NTuple{N,Symbol}) where {N}
+function _sort(parameters::Vector{<:Tuple{Any,Symbol}}, order::NTuple{N,Symbol}) where {N}
     order_parameters = Vector{Tuple{Any,Symbol}}()
     for ordered_element in order
         for tuple in parameters
@@ -771,8 +771,8 @@ end
 
 function _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
     lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, input, noise, dim, AT)
-    ordered_rhs = sort(rhs, (:A, :B, :c, :D, :f, :statedim, :inputdim, :noisedim))
-    ordered_set = sort(extract_set_parameter.(constr, state, input, noise), (:X, :U, :W))
+    ordered_rhs = _sort(rhs, (:A, :B, :c, :D, :f, :statedim, :inputdim, :noisedim))
+    ordered_set = _sort(extract_set_parameter.(constr, state, input, noise), (:X, :U, :W))
     field_names, var_names = constructor_input(lhs, ordered_rhs, ordered_set)
     sys_type = _corresponding_type(AT, field_names)
     return sys_type, var_names

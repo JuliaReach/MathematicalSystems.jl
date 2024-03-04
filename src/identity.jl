@@ -89,7 +89,7 @@ function Base.getindex(𝐼::IdentityMultiple{T}, ind) where {T}
     end
 end
 
-function Base.setindex!(𝐼::IdentityMultiple, X, inds...)
+function Base.setindex!(::IdentityMultiple, ::Any, inds...)
     return error("cannot store a value in an `IdentityMultiple` because this type is immutable")
 end
 

@@ -903,10 +903,10 @@ for (Z, AZ) in ((:ConstrainedPolynomialContinuousSystem, :AbstractContinuousSyst
         MultivariatePolynomials.variables(s::$Z) = MultivariatePolynomials.variables(s.p)
         MultivariatePolynomials.nvariables(s::$Z) = s.statedim
 
-        function $Z(p::AbstractVector{<:AbstractPolynomialLike}, X::ST) where {ST}
+        function $Z(p::AbstractVector{<:AbstractPolynomialLike}, X)
             return $(Z)(p, MultivariatePolynomials.nvariables(p), X)
         end
-        $Z(p::AbstractPolynomialLike, X::ST) where {ST} = $(Z)([p], X)
+        $Z(p::AbstractPolynomialLike, X) = $(Z)([p], X)
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin

@@ -70,7 +70,7 @@ struct ConstantInput{UT} <: AbstractInput
 end
 
 Base.eltype(::Type{ConstantInput{UT}}) where {UT} = UT
-Base.iterate(input::ConstantInput, state::Union{Int,Nothing}=nothing) = (input.U, nothing)
+Base.iterate(input::ConstantInput, ::Union{Int,Nothing}=nothing) = (input.U, nothing)
 Base.IteratorSize(::Type{<:ConstantInput}) = Base.IsInfinite()
 
 # the following does not need to be defined because it is the default:

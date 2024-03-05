@@ -22,5 +22,5 @@
     @test !islinear(P)
     @test isaffine(P)
     @test !ispolynomial(P)
-    @show affine_term(P) == c
+    @test affine_term(P) == c
 end

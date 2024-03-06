@@ -19,9 +19,6 @@ p = 2x^2 - 3x + y
 sdp = 2
 
 # blackbox system
-add_one(x) = x .+ 1
-add_one(x, u) = x .+ 1 .+ u
-add_one(x, u, w) = x .+ 1 .+ u .+ w
 state = [1.0; 2.0]
 input = 1
 noise = [3.0; 1.0]

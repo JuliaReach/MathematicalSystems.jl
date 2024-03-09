@@ -165,10 +165,16 @@ end
     @test statedim(m) == 10
     @test inputdim(m) == 0
     @test outputdim(m) == 10
+    # alternative constructor from pairs
+    @test m.dict == ResetMap(10, 9 => 0.0).dict
 
-    m = ResetMap(10, 2 => -1.0, 5 => 1.0)
+    m = ResetMap(10, Dict(2 => -1.0, 5 => 1.0))
     @test outputdim(m) == 10
     @test !islinear(m) && isaffine(m)
+    # alternative constructor from pairs
+    @test m.dict == ResetMap(10, 2 => -1.0, 5 => 1.0).dict
+    # alternative constructor from pairs with mixed numeric types
+    @test ResetMap(10, 2 => -1.0, 5 => 1).dict == Dict(2 => -1.0, 5 => 1)
 
     # applying the affine map on a vector
     x = zeros(10)
@@ -183,11 +189,17 @@ end
     @test inputdim(m) == 0
     @test outputdim(m) == 10
     @test stateset(m) == X
+    # alternative constructor from pairs
+    @test m.dict == ConstrainedResetMap(10, X, 9 => 0.0).dict
 
-    m = ConstrainedResetMap(10, X, 2 => -1.0, 5 => 1.0)
+    m = ConstrainedResetMap(10, X, Dict(2 => -1.0, 5 => 1.0))
     @test outputdim(m) == 10
     @test stateset(m) == X
     @test !islinear(m) && isaffine(m)
+    # alternative constructor from pairs
+    @test m.dict == ConstrainedResetMap(10, X, 2 => -1.0, 5 => 1.0).dict
+    # alternative constructor from pairs with mixed numeric types
+    @test ConstrainedResetMap(10, X, 2 => -1.0, 5 => 1).dict == Dict(2 => -1.0, 5 => 1)
 
     # applying the affine map on a vector
     x = zeros(10)

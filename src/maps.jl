@@ -329,7 +329,7 @@ islinear(::ResetMap) = false
 isaffine(::ResetMap) = true
 
 # convenience constructor for a list of pairs instead of a dictionary
-ResetMap(dim::Int, args::Pair{Int,<:N}...) where {N} = ResetMap(dim, Dict{Int,N}(args))
+ResetMap(dim::Int, args::Pair{Int}...) = ResetMap(dim, Dict(args))
 
 """
     ConstrainedResetMap
@@ -362,8 +362,8 @@ islinear(::ConstrainedResetMap) = false
 isaffine(::ConstrainedResetMap) = true
 
 # convenience constructor for a list of pairs instead of a dictionary
-function ConstrainedResetMap(dim::Int, X, args::Pair{Int,<:N}...) where {N}
-    return ConstrainedResetMap(dim, X, Dict{Int,N}(args))
+function ConstrainedResetMap(dim::Int, X, args::Pair{Int}...)
+    return ConstrainedResetMap(dim, X, Dict(args))
 end
 
 function apply(m::Union{ResetMap,ConstrainedResetMap}, x)

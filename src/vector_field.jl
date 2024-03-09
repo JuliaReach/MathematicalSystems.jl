@@ -221,7 +221,7 @@ function _position_value_list(V::VectorField, grid, dimx, dimy)
     end
 
     # center arrows in the grid points
-    for k in 1:length(x)
+    for k in eachindex(x)
         x[k] -= vx[k] / 2
         y[k] -= vy[k] / 2
     end

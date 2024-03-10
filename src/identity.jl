@@ -13,7 +13,7 @@ A scalar multiple of the identity matrix of given order and numeric type.
 This type can be used to create multiples of the identity of given size. Since
 only the multiple and the order are stored, the allocations are minimal.
 
-Internally, the type wraps Julia's lazy multiple of the identity operator,
+Internally, the type wraps Julia's lazy multiple of the identity operator,
 `UniformScaling`. `IdentityMultiple` subtypes `AbstractMatrix`, hence it can be
 used in usual matrix arithmetic and for dispatch on `AbstractMatrix`.
 

@@ -1,6 +1,3 @@
-import MultivariatePolynomials
-import MultivariatePolynomials: AbstractPolynomialLike
-
 # check if a matrix is square
 @inline function issquare(A::AbstractMatrix)
     return size(A, 1) == size(A, 2)

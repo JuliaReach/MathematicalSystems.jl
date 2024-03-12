@@ -6,10 +6,10 @@ using Test
 # fix namespace conflicts with LazySets
 using MathematicalSystems: LinearMap, AffineMap, ResetMap
 
-const SECOND_ORDER_CTYPES = [SecondOrderAffineContinuousSystem,
-                             SecondOrderConstrainedAffineControlContinuousSystem,
-                             SecondOrderConstrainedLinearControlContinuousSystem,
-                             SecondOrderLinearContinuousSystem]
+SECOND_ORDER_CTYPES = [SecondOrderAffineContinuousSystem,
+                       SecondOrderConstrainedAffineControlContinuousSystem,
+                       SecondOrderConstrainedLinearControlContinuousSystem,
+                       SecondOrderLinearContinuousSystem]
 
 @testset "Utilities" begin
     include("utilities.jl")

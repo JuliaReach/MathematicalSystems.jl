@@ -1,8 +1,3 @@
-using Espresso: matchex
-using LinearAlgebra: I
-using MacroTools: @capture
-using InteractiveUtils: subtypes
-
 # ========================
 # @map macro
 # ========================

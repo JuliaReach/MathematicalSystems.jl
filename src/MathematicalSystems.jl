@@ -2,7 +2,13 @@ module MathematicalSystems
 
 using LinearAlgebra, SparseArrays
 using LinearAlgebra: checksquare
-using RecipesBase
+import RecipesBase
+using RecipesBase: @recipe
+using Espresso: matchex
+using MacroTools: @capture
+using InteractiveUtils: subtypes
+import MultivariatePolynomials
+using MultivariatePolynomials: AbstractPolynomialLike
 
 #=======================
 Identity operator

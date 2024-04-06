@@ -159,7 +159,7 @@ function _discretize(::AbstractDiscretizationAlgorithm, ΔT::Real,
                      A::AbstractMatrix,
                      B::AbstractMatrix,
                      c::AbstractVector,
-                     D::AbstractMatrix)
+                     D::AbstractMatrix)  # COV_EXCL_LINE
 end
 
 function _discretize(::ExactDiscretization, ΔT::Real,

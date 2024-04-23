@@ -701,7 +701,7 @@ function extract_set_parameter(expr, state, input, noise) # input => to check se
         elseif x == noise
             return Set, :W
         else
-            error("$expr is not a valid set constraint definition; it does not contain" *
+            error("$expr is not a valid set constraint definition; it does not contain " *
                   "the state $state, the input $input or noise term $noise")
         end
     end

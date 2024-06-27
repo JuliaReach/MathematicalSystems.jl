@@ -243,10 +243,6 @@ function strip_dynamic_equation(expr)
     return (nothing, nothing, nothing)
 end
 
-function _parse_system(expr::Expr)
-    return _parse_system((expr,))
-end
-
 function _parse_system(exprs::NTuple{N,Expr}) where {N}
     # define default dynamic equation, unknown abstract system type,
     # and empty list of constraints
@@ -690,10 +686,7 @@ end
 # tuple of symbols where the field name is either `:X`, `:U` or `:W` and
 # the variable name is the value parsed as Set_
 function extract_set_parameter(expr, state, input, noise) # input => to check set definitions
-    if @capture(expr, x_(0) ∈ Set_)
-        return Set, :x0
-
-    elseif @capture(expr, x_ ∈ Set_)  # COV_EXCL_LINE
+    if @capture(expr, x_ ∈ Set_)
         if x == state
             return Set, :X
         elseif x == input

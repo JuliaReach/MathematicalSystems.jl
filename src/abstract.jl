@@ -50,7 +50,7 @@ function noiseset(::AbstractSystem) end
 """
     state_matrix(s::AbstractSystem)
 
-Return the state matrix of an affine system.
+Returns the state matrix of an affine system.
 
 ### Notes
 
@@ -62,7 +62,7 @@ function state_matrix(::AbstractSystem) end
 """
     input_matrix(s::AbstractSystem)
 
-Return the input matrix of a system with linear input.
+Returns the input matrix of a system with linear input.
 
 ### Notes
 
@@ -74,7 +74,7 @@ function input_matrix(::AbstractSystem) end
 """
     noise_matrix(s::AbstractSystem)
 
-Return the noise matrix of a system with linear noise.
+Returns the noise matrix of a system with linear noise.
 
 ### Notes
 
@@ -86,13 +86,20 @@ function noise_matrix(::AbstractSystem) end
 """
     affine_term(s::AbstractSystem)
 
-Return the affine term in an affine system.
+Returns the affine term in an affine system.
 
 ### Notes
 
 The affine term is e.g. the vector ``c`` in the affine system ``x' = Ax + c``.
 """
 function affine_term(::AbstractSystem) end
+
+"""
+    mapping(s::AbstractSystem)
+
+Returns the mapping of a black-box system.
+"""
+function mapping(::AbstractSystem) end
 
 """
     outputmap(s::AbstractSystem)
@@ -118,7 +125,7 @@ abstract type AbstractContinuousSystem <: AbstractSystem end
 """
     islinear(s::AbstractSystem)
 
-Specifies if the dynamics of system `s` is specified by linear equations.
+Determines whether the dynamics of system `s` is specified by linear equations.
 
 ### Notes
 
@@ -141,7 +148,7 @@ function islinear(::AbstractSystem) end
 """
     isaffine(s::AbstractSystem)
 
-Specifies if the dynamics of system `s` is specified by affine equations.
+Determines whether the dynamics of system `s` is specified by affine equations.
 
 ### Notes
 
@@ -159,7 +166,7 @@ function isaffine(::AbstractSystem) end
 """
     ispolynomial(s::AbstractSystem)
 
-Specifies if the dynamics of system `s` is specified by polynomial equations.
+Determines whether the dynamics of system `s` is specified by polynomial equations.
 
 The result of this function only depends on the system type, not the value, and
 can also be applied to `typeof(s)`. Hence, e.g. a `LinearContinuousSystem` is not
@@ -170,7 +177,7 @@ function ispolynomial(::AbstractSystem) end
 """
     isblackbox(s::AbstractSystem)
 
-Specifies if no specific structure is assumed for the dynamics of system `s`.
+Determines whether no specific structure is assumed for the dynamics of system `s`.
 
 The result of this function only depends on the system type, not the value, and
 can also be applied to `typeof(s)`.
@@ -225,7 +232,7 @@ function outputdim(::AbstractMap) end
 """
     islinear(m::AbstractMap)
 
-Specifies if the map `m` is linear or not.
+Determines whether the map `m` is linear or not.
 
 ### Notes
 
@@ -237,7 +244,7 @@ function islinear(::AbstractMap) end
 """
     isaffine(m::AbstractMap)
 
-Specifies if the map `m` is affine or not.
+Determines whether the map `m` is affine or not.
 
 ### Notes
 

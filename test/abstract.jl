@@ -24,6 +24,7 @@ using MathematicalSystems: AbstractDiscretizationAlgorithm,
     @test isnothing(input_matrix(s))
     @test isnothing(noise_matrix(s))
     @test isnothing(affine_term(s))
+    @test isnothing(mapping(s))
     @test isnothing(outputmap(s))
 end
 

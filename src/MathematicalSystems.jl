@@ -43,6 +43,7 @@ export statedim,
        input_matrix,
        noise_matrix,
        affine_term,
+       mapping,
        mass_matrix,
        viscosity_matrix,
        stiffness_matrix

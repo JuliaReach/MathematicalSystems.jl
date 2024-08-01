@@ -22,5 +22,13 @@
     @test !islinear(P)
     @test isaffine(P)
     @test !ispolynomial(P)
+    @test !isblackbox(P)
+    @test isnoisy(P)
+    @test iscontrolled(P)
+    @test isconstrained(P)
     @test affine_term(P) == c
+
+    f() = 1
+    P = BlackBoxDiscreteSystem(f, 1)
+    @test mapping(P) == f
 end

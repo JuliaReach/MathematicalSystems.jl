@@ -194,16 +194,17 @@ function _discretize(::EulerDiscretization, ΔT::Real,
 end
 
 """
-    _discretize(A::AbstractMatrix, ΔT::Real; algorithm=ExactDiscretization())
+    _discretize(algorithm::AbstractDiscretizationAlgorithm, ΔT::Real,
+                A::AbstractMatrix)
 
 Discretize the state matrix `A` with sampling time `ΔT` and discretization method
 `algorithm`.
 
 ### Input
 
-- `A`         -- state matrix
+- `algorithm` -- discretization algorithm
 - `ΔT`        -- sampling time
-- `algorithm` -- (optional, default: `ExactDiscretization()`) discretization algorithm
+- `A`         -- state matrix
 
 ### Output
 

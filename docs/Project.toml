@@ -4,4 +4,4 @@ LazySets = "b4f0291d-fe17-52bc-9479-3d1a343d9043"
 
 [compat]
 Documenter = "1"
-LazySets = "2"
+LazySets = "2, 3"

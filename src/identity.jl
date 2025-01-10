@@ -77,7 +77,7 @@ Base.IndexStyle(::Type{<:IdentityMultiple}) = IndexLinear()
 Base.size(𝐼::IdentityMultiple) = (𝐼.n, 𝐼.n)
 
 function Base.getindex(𝐼::IdentityMultiple, inds::Integer...)
-    any(idx -> idx > 𝐼.n, inds) && throw(BoundsError(𝐼, inds))
+    all(idx -> 1 ≤ idx ≤ 𝐼.n, inds) || throw(BoundsError(𝐼, inds))
     return getindex(𝐼.M, inds...)
 end
 

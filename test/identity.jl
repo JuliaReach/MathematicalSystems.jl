@@ -4,7 +4,9 @@
     @test size(I1) == (1, 1)
     @test I1[1, 1] == 1.0
     @test_throws BoundsError I1[1, 2]
+    @test_throws BoundsError I1[1, 0]
     @test_throws BoundsError I1[3]
+    @test_throws BoundsError I1[0]
     @test_throws ErrorException I1[1] = 2
 
     for n in [2, 1000]

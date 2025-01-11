@@ -94,8 +94,6 @@ function Base.setindex!(::IdentityMultiple, ::Any, inds...)
 end
 
 Base.:(-)(𝐼::IdentityMultiple) = IdentityMultiple(-𝐼.M, 𝐼.n)
-Base.:(+)(𝐼::IdentityMultiple, M::AbstractMatrix) = 𝐼.M + M
-Base.:(+)(M::AbstractMatrix, 𝐼::IdentityMultiple) = M + 𝐼.M
 Base.:(*)(x::Number, 𝐼::IdentityMultiple) = IdentityMultiple(x * 𝐼.M, 𝐼.n)
 Base.:(*)(𝐼::IdentityMultiple, x::Number) = IdentityMultiple(x * 𝐼.M, 𝐼.n)
 Base.:(/)(𝐼::IdentityMultiple, x::Number) = IdentityMultiple(𝐼.M / x, 𝐼.n)
@@ -192,9 +190,5 @@ end
 
 # callable identity matrix given the scaling factor and the size
 IdentityMultiple(λ::Number, n::Int) = IdentityMultiple(λ * I, n)
-
-function LinearAlgebra.Hermitian(𝐼::IdentityMultiple)
-    return Hermitian(Diagonal(fill(𝐼.M.λ, 𝐼.n)))
-end
 
 Base.exp(𝐼::IdentityMultiple) = IdentityMultiple(exp(𝐼.M.λ), 𝐼.n)

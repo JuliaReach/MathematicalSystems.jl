@@ -17,6 +17,7 @@ end
 statedim(m::IdentityMap) = m.dim
 outputdim(m::IdentityMap) = m.dim
 inputdim(::IdentityMap) = 0
+state_matrix(m::IdentityMap) = Id(m.dim)
 islinear(::IdentityMap) = true
 isaffine(::IdentityMap) = true
 apply(::IdentityMap, x) = x
@@ -43,6 +44,7 @@ statedim(m::ConstrainedIdentityMap) = m.dim
 stateset(m::ConstrainedIdentityMap) = m.X
 outputdim(m::ConstrainedIdentityMap) = m.dim
 inputdim(::ConstrainedIdentityMap) = 0
+state_matrix(m::ConstrainedIdentityMap) = Id(m.dim)
 islinear(::ConstrainedIdentityMap) = true
 isaffine(::ConstrainedIdentityMap) = true
 apply(::ConstrainedIdentityMap, x) = x
@@ -66,6 +68,7 @@ end
 statedim(m::LinearMap) = size(m.A, 2)
 outputdim(m::LinearMap) = size(m.A, 1)
 inputdim(::LinearMap) = 0
+state_matrix(m::LinearMap) = m.A
 islinear(::LinearMap) = true
 isaffine(::LinearMap) = true
 apply(m::LinearMap, x) = m.A * x
@@ -92,6 +95,7 @@ statedim(m::ConstrainedLinearMap) = size(m.A, 2)
 stateset(m::ConstrainedLinearMap) = m.X
 outputdim(m::ConstrainedLinearMap) = size(m.A, 1)
 inputdim(::ConstrainedLinearMap) = 0
+state_matrix(m::ConstrainedLinearMap) = m.A
 islinear(::ConstrainedLinearMap) = true
 isaffine(::ConstrainedLinearMap) = true
 apply(m::ConstrainedLinearMap, x) = m.A * x
@@ -121,6 +125,8 @@ end
 statedim(m::AffineMap) = size(m.A, 2)
 outputdim(m::AffineMap) = length(m.c)
 inputdim(::AffineMap) = 0
+state_matrix(m::AffineMap) = m.A
+affine_term(m::AffineMap) = m.c
 islinear(::AffineMap) = false
 isaffine(::AffineMap) = true
 apply(m::AffineMap, x) = m.A * x + m.c
@@ -154,6 +160,8 @@ statedim(m::ConstrainedAffineMap) = size(m.A, 2)
 stateset(m::ConstrainedAffineMap) = m.X
 outputdim(m::ConstrainedAffineMap) = length(m.c)
 inputdim(::ConstrainedAffineMap) = 0
+state_matrix(m::ConstrainedAffineMap) = m.A
+affine_term(m::ConstrainedAffineMap) = m.c
 islinear(::ConstrainedAffineMap) = false
 isaffine(::ConstrainedAffineMap) = true
 apply(m::ConstrainedAffineMap, x) = m.A * x + m.c
@@ -184,6 +192,8 @@ end
 statedim(m::LinearControlMap) = size(m.A, 2)
 inputdim(m::LinearControlMap) = size(m.B, 2)
 outputdim(m::LinearControlMap) = size(m.A, 1)
+state_matrix(m::LinearControlMap) = m.A
+input_matrix(m::LinearControlMap) = m.B
 islinear(::LinearControlMap) = true
 isaffine(::LinearControlMap) = true
 apply(m::LinearControlMap, x, u) = m.A * x + m.B * u
@@ -222,6 +232,8 @@ stateset(m::ConstrainedLinearControlMap) = m.X
 outputdim(m::ConstrainedLinearControlMap) = size(m.A, 1)
 inputdim(m::ConstrainedLinearControlMap) = size(m.B, 2)
 inputset(m::ConstrainedLinearControlMap) = m.U
+state_matrix(m::ConstrainedLinearControlMap) = m.A
+input_matrix(m::ConstrainedLinearControlMap) = m.B
 islinear(::ConstrainedLinearControlMap) = true
 isaffine(::ConstrainedLinearControlMap) = true
 apply(m::ConstrainedLinearControlMap, x, u) = m.A * x + m.B * u
@@ -256,6 +268,9 @@ end
 statedim(m::AffineControlMap) = size(m.A, 2)
 outputdim(m::AffineControlMap) = size(m.A, 1)
 inputdim(m::AffineControlMap) = size(m.B, 2)
+state_matrix(m::AffineControlMap) = m.A
+input_matrix(m::AffineControlMap) = m.B
+affine_term(m::AffineControlMap) = m.c
 islinear(::AffineControlMap) = false
 isaffine(::AffineControlMap) = true
 apply(m::AffineControlMap, x, u) = m.A * x + m.B * u + m.c
@@ -297,6 +312,9 @@ stateset(m::ConstrainedAffineControlMap) = m.X
 inputdim(m::ConstrainedAffineControlMap) = size(m.B, 2)
 inputset(m::ConstrainedAffineControlMap) = m.U
 outputdim(m::ConstrainedAffineControlMap) = size(m.A, 1)
+state_matrix(m::ConstrainedAffineControlMap) = m.A
+input_matrix(m::ConstrainedAffineControlMap) = m.B
+affine_term(m::ConstrainedAffineControlMap) = m.c
 islinear(::ConstrainedAffineControlMap) = false
 isaffine(::ConstrainedAffineControlMap) = true
 apply(m::ConstrainedAffineControlMap, x, u) = m.A * x + m.B * u + m.c
@@ -325,8 +343,26 @@ end
 statedim(m::ResetMap) = m.dim
 inputdim(::ResetMap) = 0
 outputdim(m::ResetMap) = m.dim
+state_matrix(m::ResetMap) = _state_matrix_resetmap(m.dim, m.dict)
+affine_term(m::ResetMap) = affine_term_resetmap(m.dim, m.dict)
 islinear(::ResetMap) = false
 isaffine(::ResetMap) = true
+
+function _state_matrix_resetmap(dim, dict::Dict{Int,N}) where {N}
+    v = ones(N, dim)
+    @inbounds for i in keys(dict)
+        v[i] = zero(N)
+    end
+    return Diagonal(v)
+end
+
+function affine_term_resetmap(dim, dict::Dict{Int,N}) where {N}
+    b = sparsevec(Int[], N[], dim)
+    @inbounds for (k, v) in dict
+        b[k] = v
+    end
+    return b
+end
 
 # convenience constructor for a list of pairs instead of a dictionary
 ResetMap(dim::Int, args::Pair{Int}...) = ResetMap(dim, Dict(args))
@@ -358,6 +394,8 @@ statedim(m::ConstrainedResetMap) = m.dim
 stateset(m::ConstrainedResetMap) = m.X
 inputdim(::ConstrainedResetMap) = 0
 outputdim(m::ConstrainedResetMap) = m.dim
+state_matrix(m::ConstrainedResetMap) = _state_matrix_resetmap(m.dim, m.dict)
+affine_term(m::ConstrainedResetMap) = affine_term_resetmap(m.dim, m.dict)
 islinear(::ConstrainedResetMap) = false
 isaffine(::ConstrainedResetMap) = true
 

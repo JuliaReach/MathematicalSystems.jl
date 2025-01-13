@@ -3,6 +3,7 @@
     @test statedim(m) == 2
     @test inputdim(m) == 0
     @test outputdim(m) == 2
+    @test state_matrix(m) == [1 0; 0 1]
     @test islinear(m) && isaffine(m)
     @test apply(m, ones(2)) == ones(2)
 end
@@ -13,6 +14,7 @@ end
     @test statedim(m) == 2
     @test inputdim(m) == 0
     @test outputdim(m) == 2
+    @test state_matrix(m) == [1 0; 0 1]
     @test islinear(m) && isaffine(m)
     @test stateset(m) == X
     @test apply(m, ones(2)) == ones(2)
@@ -24,6 +26,7 @@ end
     @test statedim(m) == 2
     @test inputdim(m) == 0
     @test outputdim(m) == 2
+    @test state_matrix(m) == A
     @test islinear(m) && isaffine(m)
 
     # applying the linear map on a vector
@@ -42,6 +45,7 @@ end
     @test inputdim(m) == 0
     @test outputdim(m) == 2
     @test stateset(m) == X
+    @test state_matrix(m) == A
     @test islinear(m) && isaffine(m)
 
     # applying the linear map on a vector
@@ -59,6 +63,8 @@ end
     @test statedim(m) == 2
     @test inputdim(m) == 0
     @test outputdim(m) == 2
+    @test state_matrix(m) == A
+    @test affine_term(m) == b
 
     # applying the affine map on a vector
     @test apply(m, ones(2)) == [2.5, 0.5]
@@ -79,6 +85,8 @@ end
     @test inputdim(m) == 0
     @test outputdim(m) == 2
     @test stateset(m) == X
+    @test state_matrix(m) == A
+    @test affine_term(m) == b
 
     # applying the affine map on a vector
     @test apply(m, ones(2)) == [2.5, 0.5]
@@ -98,6 +106,8 @@ end
     @test inputdim(m) == 1
     @test outputdim(m) == 2
     @test islinear(m) && isaffine(m)
+    @test state_matrix(m) == A
+    @test input_matrix(m) == B
 
     # applying the affine map on a vector
     x = ones(2)
@@ -115,6 +125,8 @@ end
     @test inputdim(m) == 1
     @test outputdim(m) == 2
     @test inputset(m) == U
+    @test state_matrix(m) == A
+    @test input_matrix(m) == B
     @test islinear(m) && isaffine(m)
 
     # applying the affine map on a vector
@@ -132,6 +144,9 @@ end
     @test statedim(m) == 2
     @test inputdim(m) == 1
     @test outputdim(m) == 2
+    @test state_matrix(m) == A
+    @test input_matrix(m) == B
+    @test affine_term(m) == c
     @test !islinear(m) && isaffine(m)
 
     # applying the affine map on a vector
@@ -152,6 +167,9 @@ end
     @test outputdim(m) == 2
     @test stateset(m) == X
     @test inputset(m) == U
+    @test state_matrix(m) == A
+    @test input_matrix(m) == B
+    @test affine_term(m) == c
     @test !islinear(m) && isaffine(m)
 
     # applying the affine map on a vector
@@ -170,6 +188,13 @@ end
 
     m = ResetMap(10, Dict(2 => -1.0, 5 => 1.0))
     @test outputdim(m) == 10
+    A = Diagonal(ones(10))
+    A[2, 2] = A[5, 5] = 0
+    @test state_matrix(m) == A
+    c = zeros(10)
+    c[2] = -1
+    c[5] = 1
+    @test affine_term(m) == c
     @test !islinear(m) && isaffine(m)
     # alternative constructor from pairs
     @test m.dict == ResetMap(10, 2 => -1.0, 5 => 1.0).dict
@@ -195,6 +220,13 @@ end
     m = ConstrainedResetMap(10, X, Dict(2 => -1.0, 5 => 1.0))
     @test outputdim(m) == 10
     @test stateset(m) == X
+    A = Diagonal(ones(10))
+    A[2, 2] = A[5, 5] = 0
+    @test state_matrix(m) == A
+    c = zeros(10)
+    c[2] = -1
+    c[5] = 1
+    @test affine_term(m) == c
     @test !islinear(m) && isaffine(m)
     # alternative constructor from pairs
     @test m.dict == ConstrainedResetMap(10, X, 2 => -1.0, 5 => 1.0).dict

@@ -35,8 +35,8 @@ end
     @test IdentityMultiple(6.0I, 2) / 3 == IdentityMultiple(2.0I, 2)
     @test (-I2).M == UniformScaling(-1.0)
 
-    @test_throws AssertionError I2 + I10
-    @test_throws AssertionError I2 * I10
+    @test_throws DimensionMismatch I2 + I10
+    @test_throws DimensionMismatch I2 * I10
 
     s2 = IdentityMultiple(UniformScaling(2.0), 2)
     s3 = UniformScaling(3.0)

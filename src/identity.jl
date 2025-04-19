@@ -101,7 +101,7 @@ Base.:(*)(𝐼::IdentityMultiple, x::Number) = IdentityMultiple(x * 𝐼.M, 𝐼
 Base.:(/)(𝐼::IdentityMultiple, x::Number) = IdentityMultiple(𝐼.M / x, 𝐼.n)
 
 function Base.:(*)(𝐼::IdentityMultiple, v::AbstractVector)
-    @assert 𝐼.n == length(v)
+    𝐼.n != length(v) && throw(DimensionMismatch("incompatible dimensions"))
     return 𝐼.M.λ * v
 end
 
@@ -111,12 +111,12 @@ for M in @static VERSION < v"1.6" ? [:AbstractMatrix] :
                   :(Adjoint{<:Any,<:AbstractVector}), :(LinearAlgebra.AbstractTriangular))
     @eval begin
         function Base.:(*)(𝐼::IdentityMultiple, A::$M)
-            @assert 𝐼.n == size(A, 1)
+            𝐼.n != size(A, 1) && throw(DimensionMismatch("incompatible dimensions"))
             return 𝐼.M.λ * A
         end
 
         function Base.:(*)(A::$M, 𝐼::IdentityMultiple)
-            @assert size(A, 2) == 𝐼.n
+            size(A, 2) != 𝐼.n && throw(DimensionMismatch("incompatible dimensions"))
             return A * 𝐼.M.λ
         end
     end
@@ -129,24 +129,24 @@ for M in @static VERSION < v"1.6" ? [:AbstractMatrix] :
                   :(Adjoint{<:Any,<:AbstractVector}))
     @eval begin
         function Base.:(/)(A::$M, 𝐼::IdentityMultiple)
-            @assert size(A, 2) == 𝐼.n
+            size(A, 2) != 𝐼.n && throw(DimensionMismatch("incompatible dimensions"))
             return A * inv(𝐼.M.λ)
         end
     end
 end
 
 function Base.:(+)(𝐼1::IdentityMultiple, 𝐼2::IdentityMultiple)
-    @assert 𝐼1.n == 𝐼2.n
+    𝐼1.n != 𝐼2.n && throw(DimensionMismatch("incompatible dimensions"))
     return IdentityMultiple(𝐼1.M + 𝐼2.M, 𝐼1.n)
 end
 
 function Base.:(-)(𝐼1::IdentityMultiple, 𝐼2::IdentityMultiple)
-    @assert 𝐼1.n == 𝐼2.n
+    𝐼1.n != 𝐼2.n && throw(DimensionMismatch("incompatible dimensions"))
     return IdentityMultiple(𝐼1.M - 𝐼2.M, 𝐼1.n)
 end
 
 function Base.:(*)(𝐼1::IdentityMultiple, 𝐼2::IdentityMultiple)
-    @assert 𝐼1.n == 𝐼2.n
+    𝐼1.n != 𝐼2.n && throw(DimensionMismatch("incompatible dimensions"))
     return IdentityMultiple(𝐼1.M * 𝐼2.M, 𝐼1.n)
 end
 
@@ -159,12 +159,12 @@ function Base.:(*)(U::UniformScaling{T}, 𝐼::IdentityMultiple{S}) where {T<:Nu
 end
 
 function Base.:(/)(𝐼::IdentityMultiple{T}, U::UniformScaling{S}) where {T<:Number,S<:Number}
-    @assert !iszero(U.λ)
+    iszero(U.λ) && throw(DivideError())
     return IdentityMultiple(𝐼.M * inv(U.λ), 𝐼.n)
 end
 
 function Base.:(/)(U::UniformScaling{T}, 𝐼::IdentityMultiple{S}) where {T<:Number,S<:Number}
-    @assert !iszero(𝐼.M.λ)
+    iszero(𝐼.M.λ) && throw(DivideError())
     return IdentityMultiple(U * inv(𝐼.M.λ), 𝐼.n)
 end
 

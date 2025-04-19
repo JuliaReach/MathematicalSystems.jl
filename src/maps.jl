@@ -118,7 +118,7 @@ struct AffineMap{T,MT<:AbstractMatrix{T},VT<:AbstractVector{T}} <: AbstractMap
     A::MT
     c::VT
     function AffineMap(A::MT, c::VT) where {T,MT<:AbstractMatrix{T},VT<:AbstractVector{T}}
-        @assert size(A, 1) == length(c)
+        size(A, 1) != length(c) && throw(DimensionMismatch("incompatible dimensions"))
         return new{T,MT,VT}(A, c)
     end
 end
@@ -152,7 +152,7 @@ struct ConstrainedAffineMap{T,MT<:AbstractMatrix{T},VT<:AbstractVector{T},ST} <:
     X::ST
     function ConstrainedAffineMap(A::MT, c::VT,
                                   X::ST) where {T,MT<:AbstractMatrix{T},VT<:AbstractVector{T},ST}
-        @assert size(A, 1) == length(c)
+        size(A, 1) != length(c) && throw(DimensionMismatch("incompatible dimensions"))
         return new{T,MT,VT,ST}(A, c, X)
     end
 end
@@ -185,7 +185,7 @@ struct LinearControlMap{T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T}} <: Abst
     B::MTB
     function LinearControlMap(A::MTA,
                               B::MTB) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T}}
-        @assert size(A, 1) == size(B, 1)
+        size(A, 1) != size(B, 1) && throw(DimensionMismatch("incompatible dimensions"))
         return new{T,MTA,MTB}(A, B)
     end
 end
@@ -223,7 +223,7 @@ struct ConstrainedLinearControlMap{T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{
     function ConstrainedLinearControlMap(A::MTA, B::MTB, X::ST,
                                          U::UT) where {T,MTA<:AbstractMatrix{T},
                                                        MTB<:AbstractMatrix{T},ST,UT}
-        @assert size(A, 1) == size(B, 1)
+        size(A, 1) != size(B, 1) && throw(DimensionMismatch("incompatible dimensions"))
         return new{T,MTA,MTB,ST,UT}(A, B, X, U)
     end
 end
@@ -261,7 +261,9 @@ struct AffineControlMap{T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},VT<:Abst
     function AffineControlMap(A::MTA, B::MTB,
                               c::VT) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},
                                             VT<:AbstractVector{T}}
-        @assert size(A, 1) == size(B, 1) == length(c)
+        if !(size(A, 1) == size(B, 1) == length(c))
+            throw(DimensionMismatch("incompatible dimensions"))
+        end
         return new{T,MTA,MTB,VT}(A, B, c)
     end
 end
@@ -303,7 +305,9 @@ struct ConstrainedAffineControlMap{T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{
                                          U::UT) where {T,MTA<:AbstractMatrix{T},
                                                        MTB<:AbstractMatrix{T},VT<:AbstractVector{T},
                                                        ST,UT}
-        @assert size(A, 1) == size(B, 1) == length(c)
+        if !(size(A, 1) == size(B, 1) == length(c))
+            throw(DimensionMismatch("incompatible dimensions"))
+        end
         return new{T,MTA,MTB,VT,ST,UT}(A, B, c, X, U)
     end
 end

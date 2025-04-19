@@ -1,8 +1,3 @@
-# check if a matrix is square
-@inline function issquare(A::AbstractMatrix)
-    return size(A, 1) == size(A, 2)
-end
-
 for (Z, AZ) in ((:ContinuousIdentitySystem, :AbstractContinuousSystem),
                 (:DiscreteIdentitySystem, :AbstractDiscreteSystem))
     @eval begin
@@ -120,7 +115,7 @@ for (Z, AZ) in ((:LinearContinuousSystem, :AbstractContinuousSystem),
         struct $(Z){T,MT<:AbstractMatrix{T}} <: $(AZ)
             A::MT
             function $(Z)(A::MT) where {T,MT<:AbstractMatrix{T}}
-                @assert issquare(A)
+                checksquare(A)
                 return new{T,MT}(A)
             end
         end
@@ -183,7 +178,9 @@ for (Z, AZ) in ((:AffineContinuousSystem, :AbstractContinuousSystem),
             A::MT
             c::VT
             function $(Z)(A::MT, c::VT) where {T,MT<:AbstractMatrix{T},VT<:AbstractVector{T}}
-                @assert checksquare(A) == length(c)
+                if checksquare(A) != length(c)
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
                 return new{T,MT,VT}(A, c)
             end
         end
@@ -249,7 +246,9 @@ for (Z, AZ) in ((:LinearControlContinuousSystem, :AbstractContinuousSystem),
             A::MTA
             B::MTB
             function $(Z)(A::MTA, B::MTB) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T}}
-                @assert checksquare(A) == size(B, 1)
+                if checksquare(A) != size(B, 1)
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
                 return new{T,MTA,MTB}(A, B)
             end
         end
@@ -315,7 +314,7 @@ for (Z, AZ) in ((:ConstrainedLinearContinuousSystem, :AbstractContinuousSystem),
             A::MT
             X::ST
             function $(Z)(A::MT, X::ST) where {T,MT<:AbstractMatrix{T},ST}
-                @assert issquare(A)
+                checksquare(A)
                 return new{T,MT,ST}(A, X)
             end
         end
@@ -383,7 +382,9 @@ for (Z, AZ) in ((:ConstrainedAffineContinuousSystem, :AbstractContinuousSystem),
             X::ST
             function $(Z)(A::MT, c::VT,
                           X::ST) where {T,MT<:AbstractMatrix{T},VT<:AbstractVector{T},ST}
-                @assert checksquare(A) == length(c)
+                if checksquare(A) != length(c)
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
                 return new{T,MT,VT,ST}(A, c, X)
             end
         end
@@ -455,7 +456,9 @@ for (Z, AZ) in ((:AffineControlContinuousSystem, :AbstractContinuousSystem),
             function $(Z)(A::MTA, B::MTB,
                           c::VT) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},
                                         VT<:AbstractVector{T}}
-                @assert checksquare(A) == length(c) == size(B, 1)
+                if !(checksquare(A) == length(c) == size(B, 1))
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
                 return new{T,MTA,MTB,VT}(A, B, c)
             end
         end
@@ -530,7 +533,9 @@ for (Z, AZ) in ((:ConstrainedAffineControlContinuousSystem, :AbstractContinuousS
             function $(Z)(A::MTA, B::MTB, c::VT, X::ST,
                           U::UT) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},
                                         VT<:AbstractVector{T},ST,UT}
-                @assert checksquare(A) == length(c) == size(B, 1)
+                if !(checksquare(A) == length(c) == size(B, 1))
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
                 return new{T,MTA,MTB,VT,ST,UT}(A, B, c, X, U)
             end
         end
@@ -608,7 +613,9 @@ for (Z, AZ) in ((:ConstrainedLinearControlContinuousSystem, :AbstractContinuousS
             U::UT
             function $(Z)(A::MTA, B::MTB, X::ST,
                           U::UT) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},ST,UT}
-                @assert checksquare(A) == size(B, 1)
+                if checksquare(A) != size(B, 1)
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
                 return new{T,MTA,MTB,ST,UT}(A, B, X, U)
             end
         end
@@ -679,7 +686,9 @@ for (Z, AZ) in ((:LinearDescriptorContinuousSystem, :AbstractContinuousSystem),
             A::MTA
             E::MTE
             function $(Z)(A::MTA, E::MTE) where {T,MTA<:AbstractMatrix{T},MTE<:AbstractMatrix{T}}
-                @assert size(A) == size(E)
+                if size(A) != size(E)
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
                 return new{T,MTA,MTE}(A, E)
             end
         end
@@ -746,7 +755,9 @@ for (Z, AZ) in ((:ConstrainedLinearDescriptorContinuousSystem, :AbstractContinuo
             X::ST
             function $(Z)(A::MTA, E::MTE,
                           X::ST) where {T,MTA<:AbstractMatrix{T},MTE<:AbstractMatrix{T},ST}
-                @assert size(A) == size(E)
+                if size(A) != size(E)
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
                 return new{T,MTA,MTE,ST}(A, E, X)
             end
         end
@@ -816,7 +827,9 @@ for (Z, AZ) in ((:PolynomialContinuousSystem, :AbstractContinuousSystem),
             function $(Z)(p::VPT,
                           statedim::Int) where {T,PT<:AbstractPolynomialLike{T},
                                                 VPT<:AbstractVector{PT}}
-                @assert statedim == MultivariatePolynomials.nvariables(p) "the state dimension $(statedim) does not match the number of state variables"
+                if statedim != MultivariatePolynomials.nvariables(p)
+                    throw(DimensionMismatch("the state dimension $(statedim) does not match the number of state variables"))
+                end
                 return new{T,PT,VPT}(p, statedim)
             end
         end
@@ -887,7 +900,9 @@ for (Z, AZ) in ((:ConstrainedPolynomialContinuousSystem, :AbstractContinuousSyst
             X::ST
             function $(Z)(p::VPT, statedim::Int,
                           X::ST) where {T,PT<:AbstractPolynomialLike{T},VPT<:AbstractVector{PT},ST}
-                @assert statedim == MultivariatePolynomials.nvariables(p) "the state dimension $(statedim) does not match the number of state variables"
+                if statedim != MultivariatePolynomials.nvariables(p)
+                    throw(DimensionMismatch("the state dimension $(statedim) does not match the number of state variables"))
+                end
                 return new{T,PT,VPT,ST}(p, statedim, X)
             end
         end
@@ -1213,7 +1228,9 @@ for (Z, AZ) in ((:NoisyLinearContinuousSystem, :AbstractContinuousSystem),
             A::MTA
             D::MTD
             function $(Z)(A::MTA, D::MTD) where {T,MTA<:AbstractMatrix{T},MTD<:AbstractMatrix{T}}
-                @assert checksquare(A) == size(D, 1)
+                if checksquare(A) != size(D, 1)
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
                 return new{T,MTA,MTD}(A, D)
             end
         end
@@ -1282,7 +1299,9 @@ for (Z, AZ) in ((:NoisyConstrainedLinearContinuousSystem, :AbstractContinuousSys
             W::WT
             function $(Z)(A::MTA, D::MTD, X::ST,
                           W::WT) where {T,MTA<:AbstractMatrix{T},MTD<:AbstractMatrix{T},ST,WT}
-                @assert checksquare(A) == size(D, 1)
+                if checksquare(A) != size(D, 1)
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
                 return new{T,MTA,MTD,ST,WT}(A, D, X, W)
             end
         end
@@ -1357,7 +1376,9 @@ for (Z, AZ) in ((:NoisyLinearControlContinuousSystem, :AbstractContinuousSystem)
             function $(Z)(A::MTA, B::MTB,
                           D::MTD) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},
                                          MTD<:AbstractMatrix{T}}
-                @assert checksquare(A) == size(B, 1) == size(D, 1)
+                if !(checksquare(A) == size(B, 1) == size(D, 1))
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
                 return new{T,MTA,MTB,MTD}(A, B, D)
             end
         end
@@ -1435,7 +1456,9 @@ for (Z, AZ) in ((:NoisyConstrainedLinearControlContinuousSystem, :AbstractContin
             function $(Z)(A::MTA, B::MTB, D::MTD, X::ST, U::UT,
                           W::WT) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},
                                         MTD<:AbstractMatrix{T},ST,UT,WT}
-                @assert checksquare(A) == size(B, 1) == size(D, 1)
+                if !(checksquare(A) == size(B, 1) == size(D, 1))
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
                 return new{T,MTA,MTB,MTD,ST,UT,WT}(A, B, D, X, U, W)
             end
         end
@@ -1522,7 +1545,9 @@ for (Z, AZ) in ((:NoisyAffineControlContinuousSystem, :AbstractContinuousSystem)
             function $(Z)(A::MTA, B::MTB, c::VT,
                           D::MTD) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},
                                          VT<:AbstractVector{T},MTD<:AbstractMatrix{T}}
-                @assert checksquare(A) == length(c) == size(B, 1) == size(D, 1)
+                if !(checksquare(A) == length(c) == size(B, 1) == size(D, 1))
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
                 return new{T,MTA,MTB,VT,MTD}(A, B, c, D)
             end
         end
@@ -1602,7 +1627,9 @@ for (Z, AZ) in ((:NoisyConstrainedAffineControlContinuousSystem, :AbstractContin
             function $(Z)(A::MTA, B::MTB, c::VT, D::MTD, X::ST, U::UT,
                           W::WT) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},
                                         VT<:AbstractVector{T},MTD<:AbstractMatrix{T},ST,UT,WT}
-                @assert checksquare(A) == length(c) == size(B, 1) == size(D, 1)
+                if !(checksquare(A) == length(c) == size(B, 1) == size(D, 1))
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
                 return new{T,MTA,MTB,VT,MTD,ST,UT,WT}(A, B, c, D, X, U, W)
             end
         end
@@ -1867,7 +1894,9 @@ for (Z, AZ) in ((:SecondOrderLinearContinuousSystem, :AbstractContinuousSystem),
                           K::MTK) where {T,MTM<:AbstractMatrix{T},
                                          MTC<:AbstractMatrix{T},
                                          MTK<:AbstractMatrix{T}}
-                @assert checksquare(M) == checksquare(C) == checksquare(K)
+                if !(checksquare(M) == checksquare(C) == checksquare(K))
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
                 return new{T,MTM,MTC,MTK}(M, C, K)
             end
         end
@@ -1947,7 +1976,7 @@ for (Z, AZ) in ((:SecondOrderAffineContinuousSystem, :AbstractContinuousSystem),
                                         MTC<:AbstractMatrix{T},
                                         MTK<:AbstractMatrix{T},
                                         VT<:AbstractVector{T}}
-                @assert checksquare(M) == checksquare(C) == checksquare(K) == length(b)
+                checksquare(M) == checksquare(C) == checksquare(K) == length(b)
                 return new{T,MTM,MTC,MTK,VT}(M, C, K, b)
             end
         end
@@ -2037,7 +2066,9 @@ for (Z, AZ) in ((:SecondOrderConstrainedLinearControlContinuousSystem, :Abstract
                                         MTB<:AbstractMatrix{T},
                                         ST,
                                         UT}
-                @assert checksquare(M) == checksquare(C) == checksquare(K) == size(B, 1)
+                if !(checksquare(M) == checksquare(C) == checksquare(K) == size(B, 1))
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
                 return new{T,MTM,MTC,MTK,MTB,ST,UT}(M, C, K, B, X, U)
             end
         end
@@ -2135,8 +2166,9 @@ for (Z, AZ) in ((:SecondOrderConstrainedAffineControlContinuousSystem, :Abstract
                                         VT<:AbstractVector{T},
                                         ST,
                                         UT}
-                @assert checksquare(M) == checksquare(C) == checksquare(K) == size(B, 1) ==
-                        length(d)
+                if !(checksquare(M) == checksquare(C) == checksquare(K) == size(B, 1) == length(d))
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
                 return new{T,MTM,MTC,MTK,MTB,VT,ST,UT}(M, C, K, B, d, X, U)
             end
         end
@@ -2226,7 +2258,9 @@ for (Z, AZ) in ((:SecondOrderContinuousSystem, :AbstractContinuousSystem),
             fe::FE
             function $(Z)(M::MTM, C::MTC, fi::FI,
                           fe::FE) where {T,MTM<:AbstractMatrix{T},MTC<:AbstractMatrix{T},FI,FE}
-                @assert checksquare(M) == checksquare(C)
+                if checksquare(M) != checksquare(C)
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
                 return new{T,MTM,MTC,FI,FE}(M, C, fi, fe)
             end
         end
@@ -2309,7 +2343,9 @@ for (Z, AZ) in ((:SecondOrderConstrainedContinuousSystem, :AbstractContinuousSys
 
             function $(Z)(M::MTM, C::MTC, fi::FI, fe::FE, X::ST,
                           U::UT) where {T,MTM<:AbstractMatrix{T},MTC<:AbstractMatrix{T},FI,FE,ST,UT}
-                @assert checksquare(M) == checksquare(C)
+                if checksquare(M) != checksquare(C)
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
                 return new{T,MTM,MTC,FI,FE,ST,UT}(M, C, fi, fe, X, U)
             end
         end

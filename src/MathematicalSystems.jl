@@ -1,5 +1,6 @@
 module MathematicalSystems
 
+using Requires
 using LinearAlgebra, SparseArrays
 using LinearAlgebra: checksquare
 import RecipesBase

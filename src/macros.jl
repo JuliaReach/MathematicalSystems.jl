@@ -127,7 +127,7 @@ Return the system type whose field names match those in `fields`.
 ### Input
 
 - `AT`     -- abstract system type, which can be either `AbstractContinuousSystem`
-              or `AbstractDiscreSystem`
+              or `AbstractDiscreteSystem`
 - `fields` -- tuple of field names
 
 ### Output
@@ -757,15 +757,6 @@ function _sort(parameters::Vector{<:Tuple{Any,Symbol}}, order::NTuple{N,Symbol})
     return order_parameters
 end
 
-function _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
-    lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, input, noise, dim, AT)
-    ordered_rhs = _sort(rhs, (:A, :B, :c, :D, :f, :statedim, :inputdim, :noisedim))
-    ordered_set = _sort(extract_set_parameter.(constr, state, input, noise), (:X, :U, :W))
-    field_names, var_names = constructor_input(lhs, ordered_rhs, ordered_set)
-    sys_type = _corresponding_type(AT, field_names)
-    return sys_type, var_names
-end
-
 """
     system(expr...)
 
@@ -883,8 +874,11 @@ ConstrainedBlackBoxControlDiscreteSystem{typeof(f), BallInf{Float64, Vector{Floa
 macro system(expr...)
     try
         dyn_eq, AT, constr, state, input, noise, dim, x0 = _parse_system(expr)
-        sys_type, var_names = _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
-        sys = Expr(:call, :($sys_type), :($(var_names...)))
+        lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, input, noise, dim, AT)
+        ordered_rhs = _sort(rhs, (:A, :B, :c, :D, :f, :statedim, :inputdim, :noisedim))
+        ordered_set = _sort(extract_set_parameter.(constr, state, input, noise), (:X, :U, :W))
+        _, var_names = constructor_input(lhs, ordered_rhs, ordered_set)
+        sys = Expr(:call, :(_create_system), esc.(var_names)...)
         if isnothing(x0)
             return esc(sys)
         else

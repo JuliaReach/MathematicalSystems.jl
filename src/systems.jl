@@ -18,6 +18,7 @@ for (Z, AZ) in ((:ContinuousIdentitySystem, :AbstractContinuousSystem),
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = false
+            isparametric(::$T) = false
         end
     end
 end
@@ -73,6 +74,7 @@ for (Z, AZ) in ((:ConstrainedContinuousIdentitySystem, :AbstractContinuousSystem
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = true
+            isparametric(::$T) = false
         end
     end
 end
@@ -137,6 +139,7 @@ for (Z, AZ) in ((:LinearContinuousSystem, :AbstractContinuousSystem),
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = false
+            isparametric(::$T) = false
         end
     end
 end
@@ -203,6 +206,7 @@ for (Z, AZ) in ((:AffineContinuousSystem, :AbstractContinuousSystem),
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = false
+            isparametric(::$T) = false
         end
     end
 end
@@ -271,6 +275,7 @@ for (Z, AZ) in ((:LinearControlContinuousSystem, :AbstractContinuousSystem),
             isnoisy(::$T) = false
             iscontrolled(::$T) = true
             isconstrained(::$T) = false
+            isparametric(::$T) = false
         end
     end
 end
@@ -337,6 +342,7 @@ for (Z, AZ) in ((:ConstrainedLinearContinuousSystem, :AbstractContinuousSystem),
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = true
+            isparametric(::$T) = false
         end
     end
 end
@@ -408,6 +414,7 @@ for (Z, AZ) in ((:ConstrainedAffineContinuousSystem, :AbstractContinuousSystem),
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = true
+            isparametric(::$T) = false
         end
     end
 end
@@ -482,6 +489,7 @@ for (Z, AZ) in ((:AffineControlContinuousSystem, :AbstractContinuousSystem),
             isnoisy(::$T) = false
             iscontrolled(::$T) = true
             isconstrained(::$T) = false
+            isparametric(::$T) = false
         end
     end
 end
@@ -561,6 +569,7 @@ for (Z, AZ) in ((:ConstrainedAffineControlContinuousSystem, :AbstractContinuousS
             isnoisy(::$T) = false
             iscontrolled(::$T) = true
             isconstrained(::$T) = true
+            isparametric(::$T) = false
         end
     end
 end
@@ -640,6 +649,7 @@ for (Z, AZ) in ((:ConstrainedLinearControlContinuousSystem, :AbstractContinuousS
             isnoisy(::$T) = false
             iscontrolled(::$T) = true
             isconstrained(::$T) = true
+            isparametric(::$T) = false
         end
     end
 end
@@ -710,6 +720,7 @@ for (Z, AZ) in ((:LinearDescriptorContinuousSystem, :AbstractContinuousSystem),
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = false
+            isparametric(::$T) = false
         end
     end
 end
@@ -780,6 +791,7 @@ for (Z, AZ) in ((:ConstrainedLinearDescriptorContinuousSystem, :AbstractContinuo
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = true
+            isparametric(::$T) = false
         end
     end
 end
@@ -855,6 +867,7 @@ for (Z, AZ) in ((:PolynomialContinuousSystem, :AbstractContinuousSystem),
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = false
+            isparametric(::$T) = false
         end
     end
 end
@@ -929,6 +942,7 @@ for (Z, AZ) in ((:ConstrainedPolynomialContinuousSystem, :AbstractContinuousSyst
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = true
+            isparametric(::$T) = false
         end
     end
 end
@@ -988,6 +1002,7 @@ for (Z, AZ) in ((:BlackBoxContinuousSystem, :AbstractContinuousSystem),
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = false
+            isparametric(::$T) = false
         end
     end
 end
@@ -1047,6 +1062,7 @@ for (Z, AZ) in ((:ConstrainedBlackBoxContinuousSystem, :AbstractContinuousSystem
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = true
+            isparametric(::$T) = false
         end
     end
 end
@@ -1109,6 +1125,7 @@ for (Z, AZ) in ((:BlackBoxControlContinuousSystem, :AbstractContinuousSystem),
             isnoisy(::$T) = false
             iscontrolled(::$T) = true
             isconstrained(::$T) = false
+            isparametric(::$T) = false
         end
     end
 end
@@ -1173,6 +1190,7 @@ for (Z, AZ) in ((:ConstrainedBlackBoxControlContinuousSystem, :AbstractContinuou
             isnoisy(::$T) = false
             iscontrolled(::$T) = true
             isconstrained(::$T) = true
+            isparametric(::$T) = false
         end
     end
 end
@@ -1253,6 +1271,7 @@ for (Z, AZ) in ((:NoisyLinearContinuousSystem, :AbstractContinuousSystem),
             isnoisy(::$T) = true
             iscontrolled(::$T) = false
             isconstrained(::$T) = false
+            isparametric(::$T) = false
         end
     end
 end
@@ -1326,6 +1345,7 @@ for (Z, AZ) in ((:NoisyConstrainedLinearContinuousSystem, :AbstractContinuousSys
             isnoisy(::$T) = true
             iscontrolled(::$T) = false
             isconstrained(::$T) = true
+            isparametric(::$T) = false
         end
     end
 end
@@ -1402,6 +1422,7 @@ for (Z, AZ) in ((:NoisyLinearControlContinuousSystem, :AbstractContinuousSystem)
             isnoisy(::$T) = true
             iscontrolled(::$T) = true
             isconstrained(::$T) = false
+            isparametric(::$T) = false
         end
     end
 end
@@ -1485,6 +1506,7 @@ for (Z, AZ) in ((:NoisyConstrainedLinearControlContinuousSystem, :AbstractContin
             isnoisy(::$T) = true
             iscontrolled(::$T) = true
             isconstrained(::$T) = true
+            isparametric(::$T) = false
         end
     end
 end
@@ -1572,6 +1594,7 @@ for (Z, AZ) in ((:NoisyAffineControlContinuousSystem, :AbstractContinuousSystem)
             isnoisy(::$T) = true
             iscontrolled(::$T) = true
             isconstrained(::$T) = false
+            isparametric(::$T) = false
         end
     end
 end
@@ -1657,6 +1680,7 @@ for (Z, AZ) in ((:NoisyConstrainedAffineControlContinuousSystem, :AbstractContin
             isnoisy(::$T) = true
             iscontrolled(::$T) = true
             isconstrained(::$T) = true
+            isparametric(::$T) = false
         end
     end
 end
@@ -1728,6 +1752,7 @@ for (Z, AZ) in ((:NoisyBlackBoxControlContinuousSystem, :AbstractContinuousSyste
             isnoisy(::$T) = true
             iscontrolled(::$T) = true
             isconstrained(::$T) = false
+            isparametric(::$T) = false
         end
     end
 end
@@ -1799,6 +1824,7 @@ for (Z, AZ) in ((:NoisyConstrainedBlackBoxControlContinuousSystem, :AbstractCont
             isnoisy(::$T) = true
             iscontrolled(::$T) = true
             isconstrained(::$T) = true
+            isparametric(::$T) = false
         end
     end
 end
@@ -1920,6 +1946,7 @@ for (Z, AZ) in ((:SecondOrderLinearContinuousSystem, :AbstractContinuousSystem),
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = false
+            isparametric(::$T) = false
         end
     end
 end
@@ -2000,6 +2027,7 @@ for (Z, AZ) in ((:SecondOrderAffineContinuousSystem, :AbstractContinuousSystem),
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = false
+            isparametric(::$T) = false
         end
     end
 end
@@ -2095,6 +2123,7 @@ for (Z, AZ) in ((:SecondOrderConstrainedLinearControlContinuousSystem, :Abstract
             isnoisy(::$T) = false
             iscontrolled(::$T) = true
             isconstrained(::$T) = true
+            isparametric(::$T) = false
         end
     end
 end
@@ -2195,6 +2224,7 @@ for (Z, AZ) in ((:SecondOrderConstrainedAffineControlContinuousSystem, :Abstract
             isnoisy(::$T) = false
             iscontrolled(::$T) = true
             isconstrained(::$T) = true
+            isparametric(::$T) = false
         end
     end
 end
@@ -2281,6 +2311,7 @@ for (Z, AZ) in ((:SecondOrderContinuousSystem, :AbstractContinuousSystem),
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = false
+            isparametric(::$T) = false
         end
     end
 end
@@ -2368,6 +2399,153 @@ for (Z, AZ) in ((:SecondOrderConstrainedContinuousSystem, :AbstractContinuousSys
             isnoisy(::$T) = false
             iscontrolled(::$T) = false
             isconstrained(::$T) = true
+            isparametric(::$T) = false
+        end
+    end
+end
+
+function __init__()
+    @require LazySets = "b4f0291d-fe17-52bc-9479-3d1a343d9043" begin
+        using .LazySets: MatrixZonotope
+
+        export LinearUncertainParametricContinuousSystem,
+               LinearUncertainParametricDiscreteSystem,
+               LinearControlUncertainParametricContinuousSystem,
+               LinearControlUncertainParametricDiscreteSystem
+               
+        @doc """
+            LinearUncertainParametricContinuousSystem
+
+        Continuous-time linear uncertain parametric system of the form:
+
+        ```math
+            x(t)' = A(\\theta) x(t), \\theta ∈ \\Theta \\; \\forall t
+        ```
+        where ``A(θ)`` belongs to a continuous set of matrices, e.g., an interval
+        matrix, matrix zonotope, or other convex matrix sets.
+
+        ### Fields
+        - `A`      -- uncertain state matrix
+        """
+        LinearUncertainParametricContinuousSystem
+
+        @doc """
+            LinearUncertainParametricDiscreteSystem
+
+        Discrete-time linear uncertain parametric system of the form:
+        ```math
+            x_{k+1} = A(\\theta) x_k, \\theta ∈ \\Theta \\; \\forall k
+        ```
+        where ``A(θ)`` belongs to a continuous set of matrices, e.g., an interval
+        matrix, matrix zonotope, or other convex matrix sets.
+
+        ### Fields
+        - `A`      -- uncertain state matrix
+        """
+        LinearUncertainParametricDiscreteSystem
+
+        for (Z, AZ) in ((:LinearUncertainParametricContinuousSystem, :AbstractContinuousSystem),
+                        (:LinearUncertainParametricDiscreteSystem, :AbstractDiscreteSystem))
+
+            @eval begin
+                struct $(Z){T, MA<:MatrixZonotope{T}} <: $(AZ)
+                    A::MA
+                end
+
+                statedim(s::$Z) = size(s.A, 1)
+                inputdim(::$Z) = 0
+                noisedim(::$Z) = 0
+                state_matrix(s::$Z) = s.A
+            end
+
+            for T in [Z, Type{<:eval(Z)}]
+                @eval begin
+                    islinear(::$T) = true
+                    isaffine(::$T) = false
+                    ispolynomial(::$T) = false
+                    isnoisy(::$T) = false
+                    iscontrolled(::$T) = false
+                    isconstrained(::$T) = false
+                    isparametric(::$T) = true
+                end
+            end
+        end
+
+        @doc """
+            LinearControlUncertainParametricContinuousSystem
+
+        Continuous-time linear uncertain parametric system of the form:
+
+        ```math
+            x(t)' = A(θ) x(t) + B(θ) u(t), \\theta ∈ \\Theta \\; \\forall t
+        ```
+
+        where ``A(θ)`` and ``B(θ)`` belong to continuous sets of matrices, e.g., an interval
+        matrix, matrix zonotope, or other convex matrix sets.
+
+        ### Fields
+        - `A`      -- uncertain state matrix
+        - `B`      -- uncertain input matrix
+        """
+        LinearControlUncertainParametricContinuousSystem
+
+        @doc """
+            LinearControlUncertainParametricDiscreteSystem 
+
+        Discrete-time linear uncertain parametric system of the form:
+
+        ```math
+            x_{k+1} = A(θ) x_k + B(θ) u_k, \\theta ∈ \\Theta \\; \\forall k
+        ```
+
+        where ``A(θ)`` and ``B(θ)`` belong to continuous sets of matrices, e.g., an interval
+        matrix, matrix zonotope, or other convex matrix sets.
+
+        ### Fields
+        - `A`      -- uncertain state matrix
+        - `B`      -- uncertain input matrix
+        """
+        LinearControlUncertainParametricDiscreteSystem
+
+        for (Z, AZ) in
+            ((:LinearControlUncertainParametricContinuousSystem, :AbstractContinuousSystem),
+             (:LinearControlUncertainParametricDiscreteSystem, :AbstractDiscreteSystem))
+
+            @eval begin
+                struct $(Z){T, MTA<:MatrixZonotope{T}, MTB<:MatrixZonotope{T}} <: $(AZ)
+                    A::MTA
+                    B::MTB
+                    function $(Z)(A::MTA, B::MTB) where {T, MTA<:MatrixZonotope{T}, MTB<:MatrixZonotope{T}}
+                        if size(A, 1) != size(A, 2) || size(A, 1) != size(B, 1)
+                            throw(DimensionMismatch("incompatible dimensions"))
+                        end
+                        return new{T, MTA, MTB}(A, B)
+                    end
+                end
+
+                function $(Z)(A::Number, B::Number)
+                    return $(Z)(hcat(A), hcat(B))
+                end
+
+                statedim(s::$Z) = size(s.A, 1)
+                inputdim(s::$Z) = size(s.B, 2)
+                noisedim(::$Z) = 0
+                state_matrix(s::$Z) = s.A
+                input_matrix(s::$Z) = s.B
+            end
+
+            for T in [Z, Type{<:eval(Z)}]
+                @eval begin
+                    islinear(::$T) = true
+                    isaffine(::$T) = true
+                    ispolynomial(::$T) = false
+                    isblackbox(::$T) = false
+                    isnoisy(::$T) = false
+                    iscontrolled(::$T) = true
+                    isconstrained(::$T) = false
+                    isparametric(::$T) = true
+                end
+            end
         end
     end
 end

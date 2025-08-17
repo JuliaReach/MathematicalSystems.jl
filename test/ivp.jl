@@ -29,6 +29,6 @@
     @test affine_term(P) == c
 
     f() = 1
-    P = BlackBoxDiscreteSystem(f, 1)
+    P = InitialValueProblem(BlackBoxDiscreteSystem(f, 1), X0)
     @test mapping(P) == f
 end

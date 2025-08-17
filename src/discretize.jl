@@ -155,12 +155,14 @@ Returns a vector containing the discretized input arguments `A`, `B`, `c` and `D
 
 See [`discretize`](@ref) for more details.
 """
+# COV_EXCL_START
 function _discretize(::AbstractDiscretizationAlgorithm, ΔT::Real,
                      A::AbstractMatrix,
                      B::AbstractMatrix,
                      c::AbstractVector,
-                     D::AbstractMatrix)  # COV_EXCL_LINE
+                     D::AbstractMatrix)
 end
+# COV_EXCL_STOP
 
 function _discretize(::ExactDiscretization, ΔT::Real,
                      A::AbstractMatrix,

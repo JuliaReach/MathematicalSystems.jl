@@ -14,13 +14,27 @@ An identity map
 struct IdentityMap <: AbstractMap
     dim::Int
 end
-statedim(m::IdentityMap) = m.dim
-outputdim(m::IdentityMap) = m.dim
-inputdim(::IdentityMap) = 0
-state_matrix(m::IdentityMap) = Id(m.dim)
-islinear(::IdentityMap) = true
-isaffine(::IdentityMap) = true
-apply(::IdentityMap, x) = x
+function statedim(m::IdentityMap)
+    return m.dim
+end
+function outputdim(m::IdentityMap)
+    return m.dim
+end
+function inputdim(::IdentityMap)
+    return 0
+end
+function state_matrix(m::IdentityMap)
+    return Id(m.dim)
+end
+function islinear(::IdentityMap)
+    return true
+end
+function isaffine(::IdentityMap)
+    return true
+end
+function apply(::IdentityMap, x)
+    return x
+end
 
 """
     ConstrainedIdentityMap
@@ -40,14 +54,30 @@ struct ConstrainedIdentityMap{ST} <: AbstractMap
     dim::Int
     X::ST
 end
-statedim(m::ConstrainedIdentityMap) = m.dim
-stateset(m::ConstrainedIdentityMap) = m.X
-outputdim(m::ConstrainedIdentityMap) = m.dim
-inputdim(::ConstrainedIdentityMap) = 0
-state_matrix(m::ConstrainedIdentityMap) = Id(m.dim)
-islinear(::ConstrainedIdentityMap) = true
-isaffine(::ConstrainedIdentityMap) = true
-apply(::ConstrainedIdentityMap, x) = x
+function statedim(m::ConstrainedIdentityMap)
+    return m.dim
+end
+function stateset(m::ConstrainedIdentityMap)
+    return m.X
+end
+function outputdim(m::ConstrainedIdentityMap)
+    return m.dim
+end
+function inputdim(::ConstrainedIdentityMap)
+    return 0
+end
+function state_matrix(m::ConstrainedIdentityMap)
+    return Id(m.dim)
+end
+function islinear(::ConstrainedIdentityMap)
+    return true
+end
+function isaffine(::ConstrainedIdentityMap)
+    return true
+end
+function apply(::ConstrainedIdentityMap, x)
+    return x
+end
 
 """
     LinearMap
@@ -65,13 +95,27 @@ A linear map
 struct LinearMap{T,MT<:AbstractMatrix{T}} <: AbstractMap
     A::MT
 end
-statedim(m::LinearMap) = size(m.A, 2)
-outputdim(m::LinearMap) = size(m.A, 1)
-inputdim(::LinearMap) = 0
-state_matrix(m::LinearMap) = m.A
-islinear(::LinearMap) = true
-isaffine(::LinearMap) = true
-apply(m::LinearMap, x) = m.A * x
+function statedim(m::LinearMap)
+    return size(m.A, 2)
+end
+function outputdim(m::LinearMap)
+    return size(m.A, 1)
+end
+function inputdim(::LinearMap)
+    return 0
+end
+function state_matrix(m::LinearMap)
+    return m.A
+end
+function islinear(::LinearMap)
+    return true
+end
+function isaffine(::LinearMap)
+    return true
+end
+function apply(m::LinearMap, x)
+    return m.A * x
+end
 
 """
     ConstrainedLinearMap
@@ -91,14 +135,30 @@ struct ConstrainedLinearMap{T,MT<:AbstractMatrix{T},ST} <: AbstractMap
     A::MT
     X::ST
 end
-statedim(m::ConstrainedLinearMap) = size(m.A, 2)
-stateset(m::ConstrainedLinearMap) = m.X
-outputdim(m::ConstrainedLinearMap) = size(m.A, 1)
-inputdim(::ConstrainedLinearMap) = 0
-state_matrix(m::ConstrainedLinearMap) = m.A
-islinear(::ConstrainedLinearMap) = true
-isaffine(::ConstrainedLinearMap) = true
-apply(m::ConstrainedLinearMap, x) = m.A * x
+function statedim(m::ConstrainedLinearMap)
+    return size(m.A, 2)
+end
+function stateset(m::ConstrainedLinearMap)
+    return m.X
+end
+function outputdim(m::ConstrainedLinearMap)
+    return size(m.A, 1)
+end
+function inputdim(::ConstrainedLinearMap)
+    return 0
+end
+function state_matrix(m::ConstrainedLinearMap)
+    return m.A
+end
+function islinear(::ConstrainedLinearMap)
+    return true
+end
+function isaffine(::ConstrainedLinearMap)
+    return true
+end
+function apply(m::ConstrainedLinearMap, x)
+    return m.A * x
+end
 
 """
     AffineMap
@@ -122,14 +182,30 @@ struct AffineMap{T,MT<:AbstractMatrix{T},VT<:AbstractVector{T}} <: AbstractMap
         return new{T,MT,VT}(A, c)
     end
 end
-statedim(m::AffineMap) = size(m.A, 2)
-outputdim(m::AffineMap) = length(m.c)
-inputdim(::AffineMap) = 0
-state_matrix(m::AffineMap) = m.A
-affine_term(m::AffineMap) = m.c
-islinear(::AffineMap) = false
-isaffine(::AffineMap) = true
-apply(m::AffineMap, x) = m.A * x + m.c
+function statedim(m::AffineMap)
+    return size(m.A, 2)
+end
+function outputdim(m::AffineMap)
+    return length(m.c)
+end
+function inputdim(::AffineMap)
+    return 0
+end
+function state_matrix(m::AffineMap)
+    return m.A
+end
+function affine_term(m::AffineMap)
+    return m.c
+end
+function islinear(::AffineMap)
+    return false
+end
+function isaffine(::AffineMap)
+    return true
+end
+function apply(m::AffineMap, x)
+    return m.A * x + m.c
+end
 
 """
     ConstrainedAffineMap
@@ -156,15 +232,33 @@ struct ConstrainedAffineMap{T,MT<:AbstractMatrix{T},VT<:AbstractVector{T},ST} <:
         return new{T,MT,VT,ST}(A, c, X)
     end
 end
-statedim(m::ConstrainedAffineMap) = size(m.A, 2)
-stateset(m::ConstrainedAffineMap) = m.X
-outputdim(m::ConstrainedAffineMap) = length(m.c)
-inputdim(::ConstrainedAffineMap) = 0
-state_matrix(m::ConstrainedAffineMap) = m.A
-affine_term(m::ConstrainedAffineMap) = m.c
-islinear(::ConstrainedAffineMap) = false
-isaffine(::ConstrainedAffineMap) = true
-apply(m::ConstrainedAffineMap, x) = m.A * x + m.c
+function statedim(m::ConstrainedAffineMap)
+    return size(m.A, 2)
+end
+function stateset(m::ConstrainedAffineMap)
+    return m.X
+end
+function outputdim(m::ConstrainedAffineMap)
+    return length(m.c)
+end
+function inputdim(::ConstrainedAffineMap)
+    return 0
+end
+function state_matrix(m::ConstrainedAffineMap)
+    return m.A
+end
+function affine_term(m::ConstrainedAffineMap)
+    return m.c
+end
+function islinear(::ConstrainedAffineMap)
+    return false
+end
+function isaffine(::ConstrainedAffineMap)
+    return true
+end
+function apply(m::ConstrainedAffineMap, x)
+    return m.A * x + m.c
+end
 
 """
     LinearControlMap
@@ -189,14 +283,30 @@ struct LinearControlMap{T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T}} <: Abst
         return new{T,MTA,MTB}(A, B)
     end
 end
-statedim(m::LinearControlMap) = size(m.A, 2)
-inputdim(m::LinearControlMap) = size(m.B, 2)
-outputdim(m::LinearControlMap) = size(m.A, 1)
-state_matrix(m::LinearControlMap) = m.A
-input_matrix(m::LinearControlMap) = m.B
-islinear(::LinearControlMap) = true
-isaffine(::LinearControlMap) = true
-apply(m::LinearControlMap, x, u) = m.A * x + m.B * u
+function statedim(m::LinearControlMap)
+    return size(m.A, 2)
+end
+function inputdim(m::LinearControlMap)
+    return size(m.B, 2)
+end
+function outputdim(m::LinearControlMap)
+    return size(m.A, 1)
+end
+function state_matrix(m::LinearControlMap)
+    return m.A
+end
+function input_matrix(m::LinearControlMap)
+    return m.B
+end
+function islinear(::LinearControlMap)
+    return true
+end
+function isaffine(::LinearControlMap)
+    return true
+end
+function apply(m::LinearControlMap, x, u)
+    return m.A * x + m.B * u
+end
 
 """
     ConstrainedLinearControlMap
@@ -227,16 +337,36 @@ struct ConstrainedLinearControlMap{T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{
         return new{T,MTA,MTB,ST,UT}(A, B, X, U)
     end
 end
-statedim(m::ConstrainedLinearControlMap) = size(m.A, 2)
-stateset(m::ConstrainedLinearControlMap) = m.X
-outputdim(m::ConstrainedLinearControlMap) = size(m.A, 1)
-inputdim(m::ConstrainedLinearControlMap) = size(m.B, 2)
-inputset(m::ConstrainedLinearControlMap) = m.U
-state_matrix(m::ConstrainedLinearControlMap) = m.A
-input_matrix(m::ConstrainedLinearControlMap) = m.B
-islinear(::ConstrainedLinearControlMap) = true
-isaffine(::ConstrainedLinearControlMap) = true
-apply(m::ConstrainedLinearControlMap, x, u) = m.A * x + m.B * u
+function statedim(m::ConstrainedLinearControlMap)
+    return size(m.A, 2)
+end
+function stateset(m::ConstrainedLinearControlMap)
+    return m.X
+end
+function outputdim(m::ConstrainedLinearControlMap)
+    return size(m.A, 1)
+end
+function inputdim(m::ConstrainedLinearControlMap)
+    return size(m.B, 2)
+end
+function inputset(m::ConstrainedLinearControlMap)
+    return m.U
+end
+function state_matrix(m::ConstrainedLinearControlMap)
+    return m.A
+end
+function input_matrix(m::ConstrainedLinearControlMap)
+    return m.B
+end
+function islinear(::ConstrainedLinearControlMap)
+    return true
+end
+function isaffine(::ConstrainedLinearControlMap)
+    return true
+end
+function apply(m::ConstrainedLinearControlMap, x, u)
+    return m.A * x + m.B * u
+end
 
 """
     AffineControlMap
@@ -267,15 +397,33 @@ struct AffineControlMap{T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},VT<:Abst
         return new{T,MTA,MTB,VT}(A, B, c)
     end
 end
-statedim(m::AffineControlMap) = size(m.A, 2)
-outputdim(m::AffineControlMap) = size(m.A, 1)
-inputdim(m::AffineControlMap) = size(m.B, 2)
-state_matrix(m::AffineControlMap) = m.A
-input_matrix(m::AffineControlMap) = m.B
-affine_term(m::AffineControlMap) = m.c
-islinear(::AffineControlMap) = false
-isaffine(::AffineControlMap) = true
-apply(m::AffineControlMap, x, u) = m.A * x + m.B * u + m.c
+function statedim(m::AffineControlMap)
+    return size(m.A, 2)
+end
+function outputdim(m::AffineControlMap)
+    return size(m.A, 1)
+end
+function inputdim(m::AffineControlMap)
+    return size(m.B, 2)
+end
+function state_matrix(m::AffineControlMap)
+    return m.A
+end
+function input_matrix(m::AffineControlMap)
+    return m.B
+end
+function affine_term(m::AffineControlMap)
+    return m.c
+end
+function islinear(::AffineControlMap)
+    return false
+end
+function isaffine(::AffineControlMap)
+    return true
+end
+function apply(m::AffineControlMap, x, u)
+    return m.A * x + m.B * u + m.c
+end
 
 """
     ConstrainedAffineControlMap
@@ -311,17 +459,39 @@ struct ConstrainedAffineControlMap{T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{
         return new{T,MTA,MTB,VT,ST,UT}(A, B, c, X, U)
     end
 end
-statedim(m::ConstrainedAffineControlMap) = size(m.A, 2)
-stateset(m::ConstrainedAffineControlMap) = m.X
-inputdim(m::ConstrainedAffineControlMap) = size(m.B, 2)
-inputset(m::ConstrainedAffineControlMap) = m.U
-outputdim(m::ConstrainedAffineControlMap) = size(m.A, 1)
-state_matrix(m::ConstrainedAffineControlMap) = m.A
-input_matrix(m::ConstrainedAffineControlMap) = m.B
-affine_term(m::ConstrainedAffineControlMap) = m.c
-islinear(::ConstrainedAffineControlMap) = false
-isaffine(::ConstrainedAffineControlMap) = true
-apply(m::ConstrainedAffineControlMap, x, u) = m.A * x + m.B * u + m.c
+function statedim(m::ConstrainedAffineControlMap)
+    return size(m.A, 2)
+end
+function stateset(m::ConstrainedAffineControlMap)
+    return m.X
+end
+function inputdim(m::ConstrainedAffineControlMap)
+    return size(m.B, 2)
+end
+function inputset(m::ConstrainedAffineControlMap)
+    return m.U
+end
+function outputdim(m::ConstrainedAffineControlMap)
+    return size(m.A, 1)
+end
+function state_matrix(m::ConstrainedAffineControlMap)
+    return m.A
+end
+function input_matrix(m::ConstrainedAffineControlMap)
+    return m.B
+end
+function affine_term(m::ConstrainedAffineControlMap)
+    return m.c
+end
+function islinear(::ConstrainedAffineControlMap)
+    return false
+end
+function isaffine(::ConstrainedAffineControlMap)
+    return true
+end
+function apply(m::ConstrainedAffineControlMap, x, u)
+    return m.A * x + m.B * u + m.c
+end
 
 """
     ResetMap
@@ -344,13 +514,27 @@ struct ResetMap{N} <: AbstractMap
     dim::Int
     dict::Dict{Int,N}
 end
-statedim(m::ResetMap) = m.dim
-inputdim(::ResetMap) = 0
-outputdim(m::ResetMap) = m.dim
-state_matrix(m::ResetMap) = _state_matrix_resetmap(m.dim, m.dict)
-affine_term(m::ResetMap) = affine_term_resetmap(m.dim, m.dict)
-islinear(::ResetMap) = false
-isaffine(::ResetMap) = true
+function statedim(m::ResetMap)
+    return m.dim
+end
+function inputdim(::ResetMap)
+    return 0
+end
+function outputdim(m::ResetMap)
+    return m.dim
+end
+function state_matrix(m::ResetMap)
+    return _state_matrix_resetmap(m.dim, m.dict)
+end
+function affine_term(m::ResetMap)
+    return affine_term_resetmap(m.dim, m.dict)
+end
+function islinear(::ResetMap)
+    return false
+end
+function isaffine(::ResetMap)
+    return true
+end
 
 function _state_matrix_resetmap(dim, dict::Dict{Int,N}) where {N}
     v = ones(N, dim)
@@ -369,7 +553,9 @@ function affine_term_resetmap(dim, dict::Dict{Int,N}) where {N}
 end
 
 # convenience constructor for a list of pairs instead of a dictionary
-ResetMap(dim::Int, args::Pair{Int}...) = ResetMap(dim, Dict(args))
+function ResetMap(dim::Int, args::Pair{Int}...)
+    return ResetMap(dim, Dict(args))
+end
 
 """
     ConstrainedResetMap
@@ -394,14 +580,30 @@ struct ConstrainedResetMap{N,ST} <: AbstractMap
     X::ST
     dict::Dict{Int,N}
 end
-statedim(m::ConstrainedResetMap) = m.dim
-stateset(m::ConstrainedResetMap) = m.X
-inputdim(::ConstrainedResetMap) = 0
-outputdim(m::ConstrainedResetMap) = m.dim
-state_matrix(m::ConstrainedResetMap) = _state_matrix_resetmap(m.dim, m.dict)
-affine_term(m::ConstrainedResetMap) = affine_term_resetmap(m.dim, m.dict)
-islinear(::ConstrainedResetMap) = false
-isaffine(::ConstrainedResetMap) = true
+function statedim(m::ConstrainedResetMap)
+    return m.dim
+end
+function stateset(m::ConstrainedResetMap)
+    return m.X
+end
+function inputdim(::ConstrainedResetMap)
+    return 0
+end
+function outputdim(m::ConstrainedResetMap)
+    return m.dim
+end
+function state_matrix(m::ConstrainedResetMap)
+    return _state_matrix_resetmap(m.dim, m.dict)
+end
+function affine_term(m::ConstrainedResetMap)
+    return affine_term_resetmap(m.dim, m.dict)
+end
+function islinear(::ConstrainedResetMap)
+    return false
+end
+function isaffine(::ConstrainedResetMap)
+    return true
+end
 
 # convenience constructor for a list of pairs instead of a dictionary
 function ConstrainedResetMap(dim::Int, X, args::Pair{Int}...)
@@ -437,12 +639,24 @@ struct BlackBoxMap{FT} <: AbstractMap
     h::FT
 end
 
-statedim(m::BlackBoxMap) = m.dim
-inputdim(::BlackBoxMap) = 0
-outputdim(m::BlackBoxMap) = m.output_dim
-islinear(::BlackBoxMap) = false
-isaffine(::BlackBoxMap) = false
-apply(m::BlackBoxMap, x) = m.h(x)
+function statedim(m::BlackBoxMap)
+    return m.dim
+end
+function inputdim(::BlackBoxMap)
+    return 0
+end
+function outputdim(m::BlackBoxMap)
+    return m.output_dim
+end
+function islinear(::BlackBoxMap)
+    return false
+end
+function isaffine(::BlackBoxMap)
+    return false
+end
+function apply(m::BlackBoxMap, x)
+    return m.h(x)
+end
 
 """
     ConstrainedBlackBoxMap
@@ -467,13 +681,27 @@ struct ConstrainedBlackBoxMap{FT,ST} <: AbstractMap
     X::ST
 end
 
-statedim(m::ConstrainedBlackBoxMap) = m.dim
-stateset(m::ConstrainedBlackBoxMap) = m.X
-inputdim(::ConstrainedBlackBoxMap) = 0
-outputdim(m::ConstrainedBlackBoxMap) = m.output_dim
-islinear(::ConstrainedBlackBoxMap) = false
-isaffine(::ConstrainedBlackBoxMap) = false
-apply(m::ConstrainedBlackBoxMap, x) = m.h(x)
+function statedim(m::ConstrainedBlackBoxMap)
+    return m.dim
+end
+function stateset(m::ConstrainedBlackBoxMap)
+    return m.X
+end
+function inputdim(::ConstrainedBlackBoxMap)
+    return 0
+end
+function outputdim(m::ConstrainedBlackBoxMap)
+    return m.output_dim
+end
+function islinear(::ConstrainedBlackBoxMap)
+    return false
+end
+function isaffine(::ConstrainedBlackBoxMap)
+    return false
+end
+function apply(m::ConstrainedBlackBoxMap, x)
+    return m.h(x)
+end
 
 """
     BlackBoxControlMap
@@ -498,12 +726,24 @@ struct BlackBoxControlMap{FT} <: AbstractMap
     h::FT
 end
 
-statedim(m::BlackBoxControlMap) = m.dim
-inputdim(m::BlackBoxControlMap) = m.input_dim
-outputdim(m::BlackBoxControlMap) = m.output_dim
-islinear(::BlackBoxControlMap) = false
-isaffine(::BlackBoxControlMap) = false
-apply(m::BlackBoxControlMap, x, u) = m.h(x, u)
+function statedim(m::BlackBoxControlMap)
+    return m.dim
+end
+function inputdim(m::BlackBoxControlMap)
+    return m.input_dim
+end
+function outputdim(m::BlackBoxControlMap)
+    return m.output_dim
+end
+function islinear(::BlackBoxControlMap)
+    return false
+end
+function isaffine(::BlackBoxControlMap)
+    return false
+end
+function apply(m::BlackBoxControlMap, x, u)
+    return m.h(x, u)
+end
 
 """
     ConstrainedBlackBoxControlMap
@@ -532,11 +772,27 @@ struct ConstrainedBlackBoxControlMap{FT,ST,UT} <: AbstractMap
     U::UT
 end
 
-statedim(m::ConstrainedBlackBoxControlMap) = m.dim
-stateset(m::ConstrainedBlackBoxControlMap) = m.X
-inputdim(m::ConstrainedBlackBoxControlMap) = m.input_dim
-inputset(m::ConstrainedBlackBoxControlMap) = m.U
-outputdim(m::ConstrainedBlackBoxControlMap) = m.output_dim
-islinear(::ConstrainedBlackBoxControlMap) = false
-isaffine(::ConstrainedBlackBoxControlMap) = false
-apply(m::ConstrainedBlackBoxControlMap, x, u) = m.h(x, u)
+function statedim(m::ConstrainedBlackBoxControlMap)
+    return m.dim
+end
+function stateset(m::ConstrainedBlackBoxControlMap)
+    return m.X
+end
+function inputdim(m::ConstrainedBlackBoxControlMap)
+    return m.input_dim
+end
+function inputset(m::ConstrainedBlackBoxControlMap)
+    return m.U
+end
+function outputdim(m::ConstrainedBlackBoxControlMap)
+    return m.output_dim
+end
+function islinear(::ConstrainedBlackBoxControlMap)
+    return false
+end
+function isaffine(::ConstrainedBlackBoxControlMap)
+    return false
+end
+function apply(m::ConstrainedBlackBoxControlMap, x, u)
+    return m.h(x, u)
+end

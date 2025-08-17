@@ -1,3 +1,4 @@
+# COV_EXCL_START
 """
     AbstractSystem
 
@@ -256,3 +257,4 @@ function isaffine(::AbstractMap) end
 Apply the rule specified by the map to the given arguments.
 """
 function apply(::AbstractMap) end
+# COV_EXCL_STOP

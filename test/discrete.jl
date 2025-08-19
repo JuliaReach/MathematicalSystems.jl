@@ -1,3 +1,5 @@
+using LazySets: MatrixZonotope
+
 # linear systems
 E = [0.0 1; 1 0]
 A = [1.0 1; 1 -1]
@@ -53,7 +55,7 @@ Es = [e][:, :];
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
-        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
     end
 end
 
@@ -71,7 +73,7 @@ end
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
-        @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+        @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s) && !isparametric(s)
     end
 end
 
@@ -89,7 +91,7 @@ end
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
-        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
     end
     # Scalar System
     scalar_sys = LinearDiscreteSystem(a)
@@ -110,7 +112,7 @@ end
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
-        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
     end
     # Scalar System
     scalar_sys = AffineDiscreteSystem(a, c)
@@ -131,7 +133,7 @@ end
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
-        @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+        @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s) && !isparametric(s)
     end
     # Scalar System
     scalar_sys = LinearControlDiscreteSystem(a, b)
@@ -152,7 +154,7 @@ end
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
-        @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+        @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s) && !isparametric(s)
     end
     # Scalar System
     scalar_sys = ConstrainedLinearDiscreteSystem(a, Xs)
@@ -173,7 +175,7 @@ end
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
-        @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+        @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s) && !isparametric(s)
     end
     # Scalar System
     scalar_sys = ConstrainedAffineDiscreteSystem(a, c, Xs)
@@ -194,7 +196,7 @@ end
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
-        @test !isnoisy(s) && iscontrolled(s) && isconstrained(s)
+        @test !isnoisy(s) && iscontrolled(s) && isconstrained(s) && !isparametric(s)
     end
     # Scalar System
     scalar_sys = ConstrainedLinearControlDiscreteSystem(a, b, Xs, Us)
@@ -216,7 +218,7 @@ end
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
-        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
     end
     # Scalar System
     scalar_sys = LinearDescriptorDiscreteSystem(a, e)
@@ -238,7 +240,7 @@ end
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
-        @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+        @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s) && !isparametric(s)
     end
     # Scalar System
     scalar_sys = ConstrainedLinearDescriptorDiscreteSystem(a, e, Xs)
@@ -260,7 +262,7 @@ end
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && ispolynomial(s) && !isblackbox(s)
-        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
     end
 end
 
@@ -279,7 +281,7 @@ end
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && ispolynomial(s) && !isblackbox(s)
-        @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+        @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s) && !isparametric(s)
     end
 end
 
@@ -298,7 +300,7 @@ end
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
-        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+        @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
     end
 end
 
@@ -317,7 +319,7 @@ end
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
-        @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+        @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s) && !isparametric(s)
     end
 end
 
@@ -339,7 +341,7 @@ end
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
-        @test isnoisy(s) && !iscontrolled(s) && !isconstrained(s)
+        @test isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
     end
     # Scalar System
     scalar_sys = NoisyLinearDiscreteSystem(a, d)
@@ -360,7 +362,7 @@ end
     @test noiseset(s) == W
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
-        @test isnoisy(s) && !iscontrolled(s) && isconstrained(s)
+        @test isnoisy(s) && !iscontrolled(s) && isconstrained(s) && !isparametric(s)
     end
     # Scalar System
     scalar_sys = NoisyConstrainedLinearDiscreteSystem(a, d, Xs, Ws)
@@ -381,7 +383,7 @@ end
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
-        @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+        @test isnoisy(s) && iscontrolled(s) && !isconstrained(s) && !isparametric(s)
     end
     # Scalar System
     scalar_sys = NoisyLinearControlDiscreteSystem(a, b, d)
@@ -402,7 +404,7 @@ end
     @test noiseset(s) == W
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
-        @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
+        @test isnoisy(s) && iscontrolled(s) && isconstrained(s) && !isparametric(s)
     end
     # Scalar System
     scalar_sys = NoisyConstrainedLinearControlDiscreteSystem(a, b, d, Xs, Us, Ws)
@@ -423,7 +425,7 @@ end
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test isaffine(s) && !islinear(s) && !ispolynomial(s) && !isblackbox(s)
-        @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+        @test isnoisy(s) && iscontrolled(s) && !isconstrained(s) && !isparametric(s)
     end
     # Scalar System
     scalar_sys = NoisyAffineControlDiscreteSystem(a, b, c, d)
@@ -444,7 +446,7 @@ end
     @test noiseset(s) == W
     for s in [s, typeof(s)]
         @test isaffine(s) && !islinear(s) && !ispolynomial(s) && !isblackbox(s)
-        @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
+        @test isnoisy(s) && iscontrolled(s) && isconstrained(s) && !isparametric(s)
     end
     # Scalar System
     scalar_sys = NoisyConstrainedAffineControlDiscreteSystem(a, b, c, d, Xs, Us, Ws)
@@ -466,7 +468,7 @@ end
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
-        @test isnoisy(s) && iscontrolled(s) && !isconstrained(s)
+        @test isnoisy(s) && iscontrolled(s) && !isconstrained(s) && !isparametric(s)
     end
 end
 
@@ -485,7 +487,7 @@ end
     @test noiseset(s) == W
     for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
-        @test isnoisy(s) && iscontrolled(s) && isconstrained(s)
+        @test isnoisy(s) && iscontrolled(s) && isconstrained(s) && !isparametric(s)
     end
 end
 
@@ -507,5 +509,57 @@ end
     @test length(s.U) == 2
     for ui in s.U
         @test ui isa Hyperrectangle
+    end
+end
+
+# ==================
+# Parametric systems
+# ==================
+
+@testset "Linear parametric discrete systems" begin
+    @static if isdefined(@__MODULE__, :LazySets)
+        Ac = [1.0 0.0; 0.0 1.0]
+        A1 = [0.1 0.0; 0.0 0.0]
+        A2 = [0.0 0.0; 0.0 0.2]
+        A = MatrixZonotope(Ac, [A1, A2])
+
+        s = LinearParametricDiscreteSystem(A)
+        @test isa(s, LinearParametricDiscreteSystem)
+        # shortcut constructor
+        s = LinearDiscreteSystem(A)
+        @test isa(s, LinearParametricDiscreteSystem)
+
+        @test statedim(s) == 2
+        @test inputdim(s) == 0
+        @test noisedim(s) == 0
+        @test state_matrix(s) === A
+        @test islinear(s)
+        @test isparametric(s)
+        @test !isaffine(s)
+        @test !isnoisy(s)
+        @test !iscontrolled(s)
+        @test !isconstrained(s)
+        
+        Bc = hcat([1.0; 0.5])
+        B1 = hcat([0.05; 0.0])
+        B = MatrixZonotope(Bc, [B1])
+
+        sc = LinearControlParametricDiscreteSystem(A, B)
+        @test isa(sc, LinearControlParametricDiscreteSystem)
+        # shortcut constructor
+        sc = LinearControlDiscreteSystem(A, B)
+        @test isa(sc, LinearControlParametricDiscreteSystem)
+
+        @test statedim(sc) == 2
+        @test inputdim(sc) == size(B, 2)
+        @test noisedim(sc) == 0
+        @test state_matrix(sc) === A
+        @test input_matrix(sc) === B
+        @test islinear(sc)
+        @test isparametric(sc)
+        @test isaffine(sc)
+        @test iscontrolled(sc)
+        @test !isnoisy(sc)
+        @test !isconstrained(sc)
     end
 end

@@ -56,7 +56,8 @@ export islinear,
        isblackbox,
        isnoisy,
        iscontrolled,
-       isconstrained
+       isconstrained,
+       isparametric
 
 #====================================
 Concrete Types for Continuous Systems

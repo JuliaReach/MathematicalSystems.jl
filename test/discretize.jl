@@ -1,15 +1,19 @@
 
 @testset "Convert continuous to discrete type" begin
     for dtype in subtypes(AbstractDiscreteSystem)
-        ctype = eval.(Meta.parse.(replace(string(dtype), "Discrete" => "Continuous")))
-        @test MathematicalSystems._complementary_type(dtype) == ctype
-        @inferred MathematicalSystems._complementary_type(dtype)
+        if dtype ∉ PARAMETRIC_DTYPES
+            ctype = eval.(Meta.parse.(replace(string(dtype), "Discrete" => "Continuous")))
+            @test MathematicalSystems._complementary_type(dtype) == ctype
+            @inferred MathematicalSystems._complementary_type(dtype)
+        end
     end
 
     for ctype in subtypes(AbstractContinuousSystem)
-        dtype = eval.(Meta.parse.(replace(string(ctype), "Continuous" => "Discrete")))
-        @test MathematicalSystems._complementary_type(ctype) == dtype
-        @inferred MathematicalSystems._complementary_type(ctype)
+        if ctype ∉ PARAMETRIC_CTYPES
+            dtype = eval.(Meta.parse.(replace(string(ctype), "Continuous" => "Discrete")))
+            @test MathematicalSystems._complementary_type(ctype) == dtype
+            @inferred MathematicalSystems._complementary_type(ctype)
+        end
     end
 end
 
@@ -38,7 +42,7 @@ end
                         !occursin("Descriptor", string(x)), subtypes(AbstractContinuousSystem))
 
     # this test doesn't apply for second order systems
-    filter!(x -> x ∉ SECOND_ORDER_CTYPES, CTYPES)
+    filter!(x -> x ∉ SECOND_ORDER_CTYPES && x ∉ PARAMETRIC_CTYPES, CTYPES)
 
     DTYPES = MathematicalSystems._complementary_type.(CTYPES)
     n_types = length(CTYPES)
@@ -78,8 +82,8 @@ end
     CTYPES = filter(x -> (occursin("Linear", string(x)) || occursin("Affine", string(x))) &&
                         !occursin("Descriptor", string(x)), subtypes(AbstractContinuousSystem))
 
-    # this test doesn't apply for second order systems
-    filter!(x -> x ∉ SECOND_ORDER_CTYPES, CTYPES)
+    # this test doesn't apply for second order systems and parametric systems
+    filter!(x -> x ∉ SECOND_ORDER_CTYPES && x ∉ PARAMETRIC_CTYPES, CTYPES)
 
     DTYPES = MathematicalSystems._complementary_type.(CTYPES)
     n_types = length(CTYPES)

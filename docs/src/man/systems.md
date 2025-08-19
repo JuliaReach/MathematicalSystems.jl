@@ -99,6 +99,8 @@ However in this table we only included continuous system types for brevity.
 |SOACS|[`SecondOrderAffineContinuousSystem`](@ref)|
 |SOCACCS|[`SecondOrderConstrainedAffineControlContinuousSystem`](@ref)|
 |SOCLCCS|[`SecondOrderConstrainedLinearControlContinuousSystem`](@ref)|
+|LPCS|[`LinearParametricContinuousSystem`](@ref)|
+|LCPCS|[`LinearControlParametricContinuousSystem`](@ref)|
 
 The following table summarizes the equation represented by each system type
 (the names are given in abbreviated form). Again, discrete systems are not included. The column *Input constraints* is `yes` if the structure can model input or noise constraints (or both).
@@ -137,3 +139,5 @@ The following table summarizes the equation represented by each system type
 |``Mx'' + Cx' + Kx = Bu, x ∈ X, u ∈ U``|yes|yes|SOCLCCS|
 |``Mx'' + Cx' + f_i(x) = f_e``|no|no|SOCS|
 |``Mx'' + Cx' + f_i(x) = f_e``, x ∈ X, u ∈ U``|yes|yes|SOCCS|
+|``x' = A(θ)x, θ ∈ Θ``| no|no|LPCS|
+|``x' = A(θ)x + B(θ)u, θ ∈ Θ``| no|no|LPCS|

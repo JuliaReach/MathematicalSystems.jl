@@ -2408,15 +2408,15 @@ function __init__()
     @require LazySets = "b4f0291d-fe17-52bc-9479-3d1a343d9043" begin
         using .LazySets: MatrixZonotope
 
-        export LinearUncertainParametricContinuousSystem,
-               LinearUncertainParametricDiscreteSystem,
-               LinearControlUncertainParametricContinuousSystem,
-               LinearControlUncertainParametricDiscreteSystem
+        export LinearParametricContinuousSystem,
+               LinearParametricDiscreteSystem,
+               LinearControlParametricContinuousSystem,
+               LinearControlParametricDiscreteSystem
                
         @doc """
-            LinearUncertainParametricContinuousSystem
+            LinearParametricContinuousSystem
 
-        Continuous-time linear uncertain parametric system of the form:
+        Continuous-time linear  parametric system of the form:
 
         ```math
             x(t)' = A(\\theta) x(t), \\theta ∈ \\Theta \\; \\forall t
@@ -2425,14 +2425,14 @@ function __init__()
         matrix, matrix zonotope, or other convex matrix sets.
 
         ### Fields
-        - `A`      -- uncertain state matrix
+        - `A`      --  parametric state matrix
         """
-        LinearUncertainParametricContinuousSystem
+        LinearParametricContinuousSystem
 
         @doc """
-            LinearUncertainParametricDiscreteSystem
+            LinearParametricDiscreteSystem
 
-        Discrete-time linear uncertain parametric system of the form:
+        Discrete-time linear parametric system of the form:
         ```math
             x_{k+1} = A(\\theta) x_k, \\theta ∈ \\Theta \\; \\forall k
         ```
@@ -2440,12 +2440,13 @@ function __init__()
         matrix, matrix zonotope, or other convex matrix sets.
 
         ### Fields
-        - `A`      -- uncertain state matrix
+        - `A`      --  parametric state matrix
         """
-        LinearUncertainParametricDiscreteSystem
+        LinearParametricDiscreteSystem
 
-        for (Z, AZ) in ((:LinearUncertainParametricContinuousSystem, :AbstractContinuousSystem),
-                        (:LinearUncertainParametricDiscreteSystem, :AbstractDiscreteSystem))
+        for (Z, AZ) in ((:LinearParametricContinuousSystem, :AbstractContinuousSystem),
+                        (:LinearParametricDiscreteSystem, :AbstractDiscreteSystem))
+            BaseName = Symbol(replace(string(Z), "Parametric" => ""))
 
             @eval begin
                 struct $(Z){T, MA<:MatrixZonotope{T}} <: $(AZ)
@@ -2456,6 +2457,10 @@ function __init__()
                 inputdim(::$Z) = 0
                 noisedim(::$Z) = 0
                 state_matrix(s::$Z) = s.A
+
+                function $(BaseName)(M::MatrixZonotope)
+                    return $Z(M)
+                end
             end
 
             for T in [Z, Type{<:eval(Z)}]
@@ -2471,10 +2476,11 @@ function __init__()
             end
         end
 
-        @doc """
-            LinearControlUncertainParametricContinuousSystem
 
-        Continuous-time linear uncertain parametric system of the form:
+        @doc """
+            LinearControlParametricContinuousSystem
+
+        Continuous-time linear  parametric system of the form:
 
         ```math
             x(t)' = A(θ) x(t) + B(θ) u(t), \\theta ∈ \\Theta \\; \\forall t
@@ -2484,15 +2490,15 @@ function __init__()
         matrix, matrix zonotope, or other convex matrix sets.
 
         ### Fields
-        - `A`      -- uncertain state matrix
-        - `B`      -- uncertain input matrix
+        - `A`      --  parametric state matrix
+        - `B`      --  parametric input matrix
         """
-        LinearControlUncertainParametricContinuousSystem
+        LinearControlParametricContinuousSystem
 
         @doc """
-            LinearControlUncertainParametricDiscreteSystem 
+            LinearControlParametricDiscreteSystem 
 
-        Discrete-time linear uncertain parametric system of the form:
+        Discrete-time linear  parametric system of the form:
 
         ```math
             x_{k+1} = A(θ) x_k + B(θ) u_k, \\theta ∈ \\Theta \\; \\forall k
@@ -2502,14 +2508,15 @@ function __init__()
         matrix, matrix zonotope, or other convex matrix sets.
 
         ### Fields
-        - `A`      -- uncertain state matrix
-        - `B`      -- uncertain input matrix
+        - `A`      --  parametric state matrix
+        - `B`      --  parametric input matrix
         """
-        LinearControlUncertainParametricDiscreteSystem
+        LinearControlParametricDiscreteSystem
 
         for (Z, AZ) in
-            ((:LinearControlUncertainParametricContinuousSystem, :AbstractContinuousSystem),
-             (:LinearControlUncertainParametricDiscreteSystem, :AbstractDiscreteSystem))
+            ((:LinearControlParametricContinuousSystem, :AbstractContinuousSystem),
+             (:LinearControlParametricDiscreteSystem, :AbstractDiscreteSystem))
+            BaseName = Symbol(replace(string(Z), "Parametric" => ""))
 
             @eval begin
                 struct $(Z){T, MTA<:MatrixZonotope{T}, MTB<:MatrixZonotope{T}} <: $(AZ)
@@ -2532,6 +2539,10 @@ function __init__()
                 noisedim(::$Z) = 0
                 state_matrix(s::$Z) = s.A
                 input_matrix(s::$Z) = s.B
+
+                function $(BaseName)(MA::MatrixZonotope, MB::MatrixZonotope)
+                    return $Z(MA, MB)
+                end
             end
 
             for T in [Z, Type{<:eval(Z)}]

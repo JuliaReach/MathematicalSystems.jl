@@ -4,7 +4,9 @@
     @test size(I1) == (1, 1)
     @test I1[1, 1] == 1.0
     @test_throws BoundsError I1[1, 2]
+    @test_throws BoundsError I1[1, 0]
     @test_throws BoundsError I1[3]
+    @test_throws BoundsError I1[0]
     @test_throws ErrorException I1[1] = 2
 
     for n in [2, 1000]
@@ -76,6 +78,7 @@ end
 end
 
 @testset "Specific methods for IdentityMultiple" begin
+    @test Diagonal(Id(2)) == Diagonal([1.0, 1])
     @test Hermitian(Id(2)) == Hermitian([1.0 0; 0 1])
     @test exp(Id(3, 1)) == Id(3, exp(1))
 end

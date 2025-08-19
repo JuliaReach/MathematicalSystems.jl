@@ -189,8 +189,11 @@ function _capture_dim(expr)
     elseif @capture(expr, (x_))  # COV_EXCL_LINE
         dims = x
     else
+        # this should not happen because `@capture(expr, (x_))` captures anything
+        # COV_EXCL_START
         throw(ArgumentError("the dimensions in expression $expr could not be parsed; " *
                             "see the documentation for valid examples"))
+        # COV_EXCL_STOP
     end
     return dims
 end
@@ -233,14 +236,20 @@ function strip_dynamic_equation(expr)
     end
     stripped_expr = Meta.parse(stripped_equation)
     # check if `stripped_expr` is an equation and extract `lhs` and `rhs` if so
-    !@capture(stripped_expr, lhs_ = rhs_) && return (nothing, nothing, nothing)
+    if !@capture(stripped_expr, lhs_ = rhs_)
+        return (nothing, nothing, nothing)
+    end
 
     # extract the name of the state variable from the lhs
     if @capture(lhs, (E_ * x_)) || @capture(lhs, (x_))
         state = x
         return (stripped_expr, AT, state)
     end
+
+    # this should not happen because `@capture(lhs, (x_))` captures anything
+    # COV_EXCL_START
     return (nothing, nothing, nothing)
+    # COV_EXCL_STOP
 end
 
 function _parse_system(exprs::NTuple{N,Expr}) where {N}
@@ -694,8 +703,8 @@ function extract_set_parameter(expr, state, input, noise) # input => to check se
         elseif x == noise
             return Set, :W
         else
-            error("$expr is not a valid set constraint definition; it does not contain " *
-                  "the state $state, the input $input or noise term $noise")
+            throw(ArgumentError("$expr is not a valid set constraint definition; it does not " *
+                                "contain the state $state, the input $input or noise term $noise"))
         end
     end
     throw(ArgumentError("the set entry $(expr) does not have the correct form `x_ ∈ X_`"))

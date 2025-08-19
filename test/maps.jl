@@ -148,6 +148,7 @@ end
     @test input_matrix(m) == B
     @test affine_term(m) == c
     @test !islinear(m) && isaffine(m)
+    @test_throws DimensionMismatch AffineControlMap(A, B, [0.0])
 
     # applying the affine map on a vector
     x = ones(2)
@@ -171,6 +172,7 @@ end
     @test input_matrix(m) == B
     @test affine_term(m) == c
     @test !islinear(m) && isaffine(m)
+    @test_throws DimensionMismatch ConstrainedAffineControlMap(A, B, [0.0], X, U)
 
     # applying the affine map on a vector
     x = ones(2)

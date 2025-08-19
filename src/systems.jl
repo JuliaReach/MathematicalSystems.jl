@@ -4,21 +4,44 @@ for (Z, AZ) in ((:ContinuousIdentitySystem, :AbstractContinuousSystem),
         struct $(Z) <: $(AZ)
             statedim::Int
         end
-        statedim(s::$Z) = s.statedim
-        inputdim(s::$Z) = 0
-        noisedim(s::$Z) = 0
-        state_matrix(s::$Z) = Id(s.statedim)
+        function statedim(s::$Z)
+            return s.statedim
+        end
+        function inputdim(s::$Z)
+            return 0
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function state_matrix(s::$Z)
+            return Id(s.statedim)
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = true
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = false
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = false
-            isconstrained(::$T) = false
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return true
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return false
+            end
+            function isconstrained(::$T)
+                return false
+            end
+            function isparametric(::$T)
+                return false
         end
     end
 end
@@ -59,22 +82,48 @@ for (Z, AZ) in ((:ConstrainedContinuousIdentitySystem, :AbstractContinuousSystem
             statedim::Int
             X::ST
         end
-        statedim(s::$Z) = s.statedim
-        inputdim(::$Z) = 0
-        noisedim(::$Z) = 0
-        stateset(s::$Z) = s.X
-        state_matrix(s::$Z) = Id(s.statedim)
+        function statedim(s::$Z)
+            return s.statedim
+        end
+        function inputdim(s::$Z)
+            return 0
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function stateset(s::$Z)
+            return s.X
+        end
+        function state_matrix(s::$Z)
+            return Id(s.statedim)
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = true
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = false
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = false
-            isconstrained(::$T) = true
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return true
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return false
+            end
+            function isconstrained(::$T)
+                return true
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -125,21 +174,45 @@ for (Z, AZ) in ((:LinearContinuousSystem, :AbstractContinuousSystem),
             return $(Z)(hcat(A))
         end
 
-        statedim(s::$Z) = size(s.A, 1)
-        inputdim(::$Z) = 0
-        noisedim(::$Z) = 0
-        state_matrix(s::$Z) = s.A
+        function statedim(s::$Z)
+            return size(s.A, 1)
+        end
+        function inputdim(s::$Z)
+            return 0
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function state_matrix(s::$Z)
+            return s.A
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = true
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = false
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = false
-            isconstrained(::$T) = false
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return true
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return false
+            end
+            function isconstrained(::$T)
+                return false
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -191,22 +264,48 @@ for (Z, AZ) in ((:AffineContinuousSystem, :AbstractContinuousSystem),
             return $(Z)(hcat(A), vcat(c))
         end
 
-        statedim(s::$Z) = length(s.c)
-        inputdim(::$Z) = 0
-        noisedim(::$Z) = 0
-        state_matrix(s::$Z) = s.A
-        affine_term(s::$Z) = s.c
+        function statedim(s::$Z)
+            return length(s.c)
+        end
+        function inputdim(s::$Z)
+            return 0
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function state_matrix(s::$Z)
+            return s.A
+        end
+        function affine_term(s::$Z)
+            return s.c
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = false
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = false
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = false
-            isconstrained(::$T) = false
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return false
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return false
+            end
+            function isconstrained(::$T)
+                return false
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -260,22 +359,48 @@ for (Z, AZ) in ((:LinearControlContinuousSystem, :AbstractContinuousSystem),
             return $(Z)(hcat(A), hcat(B))
         end
 
-        statedim(s::$Z) = size(s.A, 1)
-        inputdim(s::$Z) = size(s.B, 2)
-        noisedim(::$Z) = 0
-        state_matrix(s::$Z) = s.A
-        input_matrix(s::$Z) = s.B
+        function statedim(s::$Z)
+            return size(s.A, 1)
+        end
+        function inputdim(s::$Z)
+            return size(s.B, 2)
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function state_matrix(s::$Z)
+            return s.A
+        end
+        function input_matrix(s::$Z)
+            return s.B
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = true
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = false
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = true
-            isconstrained(::$T) = false
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return true
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return true
+            end
+            function isconstrained(::$T)
+                return false
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -327,22 +452,48 @@ for (Z, AZ) in ((:ConstrainedLinearContinuousSystem, :AbstractContinuousSystem),
             return $(Z)(hcat(A), X)
         end
 
-        statedim(s::$Z) = size(s.A, 1)
-        inputdim(::$Z) = 0
-        noisedim(::$Z) = 0
-        stateset(s::$Z) = s.X
-        state_matrix(s::$Z) = s.A
+        function statedim(s::$Z)
+            return size(s.A, 1)
+        end
+        function inputdim(s::$Z)
+            return 0
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function stateset(s::$Z)
+            return s.X
+        end
+        function state_matrix(s::$Z)
+            return s.A
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = true
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = false
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = false
-            isconstrained(::$T) = true
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return true
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return false
+            end
+            function isconstrained(::$T)
+                return true
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -398,23 +549,51 @@ for (Z, AZ) in ((:ConstrainedAffineContinuousSystem, :AbstractContinuousSystem),
             return $(Z)(hcat(A), vcat(c), X)
         end
 
-        statedim(s::$Z) = length(s.c)
-        inputdim(::$Z) = 0
-        noisedim(::$Z) = 0
-        stateset(s::$Z) = s.X
-        state_matrix(s::$Z) = s.A
-        affine_term(s::$Z) = s.c
+        function statedim(s::$Z)
+            return length(s.c)
+        end
+        function inputdim(s::$Z)
+            return 0
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function stateset(s::$Z)
+            return s.X
+        end
+        function state_matrix(s::$Z)
+            return s.A
+        end
+        function affine_term(s::$Z)
+            return s.c
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = false
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = false
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = false
-            isconstrained(::$T) = true
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return false
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return false
+            end
+            function isconstrained(::$T)
+                return true
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -473,23 +652,51 @@ for (Z, AZ) in ((:AffineControlContinuousSystem, :AbstractContinuousSystem),
             return $(Z)(hcat(A), hcat(B), vcat(c))
         end
 
-        statedim(s::$Z) = length(s.c)
-        inputdim(s::$Z) = size(s.B, 2)
-        noisedim(::$Z) = 0
-        state_matrix(s::$Z) = s.A
-        input_matrix(s::$Z) = s.B
-        affine_term(s::$Z) = s.c
+        function statedim(s::$Z)
+            return length(s.c)
+        end
+        function inputdim(s::$Z)
+            return size(s.B, 2)
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function state_matrix(s::$Z)
+            return s.A
+        end
+        function input_matrix(s::$Z)
+            return s.B
+        end
+        function affine_term(s::$Z)
+            return s.c
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = false
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = false
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = true
-            isconstrained(::$T) = false
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return false
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return true
+            end
+            function isconstrained(::$T)
+                return false
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -551,25 +758,57 @@ for (Z, AZ) in ((:ConstrainedAffineControlContinuousSystem, :AbstractContinuousS
             return $(Z)(hcat(A), hcat(B), vcat(c), X, U)
         end
 
-        statedim(s::$Z) = length(s.c)
-        inputdim(s::$Z) = size(s.B, 2)
-        noisedim(::$Z) = 0
-        stateset(s::$Z) = s.X
-        inputset(s::$Z) = s.U
-        state_matrix(s::$Z) = s.A
-        input_matrix(s::$Z) = s.B
-        affine_term(s::$Z) = s.c
+        function statedim(s::$Z)
+            return length(s.c)
+        end
+        function inputdim(s::$Z)
+            return size(s.B, 2)
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function stateset(s::$Z)
+            return s.X
+        end
+        function inputset(s::$Z)
+            return s.U
+        end
+        function state_matrix(s::$Z)
+            return s.A
+        end
+        function input_matrix(s::$Z)
+            return s.B
+        end
+        function affine_term(s::$Z)
+            return s.c
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = false
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = false
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = true
-            isconstrained(::$T) = true
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return false
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return true
+            end
+            function isconstrained(::$T)
+                return true
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -632,24 +871,54 @@ for (Z, AZ) in ((:ConstrainedLinearControlContinuousSystem, :AbstractContinuousS
             return $(Z)(hcat(A), hcat(B), X, U)
         end
 
-        statedim(s::$Z) = size(s.A, 1)
-        inputdim(s::$Z) = size(s.B, 2)
-        noisedim(::$Z) = 0
-        stateset(s::$Z) = s.X
-        inputset(s::$Z) = s.U
-        state_matrix(s::$Z) = s.A
-        input_matrix(s::$Z) = s.B
+        function statedim(s::$Z)
+            return size(s.A, 1)
+        end
+        function inputdim(s::$Z)
+            return size(s.B, 2)
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function stateset(s::$Z)
+            return s.X
+        end
+        function inputset(s::$Z)
+            return s.U
+        end
+        function state_matrix(s::$Z)
+            return s.A
+        end
+        function input_matrix(s::$Z)
+            return s.B
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = true
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = false
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = true
-            isconstrained(::$T) = true
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return true
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return true
+            end
+            function isconstrained(::$T)
+                return true
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -706,21 +975,45 @@ for (Z, AZ) in ((:LinearDescriptorContinuousSystem, :AbstractContinuousSystem),
             return $(Z)(hcat(A), hcat(E))
         end
 
-        statedim(s::$Z) = size(s.A, 1)
-        inputdim(::$Z) = 0
-        noisedim(::$Z) = 0
-        state_matrix(s::$Z) = s.A
+        function statedim(s::$Z)
+            return size(s.A, 1)
+        end
+        function inputdim(s::$Z)
+            return 0
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function state_matrix(s::$Z)
+            return s.A
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = true
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = false
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = false
-            isconstrained(::$T) = false
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return true
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return false
+            end
+            function isconstrained(::$T)
+                return false
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -776,22 +1069,48 @@ for (Z, AZ) in ((:ConstrainedLinearDescriptorContinuousSystem, :AbstractContinuo
             return $(Z)(hcat(A), hcat(E), X)
         end
 
-        statedim(s::$Z) = size(s.A, 1)
-        inputdim(::$Z) = 0
-        noisedim(::$Z) = 0
-        stateset(s::$Z) = s.X
-        state_matrix(s::$Z) = s.A
+        function statedim(s::$Z)
+            return size(s.A, 1)
+        end
+        function inputdim(s::$Z)
+            return 0
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function stateset(s::$Z)
+            return s.X
+        end
+        function state_matrix(s::$Z)
+            return s.A
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = true
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = false
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = false
-            isconstrained(::$T) = true
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return true
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return false
+            end
+            function isconstrained(::$T)
+                return true
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -845,10 +1164,18 @@ for (Z, AZ) in ((:PolynomialContinuousSystem, :AbstractContinuousSystem),
                 return new{T,PT,VPT}(p, statedim)
             end
         end
-        statedim(s::$Z) = s.statedim
-        inputdim(::$Z) = 0
-        noisedim(::$Z) = 0
-        mapping(s::$Z) = s.p
+        function statedim(s::$Z)
+            return s.statedim
+        end
+        function inputdim(s::$Z)
+            return 0
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function mapping(s::$Z)
+            return s.p
+        end
 
         MultivariatePolynomials.variables(s::$Z) = MultivariatePolynomials.variables(s.p)
         MultivariatePolynomials.nvariables(s::$Z) = s.statedim
@@ -860,14 +1187,30 @@ for (Z, AZ) in ((:PolynomialContinuousSystem, :AbstractContinuousSystem),
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = false
-            isaffine(::$T) = false
-            ispolynomial(::$T) = true
-            isblackbox(::$T) = false
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = false
-            isconstrained(::$T) = false
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return false
+            end
+            function isaffine(::$T)
+                return false
+            end
+            function ispolynomial(::$T)
+                return true
+            end
+            function isblackbox(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return false
+            end
+            function isconstrained(::$T)
+                return false
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -919,11 +1262,21 @@ for (Z, AZ) in ((:ConstrainedPolynomialContinuousSystem, :AbstractContinuousSyst
                 return new{T,PT,VPT,ST}(p, statedim, X)
             end
         end
-        statedim(s::$Z) = s.statedim
-        inputdim(::$Z) = 0
-        noisedim(::$Z) = 0
-        stateset(s::$Z) = s.X
-        mapping(s::$Z) = s.p
+        function statedim(s::$Z)
+            return s.statedim
+        end
+        function inputdim(s::$Z)
+            return 0
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function stateset(s::$Z)
+            return s.X
+        end
+        function mapping(s::$Z)
+            return s.p
+        end
 
         MultivariatePolynomials.variables(s::$Z) = MultivariatePolynomials.variables(s.p)
         MultivariatePolynomials.nvariables(s::$Z) = s.statedim
@@ -935,14 +1288,30 @@ for (Z, AZ) in ((:ConstrainedPolynomialContinuousSystem, :AbstractContinuousSyst
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = false
-            isaffine(::$T) = false
-            ispolynomial(::$T) = true
-            isblackbox(::$T) = false
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = false
-            isconstrained(::$T) = true
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return false
+            end
+            function isaffine(::$T)
+                return false
+            end
+            function ispolynomial(::$T)
+                return true
+            end
+            function isblackbox(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return false
+            end
+            function isconstrained(::$T)
+                return true
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -988,21 +1357,45 @@ for (Z, AZ) in ((:BlackBoxContinuousSystem, :AbstractContinuousSystem),
             f::FT
             statedim::Int
         end
-        statedim(s::$Z) = s.statedim
-        inputdim(s::$Z) = 0
-        noisedim(::$Z) = 0
-        mapping(s::$Z) = s.f
+        function statedim(s::$Z)
+            return s.statedim
+        end
+        function inputdim(s::$Z)
+            return 0
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function mapping(s::$Z)
+            return s.f
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = false
-            isaffine(::$T) = false
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = true
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = false
-            isconstrained(::$T) = false
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return false
+            end
+            function isaffine(::$T)
+                return false
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return true
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return false
+            end
+            function isconstrained(::$T)
+                return false
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -1047,22 +1440,48 @@ for (Z, AZ) in ((:ConstrainedBlackBoxContinuousSystem, :AbstractContinuousSystem
             statedim::Int
             X::ST
         end
-        statedim(s::$Z) = s.statedim
-        inputdim(s::$Z) = 0
-        noisedim(::$Z) = 0
-        stateset(s::$Z) = s.X
-        mapping(s::$Z) = s.f
+        function statedim(s::$Z)
+            return s.statedim
+        end
+        function inputdim(s::$Z)
+            return 0
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function stateset(s::$Z)
+            return s.X
+        end
+        function mapping(s::$Z)
+            return s.f
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = false
-            isaffine(::$T) = false
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = true
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = false
-            isconstrained(::$T) = true
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return false
+            end
+            function isaffine(::$T)
+                return false
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return true
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return false
+            end
+            function isconstrained(::$T)
+                return true
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -1111,21 +1530,45 @@ for (Z, AZ) in ((:BlackBoxControlContinuousSystem, :AbstractContinuousSystem),
             statedim::Int
             inputdim::Int
         end
-        statedim(s::$Z) = s.statedim
-        inputdim(s::$Z) = s.inputdim
-        noisedim(::$Z) = 0
-        mapping(s::$Z) = s.f
+        function statedim(s::$Z)
+            return s.statedim
+        end
+        function inputdim(s::$Z)
+            return s.inputdim
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function mapping(s::$Z)
+            return s.f
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = false
-            isaffine(::$T) = false
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = true
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = true
-            isconstrained(::$T) = false
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return false
+            end
+            function isaffine(::$T)
+                return false
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return true
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return true
+            end
+            function isconstrained(::$T)
+                return false
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -1174,23 +1617,51 @@ for (Z, AZ) in ((:ConstrainedBlackBoxControlContinuousSystem, :AbstractContinuou
             X::ST
             U::UT
         end
-        statedim(s::$Z) = s.statedim
-        inputdim(s::$Z) = s.inputdim
-        noisedim(::$Z) = 0
-        stateset(s::$Z) = s.X
-        inputset(s::$Z) = s.U
-        mapping(s::$Z) = s.f
+        function statedim(s::$Z)
+            return s.statedim
+        end
+        function inputdim(s::$Z)
+            return s.inputdim
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function stateset(s::$Z)
+            return s.X
+        end
+        function inputset(s::$Z)
+            return s.U
+        end
+        function mapping(s::$Z)
+            return s.f
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = false
-            isaffine(::$T) = false
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = true
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = true
-            isconstrained(::$T) = true
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return false
+            end
+            function isaffine(::$T)
+                return false
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return true
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return true
+            end
+            function isconstrained(::$T)
+                return true
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -1256,22 +1727,48 @@ for (Z, AZ) in ((:NoisyLinearContinuousSystem, :AbstractContinuousSystem),
             return $(Z)(hcat(A), hcat(D))
         end
 
-        statedim(s::$Z) = size(s.A, 1)
-        inputdim(::$Z) = 0
-        noisedim(s::$Z) = size(s.D, 2)
-        state_matrix(s::$Z) = s.A
-        noise_matrix(s::$Z) = s.D
+        function statedim(s::$Z)
+            return size(s.A, 1)
+        end
+        function inputdim(s::$Z)
+            return 0
+        end
+        function noisedim(s::$Z)
+            return size(s.D, 2)
+        end
+        function state_matrix(s::$Z)
+            return s.A
+        end
+        function noise_matrix(s::$Z)
+            return s.D
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = true
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = false
-            isnoisy(::$T) = true
-            iscontrolled(::$T) = false
-            isconstrained(::$T) = false
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return true
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return true
+            end
+            function iscontrolled(::$T)
+                return false
+            end
+            function isconstrained(::$T)
+                return false
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -1328,24 +1825,54 @@ for (Z, AZ) in ((:NoisyConstrainedLinearContinuousSystem, :AbstractContinuousSys
             return $(Z)(hcat(A), hcat(D), X, W)
         end
 
-        statedim(s::$Z) = size(s.A, 1)
-        inputdim(::$Z) = 0
-        noisedim(s::$Z) = size(s.D, 2)
-        stateset(s::$Z) = s.X
-        noiseset(s::$Z) = s.W
-        state_matrix(s::$Z) = s.A
-        noise_matrix(s::$Z) = s.D
+        function statedim(s::$Z)
+            return size(s.A, 1)
+        end
+        function inputdim(s::$Z)
+            return 0
+        end
+        function noisedim(s::$Z)
+            return size(s.D, 2)
+        end
+        function stateset(s::$Z)
+            return s.X
+        end
+        function noiseset(s::$Z)
+            return s.W
+        end
+        function state_matrix(s::$Z)
+            return s.A
+        end
+        function noise_matrix(s::$Z)
+            return s.D
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = true
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = false
-            isnoisy(::$T) = true
-            iscontrolled(::$T) = false
-            isconstrained(::$T) = true
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return true
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return true
+            end
+            function iscontrolled(::$T)
+                return false
+            end
+            function isconstrained(::$T)
+                return true
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -1406,23 +1933,51 @@ for (Z, AZ) in ((:NoisyLinearControlContinuousSystem, :AbstractContinuousSystem)
             return $(Z)(hcat(A), hcat(B), hcat(D))
         end
 
-        statedim(s::$Z) = size(s.A, 1)
-        inputdim(s::$Z) = size(s.B, 2)
-        noisedim(s::$Z) = size(s.D, 2)
-        state_matrix(s::$Z) = s.A
-        input_matrix(s::$Z) = s.B
-        noise_matrix(s::$Z) = s.D
+        function statedim(s::$Z)
+            return size(s.A, 1)
+        end
+        function inputdim(s::$Z)
+            return size(s.B, 2)
+        end
+        function noisedim(s::$Z)
+            return size(s.D, 2)
+        end
+        function state_matrix(s::$Z)
+            return s.A
+        end
+        function input_matrix(s::$Z)
+            return s.B
+        end
+        function noise_matrix(s::$Z)
+            return s.D
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = true
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = false
-            isnoisy(::$T) = true
-            iscontrolled(::$T) = true
-            isconstrained(::$T) = false
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return true
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return true
+            end
+            function iscontrolled(::$T)
+                return true
+            end
+            function isconstrained(::$T)
+                return false
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -1487,26 +2042,60 @@ for (Z, AZ) in ((:NoisyConstrainedLinearControlContinuousSystem, :AbstractContin
             return $(Z)(hcat(A), hcat(B), hcat(D), X, U, W)
         end
 
-        statedim(s::$Z) = size(s.A, 1)
-        inputdim(s::$Z) = size(s.B, 2)
-        noisedim(s::$Z) = size(s.D, 2)
-        stateset(s::$Z) = s.X
-        inputset(s::$Z) = s.U
-        noiseset(s::$Z) = s.W
-        state_matrix(s::$Z) = s.A
-        input_matrix(s::$Z) = s.B
-        noise_matrix(s::$Z) = s.D
+        function statedim(s::$Z)
+            return size(s.A, 1)
+        end
+        function inputdim(s::$Z)
+            return size(s.B, 2)
+        end
+        function noisedim(s::$Z)
+            return size(s.D, 2)
+        end
+        function stateset(s::$Z)
+            return s.X
+        end
+        function inputset(s::$Z)
+            return s.U
+        end
+        function noiseset(s::$Z)
+            return s.W
+        end
+        function state_matrix(s::$Z)
+            return s.A
+        end
+        function input_matrix(s::$Z)
+            return s.B
+        end
+        function noise_matrix(s::$Z)
+            return s.D
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = true
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = false
-            isnoisy(::$T) = true
-            iscontrolled(::$T) = true
-            isconstrained(::$T) = true
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return true
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return true
+            end
+            function iscontrolled(::$T)
+                return true
+            end
+            function isconstrained(::$T)
+                return true
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -1577,24 +2166,54 @@ for (Z, AZ) in ((:NoisyAffineControlContinuousSystem, :AbstractContinuousSystem)
             return $(Z)(hcat(A), hcat(B), vcat(c), hcat(D))
         end
 
-        statedim(s::$Z) = length(s.c)
-        inputdim(s::$Z) = size(s.B, 2)
-        noisedim(s::$Z) = size(s.D, 2)
-        state_matrix(s::$Z) = s.A
-        input_matrix(s::$Z) = s.B
-        noise_matrix(s::$Z) = s.D
-        affine_term(s::$Z) = s.c
+        function statedim(s::$Z)
+            return length(s.c)
+        end
+        function inputdim(s::$Z)
+            return size(s.B, 2)
+        end
+        function noisedim(s::$Z)
+            return size(s.D, 2)
+        end
+        function state_matrix(s::$Z)
+            return s.A
+        end
+        function input_matrix(s::$Z)
+            return s.B
+        end
+        function noise_matrix(s::$Z)
+            return s.D
+        end
+        function affine_term(s::$Z)
+            return s.c
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = false
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = false
-            isnoisy(::$T) = true
-            iscontrolled(::$T) = true
-            isconstrained(::$T) = false
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return false
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return true
+            end
+            function iscontrolled(::$T)
+                return true
+            end
+            function isconstrained(::$T)
+                return false
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -1660,27 +2279,63 @@ for (Z, AZ) in ((:NoisyConstrainedAffineControlContinuousSystem, :AbstractContin
             return $(Z)(hcat(A), hcat(B), vcat(c), hcat(D), X, U, W)
         end
 
-        statedim(s::$Z) = length(s.c)
-        inputdim(s::$Z) = size(s.B, 2)
-        noisedim(s::$Z) = size(s.D, 2)
-        stateset(s::$Z) = s.X
-        inputset(s::$Z) = s.U
-        noiseset(s::$Z) = s.W
-        state_matrix(s::$Z) = s.A
-        input_matrix(s::$Z) = s.B
-        noise_matrix(s::$Z) = s.D
-        affine_term(s::$Z) = s.c
+        function statedim(s::$Z)
+            return length(s.c)
+        end
+        function inputdim(s::$Z)
+            return size(s.B, 2)
+        end
+        function noisedim(s::$Z)
+            return size(s.D, 2)
+        end
+        function stateset(s::$Z)
+            return s.X
+        end
+        function inputset(s::$Z)
+            return s.U
+        end
+        function noiseset(s::$Z)
+            return s.W
+        end
+        function state_matrix(s::$Z)
+            return s.A
+        end
+        function input_matrix(s::$Z)
+            return s.B
+        end
+        function noise_matrix(s::$Z)
+            return s.D
+        end
+        function affine_term(s::$Z)
+            return s.c
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = false
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = false
-            isnoisy(::$T) = true
-            iscontrolled(::$T) = true
-            isconstrained(::$T) = true
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return false
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return true
+            end
+            function iscontrolled(::$T)
+                return true
+            end
+            function isconstrained(::$T)
+                return true
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -1738,21 +2393,45 @@ for (Z, AZ) in ((:NoisyBlackBoxControlContinuousSystem, :AbstractContinuousSyste
             inputdim::Int
             noisedim::Int
         end
-        statedim(s::$Z) = s.statedim
-        inputdim(s::$Z) = s.inputdim
-        noisedim(s::$Z) = s.noisedim
-        mapping(s::$Z) = s.f
+        function statedim(s::$Z)
+            return s.statedim
+        end
+        function inputdim(s::$Z)
+            return s.inputdim
+        end
+        function noisedim(s::$Z)
+            return s.noisedim
+        end
+        function mapping(s::$Z)
+            return s.f
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = false
-            isaffine(::$T) = false
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = true
-            isnoisy(::$T) = true
-            iscontrolled(::$T) = true
-            isconstrained(::$T) = false
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return false
+            end
+            function isaffine(::$T)
+                return false
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return true
+            end
+            function isnoisy(::$T)
+                return true
+            end
+            function iscontrolled(::$T)
+                return true
+            end
+            function isconstrained(::$T)
+                return false
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -1807,24 +2486,54 @@ for (Z, AZ) in ((:NoisyConstrainedBlackBoxControlContinuousSystem, :AbstractCont
             U::UT
             W::WT
         end
-        statedim(s::$Z) = s.statedim
-        inputdim(s::$Z) = s.inputdim
-        noisedim(s::$Z) = s.noisedim
-        stateset(s::$Z) = s.X
-        inputset(s::$Z) = s.U
-        noiseset(s::$Z) = s.W
-        mapping(s::$Z) = s.f
+        function statedim(s::$Z)
+            return s.statedim
+        end
+        function inputdim(s::$Z)
+            return s.inputdim
+        end
+        function noisedim(s::$Z)
+            return s.noisedim
+        end
+        function stateset(s::$Z)
+            return s.X
+        end
+        function inputset(s::$Z)
+            return s.U
+        end
+        function noiseset(s::$Z)
+            return s.W
+        end
+        function mapping(s::$Z)
+            return s.f
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = false
-            isaffine(::$T) = false
-            ispolynomial(::$T) = false
-            isblackbox(::$T) = true
-            isnoisy(::$T) = true
-            iscontrolled(::$T) = true
-            isconstrained(::$T) = true
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return false
+            end
+            function isaffine(::$T)
+                return false
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isblackbox(::$T)
+                return true
+            end
+            function isnoisy(::$T)
+                return true
+            end
+            function iscontrolled(::$T)
+                return true
+            end
+            function isconstrained(::$T)
+                return true
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -1930,23 +2639,51 @@ for (Z, AZ) in ((:SecondOrderLinearContinuousSystem, :AbstractContinuousSystem),
             return $(Z)(hcat(M), hcat(C), hcat(K))
         end
 
-        statedim(s::$Z) = size(s.C, 1)
-        inputdim(::$Z) = 0
-        noisedim(::$Z) = 0
-        mass_matrix(s::$Z) = s.M
-        viscosity_matrix(s::$Z) = s.C
-        stiffness_matrix(s::$Z) = s.K
-        affine_term(s::$Z) = zeros(eltype(s.C), size(s.C, 1))
+        function statedim(s::$Z)
+            return size(s.C, 1)
+        end
+        function inputdim(s::$Z)
+            return 0
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function mass_matrix(s::$Z)
+            return s.M
+        end
+        function viscosity_matrix(s::$Z)
+            return s.C
+        end
+        function stiffness_matrix(s::$Z)
+            return s.K
+        end
+        function affine_term(s::$Z)
+            return zeros(eltype(s.C), size(s.C, 1))
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = true
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = false
-            isconstrained(::$T) = false
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return true
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return false
+            end
+            function isconstrained(::$T)
+                return false
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -2011,23 +2748,51 @@ for (Z, AZ) in ((:SecondOrderAffineContinuousSystem, :AbstractContinuousSystem),
             return $(Z)(hcat(M), hcat(C), hcat(K), [b])
         end
 
-        statedim(s::$Z) = size(s.C, 1)
-        inputdim(::$Z) = 0
-        noisedim(::$Z) = 0
-        mass_matrix(s::$Z) = s.M
-        viscosity_matrix(s::$Z) = s.C
-        stiffness_matrix(s::$Z) = s.K
-        affine_term(s::$Z) = s.b
+        function statedim(s::$Z)
+            return size(s.C, 1)
+        end
+        function inputdim(s::$Z)
+            return 0
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function mass_matrix(s::$Z)
+            return s.M
+        end
+        function viscosity_matrix(s::$Z)
+            return s.C
+        end
+        function stiffness_matrix(s::$Z)
+            return s.K
+        end
+        function affine_term(s::$Z)
+            return s.b
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = true
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = false
-            isconstrained(::$T) = false
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return true
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return false
+            end
+            function isconstrained(::$T)
+                return false
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -2104,26 +2869,60 @@ for (Z, AZ) in ((:SecondOrderConstrainedLinearControlContinuousSystem, :Abstract
             return $(Z)(hcat(M), hcat(C), hcat(K), hcat(B), X, U)
         end
 
-        statedim(s::$Z) = size(s.C, 1)
-        inputdim(s::$Z) = size(s.B, 2)
-        noisedim(::$Z) = 0
-        mass_matrix(s::$Z) = s.M
-        viscosity_matrix(s::$Z) = s.C
-        stiffness_matrix(s::$Z) = s.K
-        affine_term(s::$Z) = zeros(eltype(s.C), size(s.C, 1))
-        input_matrix(s::$Z) = s.B
-        stateset(s::$Z) = s.X
-        inputset(s::$Z) = s.U
+        function statedim(s::$Z)
+            return size(s.C, 1)
+        end
+        function inputdim(s::$Z)
+            return size(s.B, 2)
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function mass_matrix(s::$Z)
+            return s.M
+        end
+        function viscosity_matrix(s::$Z)
+            return s.C
+        end
+        function stiffness_matrix(s::$Z)
+            return s.K
+        end
+        function affine_term(s::$Z)
+            return zeros(eltype(s.C), size(s.C, 1))
+        end
+        function input_matrix(s::$Z)
+            return s.B
+        end
+        function stateset(s::$Z)
+            return s.X
+        end
+        function inputset(s::$Z)
+            return s.U
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = true
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = true
-            isconstrained(::$T) = true
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return true
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return true
+            end
+            function isconstrained(::$T)
+                return true
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -2205,26 +3004,60 @@ for (Z, AZ) in ((:SecondOrderConstrainedAffineControlContinuousSystem, :Abstract
             return $(Z)(hcat(M), hcat(C), hcat(K), hcat(B), [d], X, U)
         end
 
-        statedim(s::$Z) = size(s.C, 1)
-        inputdim(s::$Z) = size(s.B, 2)
-        noisedim(::$Z) = 0
-        mass_matrix(s::$Z) = s.M
-        viscosity_matrix(s::$Z) = s.C
-        stiffness_matrix(s::$Z) = s.K
-        affine_term(s::$Z) = s.d
-        input_matrix(s::$Z) = s.B
-        stateset(s::$Z) = s.X
-        inputset(s::$Z) = s.U
+        function statedim(s::$Z)
+            return size(s.C, 1)
+        end
+        function inputdim(s::$Z)
+            return size(s.B, 2)
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function mass_matrix(s::$Z)
+            return s.M
+        end
+        function viscosity_matrix(s::$Z)
+            return s.C
+        end
+        function stiffness_matrix(s::$Z)
+            return s.K
+        end
+        function affine_term(s::$Z)
+            return s.d
+        end
+        function input_matrix(s::$Z)
+            return s.B
+        end
+        function stateset(s::$Z)
+            return s.X
+        end
+        function inputset(s::$Z)
+            return s.U
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = true
-            isaffine(::$T) = true
-            ispolynomial(::$T) = false
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = true
-            isconstrained(::$T) = true
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return true
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return true
+            end
+            function isconstrained(::$T)
+                return true
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -2298,20 +3131,42 @@ for (Z, AZ) in ((:SecondOrderContinuousSystem, :AbstractContinuousSystem),
             return $(Z)(hcat(M), hcat(C), fi, fe)
         end
 
-        statedim(s::$Z) = size(s.M, 1)
-        noisedim(::$Z) = 0
-        mass_matrix(s::$Z) = s.M
-        viscosity_matrix(s::$Z) = s.C
+        function statedim(s::$Z)
+            return size(s.M, 1)
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function mass_matrix(s::$Z)
+            return s.M
+        end
+        function viscosity_matrix(s::$Z)
+            return s.C
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = false
-            isaffine(::$T) = false
-            ispolynomial(::$T) = false
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = false
-            isconstrained(::$T) = false
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return false
+            end
+            function isaffine(::$T)
+                return false
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return false
+            end
+            function isconstrained(::$T)
+                return false
+            end
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -2384,22 +3239,47 @@ for (Z, AZ) in ((:SecondOrderConstrainedContinuousSystem, :AbstractContinuousSys
             return $(Z)(hcat(M), hcat(C), fi, fe, X, U)
         end
 
-        statedim(s::$Z) = size(s.M, 1)
-        noisedim(::$Z) = 0
-        mass_matrix(s::$Z) = s.M
-        viscosity_matrix(s::$Z) = s.C
-        stateset(s::$Z) = s.X
-        inputset(s::$Z) = s.U
+        function statedim(s::$Z)
+            return size(s.M, 1)
+        end
+        function noisedim(s::$Z)
+            return 0
+        end
+        function mass_matrix(s::$Z)
+            return s.M
+        end
+        function viscosity_matrix(s::$Z)
+            return s.C
+        end
+        function stateset(s::$Z)
+            return s.X
+        end
+        function inputset(s::$Z)
+            return s.U
+        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
-            islinear(::$T) = false
-            isaffine(::$T) = false
-            ispolynomial(::$T) = false
-            isnoisy(::$T) = false
-            iscontrolled(::$T) = false
-            isconstrained(::$T) = true
-            isparametric(::$T) = false
+            function islinear(::$T)
+                return false
+            end
+            function isaffine(::$T)
+                return false
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return false
+            end
+            function isconstrained(::$T)
+                return true
+            function isparametric(::$T)
+                return false
+            end
         end
     end
 end
@@ -2465,13 +3345,20 @@ function __init__()
 
             for T in [Z, Type{<:eval(Z)}]
                 @eval begin
-                    islinear(::$T) = true
-                    isaffine(::$T) = false
-                    ispolynomial(::$T) = false
-                    isnoisy(::$T) = false
-                    iscontrolled(::$T) = false
-                    isconstrained(::$T) = false
-                    isparametric(::$T) = true
+                    function islinear(::$T)
+                        return true
+                    function isaffine(::$T)
+                        return false
+                    function ispolynomial(::$T)
+                        return false
+                    function isnoisy(::$T)
+                        return false
+                    function iscontrolled(::$T)
+                        return false
+                    function isconstrained(::$T)
+                        return false
+                    function isparametric(::$T)
+                        return true
                 end
             end
         end
@@ -2547,14 +3434,20 @@ function __init__()
 
             for T in [Z, Type{<:eval(Z)}]
                 @eval begin
-                    islinear(::$T) = true
-                    isaffine(::$T) = true
-                    ispolynomial(::$T) = false
-                    isblackbox(::$T) = false
-                    isnoisy(::$T) = false
-                    iscontrolled(::$T) = true
-                    isconstrained(::$T) = false
-                    isparametric(::$T) = true
+                    function islinear(::$T)
+                        return true
+                    function isaffine(::$T)
+                        return false
+                    function ispolynomial(::$T)
+                        return false
+                    function isnoisy(::$T)
+                        return false
+                    function iscontrolled(::$T)
+                        return true
+                    function isconstrained(::$T)
+                        return false
+                    function isparametric(::$T)
+                        return true
                 end
             end
         end

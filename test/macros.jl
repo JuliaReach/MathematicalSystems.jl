@@ -1,4 +1,7 @@
 @testset "@map macro(ex)" begin
+    @static if VERSION >= v"1.10"
+        @test_throws ArgumentError @macroexpand @map(x -> x)
+    end
     n = 3
     A = rand(2, 2)
     b = rand(2)
@@ -11,6 +14,10 @@
 end
 
 @testset "@map macro(ex, args)" begin
+    @static if VERSION >= v"1.10"
+        @test_throws ArgumentError @macroexpand @map(x -> 2x, dim:2)
+        @test_throws ArgumentError @macroexpand @map(x -> x, dimX:2)
+    end
     n = 3
     identitymap1 = @map(x -> x, dim = n)
     identitymap2 = @map(x -> x, dim:3)

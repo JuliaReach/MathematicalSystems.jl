@@ -76,17 +76,14 @@ end
 Base.IndexStyle(::Type{<:IdentityMultiple}) = IndexLinear()
 Base.size(𝐼::IdentityMultiple) = (𝐼.n, 𝐼.n)
 
-function Base.getindex(𝐼::IdentityMultiple, inds...)
-    any(idx -> idx > 𝐼.n, inds) && throw(BoundsError(𝐼, inds))
+function Base.getindex(𝐼::IdentityMultiple, inds::Integer...)
+    @boundscheck all(idx -> 1 ≤ idx ≤ 𝐼.n, inds) || throw(BoundsError(𝐼, inds))
     return getindex(𝐼.M, inds...)
 end
 
-function Base.getindex(𝐼::IdentityMultiple{T}, ind) where {T}
-    if 1 ≤ ind ≤ 𝐼.n^2
-        return rem(ind - 1, 𝐼.n + 1) == 0 ? 𝐼.M.λ : zero(T)
-    else
-        throw(BoundsError(𝐼, ind))
-    end
+function Base.getindex(𝐼::IdentityMultiple{T}, ind::Integer) where {T}
+    @boundscheck 1 ≤ ind ≤ 𝐼.n^2 || throw(BoundsError(𝐼, ind))
+    return rem(ind - 1, 𝐼.n + 1) == 0 ? 𝐼.M.λ : zero(T)
 end
 
 function Base.setindex!(::IdentityMultiple, ::Any, inds...)
@@ -94,8 +91,6 @@ function Base.setindex!(::IdentityMultiple, ::Any, inds...)
 end
 
 Base.:(-)(𝐼::IdentityMultiple) = IdentityMultiple(-𝐼.M, 𝐼.n)
-Base.:(+)(𝐼::IdentityMultiple, M::AbstractMatrix) = 𝐼.M + M
-Base.:(+)(M::AbstractMatrix, 𝐼::IdentityMultiple) = M + 𝐼.M
 Base.:(*)(x::Number, 𝐼::IdentityMultiple) = IdentityMultiple(x * 𝐼.M, 𝐼.n)
 Base.:(*)(𝐼::IdentityMultiple, x::Number) = IdentityMultiple(x * 𝐼.M, 𝐼.n)
 Base.:(/)(𝐼::IdentityMultiple, x::Number) = IdentityMultiple(𝐼.M / x, 𝐼.n)
@@ -192,9 +187,5 @@ end
 
 # callable identity matrix given the scaling factor and the size
 IdentityMultiple(λ::Number, n::Int) = IdentityMultiple(λ * I, n)
-
-function LinearAlgebra.Hermitian(𝐼::IdentityMultiple)
-    return Hermitian(Diagonal(fill(𝐼.M.λ, 𝐼.n)))
-end
 
 Base.exp(𝐼::IdentityMultiple) = IdentityMultiple(exp(𝐼.M.λ), 𝐼.n)

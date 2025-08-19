@@ -42,6 +42,7 @@ for (Z, AZ) in ((:ContinuousIdentitySystem, :AbstractContinuousSystem),
             end
             function isparametric(::$T)
                 return false
+            end
         end
     end
 end
@@ -348,7 +349,8 @@ for (Z, AZ) in ((:LinearControlContinuousSystem, :AbstractContinuousSystem),
         struct $(Z){T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T}} <: $(AZ)
             A::MTA
             B::MTB
-            function $(Z)(A::MTA, B::MTB) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T}}
+            function $(Z)(A::MTA,
+                          B::MTB) where {T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T}}
                 if checksquare(A) != size(B, 1)
                     throw(DimensionMismatch("incompatible dimensions"))
                 end
@@ -635,7 +637,8 @@ ConstrainedAffineDiscreteSystem
 for (Z, AZ) in ((:AffineControlContinuousSystem, :AbstractContinuousSystem),
                 (:AffineControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},VT<:AbstractVector{T}} <: $(AZ)
+        struct $(Z){T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},VT<:AbstractVector{T}} <:
+               $(AZ)
             A::MTA
             B::MTB
             c::VT
@@ -738,7 +741,8 @@ AffineControlDiscreteSystem
 for (Z, AZ) in ((:ConstrainedAffineControlContinuousSystem, :AbstractContinuousSystem),
                 (:ConstrainedAffineControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},VT<:AbstractVector{T},ST,UT} <:
+        struct $(Z){T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},VT<:AbstractVector{T},ST,
+                    UT} <:
                $(AZ)
             A::MTA
             B::MTB
@@ -964,7 +968,8 @@ for (Z, AZ) in ((:LinearDescriptorContinuousSystem, :AbstractContinuousSystem),
         struct $(Z){T,MTA<:AbstractMatrix{T},MTE<:AbstractMatrix{T}} <: $(AZ)
             A::MTA
             E::MTE
-            function $(Z)(A::MTA, E::MTE) where {T,MTA<:AbstractMatrix{T},MTE<:AbstractMatrix{T}}
+            function $(Z)(A::MTA,
+                          E::MTE) where {T,MTA<:AbstractMatrix{T},MTE<:AbstractMatrix{T}}
                 if size(A) != size(E)
                     throw(DimensionMismatch("incompatible dimensions"))
                 end
@@ -1255,7 +1260,8 @@ for (Z, AZ) in ((:ConstrainedPolynomialContinuousSystem, :AbstractContinuousSyst
             statedim::Int
             X::ST
             function $(Z)(p::VPT, statedim::Int,
-                          X::ST) where {T,PT<:AbstractPolynomialLike{T},VPT<:AbstractVector{PT},ST}
+                          X::ST) where {T,PT<:AbstractPolynomialLike{T},VPT<:AbstractVector{PT},
+                                        ST}
                 if statedim != MultivariatePolynomials.nvariables(p)
                     throw(DimensionMismatch("the state dimension $(statedim) does not match the number of state variables"))
                 end
@@ -1716,7 +1722,8 @@ for (Z, AZ) in ((:NoisyLinearContinuousSystem, :AbstractContinuousSystem),
         struct $(Z){T,MTA<:AbstractMatrix{T},MTD<:AbstractMatrix{T}} <: $(AZ)
             A::MTA
             D::MTD
-            function $(Z)(A::MTA, D::MTD) where {T,MTA<:AbstractMatrix{T},MTD<:AbstractMatrix{T}}
+            function $(Z)(A::MTA,
+                          D::MTD) where {T,MTA<:AbstractMatrix{T},MTD<:AbstractMatrix{T}}
                 if checksquare(A) != size(D, 1)
                     throw(DimensionMismatch("incompatible dimensions"))
                 end
@@ -1916,7 +1923,8 @@ NoisyConstrainedLinearDiscreteSystem
 for (Z, AZ) in ((:NoisyLinearControlContinuousSystem, :AbstractContinuousSystem),
                 (:NoisyLinearControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},MTD<:AbstractMatrix{T}} <: $(AZ)
+        struct $(Z){T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},MTD<:AbstractMatrix{T}} <:
+               $(AZ)
             A::MTA
             B::MTB
             D::MTD
@@ -2021,7 +2029,8 @@ NoisyLinearControlDiscreteSystem
 for (Z, AZ) in ((:NoisyConstrainedLinearControlContinuousSystem, :AbstractContinuousSystem),
                 (:NoisyConstrainedLinearControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},MTD<:AbstractMatrix{T},ST,UT,
+        struct $(Z){T,MTA<:AbstractMatrix{T},MTB<:AbstractMatrix{T},MTD<:AbstractMatrix{T},ST,
+                    UT,
                     WT} <: $(AZ)
             A::MTA
             B::MTB
@@ -2837,8 +2846,9 @@ Discrete-time second order constrained linear control system of the form:
 """
 SecondOrderConstrainedLinearControlDiscreteSystem
 
-for (Z, AZ) in ((:SecondOrderConstrainedLinearControlContinuousSystem, :AbstractContinuousSystem),
-                (:SecondOrderConstrainedLinearControlDiscreteSystem, :AbstractDiscreteSystem))
+for (Z, AZ) in
+    ((:SecondOrderConstrainedLinearControlContinuousSystem, :AbstractContinuousSystem),
+     (:SecondOrderConstrainedLinearControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
         struct $(Z){T,MTM<:AbstractMatrix{T},
                     MTC<:AbstractMatrix{T},
@@ -2969,8 +2979,9 @@ Discrete-time second order constrained affine control system of the form:
 """
 SecondOrderConstrainedAffineControlDiscreteSystem
 
-for (Z, AZ) in ((:SecondOrderConstrainedAffineControlContinuousSystem, :AbstractContinuousSystem),
-                (:SecondOrderConstrainedAffineControlDiscreteSystem, :AbstractDiscreteSystem))
+for (Z, AZ) in
+    ((:SecondOrderConstrainedAffineControlContinuousSystem, :AbstractContinuousSystem),
+     (:SecondOrderConstrainedAffineControlDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
         struct $(Z){T,MTM<:AbstractMatrix{T},
                     MTC<:AbstractMatrix{T},
@@ -2994,7 +3005,8 @@ for (Z, AZ) in ((:SecondOrderConstrainedAffineControlContinuousSystem, :Abstract
                                         VT<:AbstractVector{T},
                                         ST,
                                         UT}
-                if !(checksquare(M) == checksquare(C) == checksquare(K) == size(B, 1) == length(d))
+                if !(checksquare(M) == checksquare(C) == checksquare(K) == size(B, 1) ==
+                     length(d))
                     throw(DimensionMismatch("incompatible dimensions"))
                 end
                 return new{T,MTM,MTC,MTK,MTB,VT,ST,UT}(M, C, K, B, d, X, U)
@@ -3228,7 +3240,8 @@ for (Z, AZ) in ((:SecondOrderConstrainedContinuousSystem, :AbstractContinuousSys
             U::UT
 
             function $(Z)(M::MTM, C::MTC, fi::FI, fe::FE, X::ST,
-                          U::UT) where {T,MTM<:AbstractMatrix{T},MTC<:AbstractMatrix{T},FI,FE,ST,UT}
+                          U::UT) where {T,MTM<:AbstractMatrix{T},MTC<:AbstractMatrix{T},FI,FE,
+                                        ST,UT}
                 if checksquare(M) != checksquare(C)
                     throw(DimensionMismatch("incompatible dimensions"))
                 end
@@ -3277,6 +3290,7 @@ for (Z, AZ) in ((:SecondOrderConstrainedContinuousSystem, :AbstractContinuousSys
             end
             function isconstrained(::$T)
                 return true
+            end
             function isparametric(::$T)
                 return false
             end
@@ -3292,7 +3306,7 @@ function __init__()
                LinearParametricDiscreteSystem,
                LinearControlParametricContinuousSystem,
                LinearControlParametricDiscreteSystem
-               
+
         @doc """
             LinearParametricContinuousSystem
 
@@ -3329,7 +3343,7 @@ function __init__()
             BaseName = Symbol(replace(string(Z), "Parametric" => ""))
 
             @eval begin
-                struct $(Z){T, MA<:MatrixZonotope{T}} <: $(AZ)
+                struct $(Z){T,MA<:MatrixZonotope{T}} <: $(AZ)
                     A::MA
                 end
 
@@ -3347,22 +3361,28 @@ function __init__()
                 @eval begin
                     function islinear(::$T)
                         return true
+                    end
                     function isaffine(::$T)
-                        return false
+                        return true
+                    end
                     function ispolynomial(::$T)
                         return false
+                    end
                     function isnoisy(::$T)
                         return false
+                    end
                     function iscontrolled(::$T)
                         return false
+                    end
                     function isconstrained(::$T)
                         return false
+                    end
                     function isparametric(::$T)
                         return true
+                    end
                 end
             end
         end
-
 
         @doc """
             LinearControlParametricContinuousSystem
@@ -3406,14 +3426,16 @@ function __init__()
             BaseName = Symbol(replace(string(Z), "Parametric" => ""))
 
             @eval begin
-                struct $(Z){T, MTA<:MatrixZonotope{T}, MTB<:MatrixZonotope{T}} <: $(AZ)
+                struct $(Z){T,MTA<:MatrixZonotope{T},MTB<:MatrixZonotope{T}} <: $(AZ)
                     A::MTA
                     B::MTB
-                    function $(Z)(A::MTA, B::MTB) where {T, MTA<:MatrixZonotope{T}, MTB<:MatrixZonotope{T}}
+                    function $(Z)(A::MTA,
+                                  B::MTB) where {T,MTA<:MatrixZonotope{T},
+                                                 MTB<:MatrixZonotope{T}}
                         if size(A, 1) != size(A, 2) || size(A, 1) != size(B, 1)
                             throw(DimensionMismatch("incompatible dimensions"))
                         end
-                        return new{T, MTA, MTB}(A, B)
+                        return new{T,MTA,MTB}(A, B)
                     end
                 end
 
@@ -3436,18 +3458,25 @@ function __init__()
                 @eval begin
                     function islinear(::$T)
                         return true
+                    end
                     function isaffine(::$T)
-                        return false
+                        return true
+                    end
                     function ispolynomial(::$T)
                         return false
+                    end
                     function isnoisy(::$T)
                         return false
+                    end
                     function iscontrolled(::$T)
                         return true
+                    end
                     function isconstrained(::$T)
                         return false
+                    end
                     function isparametric(::$T)
                         return true
+                    end
                 end
             end
         end

@@ -535,7 +535,7 @@ end
         @test state_matrix(s) === A
         @test islinear(s)
         @test isparametric(s)
-        @test !isaffine(s)
+        @test isaffine(s)
         @test !isnoisy(s)
         @test !iscontrolled(s)
         @test !isconstrained(s)

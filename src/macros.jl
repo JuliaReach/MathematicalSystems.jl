@@ -127,7 +127,7 @@ Return the system type whose field names match those in `fields`.
 ### Input
 
 - `AT`     -- abstract system type, which can be either `AbstractContinuousSystem`
-              or `AbstractDiscreSystem`
+              or `AbstractDiscreteSystem`
 - `fields` -- tuple of field names
 
 ### Output

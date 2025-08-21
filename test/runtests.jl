@@ -11,6 +11,13 @@ SECOND_ORDER_CTYPES = [SecondOrderAffineContinuousSystem,
                        SecondOrderConstrainedLinearControlContinuousSystem,
                        SecondOrderLinearContinuousSystem]
 
+PARAMETRIC_CTYPES = [LinearParametricContinuousSystem,
+                     LinearControlParametricContinuousSystem]
+
+
+PARAMETRIC_DTYPES = [LinearParametricDiscreteSystem,
+                     LinearControlParametricDiscreteSystem]
+
 @testset "Utilities" begin
     include("utilities.jl")
 end

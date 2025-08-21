@@ -1,5 +1,6 @@
 module MathematicalSystems
 
+using Requires
 using LinearAlgebra, SparseArrays
 using LinearAlgebra: checksquare
 import RecipesBase
@@ -55,7 +56,8 @@ export islinear,
        isblackbox,
        isnoisy,
        iscontrolled,
-       isconstrained
+       isconstrained,
+       isparametric
 
 #====================================
 Concrete Types for Continuous Systems

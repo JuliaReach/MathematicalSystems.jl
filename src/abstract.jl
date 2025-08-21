@@ -214,6 +214,18 @@ can also be applied to `typeof(s)`.
 function isconstrained(::AbstractSystem) end
 
 """
+    isparametric(s::AbstractSystem)
+
+Determines if the system `s` contains one or more symbolic parameters in its
+dynamics (for example, matrix entries that can take values from a
+specified set).
+
+The result of this function only depends on the
+system type, not the value, and can also be applied to `typeof(s)`.
+"""
+function isparametric(::AbstractSystem) end
+
+"""
     AbstractMap
 
 Abstract supertype for all map types.

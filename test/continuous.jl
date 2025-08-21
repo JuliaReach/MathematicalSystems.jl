@@ -793,6 +793,7 @@ end
 
 @testset "Linear parametric continuous systems" begin
     @static if isdefined(@__MODULE__, :LazySets)
+        using LazySets: MatrixZonotope
         
         Ac = [1.0 0.0; 0.0 1.0]
         A1 = [0.1 0.0; 0.0 0.0]
@@ -829,7 +830,7 @@ end
         @test isa(sc, LinearControlParametricContinuousSystem)
 
         @test statedim(sc) == 2
-        @test inputdim(sc) == size(B, 2)
+        @test inputdim(sc) == 1
         @test noisedim(sc) == 0
         @test state_matrix(sc) === A
         @test input_matrix(sc) === B

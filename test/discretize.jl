@@ -41,7 +41,7 @@ end
     CTYPES = filter(x -> (occursin("Linear", string(x)) || occursin("Affine", string(x))) &&
                         !occursin("Descriptor", string(x)), subtypes(AbstractContinuousSystem))
 
-    # this test doesn't apply for second order systems
+    # this test doesn't apply for second order systems and parametric systems
     filter!(x -> x ∉ SECOND_ORDER_CTYPES && x ∉ PARAMETRIC_CTYPES, CTYPES)
 
     DTYPES = MathematicalSystems._complementary_type.(CTYPES)

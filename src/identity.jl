@@ -101,9 +101,22 @@ function Base.:(*)(𝐼::IdentityMultiple, v::AbstractVector)
 end
 
 # beside `AbstractMatrix`, we need some disambiguations with LinearAlgebra since v1.6
-for M in @static VERSION < v"1.6" ? [:AbstractMatrix] :
-                 (:AbstractMatrix, :Diagonal, :(Transpose{<:Any,<:AbstractVector}),
-                  :(Adjoint{<:Any,<:AbstractVector}), :(LinearAlgebra.AbstractTriangular))
+MATRICES = @static VERSION < v"1.6" ? [:AbstractMatrix] :
+                   [:AbstractMatrix, :Diagonal, :(Transpose{<:Any,<:AbstractVector}),
+                    :(Adjoint{<:Any,<:AbstractVector}), :(LinearAlgebra.AbstractTriangular)]
+@static if VERSION < v"1.8"
+    append!(MATRICES,
+            [:(Transpose{<:Any,
+                         <:Union{LinearAlgebra.Hermitian{T,S},LinearAlgebra.Symmetric{T,S},
+                                 LinearAlgebra.Symmetric{Complex{T},S}} where {T<:Real,S}}),
+             :(Adjoint{<:Any,
+                       <:Union{LinearAlgebra.Hermitian{T,S},LinearAlgebra.Hermitian{Complex{T},S},
+                               LinearAlgebra.Symmetric{T,S}} where {T<:Real,S}})])
+end
+@static if VERSION < v"1.9"
+    push!(MATRICES, :(Adjoint{<:Any,<:LinearAlgebra.AbstractRotation}))
+end
+for M in MATRICES
     @eval begin
         function Base.:(*)(𝐼::IdentityMultiple, A::$M)
             𝐼.n != size(A, 1) && throw(DimensionMismatch("incompatible dimensions"))

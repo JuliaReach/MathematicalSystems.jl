@@ -3387,7 +3387,7 @@ function __init__()
         @doc """
             LinearControlParametricContinuousSystem
 
-        Continuous-time linear  parametric system of the form:
+        Continuous-time linear parametric control system of the form:
 
         ```math
             x(t)' = A(θ) x(t) + B(θ) u(t), \\theta ∈ \\Theta \\; \\forall t
@@ -3405,7 +3405,7 @@ function __init__()
         @doc """
             LinearControlParametricDiscreteSystem 
 
-        Discrete-time linear  parametric system of the form:
+        Discrete-time linear parametric control system of the form:
 
         ```math
             x_{k+1} = A(θ) x_k + B(θ) u_k, \\theta ∈ \\Theta \\; \\forall k
@@ -3432,7 +3432,7 @@ function __init__()
                     function $(Z)(A::MTA,
                                   B::MTB) where {T,MTA<:MatrixZonotope{T},
                                                  MTB<:MatrixZonotope{T}}
-                        if size(A, 1) != size(A, 2) || size(A, 1) != size(B, 1)
+                        if checksquare(A) != size(B, 1)
                             throw(DimensionMismatch("incompatible dimensions"))
                         end
                         return new{T,MTA,MTB}(A, B)

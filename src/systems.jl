@@ -3310,7 +3310,7 @@ function __init__()
         @doc """
             LinearParametricContinuousSystem
 
-        Continuous-time linear  parametric system of the form:
+        Continuous-time linear parametric system of the form:
 
         ```math
             x(t)' = A(\\theta) x(t), \\theta ∈ \\Theta \\; \\forall t
@@ -3319,7 +3319,7 @@ function __init__()
         matrix, matrix zonotope, or other convex matrix sets.
 
         ### Fields
-        - `A`      --  parametric state matrix
+        - `A` -- parametric state matrix
         """
         LinearParametricContinuousSystem
 
@@ -3334,7 +3334,7 @@ function __init__()
         matrix, matrix zonotope, or other convex matrix sets.
 
         ### Fields
-        - `A`      --  parametric state matrix
+        - `A` -- parametric state matrix
         """
         LinearParametricDiscreteSystem
 
@@ -3347,10 +3347,18 @@ function __init__()
                     A::MA
                 end
 
-                statedim(s::$Z) = size(s.A, 1)
-                inputdim(::$Z) = 0
-                noisedim(::$Z) = 0
-                state_matrix(s::$Z) = s.A
+                function statedim(s::$Z)
+                    return size(s.A, 1)
+                end
+                function inputdim(::$Z)
+                    return 0
+                end
+                function noisedim(::$Z)
+                    return 0
+                end
+                function state_matrix(s::$Z)
+                    return s.A
+                end
 
                 function $(BaseName)(M::MatrixZonotope)
                     return $Z(M)
@@ -3397,13 +3405,13 @@ function __init__()
         matrix, matrix zonotope, or other convex matrix sets.
 
         ### Fields
-        - `A`      --  parametric state matrix
-        - `B`      --  parametric input matrix
+        - `A` -- parametric state matrix
+        - `B` -- parametric input matrix
         """
         LinearControlParametricContinuousSystem
 
         @doc """
-            LinearControlParametricDiscreteSystem 
+            LinearControlParametricDiscreteSystem
 
         Discrete-time linear parametric control system of the form:
 
@@ -3415,8 +3423,8 @@ function __init__()
         matrix, matrix zonotope, or other convex matrix sets.
 
         ### Fields
-        - `A`      --  parametric state matrix
-        - `B`      --  parametric input matrix
+        - `A` -- parametric state matrix
+        - `B` -- parametric input matrix
         """
         LinearControlParametricDiscreteSystem
 
@@ -3443,11 +3451,21 @@ function __init__()
                     return $(Z)(hcat(A), hcat(B))
                 end
 
-                statedim(s::$Z) = size(s.A, 1)
-                inputdim(s::$Z) = size(s.B, 2)
-                noisedim(::$Z) = 0
-                state_matrix(s::$Z) = s.A
-                input_matrix(s::$Z) = s.B
+                function statedim(s::$Z)
+                    return size(s.A, 1)
+                end
+                function inputdim(s::$Z)
+                    return size(s.B, 2)
+                end
+                function noisedim(::$Z)
+                    return 0
+                end
+                function state_matrix(s::$Z)
+                    return s.A
+                end
+                function input_matrix(s::$Z)
+                    return s.B
+                end
 
                 function $(BaseName)(MA::MatrixZonotope, MB::MatrixZonotope)
                     return $Z(MA, MB)

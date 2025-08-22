@@ -901,7 +901,7 @@ macro system(expr...)
             return esc(ivp)
         end
     catch ex
-        if isa(ex, ArgumentError)
+        if ex isa ArgumentError
             return :(throw($ex))
         else
             throw(ex)
@@ -973,7 +973,7 @@ macro ivp(expr...)
             end
         end
     catch ex
-        if isa(ex, ArgumentError)
+        if ex isa ArgumentError
             return :(throw($ex))
         else
             throw(ex)

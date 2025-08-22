@@ -517,17 +517,17 @@ end
 @testset "Linear parametric discrete systems" begin
     @static if isdefined(@__MODULE__, :LazySets)
         using LazySets: MatrixZonotope
-        
+
         Ac = [1.0 0.0; 0.0 1.0]
         A1 = [0.1 0.0; 0.0 0.0]
         A2 = [0.0 0.0; 0.0 0.2]
         A = MatrixZonotope(Ac, [A1, A2])
 
         s = LinearParametricDiscreteSystem(A)
-        @test isa(s, LinearParametricDiscreteSystem)
+        @test s isa LinearParametricDiscreteSystem
         # shortcut constructor
         s = LinearDiscreteSystem(A)
-        @test isa(s, LinearParametricDiscreteSystem)
+        @test s isa LinearParametricDiscreteSystem
 
         @test statedim(s) == 2
         @test inputdim(s) == 0
@@ -539,16 +539,16 @@ end
         @test !isnoisy(s)
         @test !iscontrolled(s)
         @test !isconstrained(s)
-        
+
         Bc = hcat([1.0; 0.5])
         B1 = hcat([0.05; 0.0])
         B = MatrixZonotope(Bc, [B1])
 
         sc = LinearControlParametricDiscreteSystem(A, B)
-        @test isa(sc, LinearControlParametricDiscreteSystem)
+        @test sc isa LinearControlParametricDiscreteSystem
         # shortcut constructor
         sc = LinearControlDiscreteSystem(A, B)
-        @test isa(sc, LinearControlParametricDiscreteSystem)
+        @test sc isa LinearControlParametricDiscreteSystem
 
         @test statedim(sc) == 2
         @test inputdim(sc) == 1

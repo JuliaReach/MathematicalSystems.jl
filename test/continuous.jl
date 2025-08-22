@@ -794,18 +794,18 @@ end
 @testset "Linear parametric continuous systems" begin
     @static if isdefined(@__MODULE__, :LazySets)
         using LazySets: MatrixZonotope
-        
+
         Ac = [1.0 0.0; 0.0 1.0]
         A1 = [0.1 0.0; 0.0 0.0]
         A2 = [0.0 0.0; 0.0 0.2]
         A = MatrixZonotope(Ac, [A1, A2])
 
         s = LinearParametricContinuousSystem(A)
-        @test isa(s, LinearParametricContinuousSystem)
+        @test s isa LinearParametricContinuousSystem
 
         # shortcut constructor
         s = LinearContinuousSystem(A)
-        @test isa(s, LinearParametricContinuousSystem)
+        @test s isa LinearParametricContinuousSystem
 
         @test statedim(s) == 2
         @test inputdim(s) == 0
@@ -817,17 +817,17 @@ end
         @test !isnoisy(s)
         @test !iscontrolled(s)
         @test !isconstrained(s)
-        
+
         # control case
         Bc = hcat([1.0; 0.5])
         B1 = hcat([0.05; 0.0])
         B = MatrixZonotope(Bc, [B1])
 
         sc = LinearControlParametricContinuousSystem(A, B)
-        @test isa(sc, LinearControlParametricContinuousSystem)
+        @test sc isa LinearControlParametricContinuousSystem
         # shortcut constructor for control
         sc = LinearControlContinuousSystem(A, B)
-        @test isa(sc, LinearControlParametricContinuousSystem)
+        @test sc isa LinearControlParametricContinuousSystem
 
         @test statedim(sc) == 2
         @test inputdim(sc) == 1

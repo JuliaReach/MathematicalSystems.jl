@@ -95,7 +95,11 @@ export ContinuousIdentitySystem,
        SecondOrderConstrainedLinearControlContinuousSystem,
        SecondOrderConstrainedAffineControlContinuousSystem,
        SecondOrderContinuousSystem,
-       SecondOrderConstrainedContinuousSystem
+       SecondOrderConstrainedContinuousSystem,
+       LinearParametricContinuousSystem,
+       LinearParametricDiscreteSystem,
+       LinearControlParametricContinuousSystem,
+       LinearControlParametricDiscreteSystem
 
 #==================================
 Concrete Types for Discrete Systems

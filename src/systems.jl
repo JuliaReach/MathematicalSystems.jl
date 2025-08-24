@@ -3298,203 +3298,212 @@ for (Z, AZ) in ((:SecondOrderConstrainedContinuousSystem, :AbstractContinuousSys
     end
 end
 
+@doc """
+    LinearParametricContinuousSystem
+
+Continuous-time linear parametric system of the form:
+
+```math
+    x(t)' = A(\\theta) x(t), \\theta ∈ \\Theta \\; \\forall t
+```
+where ``A(θ)`` belongs to a continuous set of matrices, e.g., an interval
+matrix, matrix zonotope, or other convex matrix sets.
+
+### Fields
+
+- `A` -- parametric state matrix
+"""
+LinearParametricContinuousSystem
+
+@doc """
+    LinearParametricDiscreteSystem
+
+Discrete-time linear parametric system of the form:
+
+```math
+    x_{k+1} = A(\\theta) x_k, \\theta ∈ \\Theta \\; \\forall k
+```
+
+where ``A(θ)`` belongs to a continuous set of matrices, e.g., an interval
+matrix, matrix zonotope, or other convex matrix sets.
+
+### Fields
+
+- `AS` -- parametric state matrix
+"""
+LinearParametricDiscreteSystem
+
+for (Z, AZ) in ((:LinearParametricContinuousSystem, :AbstractContinuousSystem),
+                (:LinearParametricDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){MA} <: $(AZ)
+            AS::MA
+        end
+
+        function statedim(s::$Z)
+            return size(s.AS, 1)
+        end
+        function inputdim(::$Z)
+            return 0
+        end
+        function noisedim(::$Z)
+            return 0
+        end
+        function state_matrix(s::$Z)
+            return s.AS
+        end
+    end
+
+    for T in [Z, Type{<:eval(Z)}]
+        @eval begin
+            function islinear(::$T)
+                return true
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return false
+            end
+            function isconstrained(::$T)
+                return false
+            end
+            function isparametric(::$T)
+                return true
+            end
+        end
+    end
+end
+
+@doc """
+    LinearControlParametricContinuousSystem
+
+Continuous-time linear parametric control system of the form:
+
+```math
+    x(t)' = A(θ) x(t) + B(θ) u(t), \\theta ∈ \\Theta \\; \\forall t
+```
+
+where ``A(θ)`` and ``B(θ)`` belong to continuous sets of matrices, e.g., an interval
+matrix, matrix zonotope, or other convex matrix sets.
+
+### Fields
+
+- `A` -- parametric state matrix
+- `B` -- parametric input matrix
+"""
+LinearControlParametricContinuousSystem
+
+@doc """
+    LinearControlParametricDiscreteSystem
+
+Discrete-time linear parametric control system of the form:
+
+```math
+    x_{k+1} = A(θ) x_k + B(θ) u_k, \\theta ∈ \\Theta \\; \\forall k
+```
+
+where ``A(θ)`` and ``B(θ)`` belong to continuous sets of matrices, e.g., an interval
+matrix, matrix zonotope, or other convex matrix sets.
+
+### Fields
+
+- `AS` -- parametric state matrix
+- `BS` -- parametric input matrix
+"""
+LinearControlParametricDiscreteSystem
+
+for (Z, AZ) in
+    ((:LinearControlParametricContinuousSystem, :AbstractContinuousSystem),
+     (:LinearControlParametricDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){MTA,MTB} <: $(AZ)
+            AS::MTA
+            BS::MTB
+
+            function $(Z)(AS::MTA, BS::MTB) where {MTA,MTB}
+                if checksquare(AS) != size(BS, 1)
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
+                return new{MTA,MTB}(AS, BS)
+            end
+        end
+
+        function $(Z)(AS::Number, BS::Number)
+            return $(Z)(hcat(AS), hcat(BS))
+        end
+
+        function statedim(s::$Z)
+            return size(s.AS, 1)
+        end
+        function inputdim(s::$Z)
+            return size(s.BS, 2)
+        end
+        function noisedim(::$Z)
+            return 0
+        end
+        function state_matrix(s::$Z)
+            return s.AS
+        end
+        function input_matrix(s::$Z)
+            return s.BS
+        end
+    end
+
+    for T in [Z, Type{<:eval(Z)}]
+        @eval begin
+            function islinear(::$T)
+                return true
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return true
+            end
+            function isconstrained(::$T)
+                return false
+            end
+            function isparametric(::$T)
+                return true
+            end
+        end
+    end
+end
+
 function __init__()
     @require LazySets = "b4f0291d-fe17-52bc-9479-3d1a343d9043" begin
         using .LazySets: MatrixZonotope
 
-        export LinearParametricContinuousSystem,
-               LinearParametricDiscreteSystem,
-               LinearControlParametricContinuousSystem,
-               LinearControlParametricDiscreteSystem
-
-        @doc """
-            LinearParametricContinuousSystem
-
-        Continuous-time linear parametric system of the form:
-
-        ```math
-            x(t)' = A(\\theta) x(t), \\theta ∈ \\Theta \\; \\forall t
-        ```
-        where ``A(θ)`` belongs to a continuous set of matrices, e.g., an interval
-        matrix, matrix zonotope, or other convex matrix sets.
-
-        ### Fields
-        - `A` -- parametric state matrix
-        """
-        LinearParametricContinuousSystem
-
-        @doc """
-            LinearParametricDiscreteSystem
-
-        Discrete-time linear parametric system of the form:
-        ```math
-            x_{k+1} = A(\\theta) x_k, \\theta ∈ \\Theta \\; \\forall k
-        ```
-        where ``A(θ)`` belongs to a continuous set of matrices, e.g., an interval
-        matrix, matrix zonotope, or other convex matrix sets.
-
-        ### Fields
-        - `A` -- parametric state matrix
-        """
-        LinearParametricDiscreteSystem
-
-        for (Z, AZ) in ((:LinearParametricContinuousSystem, :AbstractContinuousSystem),
-                        (:LinearParametricDiscreteSystem, :AbstractDiscreteSystem))
+        for Z in (:LinearParametricContinuousSystem, :LinearParametricDiscreteSystem)
             BaseName = Symbol(replace(string(Z), "Parametric" => ""))
 
             @eval begin
-                struct $(Z){T,MA<:MatrixZonotope{T}} <: $(AZ)
-                    A::MA
-                end
-
-                function statedim(s::$Z)
-                    return size(s.A, 1)
-                end
-                function inputdim(::$Z)
-                    return 0
-                end
-                function noisedim(::$Z)
-                    return 0
-                end
-                function state_matrix(s::$Z)
-                    return s.A
-                end
-
-                function $(BaseName)(M::MatrixZonotope)
-                    return $Z(M)
-                end
-            end
-
-            for T in [Z, Type{<:eval(Z)}]
-                @eval begin
-                    function islinear(::$T)
-                        return true
-                    end
-                    function isaffine(::$T)
-                        return true
-                    end
-                    function ispolynomial(::$T)
-                        return false
-                    end
-                    function isnoisy(::$T)
-                        return false
-                    end
-                    function iscontrolled(::$T)
-                        return false
-                    end
-                    function isconstrained(::$T)
-                        return false
-                    end
-                    function isparametric(::$T)
-                        return true
-                    end
+                function $(BaseName)(AS::MatrixZonotope)
+                    return $Z(AS)
                 end
             end
         end
 
-        @doc """
-            LinearControlParametricContinuousSystem
-
-        Continuous-time linear parametric control system of the form:
-
-        ```math
-            x(t)' = A(θ) x(t) + B(θ) u(t), \\theta ∈ \\Theta \\; \\forall t
-        ```
-
-        where ``A(θ)`` and ``B(θ)`` belong to continuous sets of matrices, e.g., an interval
-        matrix, matrix zonotope, or other convex matrix sets.
-
-        ### Fields
-        - `A` -- parametric state matrix
-        - `B` -- parametric input matrix
-        """
-        LinearControlParametricContinuousSystem
-
-        @doc """
-            LinearControlParametricDiscreteSystem
-
-        Discrete-time linear parametric control system of the form:
-
-        ```math
-            x_{k+1} = A(θ) x_k + B(θ) u_k, \\theta ∈ \\Theta \\; \\forall k
-        ```
-
-        where ``A(θ)`` and ``B(θ)`` belong to continuous sets of matrices, e.g., an interval
-        matrix, matrix zonotope, or other convex matrix sets.
-
-        ### Fields
-        - `A` -- parametric state matrix
-        - `B` -- parametric input matrix
-        """
-        LinearControlParametricDiscreteSystem
-
-        for (Z, AZ) in
-            ((:LinearControlParametricContinuousSystem, :AbstractContinuousSystem),
-             (:LinearControlParametricDiscreteSystem, :AbstractDiscreteSystem))
+        for Z in (:LinearControlParametricContinuousSystem, :LinearControlParametricDiscreteSystem)
             BaseName = Symbol(replace(string(Z), "Parametric" => ""))
 
             @eval begin
-                struct $(Z){T,MTA<:MatrixZonotope{T},MTB<:MatrixZonotope{T}} <: $(AZ)
-                    A::MTA
-                    B::MTB
-                    function $(Z)(A::MTA,
-                                  B::MTB) where {T,MTA<:MatrixZonotope{T},
-                                                 MTB<:MatrixZonotope{T}}
-                        if checksquare(A) != size(B, 1)
-                            throw(DimensionMismatch("incompatible dimensions"))
-                        end
-                        return new{T,MTA,MTB}(A, B)
-                    end
-                end
-
-                function $(Z)(A::Number, B::Number)
-                    return $(Z)(hcat(A), hcat(B))
-                end
-
-                function statedim(s::$Z)
-                    return size(s.A, 1)
-                end
-                function inputdim(s::$Z)
-                    return size(s.B, 2)
-                end
-                function noisedim(::$Z)
-                    return 0
-                end
-                function state_matrix(s::$Z)
-                    return s.A
-                end
-                function input_matrix(s::$Z)
-                    return s.B
-                end
-
-                function $(BaseName)(MA::MatrixZonotope, MB::MatrixZonotope)
-                    return $Z(MA, MB)
-                end
-            end
-
-            for T in [Z, Type{<:eval(Z)}]
-                @eval begin
-                    function islinear(::$T)
-                        return true
-                    end
-                    function isaffine(::$T)
-                        return true
-                    end
-                    function ispolynomial(::$T)
-                        return false
-                    end
-                    function isnoisy(::$T)
-                        return false
-                    end
-                    function iscontrolled(::$T)
-                        return true
-                    end
-                    function isconstrained(::$T)
-                        return false
-                    end
-                    function isparametric(::$T)
-                        return true
-                    end
+                function $(BaseName)(AS::MTA,
+                                     BS::MTB) where {MTA<:MatrixZonotope,MTB<:MatrixZonotope}
+                    return $Z(AS, BS)
                 end
             end
         end

@@ -267,6 +267,7 @@ function _parse_system(exprs::NTuple{N,Expr}) where {N}
     noise_var = nothing
     dimension = nothing
     initial_state = nothing # for initial-value problems
+    parametric = false
 
     # main loop to parse the subexpressions in exprs
     for ex in exprs
@@ -315,6 +316,10 @@ function _parse_system(exprs::NTuple{N,Expr}) where {N}
             end
             initial_state = X0
 
+        elseif @capture(ex, A ∈ Set_)  # COV_EXCL_LINE
+            parametric = true
+            push!(constraints, ex)  # parse a constraint
+
         elseif @capture(ex, state_ ∈ Set_)  # COV_EXCL_LINE
             push!(constraints, ex)  # parse a constraint
 
@@ -361,7 +366,7 @@ function _parse_system(exprs::NTuple{N,Expr}) where {N}
     end
 
     return dynamic_equation, AT, constraints,
-           state_var, input_var, noise_var, dimension, initial_state
+           state_var, input_var, noise_var, dimension, initial_state, parametric
 end
 
 """
@@ -676,7 +681,7 @@ end
 # Take the vectors of tuples providing the variable and fields names for the
 # lhs, the rhs and the sets, combine them, and return a vector of field names
 # and a vector of variable names.
-function constructor_input(lhs, rhs, set)
+function constructor_input(lhs, rhs, set, parametric)
     rhs_fields = [tuple[2] for tuple in rhs]
     lhs_fields = [tuple[2] for tuple in lhs]
     set_fields = [tuple[2] for tuple in set]
@@ -687,6 +692,25 @@ function constructor_input(lhs, rhs, set)
     set_var_names = [tuple[1] for tuple in set]
     field_names = (rhs_fields..., lhs_fields..., set_fields...)
     var_names = (rhs_var_names..., lhs_var_names..., set_var_names...)
+    if parametric
+        # strip off normal matrices from expressions (they are just variables)
+        if length(field_names) == 2
+            @assert field_names == (:A, :AS)
+            field_names = (field_names[2],)
+            @assert length(var_names) == 2
+            @assert var_names == (:A, :AS)
+            var_names = (var_names[2],)
+        elseif length(field_names) == 4
+            @assert field_names == (:A, :B, :AS, :BS)
+            field_names = (field_names[3], field_names[4])
+            @assert length(var_names) == 4
+            @assert (var_names[3], var_names[4]) == (:AS, :BS)
+            var_names = (var_names[3], var_names[4])
+        else
+            throw(ArgumentError("the entry $(field_names) does not match a " *
+                                "parametric `MathematicalSystems.jl` structure"))
+        end
+    end
     return field_names, var_names
 end
 
@@ -694,8 +718,14 @@ end
 # checks whether the set belongs to the `state`, `input` or `noise` and returns a
 # tuple of symbols where the field name is either `:X`, `:U` or `:W` and
 # the variable name is the value parsed as Set_
-function extract_set_parameter(expr, state, input, noise) # input => to check set definitions
-    if @capture(expr, x_ ∈ Set_)
+function extract_set_parameter(expr, state, input, noise, parametric) # input => to check set definitions
+    if parametric
+        if @capture(expr, A ∈ Set_)
+            return Set, :AS
+        elseif @capture(expr, B ∈ Set_)
+            return Set, :BS
+        end
+    elseif @capture(expr, x_ ∈ Set_)
         if x == state
             return Set, :X
         elseif x == input
@@ -766,11 +796,13 @@ function _sort(parameters::Vector{<:Tuple{Any,Symbol}}, order::NTuple{N,Symbol})
     return order_parameters
 end
 
-function _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
+function _get_system_type(dyn_eq, AT, constr, state, input, noise, dim, parametric)
     lhs, rhs = extract_dyn_equation_parameters(dyn_eq, state, input, noise, dim, AT)
-    ordered_rhs = _sort(rhs, (:A, :B, :c, :D, :f, :statedim, :inputdim, :noisedim))
-    ordered_set = _sort(extract_set_parameter.(constr, state, input, noise), (:X, :U, :W))
-    field_names, var_names = constructor_input(lhs, ordered_rhs, ordered_set)
+    ordered_rhs = _sort(rhs, (:A, :B, :c, :D, :f, :statedim, :inputdim, :noisedim, :AS, :BS))
+    extract_set_parameter.(constr, state, input, noise, parametric)
+    ordered_set = _sort(extract_set_parameter.(constr, state, input, noise, parametric),
+                              (:X, :U, :W, :AS, :BS))
+    field_names, var_names = constructor_input(lhs, ordered_rhs, ordered_set, parametric)
     sys_type = _corresponding_type(AT, field_names)
     return sys_type, var_names
 end
@@ -891,8 +923,9 @@ ConstrainedBlackBoxControlDiscreteSystem{typeof(f), BallInf{Float64, Vector{Floa
 """
 macro system(expr...)
     try
-        dyn_eq, AT, constr, state, input, noise, dim, x0 = _parse_system(expr)
-        sys_type, var_names = _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
+        dyn_eq, AT, constr, state, input, noise, dim, x0, parametric = _parse_system(expr)
+        sys_type, var_names = _get_system_type(dyn_eq, AT, constr, state, input, noise, dim,
+                                               parametric)
         sys = Expr(:call, :($sys_type), :($(var_names...)))
         if isnothing(x0)
             return esc(sys)
@@ -961,8 +994,9 @@ macro ivp(expr...)
             ivp = Expr(:call, InitialValueProblem, :($(expr[1])), :($x0))
             return esc(ivp)
         else
-            dyn_eq, AT, constr, state, input, noise, dim, x0 = _parse_system(expr)
-            sys_type, var_names = _get_system_type(dyn_eq, AT, constr, state, input, noise, dim)
+            dyn_eq, AT, constr, state, input, noise, dim, x0, parametric = _parse_system(expr)
+            sys_type, var_names = _get_system_type(dyn_eq, AT, constr, state, input, noise, dim,
+                                                   parametric)
             sys = Expr(:call, :($sys_type), :($(var_names...)))
             if isnothing(x0)
                 return throw(ArgumentError("an initial-value problem should define the " *

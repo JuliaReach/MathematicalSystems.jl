@@ -1,9 +1,7 @@
 @testset "_corresponding_type" begin
     for AS in [AbstractContinuousSystem, AbstractDiscreteSystem]
         for S in subtypes(AS)
-            if S ∉ vcat(PARAMETRIC_CTYPES, PARAMETRIC_DTYPES) #TODO refactor _corresponding_type
-                @test MathematicalSystems._corresponding_type(AS, fieldnames.(S)) == S
-            end
+            @test MathematicalSystems._corresponding_type(AS, fieldnames.(S)) == S
         end
     end
 end
@@ -196,6 +194,18 @@ end
     @test sys == BlackBoxContinuousSystem(f1, 3)
 end
 
+@testset "@system for parametric continuous systems" begin
+    @static if isdefined(@__MODULE__, :LazySets)
+        AS = rand(MatrixZonotope)
+        sys = @system(x' = A*x, A ∈ AS)
+        @test sys == LinearParametricContinuousSystem(AS)
+
+        BS = AS
+        sys = @system(x' = A*x + B*u, A ∈ AS, B ∈ BS)
+        @test sys == LinearControlParametricContinuousSystem(AS, BS)
+    end
+end
+
 # ==================
 # Discrete systems
 # ==================
@@ -299,6 +309,18 @@ end
 
     sys = @system(x⁺ = f1(x, u, w), x ∈ X, u ∈ U, w ∈ W, dims = (2, 2, 2))
     @test sys == NoisyConstrainedBlackBoxControlDiscreteSystem(f1, 2, 2, 2, X, U, W)
+end
+
+@testset "@system for parametric discrete systems" begin
+    @static if isdefined(@__MODULE__, :LazySets)
+        AS = rand(MatrixZonotope)
+        sys = @system(x⁺ = A*x, A ∈ AS)
+        @test sys == LinearParametricDiscreteSystem(AS)
+
+        BS = AS
+        sys = @system(x⁺ = A*x + B*u, A ∈ AS, B ∈ BS)
+        @test sys == LinearControlParametricDiscreteSystem(AS, BS)
+    end
 end
 
 # =======================

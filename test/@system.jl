@@ -197,11 +197,11 @@ end
 @testset "@system for parametric continuous systems" begin
     @static if isdefined(@__MODULE__, :LazySets)
         AS = rand(MatrixZonotope)
-        sys = @system(x' = A*x, A ∈ AS)
+        sys = @system(x' = A * x, A ∈ AS)
         @test sys == LinearParametricContinuousSystem(AS)
 
         BS = AS
-        sys = @system(x' = A*x + B*u, A ∈ AS, B ∈ BS)
+        sys = @system(x' = A * x + B * u, A ∈ AS, B ∈ BS)
         @test sys == LinearControlParametricContinuousSystem(AS, BS)
     end
 end
@@ -314,11 +314,11 @@ end
 @testset "@system for parametric discrete systems" begin
     @static if isdefined(@__MODULE__, :LazySets)
         AS = rand(MatrixZonotope)
-        sys = @system(x⁺ = A*x, A ∈ AS)
+        sys = @system(x⁺ = A * x, A ∈ AS)
         @test sys == LinearParametricDiscreteSystem(AS)
 
         BS = AS
-        sys = @system(x⁺ = A*x + B*u, A ∈ AS, B ∈ BS)
+        sys = @system(x⁺ = A * x + B * u, A ∈ AS, B ∈ BS)
         @test sys == LinearControlParametricDiscreteSystem(AS, BS)
     end
 end

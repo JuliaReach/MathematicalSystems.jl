@@ -801,7 +801,7 @@ function _get_system_type(dyn_eq, AT, constr, state, input, noise, dim, parametr
     ordered_rhs = _sort(rhs, (:A, :B, :c, :D, :f, :statedim, :inputdim, :noisedim, :AS, :BS))
     extract_set_parameter.(constr, state, input, noise, parametric)
     ordered_set = _sort(extract_set_parameter.(constr, state, input, noise, parametric),
-                              (:X, :U, :W, :AS, :BS))
+                        (:X, :U, :W, :AS, :BS))
     field_names, var_names = constructor_input(lhs, ordered_rhs, ordered_set, parametric)
     sys_type = _corresponding_type(AT, field_names)
     return sys_type, var_names

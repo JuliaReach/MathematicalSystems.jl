@@ -135,7 +135,6 @@ end
 for M in @static VERSION < v"1.6" ? [:AbstractMatrix] :
                  (:AbstractMatrix, :(Transpose{<:Any,<:AbstractVector}),
                   :(Adjoint{<:Any,<:AbstractVector}))
-
     @eval begin
         function Base.:(/)(A::$M, 𝐼::IdentityMultiple)
             size(A, 2) != 𝐼.n && throw(DimensionMismatch("incompatible dimensions"))

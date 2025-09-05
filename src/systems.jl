@@ -3482,30 +3482,3 @@ for (Z, AZ) in
         end
     end
 end
-
-function __init__()
-    @require LazySets = "b4f0291d-fe17-52bc-9479-3d1a343d9043" begin
-        using .LazySets: MatrixZonotope
-
-        for Z in (:LinearParametricContinuousSystem, :LinearParametricDiscreteSystem)
-            BaseName = Symbol(replace(string(Z), "Parametric" => ""))
-
-            @eval begin
-                function $(BaseName)(AS::MatrixZonotope)
-                    return $Z(AS)
-                end
-            end
-        end
-
-        for Z in (:LinearControlParametricContinuousSystem, :LinearControlParametricDiscreteSystem)
-            BaseName = Symbol(replace(string(Z), "Parametric" => ""))
-
-            @eval begin
-                function $(BaseName)(AS::MTA,
-                                     BS::MTB) where {MTA<:MatrixZonotope,MTB<:MatrixZonotope}
-                    return $Z(AS, BS)
-                end
-            end
-        end
-    end
-end

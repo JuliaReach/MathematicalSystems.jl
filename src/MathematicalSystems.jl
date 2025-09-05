@@ -1,6 +1,5 @@
 module MathematicalSystems
 
-using Requires
 using LinearAlgebra, SparseArrays
 using LinearAlgebra: checksquare
 import RecipesBase
@@ -220,5 +219,7 @@ Discretization for affine systems
 include("discretize.jl")
 
 export discretize
+
+include("init.jl")
 
 end # module

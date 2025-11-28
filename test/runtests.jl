@@ -54,11 +54,14 @@ end
 @testset "Initial-value problem" begin
     include("ivp.jl")
 end
-@testset "@system macro" begin
-    include("@system.jl")
-end
-@testset "@ivp macro" begin
-    include("@ivp.jl")
+@static if VERSION < v"1.12.0" || VERSION > v"1.12.2"
+    # Julia parser is broken for `'` in v1.12.0 - v1.12.2
+    @testset "@system macro" begin
+        include("@system.jl")
+    end
+    @testset "@ivp macro" begin
+        include("@ivp.jl")
+    end
 end
 @testset "Other macros" begin
     include("macros.jl")

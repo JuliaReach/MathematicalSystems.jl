@@ -54,8 +54,8 @@ end
 @testset "Initial-value problem" begin
     include("ivp.jl")
 end
-@static if VERSION < v"1.12.0" || VERSION > v"1.12.3"
-    # Julia parser is broken for `'` in v1.12.0 - v1.12.3
+@static if VERSION < v"1.12.0" || VERSION > v"1.12.4"
+    # Julia parser is broken for `'` in v1.12.0 - v1.12.4
     @testset "@system macro" begin
         include("@system.jl")
     end

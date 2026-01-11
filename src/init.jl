@@ -1,6 +1,6 @@
 # optional dependencies
 @static if !isdefined(Base, :get_extension)
-    using Requires
+    using Requires: @require
 end
 
 @static if !isdefined(Base, :get_extension)

@@ -343,7 +343,7 @@ function _parse_system(exprs::NTuple{N,Expr}) where {N}
 
     # error handling for the given set constraints
     nsets = length(constraints)
-    nsets > 3 && throw(ArgumentError("cannot parse $nsets set constraints"))
+    nsets > 4 && throw(ArgumentError("cannot parse $nsets set constraints"))
 
     # error handling for variable names
     isnothing(state_var) && throw(ArgumentError("the state variable was not found"))
@@ -694,18 +694,18 @@ function constructor_input(lhs, rhs, set, parametric)
     var_names = (rhs_var_names..., lhs_var_names..., set_var_names...)
     if parametric
         # strip off normal matrices from expressions (they are just variables)
-        if length(field_names) == 2
-            @assert field_names == (:A, :AS)
-            field_names = (field_names[2],)
-            @assert length(var_names) == 2
+        if field_names == (:A, :AS)
+            field_names = (:AS,)
             @assert var_names == (:A, :AS)
-            var_names = (var_names[2],)
-        elseif length(field_names) == 4
-            @assert field_names == (:A, :B, :AS, :BS)
-            field_names = (field_names[3], field_names[4])
-            @assert length(var_names) == 4
+            var_names = (:AS,)
+        elseif field_names == (:A, :B, :AS, :BS)
             @assert (var_names[3], var_names[4]) == (:AS, :BS)
-            var_names = (var_names[3], var_names[4])
+            field_names = (:AS, :BS, :U)
+            var_names = (var_names[3], var_names[4], nothing)
+        elseif field_names == (:A, :B, :U, :AS, :BS)
+            @assert (var_names[3], var_names[4], var_names[5]) == (:U, :AS, :BS)
+            field_names = (:AS, :BS, :U)
+            var_names = (var_names[4], var_names[5], var_names[3])
         else
             throw(ArgumentError("the entry $(field_names) does not match a " *
                                 "parametric `MathematicalSystems.jl` structure"))
@@ -724,6 +724,8 @@ function extract_set_parameter(expr, state, input, noise, parametric) # input =>
             return Set, :AS
         elseif @capture(expr, B ∈ Set_)
             return Set, :BS
+        elseif @capture(expr, x_ ∈ Set_) && x == input
+            return Set, :U
         end
     elseif @capture(expr, x_ ∈ Set_)
         if x == state

@@ -203,6 +203,9 @@ end
         BS = AS
         sys = @system(x' = A * x + B * u, A ∈ AS, B ∈ BS)
         @test sys == LinearControlParametricContinuousSystem(AS, BS)
+
+        sys = @system(x' = A * x + B * u, u ∈ U, A ∈ AS, B ∈ BS)
+        @test sys == ConstrainedLinearControlParametricContinuousSystem(AS, BS, U)
     end
 end
 
@@ -320,6 +323,9 @@ end
         BS = AS
         sys = @system(x⁺ = A * x + B * u, A ∈ AS, B ∈ BS)
         @test sys == LinearControlParametricDiscreteSystem(AS, BS)
+
+        sys = @system(x⁺ = A * x + B * u, u ∈ U, A ∈ AS, B ∈ BS)
+        @test sys == LinearControlParametricDiscreteSystem(AS, BS, U)
     end
 end
 

@@ -17,12 +17,12 @@ end
         AS = rand(MatrixZonotope)
         BS = rand(MatrixZonotope)
         U = BallInf(zeros(1), 1.0)
+        X = BallInf(zeros(1), 1.0)
         X0 = Interval(-1.0, 1.0)
 
-        P = @ivp(x' = A * x + B * u, x(0) ∈ X0, u ∈ U, A ∈ AS, B ∈ BS)
+        P = @ivp(x' = A * x + B * u, x(0) ∈ X0, x ∈ X, u ∈ U, A ∈ AS, B ∈ BS)
         @test P == InitialValueProblem(ConstrainedLinearControlParametricContinuousSystem(AS, BS,
-                                                                                           U),
-                                       X0)
+                                                                                          X, U), X0)
         @test inputset(system(P)) == U
     end
 end

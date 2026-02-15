@@ -3486,16 +3486,17 @@ end
 @doc """
     ConstrainedLinearControlParametricContinuousSystem
 
-Continuous-time linear parametric control system with input constraints of the form:
+Continuous-time linear parametric control system with state and input constraints of the form:
 
 ```math
-    x(t)' = A(θ) x(t) + B(θ) u(t), ; u(t) ∈ \\mathcal{U}, θ ∈ \\Theta \\; ∀t
+    x(t)' = A(θ) x(t) + B(θ) u(t), ; x(t) ∈ X, u(t) \\; ∈ U, θ ∈ \\Theta \\; ∀t
 ```
 
 ### Fields
 
 - `AS` -- parametric state matrix
 - `BS` -- parametric input matrix
+- `X`  -- state constraints
 - `U`  -- input constraints
 """
 ConstrainedLinearControlParametricContinuousSystem
@@ -3503,16 +3504,17 @@ ConstrainedLinearControlParametricContinuousSystem
 @doc """
     ConstrainedLinearControlParametricDiscreteSystem
 
-Discrete-time linear parametric control system with input constraints of the form:
+Discrete-time linear parametric control system with state and input constraints of the form:
 
 ```math
-    x_{k+1} = A(θ) x_k + B(θ) u_k, \\; u_k ∈ \\mathcal{U}, θ ∈ \\Theta \\; ∀k
+    x_{k+1} = A(θ) x_k + B(θ) u_k, \\; x_k ∈ X \\; u_k ∈ U, θ ∈ \\Theta \\; ∀k
 ```
 
 ### Fields
 
 - `AS` -- parametric state matrix
 - `BS` -- parametric input matrix
+- `X`  -- states constraints
 - `U`  -- input constraints
 """
 ConstrainedLinearControlParametricDiscreteSystem
@@ -3521,16 +3523,17 @@ for (Z, AZ) in
     ((:ConstrainedLinearControlParametricContinuousSystem, :AbstractContinuousSystem),
      (:ConstrainedLinearControlParametricDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){MTA,MTB,UT} <: $(AZ)
+        struct $(Z){MTA,MTB,XT, UT} <: $(AZ)
             AS::MTA
             BS::MTB
+            X::XT
             U::UT
 
-            function $(Z)(AS::MTA, BS::MTB, U::UT) where {MTA,MTB,UT}
+            function $(Z)(AS::MTA, BS::MTB, X::XT, U::UT) where {MTA,MTB,XT,UT}
                 if checksquare(AS) != size(BS, 1)
                     throw(DimensionMismatch("incompatible dimensions"))
                 end
-                return new{MTA,MTB,UT}(AS, BS, U)
+                return new{MTA,MTB,XT,UT}(AS, BS, X, U)
             end
         end
 
@@ -3552,6 +3555,9 @@ for (Z, AZ) in
         end
         function input_matrix(s::$Z)
             return s.BS
+        end
+        function stateset(s::$Z)
+            return s.X
         end
         function inputset(s::$Z)
             return s.U

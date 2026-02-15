@@ -204,8 +204,8 @@ end
         sys = @system(x' = A * x + B * u, A ∈ AS, B ∈ BS)
         @test sys == LinearControlParametricContinuousSystem(AS, BS)
 
-        sys = @system(x' = A * x + B * u, u ∈ U, A ∈ AS, B ∈ BS)
-        @test sys == ConstrainedLinearControlParametricContinuousSystem(AS, BS, U)
+        sys = @system(x' = A * x + B * u, x ∈ X, u ∈ U, A ∈ AS, B ∈ BS)
+        @test sys == ConstrainedLinearControlParametricContinuousSystem(AS, BS, X, U)
     end
 end
 

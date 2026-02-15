@@ -142,4 +142,4 @@ The following table summarizes the equation represented by each system type
 |``Mx'' + Cx' + f_i(x) = f_e``, x ∈ X, u ∈ U``|yes|yes|SOCCS|
 |``x' = A(θ)x, θ ∈ Θ``| no|no|LPCS|
 |``x' = A(θ)x + B(θ)u, θ ∈ Θ``| no|no|LPCS|
-|``x' = A(θ)x + B(θ)u, θ ∈ Θ, u ∈ U``| no|yes|CLCPCS|
+|``x' = A(θ)x + B(θ)u, θ ∈ Θ, x ∈ X, u ∈ U``| no|yes|CLCPCS|

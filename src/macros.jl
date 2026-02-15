@@ -343,7 +343,7 @@ function _parse_system(exprs::NTuple{N,Expr}) where {N}
 
     # error handling for the given set constraints
     nsets = length(constraints)
-    nsets > 4 && throw(ArgumentError("cannot parse $nsets set constraints"))
+    nsets > 5 && throw(ArgumentError("cannot parse $nsets set constraints"))
 
     # error handling for variable names
     isnothing(state_var) && throw(ArgumentError("the state variable was not found"))
@@ -700,12 +700,12 @@ function constructor_input(lhs, rhs, set, parametric)
             var_names = (:AS,)
         elseif field_names == (:A, :B, :AS, :BS)
             @assert (var_names[3], var_names[4]) == (:AS, :BS)
-            field_names = (:AS, :BS, :U)
-            var_names = (var_names[3], var_names[4], nothing)
-        elseif field_names == (:A, :B, :U, :AS, :BS)
-            @assert (var_names[3], var_names[4], var_names[5]) == (:U, :AS, :BS)
-            field_names = (:AS, :BS, :U)
-            var_names = (var_names[4], var_names[5], var_names[3])
+            field_names = (:AS, :BS)
+            var_names = (var_names[3], var_names[4])
+        elseif field_names == (:A, :B, :X, :U, :AS, :BS)
+            @assert (var_names[3], var_names[4], var_names[5], var_names[6]) == (:X, :U, :AS, :BS)
+            field_names = (:AS, :BS, :X, :U)
+            var_names = (var_names[5], var_names[6], var_names[3], var_names[4])
         else
             throw(ArgumentError("the entry $(field_names) does not match a " *
                                 "parametric `MathematicalSystems.jl` structure"))
@@ -724,6 +724,8 @@ function extract_set_parameter(expr, state, input, noise, parametric) # input =>
             return Set, :AS
         elseif @capture(expr, B ∈ Set_)
             return Set, :BS
+        elseif @capture(expr, x_ ∈ Set_) && x == state
+            return Set, :X
         elseif @capture(expr, x_ ∈ Set_) && x == input
             return Set, :U
         end

@@ -21,14 +21,14 @@ jobs:
         version:
           - '1.11'  # parser broken on 1.12
         os:
-          - ubuntu-latest
+          - ubuntu-slim
           - windows-latest
         arch:
           - x64
         include:
           - version: '1.6'  # test on oldest supported version
             arch: x64
-            os: ubuntu-latest
+            os: ubuntu-slim
     env:
       JULIA_PKG_SERVER: ''
     steps:

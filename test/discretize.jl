@@ -38,7 +38,7 @@ end
                         !occursin("Descriptor", string(x)), subtypes(AbstractContinuousSystem))
 
     # this test doesn't apply for second order systems and parametric systems
-    filter!(x -> x ∉ SECOND_ORDER_CTYPES && x ∉ PARAMETRIC_CTYPES, CTYPES)
+    filter!(x -> x ∉ SECOND_ORDER_CTYPES && !isparametric(x), CTYPES)
 
     DTYPES = MathematicalSystems._complementary_type.(CTYPES)
     n_types = length(CTYPES)
@@ -79,7 +79,7 @@ end
                         !occursin("Descriptor", string(x)), subtypes(AbstractContinuousSystem))
 
     # this test doesn't apply for second order systems and parametric systems
-    filter!(x -> x ∉ SECOND_ORDER_CTYPES && x ∉ PARAMETRIC_CTYPES, CTYPES)
+    filter!(x -> x ∉ SECOND_ORDER_CTYPES && !isparametric(x), CTYPES)
 
     DTYPES = MathematicalSystems._complementary_type.(CTYPES)
     n_types = length(CTYPES)

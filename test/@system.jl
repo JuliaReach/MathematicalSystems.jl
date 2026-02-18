@@ -324,8 +324,8 @@ end
         sys = @system(x⁺ = A * x + B * u, A ∈ AS, B ∈ BS)
         @test sys == LinearControlParametricDiscreteSystem(AS, BS)
 
-        sys = @system(x⁺ = A * x + B * u, u ∈ U, A ∈ AS, B ∈ BS)
-        @test sys == LinearControlParametricDiscreteSystem(AS, BS, U)
+        sys = @system(x⁺ = A * x + B * u, x ∈ X, u ∈ U, A ∈ AS, B ∈ BS)
+        @test sys == ConstrainedLinearControlParametricDiscreteSystem(AS, BS, X, U)
     end
 end
 

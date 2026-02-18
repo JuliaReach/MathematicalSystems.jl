@@ -343,7 +343,7 @@ function _parse_system(exprs::NTuple{N,Expr}) where {N}
 
     # error handling for the given set constraints
     nsets = length(constraints)
-    nsets > 5 && throw(ArgumentError("cannot parse $nsets set constraints"))
+    nsets > 4 && throw(ArgumentError("cannot parse $nsets set constraints"))
 
     # error handling for variable names
     isnothing(state_var) && throw(ArgumentError("the state variable was not found"))

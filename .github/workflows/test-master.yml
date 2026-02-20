@@ -23,7 +23,7 @@ jobs:
         version:
           - '1.11'  # parser broken on 1.12
         os:
-          - ubuntu-latest
+          - ubuntu-slim
         arch:
           - x64
     env:

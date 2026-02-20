@@ -3537,10 +3537,6 @@ for (Z, AZ) in
             end
         end
 
-        function $(Z)(AS::Number, BS::Number, U)
-            return $(Z)(hcat(AS), hcat(BS), U)
-        end
-
         function statedim(s::$Z)
             return size(s.AS, 1)
         end

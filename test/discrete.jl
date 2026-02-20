@@ -561,5 +561,25 @@ end
         @test iscontrolled(sc)
         @test !isnoisy(sc)
         @test !isconstrained(sc)
+
+        X = Zonotope([0.0, 0.0], Matrix{Float64}(I, 2, 2))
+        U = Zonotope([0.0], Matrix{Float64}(I, 1, 1))
+
+        scd = ConstrainedLinearControlParametricDiscreteSystem(A, B, X, U)
+        @test scd isa ConstrainedLinearControlParametricDiscreteSystem
+
+        @test statedim(scd) == 2
+        @test inputdim(scd) == 1
+        @test noisedim(scd) == 0
+        @test state_matrix(scd) === A
+        @test input_matrix(scd) === B
+        @test stateset(scd) === X
+        @test inputset(scd) === U
+        @test islinear(scd)
+        @test isparametric(scd)
+        @test isaffine(scd)
+        @test iscontrolled(scd)
+        @test isconstrained(scd)
+        @test !isnoisy(scd)
     end
 end

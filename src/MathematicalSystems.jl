@@ -99,7 +99,9 @@ export ContinuousIdentitySystem,
        LinearParametricContinuousSystem,
        LinearParametricDiscreteSystem,
        LinearControlParametricContinuousSystem,
-       LinearControlParametricDiscreteSystem
+       LinearControlParametricDiscreteSystem,
+       ConstrainedLinearControlParametricContinuousSystem,
+       ConstrainedLinearControlParametricDiscreteSystem
 
 #==================================
 Concrete Types for Discrete Systems

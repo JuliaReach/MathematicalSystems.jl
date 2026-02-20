@@ -3482,3 +3482,107 @@ for (Z, AZ) in
         end
     end
 end
+
+@doc """
+    ConstrainedLinearControlParametricContinuousSystem
+
+Continuous-time linear parametric control system with state and input constraints of the form:
+
+```math
+    x(t)' = A(θ) x(t) + B(θ) u(t), ; x(t) ∈ X, u(t) \\; ∈ U, θ ∈ \\Theta \\; ∀t
+```
+
+### Fields
+
+- `AS` -- parametric state matrix
+- `BS` -- parametric input matrix
+- `X`  -- state constraints
+- `U`  -- input constraints
+"""
+ConstrainedLinearControlParametricContinuousSystem
+
+@doc """
+    ConstrainedLinearControlParametricDiscreteSystem
+
+Discrete-time linear parametric control system with state and input constraints of the form:
+
+```math
+    x_{k+1} = A(θ) x_k + B(θ) u_k, \\; x_k ∈ X \\; u_k ∈ U, θ ∈ \\Theta \\; ∀k
+```
+
+### Fields
+
+- `AS` -- parametric state matrix
+- `BS` -- parametric input matrix
+- `X`  -- states constraints
+- `U`  -- input constraints
+"""
+ConstrainedLinearControlParametricDiscreteSystem
+
+for (Z, AZ) in
+    ((:ConstrainedLinearControlParametricContinuousSystem, :AbstractContinuousSystem),
+     (:ConstrainedLinearControlParametricDiscreteSystem, :AbstractDiscreteSystem))
+    @eval begin
+        struct $(Z){MTA,MTB,XT, UT} <: $(AZ)
+            AS::MTA
+            BS::MTB
+            X::XT
+            U::UT
+
+            function $(Z)(AS::MTA, BS::MTB, X::XT, U::UT) where {MTA,MTB,XT,UT}
+                if checksquare(AS) != size(BS, 1)
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
+                return new{MTA,MTB,XT,UT}(AS, BS, X, U)
+            end
+        end
+
+        function statedim(s::$Z)
+            return size(s.AS, 1)
+        end
+        function inputdim(s::$Z)
+            return size(s.BS, 2)
+        end
+        function noisedim(::$Z)
+            return 0
+        end
+        function state_matrix(s::$Z)
+            return s.AS
+        end
+        function input_matrix(s::$Z)
+            return s.BS
+        end
+        function stateset(s::$Z)
+            return s.X
+        end
+        function inputset(s::$Z)
+            return s.U
+        end
+    end
+
+    for T in [Z, Type{<:eval(Z)}]
+        @eval begin
+            function islinear(::$T)
+                return true
+            end
+            function isaffine(::$T)
+                return true
+            end
+            function ispolynomial(::$T)
+                return false
+            end
+            function isnoisy(::$T)
+                return false
+            end
+            function iscontrolled(::$T)
+                return true
+            end
+            function isconstrained(::$T)
+                return true
+            end
+            function isparametric(::$T)
+                return true
+            end
+        end
+    end
+end

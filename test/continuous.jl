@@ -793,7 +793,7 @@ end
 
 @testset "Linear parametric continuous systems" begin
     @static if isdefined(@__MODULE__, :LazySets)
-        using LazySets: MatrixZonotope
+        using LazySets: MatrixZonotope, Zonotope
 
         Ac = [1.0 0.0; 0.0 1.0]
         A1 = [0.1 0.0; 0.0 0.0]
@@ -840,5 +840,25 @@ end
         @test iscontrolled(sc)
         @test !isnoisy(sc)
         @test !isconstrained(sc)
+
+        X = Zonotope([0.0, 0.0], Matrix{Float64}(I, 2, 2))
+        U = Zonotope([0.0], Matrix{Float64}(I, 1, 1))
+
+        scc = ConstrainedLinearControlParametricContinuousSystem(A, B, X, U)
+        @test scc isa ConstrainedLinearControlParametricContinuousSystem
+
+        @test statedim(scc) == 2
+        @test inputdim(scc) == 1
+        @test noisedim(scc) == 0
+        @test state_matrix(scc) === A
+        @test input_matrix(scc) === B
+        @test stateset(scc) === X
+        @test inputset(scc) === U
+        @test islinear(scc)
+        @test isparametric(scc)
+        @test isaffine(scc)
+        @test iscontrolled(scc)
+        @test isconstrained(scc)
+        @test !isnoisy(scc)
     end
 end

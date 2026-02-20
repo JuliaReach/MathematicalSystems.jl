@@ -697,7 +697,7 @@ function constructor_input(lhs, rhs, set, parametric)
         if field_names == (:A, :AS)
             field_names = (:AS,)
             @assert var_names == (:A, :AS)
-            var_names = (:AS,)
+            var_names = (var_names[2],)
         elseif field_names == (:A, :B, :AS, :BS)
             @assert (var_names[3], var_names[4]) == (:AS, :BS)
             field_names = (:AS, :BS)
@@ -726,7 +726,7 @@ function extract_set_parameter(expr, state, input, noise, parametric) # input =>
             return Set, :BS
         elseif @capture(expr, x_ ∈ Set_) && x == state
             return Set, :X
-        elseif @capture(expr, x_ ∈ Set_) && x == input
+        elseif @capture(expr, u_ ∈ Set_) && u == input
             return Set, :U
         end
     elseif @capture(expr, x_ ∈ Set_)

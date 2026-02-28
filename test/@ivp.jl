@@ -26,4 +26,3 @@ end
         @test inputset(system(P)) == U
     end
 end
-

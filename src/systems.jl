@@ -3523,7 +3523,7 @@ for (Z, AZ) in
     ((:ConstrainedLinearControlParametricContinuousSystem, :AbstractContinuousSystem),
      (:ConstrainedLinearControlParametricDiscreteSystem, :AbstractDiscreteSystem))
     @eval begin
-        struct $(Z){MTA,MTB,XT, UT} <: $(AZ)
+        struct $(Z){MTA,MTB,XT,UT} <: $(AZ)
             AS::MTA
             BS::MTB
             X::XT

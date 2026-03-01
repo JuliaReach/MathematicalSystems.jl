@@ -1,6 +1,6 @@
 name = "MathematicalSystems"
 uuid = "d14a8603-c872-5ed3-9ece-53e0e82e39da"
-version = "0.14.3"
+version = "0.14.4"
 
 [deps]
 Espresso = "6912e4f1-e036-58b0-9138-08d1e6358ea9"
@@ -15,7 +15,7 @@ SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 [compat]
 Espresso = "0.6"
 InteractiveUtils = "<0.0.1, 1.6"
-LazySets = "5"
+LazySets = "5 - 6"
 LinearAlgebra = "<0.0.1, 1.6"
 MacroTools = "0.5"
 MultivariatePolynomials = "0.3 - 0.5"

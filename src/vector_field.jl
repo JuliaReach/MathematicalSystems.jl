@@ -126,11 +126,11 @@ end
 """
     VectorField{T<:Function}
 
-Type that computes the vector field of an `AbstractContinuousSystem`.
+Type that represents the vector field of an `AbstractContinuousSystem`.
 
 ### Fields
 
-- `field`  -- function for calculating the vector field
+- `field` -- function for evaluating the vector field at a given point
 """
 struct VectorField{T<:Function}
     field::T

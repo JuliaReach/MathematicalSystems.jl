@@ -1,5 +1,7 @@
+ENV["GKSwstype"] = "100"  # prevent plots from opening interactively
+
 using Documenter, MathematicalSystems, DocumenterCitations
-import LazySets
+import LazySets, Plots
 
 DocMeta.setdocmeta!(MathematicalSystems, :DocTestSetup,
                     :(using MathematicalSystems); recursive=true)

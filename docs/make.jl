@@ -14,10 +14,11 @@ makedocs(; sitename="MathematicalSystems.jl",
          pagesonly=true,
          plugins=[bib],
          pages=["Home" => "index.md",
-                "Manual" => Any["Overview of System Types" => "man/systems.md"],
-                "Library" => Any["Types"     => "lib/types.md",
-                                 "Methods"   => "lib/methods.md",
-                                 "Internals" => "lib/internals.md"],
+                "Manual" => ["Overview of System Types" => "man/systems.md"
+                             "Vector Fields"            => "man/vectorfield.md"],
+                "Library" => ["Types"     => "lib/types.md",
+                              "Methods"   => "lib/methods.md",
+                              "Internals" => "lib/internals.md"],
                 "Bibliography" => "bibliography.md",
                 "About" => "about.md"])
 

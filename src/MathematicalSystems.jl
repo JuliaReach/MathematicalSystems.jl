@@ -5,8 +5,7 @@ using LinearAlgebra: LinearAlgebra, Adjoint, Diagonal, I, Transpose,
                      UniformScaling, checksquare, rank
 using SparseArrays: sparsevec, spzeros
 using RecipesBase: @recipe
-using Espresso: matchex
-using MacroTools: @capture
+using MLStyle: @match
 using InteractiveUtils: subtypes
 import MultivariatePolynomials
 using MultivariatePolynomials: AbstractPolynomialLike

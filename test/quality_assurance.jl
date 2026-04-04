@@ -2,7 +2,7 @@ using MathematicalSystems, Test
 import Aqua, ExplicitImports
 
 @testset "ExplicitImports tests" begin
-    ignores = (:checksquare,)
+    ignores = (:VectorField, :checksquare)
     @test isnothing(ExplicitImports.check_all_explicit_imports_are_public(MathematicalSystems;
                                                                           ignore=ignores))
     @test isnothing(ExplicitImports.check_all_explicit_imports_via_owners(MathematicalSystems))

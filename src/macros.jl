@@ -57,18 +57,23 @@ macro map(ex, args...)
     rhs = (ex.args)[2].args[2]
     if x == rhs
         # identity map, eg: @map(x -> x, dim=2)
-        if @capture(args[1], (dim = dim_) | (dim:dim_))
-            dimension = dim
-        else
-            throw(ArgumentError("cannot parse dimension of identity map"))
+        dimension = @match args[1] begin
+            Expr(:kw, :dim, d) || Expr(:(=), :dim, d) ||
+            Expr(:call, :(:), :dim, d) => d
+            _ => throw(ArgumentError("cannot parse dimension of identity map"))
         end
 
         # constrained identity map: @map(x -> x, dim=2, x ∈ X)
-        if length(args) > 1 && @capture(args[2], x ∈ X_)
-            return Expr(:call, ConstrainedIdentityMap, esc(:($(dimension))), esc(:($(X))))
-        else
-            return Expr(:call, IdentityMap, esc(:($(dimension))))
+        if length(args) > 1
+            X = @match args[2] begin
+                :($_ ∈ $X) => X
+                _ => nothing
+            end
+            if X !== nothing
+                return Expr(:call, ConstrainedIdentityMap, esc(:($(dimension))), esc(:($(X))))
+            end
         end
+        return Expr(:call, IdentityMap, esc(:($(dimension))))
     end
 
     throw(ArgumentError("unable to match the given expression to a known map type"))
@@ -78,27 +83,22 @@ macro map(ex)
     x = (ex.args)[1]
     rhs = (ex.args)[2].args[2]
 
-    # x -> Id(n)*x
-    # (this rule is more specific than x -> Ax so it should come before it)
-    MT = IdentityMap
-    pat = Meta.parse("Id(_n) * $x")
-    matched = matchex(pat, rhs)
-    !isnothing(matched) &&
-        return Expr(:call, :($MT), esc(:($(matched[:_n]))))
+    @match rhs begin
+        # x -> Id(n)*x
+        # (this rule is more specific than x -> Ax so it should come before it)
+        :(Id($n) * $xvar) && if xvar == x end =>
+            return Expr(:call, IdentityMap, esc(n))
 
-    # x -> Ax
-    MT = LinearMap
-    pat = Meta.parse("_A * $x")
-    matched = matchex(pat, rhs)
-    !isnothing(matched) &&
-        return Expr(:call, :($MT), esc(:($(matched[:_A]))))
+        # x -> Ax + b
+        :($A * $xvar + $b) && if xvar == x end =>
+            return Expr(:call, AffineMap, esc(A), esc(b))
 
-    # x -> Ax + b
-    MT = AffineMap
-    pat = Meta.parse("_A * $x + _b")
-    matched = matchex(pat, rhs)
-    !isnothing(matched) &&
-        return Expr(:call, :($MT), esc(:($(matched[:_A]))), esc(:($(matched[:_b]))))
+        # x -> Ax
+        :($A * $xvar) && if xvar == x end =>
+            return Expr(:call, LinearMap, esc(A))
+
+        _ => nothing
+    end
 
     throw(ArgumentError("unable to match the given expression to a known map type"))
 end
@@ -160,6 +160,11 @@ function _corresponding_type(AT::Type{<:AbstractSystem}, fields::Tuple)
     return TYPES[idx][1]
 end
 
+# Normalize Expr(:kw, ...) to Expr(:(=), ...) so that MLStyle quote patterns
+# like `:($lhs = $rhs)` match both `dim = 3` (parenthesized macro call, parsed
+# as :kw) and `dim = 3` (unparenthesized, parsed as :(=)).
+_normalize_kw(ex) = (ex isa Expr && ex.head === :kw) ? Expr(:(=), ex.args...) : ex
+
 """
     _capture_dim(expr)
 
@@ -180,22 +185,11 @@ Return the tuple containing the dimension(s) in `expr`.
 - The vector `[x, u, w]` if `expr` specifies state, input and noise dimensions.
 """
 function _capture_dim(expr)
-    # the order of the `if` clauses is important, as e.g.
-    # `@capture(expr, (x_, u_, w_))` is a particular case of `@capture(expr, (x_))`.
-    if @capture(expr, (x_, u_, w_))
-        dims = [x, u, w]
-    elseif @capture(expr, (x_, u_))  # COV_EXCL_LINE
-        dims = [x, u]
-    elseif @capture(expr, (x_))  # COV_EXCL_LINE
-        dims = x
-    else
-        # this should not happen because `@capture(expr, (x_))` captures anything
-        # COV_EXCL_START
-        throw(ArgumentError("the dimensions in expression $expr could not be parsed; " *
-                            "see the documentation for valid examples"))
-        # COV_EXCL_STOP
+    return @match expr begin
+        Expr(:tuple, x, u, w) => [x, u, w]
+        Expr(:tuple, x, u)    => [x, u]
+        _                      => expr
     end
-    return dims
 end
 
 """
@@ -213,7 +207,10 @@ and `false` otherwise. This function just detects the presence of the symbol `=`
 A `Bool` indicating whether `expr` is an equation or not.
 """
 function is_equation(expr)
-    return @capture(expr, lhs_ = rhs_)
+    return @match expr begin
+        :($_ = $_) => true
+        _ => false
+    end
 end
 
 # returns `(equation, AT, state)` if `expr` if the given expression `expr`
@@ -236,20 +233,43 @@ function strip_dynamic_equation(expr)
     end
     stripped_expr = Meta.parse(stripped_equation)
     # check if `stripped_expr` is an equation and extract `lhs` and `rhs` if so
-    if !@capture(stripped_expr, lhs_ = rhs_)
+    eq_parts = @match stripped_expr begin
+        :($lhs = $rhs) => (lhs, rhs)
+        _ => nothing
+    end
+    if eq_parts === nothing
         return (nothing, nothing, nothing)
     end
+    lhs = eq_parts[1]
 
     # extract the name of the state variable from the lhs
-    if @capture(lhs, (E_ * x_)) || @capture(lhs, (x_))
-        state = x
-        return (stripped_expr, AT, state)
+    state = @match lhs begin
+        :($E * $x) => x
+        x          => x
     end
+    return (stripped_expr, AT, state)
+end
 
-    # this should not happen because `@capture(lhs, (x_))` captures anything
-    # COV_EXCL_START
-    return (nothing, nothing, nothing)
-    # COV_EXCL_STOP
+# Detect the input variable from the equation pattern. Returns the input variable
+# symbol if detected, or `nothing` otherwise.
+function _detect_input_var(stripped)
+    return @match stripped begin
+        :($x1 = $A * $x2 + $B * $u) && if x1 == x2 end       => u
+        :($x1 = $x2 + $B * $u) && if x1 == x2 end            => u
+        :($x1 = $A * $x2 + $B * $u + $c) && if x1 == x2 end  => u
+        :($x1 = $x2 + $B * $u + $c) && if x1 == x2 end       => u
+        :($x1 = $f($x2, $u)) && if x1 == x2 end              => begin
+            if f === :+ || f === :- || f === :*
+                # pattern f(x, u) also catches the cases:
+                # x + u, x - u and x*u
+                # where u doesn't necessarily need to be the input
+                nothing
+            else
+                u
+            end
+        end
+        _ => nothing
+    end
 end
 
 function _parse_system(exprs::NTuple{N,Expr}) where {N}
@@ -271,70 +291,75 @@ function _parse_system(exprs::NTuple{N,Expr}) where {N}
 
     # main loop to parse the subexpressions in exprs
     for ex in exprs
+        ex = _normalize_kw(ex)
+
         if is_equation(ex)  # parse an equation
             (stripped, abstract_system_type, subject) = strip_dynamic_equation(ex)
             if !isnothing(subject)
                 dynamic_equation = stripped
                 state_var = subject
                 AT = abstract_system_type
-                # if the stripped system has the structure x_ = A_*x_ + B_*u_ or
-                # one of the other patterns, handle u_ as input variable
-                if @capture(stripped,
-                            (x_ = A_ * x_ + B_ * u_) |
-                            (x_ = x_ + B_ * u_) |
-                            (x_ = A_ * x_ + B_ * u_ + c_) |
-                            (x_ = x_ + B_ * u_ + c_) |
-                            (x_ = f_(x_, u_)))
-                    if (f == :+) || (f == :-) || (f == :*)
-                        # pattern x_ = f_(x_, u_) also catches the cases:
-                        # x_ = x_ + u_, x_ = x_ - u_ and x_ = x_*u_
-                        # where u_ doesn't necessarily need to be the input
-                    else
-                        input_var = u
-                    end
+                # if the stripped system has the structure x = A*x + B*u or
+                # one of the other patterns, handle u as input variable
+                detected = _detect_input_var(stripped)
+                if detected !== nothing
+                    input_var = detected
                 end
 
-            elseif @capture(ex, (dim = (f_dims_)) | (dims = (f_dims_)))  # COV_EXCL_LINE
-                dimension = _capture_dim(f_dims)
-
-            elseif @capture(ex, (input = u_) | (u_ = input))  # COV_EXCL_LINE
-                input_var = u
-
-            elseif @capture(ex, (noise = w_) | (w_ = noise))  # COV_EXCL_LINE
-                noise_var = w
-
             else
-                throw(ArgumentError("could not properly parse the equation $ex; " *
-                                    "see the documentation for valid examples"))
+                @match ex begin
+                    :(dim = $d) || :(dims = $d)        => begin  # COV_EXCL_LINE
+                        dimension = _capture_dim(d)
+                    end
+                    :(input = $u) || :($u = input)     => begin  # COV_EXCL_LINE
+                        input_var = u
+                    end
+                    :(noise = $w) || :($w = noise)     => begin  # COV_EXCL_LINE
+                        noise_var = w
+                    end
+                    _ => throw(ArgumentError("could not properly parse the equation $ex; " *
+                                            "see the documentation for valid examples"))
+                end
             end
-
-        elseif @capture(ex, x_(0) ∈ X0_)  # COV_EXCL_LINE
-            # TODO? handle equality, || @capture(ex, x_(0) = X0_)
-            if x != state_var
-                throw(ArgumentError("the initial state assignment, $x(0), does " *
-                                    "not correspond to the state variable $state_var"))
-            end
-            initial_state = X0
-
-        elseif @capture(ex, A ∈ Set_)  # COV_EXCL_LINE
-            parametric = true
-            push!(constraints, ex)  # parse a constraint
-
-        elseif @capture(ex, state_ ∈ Set_)  # COV_EXCL_LINE
-            push!(constraints, ex)  # parse a constraint
-
-        elseif @capture(ex, (input:u_) | (u_:input))  # COV_EXCL_LINE
-            input_var = u  # parse an input symbol
-
-        elseif @capture(ex, (noise:w_) | (w_:noise))  # COV_EXCL_LINE
-            noise_var = w  # parse a noise symbol
-
-        elseif @capture(ex, (dim:(f_dims_)) | (dims:(f_dims_)))  # COV_EXCL_LINE
-            dimension = _capture_dim(f_dims)  # parse a dimension
 
         else
-            throw(ArgumentError("the expression $ex could not be parsed; " *
-                                "see the documentation for valid examples"))
+            @match ex begin
+                :($x(0) ∈ $X0) => begin  # COV_EXCL_LINE
+                    # TODO? handle equality
+                    if x != state_var
+                        throw(ArgumentError("the initial state assignment, $x(0), does " *
+                                            "not correspond to the state variable $state_var"))
+                    end
+                    initial_state = X0
+                end
+
+                :(A ∈ $S) => begin  # COV_EXCL_LINE
+                    parametric = true
+                    push!(constraints, ex)  # parse a constraint
+                end
+
+                :($v ∈ $S) => begin  # COV_EXCL_LINE
+                    push!(constraints, ex)  # parse a constraint
+                end
+
+                Expr(:call, :(:), :input, u) ||
+                Expr(:call, :(:), u, :input) => begin  # COV_EXCL_LINE
+                    input_var = u  # parse an input symbol
+                end
+
+                Expr(:call, :(:), :noise, w) ||
+                Expr(:call, :(:), w, :noise) => begin  # COV_EXCL_LINE
+                    noise_var = w  # parse a noise symbol
+                end
+
+                Expr(:call, :(:), :dim, d) ||
+                Expr(:call, :(:), :dims, d) => begin  # COV_EXCL_LINE
+                    dimension = _capture_dim(d)  # parse a dimension
+                end
+
+                _ => throw(ArgumentError("the expression $ex could not be parsed; " *
+                                        "see the documentation for valid examples"))
+            end
         end
     end
 
@@ -404,24 +429,35 @@ Two arrays of tuples containing the value and field parameters for the right-han
 and left-hand side of the dynamic equation `equation`.
 """
 function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
-    @capture(equation, lhs_ = rhscode_)
+    (lhs, rhscode) = @match equation begin
+        :($l = $r) => (l, r)
+    end
     lhs_params = Vector{Tuple{Any,Symbol}}()
     rhs_params = Vector{Tuple{Any,Symbol}}()
     # if a * is used on the lhs, the rhs is a code-block
-    if @capture(lhs, E_ * x_)
-        push!(lhs_params, (E, :E))
-        rhs = rhscode.args[end]
-    else
-        rhs = rhscode
+    rhs = @match lhs begin
+        :($E * $x) => begin
+            push!(lhs_params, (E, :E))
+            rhscode.args[end]
+        end
+        _ => rhscode
+    end
+
+    # Classify the rhs structure
+    rhs_type = @match rhs begin
+        Expr(:call, :+, _...)                                       => :sum
+        Expr(:call, f, _...) && if f !== :(*) && f !== :(-) end     => :funcall
+        _                                                           => :term
     end
 
     # if rhs is parsed as addition => affine system which is controlled, noisy or both
-    if @capture(rhs, A_ + B__)
+    if rhs_type === :sum
         # parse summands of rhs and add * if needed
-        summands = add_asterisk.([A, B...], Ref(state), Ref(input), Ref(noise))
+        summands = add_asterisk.(rhs.args[2:end], Ref(state), Ref(input), Ref(noise))
         push!(rhs_params, extract_sum(summands, state, input, noise)...)
+
         # if rhs is a function call except `*` or `-` => black-box system
-    elseif @capture(rhs, f_(a__)) && f != :(*) && f != :(-)
+    elseif rhs_type === :funcall
         # the dimension argument needs to be a iterable
         isnothing(dim) &&
             throw(ArgumentError("for a blackbox system, the dimension has to be defined"))
@@ -445,13 +481,22 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
         elseif rhs == :(0) && AT == AbstractContinuousSystem # x' = 0
             push!(rhs_params, (dim, :statedim))
         else
-            if @capture(rhs, -var_) # => rhs = -x
-                if state == var
+            neg_var = @match rhs begin
+                :(-$var) => var
+                _ => nothing
+            end
+            if neg_var !== nothing # => rhs = -x
+                if state == neg_var
                     push!(rhs_params, (-1.0 * Id(dim), :A))
                 end
             else
                 rhs = add_asterisk(rhs, state, input, noise)
-                if @capture(rhs, array_ * var_)
+                mul = @match rhs begin
+                    :($array * $var) => (array, var)
+                    _ => nothing
+                end
+                if mul !== nothing
+                    (array, var) = mul
                     if state == var # rhs = A_x_ or rhs= A_*x_
                         value = tryparse(Float64, string(array))
                         if isnothing(value) # e.g. => rhs = Ax
@@ -513,7 +558,11 @@ julia> add_asterisk(:(A1ub), :x, :u, :w)
 ```
 """
 function add_asterisk(summand, state::Symbol, input::Symbol, noise::Symbol)
-    if @capture(summand, A_ * x_)
+    is_product = @match summand begin
+        :($_ * $_) => true
+        _ => false
+    end
+    if is_product
         return summand
     end
 
@@ -609,42 +658,46 @@ function extract_sum(summands, state::Symbol, input::Symbol, noise::Symbol)
     num_const_assignments = 0
 
     for summand in summands
-        if @capture(summand, array_ * var_)
-            if state == var
-                push!(params, (Expr(:call, :hcat, array), :A))
-                # obtain "state_dim" for later using in IdentityMultiple
-                state_dim = Expr(:call, :size, :($array), 1)
-                got_state_dim = true
-                num_state_assignments += 1
+        @match summand begin
+            :($array * $var) => begin
+                if state == var
+                    push!(params, (Expr(:call, :hcat, array), :A))
+                    # obtain "state_dim" for later using in IdentityMultiple
+                    state_dim = Expr(:call, :size, :($array), 1)
+                    got_state_dim = true
+                    num_state_assignments += 1
 
-            elseif input == var
-                push!(params, (Expr(:call, :hcat, array), :B))
-                num_input_assignments += 1
+                elseif input == var
+                    push!(params, (Expr(:call, :hcat, array), :B))
+                    num_input_assignments += 1
 
-            elseif noise == var
-                push!(params, (Expr(:call, :hcat, array), :D))
-                num_noise_assignments += 1
+                elseif noise == var
+                    push!(params, (Expr(:call, :hcat, array), :D))
+                    num_noise_assignments += 1
 
-            else
-                throw(ArgumentError("in the dynamic equation, the expression " *
-                                    "$summand does not contain the state $state, the input $input " *
-                                    "or the noise term $noise"))
+                else
+                    throw(ArgumentError("in the dynamic equation, the expression " *
+                                        "$summand does not contain the state $state, the input $input " *
+                                        "or the noise term $noise"))
+                end
             end
-        elseif @capture(summand, array_)  # COV_EXCL_LINE
-            identity = :(Id($state_dim))
-            # if array == variable: field value equals identity
-            if state == array
-                push!(params, (identity, :A))
-                num_state_assignments += 1
-            elseif input == array
-                push!(params, (identity, :B))
-                num_input_assignments += 1
-            elseif noise == array
-                push!(params, (identity, :D))
-                num_noise_assignments += 1
-            else
-                push!(params, (Expr(:call, :vcat, array), :c))
-                num_const_assignments += 1
+
+            array => begin  # COV_EXCL_LINE
+                identity = :(Id($state_dim))
+                # if array == variable: field value equals identity
+                if state == array
+                    push!(params, (identity, :A))
+                    num_state_assignments += 1
+                elseif input == array
+                    push!(params, (identity, :B))
+                    num_input_assignments += 1
+                elseif noise == array
+                    push!(params, (identity, :D))
+                    num_noise_assignments += 1
+                else
+                    push!(params, (Expr(:call, :vcat, array), :c))
+                    num_const_assignments += 1
+                end
             end
         end
     end
@@ -663,18 +716,22 @@ end
 # and `:noisedim` with corresponding variable names (which are the number of state,
 # input and noise dimensions provided as input to the macro) is returned.
 function extract_blackbox_parameter(rhs, dim::AbstractVector)
-    if @capture(rhs, f_(x_))
-        @assert length(dim) == 1
-        return [(f, :f), (dim[1], :statedim)]
-    elseif @capture(rhs, f_(x_, u_))  # COV_EXCL_LINE
-        @assert length(dim) == 2
-        return [(f, :f), (dim[1], :statedim),
-                (dim[2], :inputdim)]
-    elseif @capture(rhs, f_(x_, u_, w_))  # COV_EXCL_LINE
-        @assert length(dim) == 3
-        return [(f, :f), (dim[1], :statedim),
-                (dim[2], :inputdim),
-                (dim[3], :noisedim)]
+    return @match rhs begin
+        :($f($x)) => begin
+            @assert length(dim) == 1
+            [(f, :f), (dim[1], :statedim)]
+        end
+        :($f($x, $u)) => begin  # COV_EXCL_LINE
+            @assert length(dim) == 2
+            [(f, :f), (dim[1], :statedim),
+             (dim[2], :inputdim)]
+        end
+        :($f($x, $u, $w)) => begin  # COV_EXCL_LINE
+            @assert length(dim) == 3
+            [(f, :f), (dim[1], :statedim),
+             (dim[2], :inputdim),
+             (dim[3], :noisedim)]
+        end
     end
 end
 
@@ -717,31 +774,31 @@ end
 # extract the variable name and the field name for a set expression. The method
 # checks whether the set belongs to the `state`, `input` or `noise` and returns a
 # tuple of symbols where the field name is either `:X`, `:U` or `:W` and
-# the variable name is the value parsed as Set_
+# the variable name is the value parsed as Set
 function extract_set_parameter(expr, state, input, noise, parametric) # input => to check set definitions
     if parametric
-        if @capture(expr, A ∈ Set_)
-            return Set, :AS
-        elseif @capture(expr, B ∈ Set_)
-            return Set, :BS
-        elseif @capture(expr, x_ ∈ Set_) && x == state
-            return Set, :X
-        elseif @capture(expr, u_ ∈ Set_) && u == input
-            return Set, :U
-        end
-    elseif @capture(expr, x_ ∈ Set_)
-        if x == state
-            return Set, :X
-        elseif x == input
-            return Set, :U
-        elseif x == noise
-            return Set, :W
-        else
-            throw(ArgumentError("$expr is not a valid set constraint definition; it does not " *
-                                "contain the state $state, the input $input or noise term $noise"))
+        return @match expr begin
+            :(A ∈ $S) => (S, :AS)
+            :(B ∈ $S) => (S, :BS)
+            :($x ∈ $S) && if x == state end => (S, :X)
+            :($u ∈ $S) && if u == input end => (S, :U)
         end
     end
-    throw(ArgumentError("the set entry $(expr) does not have the correct form `x_ ∈ X_`"))
+    return @match expr begin
+        :($x ∈ $S) => begin
+            if x == state
+                return S, :X
+            elseif x == input
+                return S, :U
+            elseif x == noise
+                return S, :W
+            else
+                throw(ArgumentError("$expr is not a valid set constraint definition; it does not " *
+                                    "contain the state $state, the input $input or noise term $noise"))
+            end
+        end
+        _ => throw(ArgumentError("the set entry $(expr) does not have the correct form `x_ ∈ X_`"))
+    end
 end
 
 """
@@ -994,7 +1051,10 @@ macro ivp(expr...)
         # check if the @ivp macro is called with an AbstractSystem argument
         if parses_as_system(expr[1])
             sys = expr[1]
-            @capture(expr[2], x_(0) ∈ x0_) || throw(ArgumentError("malformed epxpression")) # TODO handle equality
+            x0 = @match expr[2] begin
+                :($x(0) ∈ $X0) => X0
+                _ => throw(ArgumentError("malformed epxpression")) # TODO handle equality
+            end
             ivp = Expr(:call, InitialValueProblem, :($(expr[1])), :($x0))
             return esc(ivp)
         else
@@ -1022,12 +1082,17 @@ end
 function parses_as_system(expr)
     # The argument is a system if
     # 1) it is directly defined using @system in the macro call
-    if @capture(expr, @system(def_))
+    is_system_macro = @match expr begin
+        Expr(:macrocall, s, _...) && if s === Symbol("@system") end => true
+        _ => false
+    end
+    if is_system_macro
         return true
     end
     # 2) it is a variable, i.e. it is not a dynamic equation
-    if !@capture(expr, a_ = b_)
-        return true
+    is_eq = @match expr begin
+        :($_ = $_) => true
+        _ => false
     end
-    return false
+    return !is_eq
 end

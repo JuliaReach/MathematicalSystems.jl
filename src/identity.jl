@@ -131,7 +131,8 @@ end
 
 # right-division
 # beside `AbstractMatrix`, we need some disambiguations with LinearAlgebra since v1.6
-for M in (:AbstractMatrix, :(Transpose{<:Any,<:AbstractVector}), :(Adjoint{<:Any,<:AbstractVector}))
+for M in
+    (:AbstractMatrix, :(Transpose{<:Any,<:AbstractVector}), :(Adjoint{<:Any,<:AbstractVector}))
     @eval begin
         function Base.:(/)(A::$M, 𝐼::IdentityMultiple)
             size(A, 2) != 𝐼.n && throw(DimensionMismatch("incompatible dimensions"))

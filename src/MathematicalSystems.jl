@@ -4,7 +4,6 @@ using Base: /
 using LinearAlgebra: LinearAlgebra, Adjoint, Diagonal, I, Transpose,
                      UniformScaling, checksquare, rank
 using SparseArrays: sparsevec, spzeros
-using RecipesBase: @recipe
 using Espresso: matchex
 using MacroTools: @capture
 using InteractiveUtils: subtypes

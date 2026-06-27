@@ -71,7 +71,7 @@ macro map(ex, args...)
         end
     end
 
-    throw(ArgumentError("unable to match the given expression to a known map type"))
+    return throw(ArgumentError("unable to match the given expression to a known map type"))
 end
 
 macro map(ex)
@@ -100,7 +100,7 @@ macro map(ex)
     !isnothing(matched) &&
         return Expr(:call, :($MT), esc(:($(matched[:_A]))), esc(:($(matched[:_b]))))
 
-    throw(ArgumentError("unable to match the given expression to a known map type"))
+    return throw(ArgumentError("unable to match the given expression to a known map type"))
 end
 
 # ========================
@@ -741,7 +741,7 @@ function extract_set_parameter(expr, state, input, noise, parametric) # input =>
                                 "contain the state $state, the input $input or noise term $noise"))
         end
     end
-    throw(ArgumentError("the set entry $(expr) does not have the correct form `x_ ∈ X_`"))
+    return throw(ArgumentError("the set entry $(expr) does not have the correct form `x_ ∈ X_`"))
 end
 
 """

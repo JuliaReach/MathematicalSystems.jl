@@ -161,8 +161,9 @@ function _corresponding_type(AT::Type{<:AbstractSystem}, fields::Tuple)
 end
 
 # Normalize Expr(:kw, ...) to Expr(:(=), ...) so that MLStyle quote patterns
-# like `:($lhs = $rhs)` match both `dim = 3` (parenthesized macro call, parsed
-# as :kw) and `dim = 3` (unparenthesized, parsed as :(=)).
+# like `:($lhs = $rhs)` match both `@macro(dim = 3)` (parenthesized macro
+# call, where `dim = 3` is parsed as :kw) and `@macro dim = 3` (unparenthesized,
+# where `dim = 3` is parsed as :(=)).
 _normalize_kw(ex) = (ex isa Expr && ex.head === :kw) ? Expr(:(=), ex.args...) : ex
 
 """
@@ -325,7 +326,7 @@ function _parse_system(exprs::NTuple{N,Expr}) where {N}
         else
             @match ex begin
                 :($x(0) ∈ $X0) => begin  # COV_EXCL_LINE
-                    # TODO? handle equality
+                    # TODO handle equality (x(0) = x0)?
                     if x != state_var
                         throw(ArgumentError("the initial state assignment, $x(0), does " *
                                             "not correspond to the state variable $state_var"))
@@ -1053,7 +1054,7 @@ macro ivp(expr...)
             sys = expr[1]
             x0 = @match expr[2] begin
                 :($x(0) ∈ $X0) => X0
-                _ => throw(ArgumentError("malformed epxpression")) # TODO handle equality
+                _ => throw(ArgumentError("malformed epxpression")) # TODO handle equality (x(0) = x0)?
             end
             ivp = Expr(:call, InitialValueProblem, :($(expr[1])), :($x0))
             return esc(ivp)

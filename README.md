@@ -43,3 +43,18 @@ To install this package, use the following command inside Julia's REPL:
 using Pkg
 Pkg.add("MathematicalSystems")
 ```
+
+## Testing
+
+To run the tests from the command line:
+
+```bash
+$ julia --project=. -e 'using Pkg; Pkg.test()'
+```
+
+Or interactively from the Julia REPL:
+
+```julia
+julia> using Pkg; Pkg.activate(".")
+julia> Pkg.test()
+```

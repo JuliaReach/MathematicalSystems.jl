@@ -1054,7 +1054,7 @@ macro ivp(expr...)
             sys = expr[1]
             x0 = @match expr[2] begin
                 :($x(0) ∈ $X0) => X0
-                _ => throw(ArgumentError("malformed epxpression")) # TODO handle equality (x(0) = x0)?
+                _ => throw(ArgumentError("malformed expression")) # TODO handle equality (x(0) = x0)?
             end
             ivp = Expr(:call, InitialValueProblem, :($(expr[1])), :($x0))
             return esc(ivp)

@@ -1,19 +1,18 @@
 name = "MathematicalSystems"
 uuid = "d14a8603-c872-5ed3-9ece-53e0e82e39da"
-version = "0.14.4"
+version = "0.14.6"
 
 [deps]
 InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 MLStyle = "d8e11817-5142-5d16-987a-aa16d5891078"
 MultivariatePolynomials = "102ac46a-7ee4-5c85-9060-abc95bfdeaa3"
-RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [compat]
 InteractiveUtils = "<0.0.1, 1.6"
-LazySets = "5 - 6"
+LazySets = "5 - 7"
 LinearAlgebra = "<0.0.1, 1.6"
 MLStyle = "0.4"
 MultivariatePolynomials = "0.3 - 0.5"
@@ -24,10 +23,13 @@ julia = "1.6"
 
 [extensions]
 LazySetsExt = "LazySets"
+RecipesBaseExt = "RecipesBase"
 
 [extras]
 LazySets = "b4f0291d-fe17-52bc-9479-3d1a343d9043"
+RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 
 [weakdeps]
 LazySets = "b4f0291d-fe17-52bc-9479-3d1a343d9043"
+RecipesBase = "3cdcf5f2-1ef4-517c-9805-6587b60abb01"
 Requires = "ae029012-a4dd-5104-9daa-d747884805df"

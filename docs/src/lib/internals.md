@@ -19,6 +19,8 @@ end
 ```@docs
 _corresponding_type
 _capture_dim
+_normalize_kw
+_detect_input_var
 extract_dyn_equation_parameters
 add_asterisk
 _sort

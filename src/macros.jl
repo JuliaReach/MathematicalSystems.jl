@@ -355,6 +355,15 @@ function _parse_system(exprs::NTuple{N,Expr}) where {N}
                     :(noise = $w) || :($w = noise)     => begin  # COV_EXCL_LINE
                         noise_var = w
                     end
+                    # `x(0) = X0` is parsed by Julia as a short-form function
+                    # definition, i.e. the right-hand side is wrapped in a block
+                    Expr(:(=), Expr(:call, x, 0), Expr(:block, _, X0)) => begin  # COV_EXCL_LINE
+                        if x != state_var
+                            throw(ArgumentError("the initial state assignment, $x(0), does " *
+                                                "not correspond to the state variable $state_var"))
+                        end
+                        initial_state = X0
+                    end
                     _ => throw(ArgumentError("could not properly parse the equation $ex; " *
                                             "see the documentation for valid examples"))
                 end
@@ -363,7 +372,6 @@ function _parse_system(exprs::NTuple{N,Expr}) where {N}
         else
             @match ex begin
                 :($x(0) ∈ $X0) => begin  # COV_EXCL_LINE
-                    # TODO handle equality (x(0) = x0)?
                     if x != state_var
                         throw(ArgumentError("the initial state assignment, $x(0), does " *
                                             "not correspond to the state variable $state_var"))
@@ -1066,6 +1074,10 @@ details we refer to the documentation of [`@system`](@ref).
 The macro can also be called with a `system` argument of type `AbstractSystem`
 in the form `@ivp(system, state(0) ∈ initial_set)`.
 
+The initial-state constraint can also be given as an equality, `x(0) = x0`, which
+is handled identically to `x(0) ∈ x0` (i.e. `x0` is stored as given, whether it is
+a single point or a set).
+
 ### Examples
 
 ```jldoctest ivp_macro
@@ -1083,6 +1095,15 @@ julia> sys = @system(x' = [1 0; 0 1] * x);
 julia> @ivp(sys, x(0) ∈ [-1, 1])
 InitialValueProblem{LinearContinuousSystem{Int64, Matrix{Int64}}, Vector{Int64}}(LinearContinuousSystem{Int64, Matrix{Int64}}([1 0; 0 1]), [-1, 1])
 ```
+
+The initial state can equivalently be specified with `=` instead of `∈`:
+
+```jldoctest ivp_macro
+julia> q = @ivp(x' = -x, x(0) = [1.0]);
+
+julia> q == p
+true
+```
 """
 macro ivp(expr...)
     try
@@ -1091,7 +1112,10 @@ macro ivp(expr...)
             sys = expr[1]
             x0 = @match expr[2] begin
                 :($x(0) ∈ $X0) => X0
-                _ => throw(ArgumentError("malformed expression")) # TODO handle equality (x(0) = x0)?
+                # `x(0) = X0` is parsed by Julia as a short-form function
+                # definition, i.e. the right-hand side is wrapped in a block
+                Expr(:(=), Expr(:call, _, 0), Expr(:block, _, X0)) => X0
+                _ => throw(ArgumentError("malformed expression"))
             end
             ivp = Expr(:call, InitialValueProblem, :($(expr[1])), :($x0))
             return esc(ivp)

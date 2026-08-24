@@ -345,4 +345,15 @@ end
 
     # initial state assignment doesn't match state variable
     @test_throws ArgumentError @system(x' = -x, t(0) ∈ Interval(-1.0, 1.0))
+
+    # the initial-state constraint can equivalently be given with `=`
+    # (singleton case)
+    ivp = @system(x' = -1.0x, x(0) = [1.0])
+    @test ivp == IVP(LinearContinuousSystem(Id(1, -1.0)), [1.0])
+
+    ivp = @system(x⁺ = -x, x(0) = [1])
+    @test ivp == IVP(LinearDiscreteSystem(Id(1, -1.0)), [1])
+
+    # initial state assignment doesn't match state variable (equality form)
+    @test_throws ArgumentError @system(x' = -x, t(0) = Interval(-1.0, 1.0))
 end

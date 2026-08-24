@@ -10,6 +10,14 @@
     @test P2 == testSystem
     P3 = @ivp(@system(x' = -x), x(0) ∈ Interval(-1.0, 1.0))
     @test P3 == testSystem
+
+    # the initial-state constraint can equivalently be given with `=`
+    P4 = @ivp(x' = -x, x(0) = Interval(-1.0, 1.0))
+    @test P4 == testSystem
+    P5 = @ivp(sys, x(0) = Interval(-1.0, 1.0))
+    @test P5 == testSystem
+    # initial state assignment doesn't match state variable
+    @test_throws ArgumentError @ivp(x' = -x, t(0) = Interval(-1.0, 1.0))
 end
 
 @testset "@ivp for constrained parametric control systems" begin

@@ -160,10 +160,27 @@ function _corresponding_type(AT::Type{<:AbstractSystem}, fields::Tuple)
     return TYPES[idx][1]
 end
 
-# Normalize Expr(:kw, ...) to Expr(:(=), ...) so that MLStyle quote patterns
-# like `:($lhs = $rhs)` match both `@macro(dim = 3)` (parenthesized macro
-# call, where `dim = 3` is parsed as :kw) and `@macro dim = 3` (unparenthesized,
-# where `dim = 3` is parsed as :(=)).
+"""
+    _normalize_kw(ex)
+
+Change a keyword expression to a plain equal-sign expression.
+
+### Input
+
+- `ex` -- an expression
+
+### Output
+
+If `ex` has head `:kw`, return a new expression with head `:(=)` and the
+same arguments. Else, return `ex` with no change.
+
+### Notes
+
+Julia parses `dim = 3` two ways. Inside a call, as in `@macro(dim = 3)`, it
+uses head `:kw`. On its own, as in `@macro dim = 3`, it uses head `:(=)`.
+This function makes both forms match the same MLStyle pattern,
+`:(\$lhs = \$rhs)`.
+"""
 _normalize_kw(ex) = (ex isa Expr && ex.head === :kw) ? Expr(:(=), ex.args...) : ex
 
 """
@@ -251,8 +268,28 @@ function strip_dynamic_equation(expr)
     return (stripped_expr, AT, state)
 end
 
-# Detect the input variable from the equation pattern. Returns the input variable
-# symbol if detected, or `nothing` otherwise.
+"""
+    _detect_input_var(stripped)
+
+Find the input variable in a dynamic equation.
+
+### Input
+
+- `stripped` -- a dynamic equation with the `'` or `⁺` symbol removed, e.g.
+  `:(x = A * x + B * u)`
+
+### Output
+
+The input variable symbol, e.g. `:u`, if `stripped` matches a known
+pattern: `A*x + B*u`, `x + B*u`, `f(x, u)`, or the same forms with an added
+`+ c` term. Return `nothing` if no pattern matches.
+
+### Notes
+
+The pattern `f(x, u)` also matches `x + u`, `x - u`, and `x*u`. In those
+three cases, the second variable is not an input, so this function returns
+`nothing` instead of `u`.
+"""
 function _detect_input_var(stripped)
     return @match stripped begin
         :($x1 = $A * $x2 + $B * $u) && if x1 == x2 end       => u

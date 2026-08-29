@@ -83,6 +83,7 @@ macro map(ex)
     x = (ex.args)[1]
     rhs = (ex.args)[2].args[2]
 
+    #! format: off
     @match rhs begin
         # x -> Id(n)*x
         # (this rule is more specific than x -> Ax so it should come before it)
@@ -99,6 +100,7 @@ macro map(ex)
 
         _ => nothing
     end
+    #! format: on
 
     throw(ArgumentError("unable to match the given expression to a known map type"))
 end
@@ -291,6 +293,7 @@ three cases, the second variable is not an input, so this function returns
 `nothing` instead of `u`.
 """
 function _detect_input_var(stripped)
+    #! format: off
     return @match stripped begin
         :($x1 = $A * $x2 + $B * $u) && if x1 == x2 end       => u
         :($x1 = $x2 + $B * $u) && if x1 == x2 end            => u
@@ -308,6 +311,7 @@ function _detect_input_var(stripped)
         end
         _                                                    => nothing
     end
+    #! format: on
 end
 
 function _parse_system(exprs::NTuple{N,Expr}) where {N}
@@ -490,11 +494,13 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
     end
 
     # Classify the rhs structure
+    #! format: off
     rhs_type = @match rhs begin
         Expr(:call, :+, _...)                                   => :sum
         Expr(:call, f, _...) && if f !== :(*) && f !== :(-) end => :funcall
         _                                                       => :term
     end
+    #! format: on
 
     # if rhs is parsed as addition => affine system which is controlled, noisy or both
     if rhs_type === :sum
@@ -823,12 +829,14 @@ end
 # the variable name is the value parsed as Set
 function extract_set_parameter(expr, state, input, noise, parametric) # input => to check set definitions
     if parametric
+        #! format: off
         return @match expr begin
             :(A ∈ $S)                       => (S, :AS)
             :(B ∈ $S)                       => (S, :BS)
             :($x ∈ $S) && if x == state end => (S, :X)
             :($u ∈ $S) && if u == input end => (S, :U)
         end
+        #! format: on
     end
     return @match expr begin
         :($x ∈ $S) => begin
@@ -1144,10 +1152,12 @@ end
 function parses_as_system(expr)
     # The argument is a system if
     # 1) it is directly defined using @system in the macro call
+    #! format: off
     is_system_macro = @match expr begin
         Expr(:macrocall, s, _...) && if s === Symbol("@system") end => true
         _                                                           => false
     end
+    #! format: on
     if is_system_macro
         return true
     end

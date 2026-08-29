@@ -206,7 +206,7 @@ function _capture_dim(expr)
     return @match expr begin
         Expr(:tuple, x, u, w) => [x, u, w]
         Expr(:tuple, x, u)    => [x, u]
-        _                      => expr
+        _                     => expr
     end
 end
 
@@ -227,7 +227,7 @@ A `Bool` indicating whether `expr` is an equation or not.
 function is_equation(expr)
     return @match expr begin
         :($_ = $_) => true
-        _ => false
+        _          => false
     end
 end
 
@@ -253,7 +253,7 @@ function strip_dynamic_equation(expr)
     # check if `stripped_expr` is an equation and extract `lhs` and `rhs` if so
     eq_parts = @match stripped_expr begin
         :($lhs = $rhs) => (lhs, rhs)
-        _ => nothing
+        _              => nothing
     end
     if eq_parts === nothing
         return (nothing, nothing, nothing)
@@ -306,7 +306,7 @@ function _detect_input_var(stripped)
                 u
             end
         end
-        _ => nothing
+        _                                                    => nothing
     end
 end
 
@@ -346,13 +346,13 @@ function _parse_system(exprs::NTuple{N,Expr}) where {N}
 
             else
                 @match ex begin
-                    :(dim = $d) || :(dims = $d)        => begin  # COV_EXCL_LINE
+                    :(dim = $d) || :(dims = $d) => begin  # COV_EXCL_LINE
                         dimension = _capture_dim(d)
                     end
-                    :(input = $u) || :($u = input)     => begin  # COV_EXCL_LINE
+                    :(input = $u) || :($u = input) => begin  # COV_EXCL_LINE
                         input_var = u
                     end
-                    :(noise = $w) || :($w = noise)     => begin  # COV_EXCL_LINE
+                    :(noise = $w) || :($w = noise) => begin  # COV_EXCL_LINE
                         noise_var = w
                     end
                     # `x(0) = X0` is parsed by Julia as a short-form function
@@ -365,7 +365,7 @@ function _parse_system(exprs::NTuple{N,Expr}) where {N}
                         initial_state = X0
                     end
                     _ => throw(ArgumentError("could not properly parse the equation $ex; " *
-                                            "see the documentation for valid examples"))
+                                             "see the documentation for valid examples"))
                 end
             end
 
@@ -404,7 +404,7 @@ function _parse_system(exprs::NTuple{N,Expr}) where {N}
                 end
 
                 _ => throw(ArgumentError("the expression $ex could not be parsed; " *
-                                        "see the documentation for valid examples"))
+                                         "see the documentation for valid examples"))
             end
         end
     end
@@ -486,14 +486,14 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
             push!(lhs_params, (E, :E))
             rhscode.args[end]
         end
-        _ => rhscode
+        _          => rhscode
     end
 
     # Classify the rhs structure
     rhs_type = @match rhs begin
-        Expr(:call, :+, _...)                                       => :sum
-        Expr(:call, f, _...) && if f !== :(*) && f !== :(-) end     => :funcall
-        _                                                           => :term
+        Expr(:call, :+, _...)                                   => :sum
+        Expr(:call, f, _...) && if f !== :(*) && f !== :(-) end => :funcall
+        _                                                       => :term
     end
 
     # if rhs is parsed as addition => affine system which is controlled, noisy or both
@@ -529,7 +529,7 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
         else
             neg_var = @match rhs begin
                 :(-$var) => var
-                _ => nothing
+                _        => nothing
             end
             if neg_var !== nothing # => rhs = -x
                 if state == neg_var
@@ -539,7 +539,7 @@ function extract_dyn_equation_parameters(equation, state, input, noise, dim, AT)
                 rhs = add_asterisk(rhs, state, input, noise)
                 mul = @match rhs begin
                     :($array * $var) => (array, var)
-                    _ => nothing
+                    _                => nothing
                 end
                 if mul !== nothing
                     (array, var) = mul
@@ -606,7 +606,7 @@ julia> add_asterisk(:(A1ub), :x, :u, :w)
 function add_asterisk(summand, state::Symbol, input::Symbol, noise::Symbol)
     is_product = @match summand begin
         :($_ * $_) => true
-        _ => false
+        _          => false
     end
     if is_product
         return summand
@@ -824,8 +824,8 @@ end
 function extract_set_parameter(expr, state, input, noise, parametric) # input => to check set definitions
     if parametric
         return @match expr begin
-            :(A ∈ $S) => (S, :AS)
-            :(B ∈ $S) => (S, :BS)
+            :(A ∈ $S)                       => (S, :AS)
+            :(B ∈ $S)                       => (S, :BS)
             :($x ∈ $S) && if x == state end => (S, :X)
             :($u ∈ $S) && if u == input end => (S, :U)
         end
@@ -1146,7 +1146,7 @@ function parses_as_system(expr)
     # 1) it is directly defined using @system in the macro call
     is_system_macro = @match expr begin
         Expr(:macrocall, s, _...) && if s === Symbol("@system") end => true
-        _ => false
+        _                                                           => false
     end
     if is_system_macro
         return true
@@ -1154,7 +1154,7 @@ function parses_as_system(expr)
     # 2) it is a variable, i.e. it is not a dynamic equation
     is_eq = @match expr begin
         :($_ = $_) => true
-        _ => false
+        _          => false
     end
     return !is_eq
 end

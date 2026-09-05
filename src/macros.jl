@@ -76,7 +76,7 @@ macro map(ex, args...)
         return Expr(:call, IdentityMap, esc(:($(dimension))))
     end
 
-    throw(ArgumentError("unable to match the given expression to a known map type"))
+    return throw(ArgumentError("unable to match the given expression to a known map type"))
 end
 
 macro map(ex)
@@ -102,7 +102,7 @@ macro map(ex)
     end
     #! format: on
 
-    throw(ArgumentError("unable to match the given expression to a known map type"))
+    return throw(ArgumentError("unable to match the given expression to a known map type"))
 end
 
 # ========================

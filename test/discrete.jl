@@ -97,6 +97,7 @@ end
 end
 
 @testset "Discrete affine system" begin
+    @test_throws DimensionMismatch AffineDiscreteSystem(A, [1.0])
     s = AffineDiscreteSystem(A, C)
     @test state_matrix(s) == A
     @test isnothing(input_matrix(s))
@@ -118,6 +119,7 @@ end
 end
 
 @testset "Discrete linear control system" begin
+    @test_throws DimensionMismatch LinearControlDiscreteSystem(A, hcat(1.0))
     s = LinearControlDiscreteSystem(A, B)
     @test state_matrix(s) == A
     @test input_matrix(s) == B
@@ -160,6 +162,7 @@ end
 end
 
 @testset "Discrete constrained affine system" begin
+    @test_throws DimensionMismatch ConstrainedAffineDiscreteSystem(A, [1.0], X)
     s = ConstrainedAffineDiscreteSystem(A, C, X)
     @test state_matrix(s) == A
     @test isnothing(input_matrix(s))
@@ -181,6 +184,7 @@ end
 end
 
 @testset "Discrete constrained linear control system" begin
+    @test_throws DimensionMismatch ConstrainedLinearControlDiscreteSystem(A, hcat(1.0), X, U)
     s = ConstrainedLinearControlDiscreteSystem(A, B, X, U)
     @test state_matrix(s) == A
     @test input_matrix(s) == B
@@ -193,7 +197,7 @@ end
     @test inputset(s) == U
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
-        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
+        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s) && !ispolynomial(s)
         @test !isnoisy(s) && iscontrolled(s) && isconstrained(s) && !isparametric(s)
     end
     # Scalar System
@@ -202,6 +206,7 @@ end
 end
 
 @testset "Discrete linear descriptor system" begin
+    @test_throws DimensionMismatch LinearDescriptorDiscreteSystem(A, hcat(1.0))
     s = LinearDescriptorDiscreteSystem(A, E)
     @test state_matrix(s) == A
     @test isnothing(input_matrix(s))
@@ -224,6 +229,7 @@ end
 end
 
 @testset "Discrete constrained linear descriptor system" begin
+    @test_throws DimensionMismatch ConstrainedLinearDescriptorDiscreteSystem(A, hcat(1.0), X)
     s = ConstrainedLinearDescriptorDiscreteSystem(A, E, X)
     @test state_matrix(s) == A
     @test isnothing(input_matrix(s))
@@ -246,6 +252,7 @@ end
 end
 
 @testset "Polynomial system in discrete time" begin
+    @test_throws DimensionMismatch PolynomialDiscreteSystem([p], 1)
     s = PolynomialDiscreteSystem(p)
     @test isnothing(state_matrix(s))
     @test isnothing(input_matrix(s))
@@ -265,6 +272,7 @@ end
 end
 
 @testset "Polynomial system in discrete time with state constraints" begin
+    @test_throws DimensionMismatch ConstrainedPolynomialDiscreteSystem([p], 1, X)
     s = ConstrainedPolynomialDiscreteSystem(p, X)
     @test isnothing(state_matrix(s))
     @test isnothing(input_matrix(s))
@@ -326,6 +334,7 @@ end
 # ==============
 
 @testset "Noisy Discrete linear system" begin
+    @test_throws DimensionMismatch NoisyLinearDiscreteSystem(A, hcat(1.0))
     s = NoisyLinearDiscreteSystem(A, D)
     @test state_matrix(s) == A
     @test isnothing(input_matrix(s))
@@ -347,6 +356,7 @@ end
 end
 
 @testset "Noisy Discrete constrained linear system" begin
+    @test_throws DimensionMismatch NoisyConstrainedLinearDiscreteSystem(A, hcat(1.0), X, W)
     s = NoisyConstrainedLinearDiscreteSystem(A, D, X, W)
     @test state_matrix(s) == A
     @test isnothing(input_matrix(s))
@@ -368,6 +378,7 @@ end
 end
 
 @testset "Noisy discrete control linear system" begin
+    @test_throws DimensionMismatch NoisyLinearControlDiscreteSystem(A, hcat(1.0), D)
     s = NoisyLinearControlDiscreteSystem(A, B, D)
     @test state_matrix(s) == A
     @test input_matrix(s) == B
@@ -388,7 +399,8 @@ end
     @test scalar_sys == NoisyLinearControlDiscreteSystem(As, Bs, Ds)
 end
 
-@testset "Noisy Discrete constrained control linear system" begin
+@testset "Noisy discrete constrained control linear system" begin
+    @test_throws DimensionMismatch NoisyConstrainedLinearControlDiscreteSystem(A, hcat(1.0), D, X, U, W)
     s = NoisyConstrainedLinearControlDiscreteSystem(A, B, D, X, U, W)
     @test state_matrix(s) == A
     @test input_matrix(s) == B
@@ -410,6 +422,7 @@ end
 end
 
 @testset "Noisy discrete control affine system" begin
+    @test_throws DimensionMismatch NoisyAffineControlDiscreteSystem(A, hcat(1.0), C, D)
     s = NoisyAffineControlDiscreteSystem(A, B, C, D)
     @test state_matrix(s) == A
     @test input_matrix(s) == B
@@ -431,6 +444,7 @@ end
 end
 
 @testset "Noisy Discrete constrained control affine system" begin
+    @test_throws DimensionMismatch NoisyConstrainedAffineControlDiscreteSystem(A, hcat(1.0), C, D, X, U, W)
     s = NoisyConstrainedAffineControlDiscreteSystem(A, B, C, D, X, U, W)
     @test state_matrix(s) == A
     @test input_matrix(s) == B

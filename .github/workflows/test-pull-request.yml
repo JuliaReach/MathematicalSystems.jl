@@ -21,7 +21,7 @@ jobs:
         version:
           - '1'
         os:
-          - ubuntu-slim
+          - ubuntu-latest
         arch:
           - x64
         include:

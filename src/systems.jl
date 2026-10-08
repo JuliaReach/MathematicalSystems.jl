@@ -2749,7 +2749,9 @@ for (Z, AZ) in ((:SecondOrderAffineContinuousSystem, :AbstractContinuousSystem),
                                         MTC<:AbstractMatrix{T},
                                         MTK<:AbstractMatrix{T},
                                         VT<:AbstractVector{T}}
-                checksquare(M) == checksquare(C) == checksquare(K) == length(b)
+                if !(checksquare(M) == checksquare(C) == checksquare(K) == length(b))
+                    throw(DimensionMismatch("incompatible dimensions"))
+                end
                 return new{T,MTM,MTC,MTK,VT}(M, C, K, b)
             end
         end

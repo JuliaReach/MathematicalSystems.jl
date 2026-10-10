@@ -400,7 +400,8 @@ end
 end
 
 @testset "Noisy discrete constrained control linear system" begin
-    @test_throws DimensionMismatch NoisyConstrainedLinearControlDiscreteSystem(A, hcat(1.0), D, X, U, W)
+    @test_throws DimensionMismatch NoisyConstrainedLinearControlDiscreteSystem(A, hcat(1.0), D, X,
+                                                                               U, W)
     s = NoisyConstrainedLinearControlDiscreteSystem(A, B, D, X, U, W)
     @test state_matrix(s) == A
     @test input_matrix(s) == B
@@ -444,7 +445,8 @@ end
 end
 
 @testset "Noisy Discrete constrained control affine system" begin
-    @test_throws DimensionMismatch NoisyConstrainedAffineControlDiscreteSystem(A, hcat(1.0), C, D, X, U, W)
+    @test_throws DimensionMismatch NoisyConstrainedAffineControlDiscreteSystem(A, hcat(1.0), C, D,
+                                                                               X, U, W)
     s = NoisyConstrainedAffineControlDiscreteSystem(A, B, C, D, X, U, W)
     @test state_matrix(s) == A
     @test input_matrix(s) == B

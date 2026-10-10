@@ -552,7 +552,8 @@ end
 end
 
 @testset "Noisy continuous constrained control linear system" begin
-    @test_throws DimensionMismatch NoisyConstrainedLinearControlContinuousSystem(A, hcat(1.0), D, X, U, W)
+    @test_throws DimensionMismatch NoisyConstrainedLinearControlContinuousSystem(A, hcat(1.0), D, X,
+                                                                                 U, W)
     s = NoisyConstrainedLinearControlContinuousSystem(A, B, D, X, U, W)
     @test state_matrix(s) == A
     @test input_matrix(s) == B
@@ -596,7 +597,8 @@ end
 end
 
 @testset "Noisy Continuous constrained control affine system" begin
-    @test_throws DimensionMismatch NoisyConstrainedAffineControlContinuousSystem(A, hcat(1.0), C, D, X, U, W)
+    @test_throws DimensionMismatch NoisyConstrainedAffineControlContinuousSystem(A, hcat(1.0), C, D,
+                                                                                 X, U, W)
     s = NoisyConstrainedAffineControlContinuousSystem(A, B, C, D, X, U, W)
     @test state_matrix(s) == A
     @test input_matrix(s) == B
@@ -709,7 +711,8 @@ end
     @test stiffness_matrix(s) == hcat(4)
     @test affine_term(s) == [6]
 
-    @test_throws DimensionMismatch SecondOrderConstrainedLinearControlContinuousSystem(M, hcat(1.0), K, B, X, U)
+    @test_throws DimensionMismatch SecondOrderConstrainedLinearControlContinuousSystem(M, hcat(1.0),
+                                                                                       K, B, X, U)
     s = SecondOrderConstrainedLinearControlContinuousSystem(M, C, K, B, X, U)
     @test mass_matrix(s) == M && viscosity_matrix(s) == C && stiffness_matrix(s) == K
     @test input_matrix(s) == B && stateset(s) == X && inputset(s) == U
@@ -732,7 +735,9 @@ end
     @test stateset(s) == X1
     @test inputset(s) == U1
 
-    @test_throws DimensionMismatch SecondOrderConstrainedAffineControlContinuousSystem(M, hcat(1.0), K, B, d, X, U)
+    @test_throws DimensionMismatch SecondOrderConstrainedAffineControlContinuousSystem(M, hcat(1.0),
+                                                                                       K, B, d, X,
+                                                                                       U)
     s = SecondOrderConstrainedAffineControlContinuousSystem(M, C, K, B, d, X, U)
     @test mass_matrix(s) == M && viscosity_matrix(s) == C && stiffness_matrix(s) == K
     @test affine_term(s) == d && input_matrix(s) == B && stateset(s) == X &&
@@ -785,7 +790,8 @@ end
 
     X = Universe(2)
     U = Universe(2)
-    @test_throws DimensionMismatch SecondOrderConstrainedContinuousSystem(M, hcat(1.0), fi, fe, X, U)
+    @test_throws DimensionMismatch SecondOrderConstrainedContinuousSystem(M, hcat(1.0), fi, fe, X,
+                                                                          U)
     s = SecondOrderConstrainedContinuousSystem(M, C, fi, fe, X, U)
     @test mass_matrix(s) == M && viscosity_matrix(s) == C
     @test stateset(s) === X && inputset(s) === U
@@ -871,7 +877,9 @@ end
         X = Zonotope([0.0, 0.0], Matrix{Float64}(I, 2, 2))
         U = Zonotope([0.0], Matrix{Float64}(I, 1, 1))
 
-        @test_throws DimensionMismatch ConstrainedLinearControlParametricContinuousSystem(A, hcat(1.0), X, U)
+        @test_throws DimensionMismatch ConstrainedLinearControlParametricContinuousSystem(A,
+                                                                                          hcat(1.0),
+                                                                                          X, U)
         scc = ConstrainedLinearControlParametricContinuousSystem(A, B, X, U)
         @test scc isa ConstrainedLinearControlParametricContinuousSystem
 

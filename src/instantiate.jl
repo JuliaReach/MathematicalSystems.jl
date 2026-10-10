@@ -13,11 +13,13 @@
         vector = "input"
     elseif sym == :w
         vector = "noise"
+    else
+        throw(ArgumentError("unknown symbol $sym"))
     end
     if set == :none
         throw(ArgumentError("the $vector vector has the wrong dimensions"))
     else
-        throw(ArgumentError("the $vector vector is not contained in the $(vector) set"))
+        throw(ArgumentError("the $vector vector is not contained in the $vector set"))
     end
 end
 

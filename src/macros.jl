@@ -260,6 +260,7 @@ function strip_dynamic_equation(expr)
     if eq_parts === nothing
         return (nothing, nothing, nothing)
     end
+    @assert @isdefined AT
     lhs = eq_parts[1]
 
     # extract the name of the state variable from the lhs

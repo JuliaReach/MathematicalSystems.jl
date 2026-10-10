@@ -131,6 +131,7 @@ function _default_complementary_constructor(system)
     return (disc_values, set_values) -> discrete_type(disc_values..., set_values...)
 end
 
+# COV_EXCL_START
 """
     _discretize(::AbstractDiscretizationAlgorithm, ΔT::Real
                 A::AbstractMatrix, B::AbstractMatrix, c::AbstractVector, D::AbstractMatrix)
@@ -155,7 +156,6 @@ Returns a vector containing the discretized input arguments `A`, `B`, `c` and `D
 
 See [`discretize`](@ref) for more details.
 """
-# COV_EXCL_START
 function _discretize(::AbstractDiscretizationAlgorithm, ΔT::Real,
                      A::AbstractMatrix,
                      B::AbstractMatrix,

@@ -220,7 +220,7 @@ function _discretize(algorithm::AbstractDiscretizationAlgorithm, ΔT::Real,
                      A::AbstractMatrix)
     n = size(A, 1)
     mzero = spzeros(n, n)
-    vzero = spzeros(n)
+    vzero = spzeros(n)::AbstractVector
     A_d, _, _, _ = _discretize(algorithm, ΔT, A, mzero, vzero, mzero)
     return [A_d]
 end
@@ -254,7 +254,7 @@ function _discretize(algorithm::AbstractDiscretizationAlgorithm, ΔT::Real,
                      A::AbstractMatrix, B::AbstractMatrix)
     n = size(A, 1)
     mzero = spzeros(n, n)
-    vzero = spzeros(n)
+    vzero = spzeros(n)::AbstractVector
     A_d, B_d, _, _ = _discretize(algorithm, ΔT, A, B, vzero, mzero)
     return [A_d, B_d]
 end
@@ -346,7 +346,7 @@ See [`discretize`](@ref) for more details.
 function _discretize(algorithm::AbstractDiscretizationAlgorithm, ΔT::Real,
                      A::AbstractMatrix, B::AbstractMatrix, D::AbstractMatrix)
     n = size(A, 1)
-    vzero = spzeros(n)
+    vzero = spzeros(n)::AbstractVector
     A_d, B_d, _, D_d = _discretize(algorithm, ΔT, A, B, vzero, D)
     return [A_d, B_d, D_d]
 end

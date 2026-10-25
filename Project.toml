@@ -1,6 +1,6 @@
 name = "MathematicalSystems"
 uuid = "d14a8603-c872-5ed3-9ece-53e0e82e39da"
-version = "0.14.6"
+version = "0.14.7"
 
 [deps]
 InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"

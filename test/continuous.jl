@@ -44,15 +44,9 @@ Es = [e][:, :];
 @testset "Continuous identity system" begin
     s = ContinuousIdentitySystem(sd)
     @test state_matrix(s) == Id(sd)
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == 0
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
@@ -62,15 +56,10 @@ end
 @testset "Continuous constrained identity system" begin
     s = ConstrainedContinuousIdentitySystem(sd, X)
     @test state_matrix(s) == Id(sd)
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == 0
     @test stateset(s) == X
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s) && !isparametric(s)
@@ -80,15 +69,9 @@ end
 @testset "Continuous linear system" begin
     s = LinearContinuousSystem(A)
     @test state_matrix(s) == A
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == 0
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
@@ -102,15 +85,10 @@ end
     @test_throws DimensionMismatch AffineContinuousSystem(A, [1.0])
     s = AffineContinuousSystem(A, C)
     @test state_matrix(s) == A
-    @test isnothing(input_matrix(s))
     @test affine_term(s) == C
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == 0
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
@@ -125,14 +103,9 @@ end
     s = LinearControlContinuousSystem(A, B)
     @test state_matrix(s) == A
     @test input_matrix(s) == B
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == sd
     @test inputdim(s) == id
     @test noisedim(s) == 0
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s) && !isparametric(s)
@@ -145,15 +118,10 @@ end
 @testset "Continuous constrained linear system" begin
     s = ConstrainedLinearContinuousSystem(A, X)
     @test state_matrix(s) == A
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == 0
     @test stateset(s) == X
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s) && !isparametric(s)
@@ -167,15 +135,11 @@ end
     @test_throws DimensionMismatch ConstrainedAffineContinuousSystem(A, [1.0], X)
     s = ConstrainedAffineContinuousSystem(A, C, X)
     @test state_matrix(s) == A
-    @test isnothing(input_matrix(s))
     @test affine_term(s) == C
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == 0
     @test stateset(s) == X
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s) && !isparametric(s)
@@ -191,13 +155,11 @@ end
     @test state_matrix(s) == A
     @test input_matrix(s) == B
     @test affine_term(s) == C
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == sd
     @test inputdim(s) == id
     @test noisedim(s) == 0
     @test stateset(s) == X
     @test inputset(s) == U
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && iscontrolled(s) && isconstrained(s) && !isparametric(s)
@@ -239,14 +201,11 @@ end
     s = ConstrainedLinearControlContinuousSystem(A, B, X, U)
     @test state_matrix(s) == A
     @test input_matrix(s) == B
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == sd
     @test inputdim(s) == id
     @test noisedim(s) == 0
     @test stateset(s) == X
     @test inputset(s) == U
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s) && !ispolynomial(s)
         @test !isnoisy(s) && iscontrolled(s) && isconstrained(s) && !isparametric(s)
@@ -277,16 +236,10 @@ end
     @test_throws DimensionMismatch LinearDescriptorContinuousSystem(A, hcat(1.0))
     s = LinearDescriptorContinuousSystem(A, E)
     @test state_matrix(s) == A
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test s.E == E
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == 0
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     # Scalar System
     scalar_sys = LinearDescriptorContinuousSystem(a, e)
     @test scalar_sys == LinearDescriptorContinuousSystem(As, Es)
@@ -296,16 +249,11 @@ end
     @test_throws DimensionMismatch ConstrainedLinearDescriptorContinuousSystem(A, hcat(1.0), X)
     s = ConstrainedLinearDescriptorContinuousSystem(A, E, X)
     @test state_matrix(s) == A
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test s.E == E
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == 0
     @test stateset(s) == X
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s) && !isparametric(s)
@@ -326,16 +274,9 @@ end
     # default constructor for scalar p and
     @test_throws DimensionMismatch PolynomialContinuousSystem([p], 1)
     s = PolynomialContinuousSystem(p)
-    @test isnothing(state_matrix(s))
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == sdp
     @test inputdim(s) == 0
     @test noisedim(s) == 0
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     @test mapping(s) == [p]
     for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && ispolynomial(s) && !isblackbox(s)
@@ -353,17 +294,11 @@ end
     # default constructor for scalar p and
     @test_throws DimensionMismatch ConstrainedPolynomialContinuousSystem([p], 1, X)
     s = ConstrainedPolynomialContinuousSystem(p, X)
-    @test isnothing(state_matrix(s))
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     # @test s.p == p
     @test statedim(s) == sdp
     @test inputdim(s) == 0
     @test noisedim(s) == 0
     @test stateset(s) == X
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     @test mapping(s) == [p]
     for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && ispolynomial(s) && !isblackbox(s)
@@ -382,16 +317,9 @@ end
 
 @testset "Continuous system defined by a function" begin
     s = BlackBoxContinuousSystem(vanderpol!, 2)
-    @test isnothing(state_matrix(s))
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == 2
     @test inputdim(s) == 0
     @test noisedim(s) == 0
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     f! = (x, dx) -> s.f(x, dx)
     x = [1.0, 0.0]
     dx = similar(x)
@@ -407,16 +335,10 @@ end
 @testset "Continuous system defined by a function with state constraints" begin
     H = HalfSpace([1.0, 0.0], 0.0) # x <= 0
     s = ConstrainedBlackBoxContinuousSystem(vanderpol!, 2, H)
-    @test isnothing(state_matrix(s))
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == 2
     @test inputdim(s) == 0
     @test noisedim(s) == 0
     @test stateset(s) == H
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     f! = (x, dx) -> s.f(x, dx)
     x = [1.0, 0.0]
     dx = similar(x)
@@ -438,16 +360,9 @@ end
 @testset "Continuous control black-box system" begin
     add_one(x) = x + 1
     s = BlackBoxControlContinuousSystem(vanderpol_controlled!, 2, 1)
-    @test isnothing(state_matrix(s))
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == 2
     @test inputdim(s) == 1
     @test noisedim(s) == 0
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     @test mapping(s) == vanderpol_controlled!
     for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
@@ -459,16 +374,11 @@ end
     H = HalfSpace([1.0, 0.0], 0.0) # x <= 0
     U = Interval(-0.1, 0.1)
     s = ConstrainedBlackBoxControlContinuousSystem(vanderpol_controlled!, 2, 1, H, U)
-    @test isnothing(state_matrix(s))
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == 2
     @test inputdim(s) == 1
     @test noisedim(s) == 0
     @test stateset(s) == H
     @test inputset(s) == U
-    @test isnothing(noiseset(s))
     f! = (x, u, dx) -> s.f(x, u, dx)
     x = [1.0, 0.0]
     u = an_element(U)
@@ -489,15 +399,10 @@ end
     @test_throws DimensionMismatch NoisyLinearContinuousSystem(A, hcat(1.0))
     s = NoisyLinearContinuousSystem(A, D)
     @test state_matrix(s) == A
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
     @test noise_matrix(s) == D
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == nd
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
@@ -511,14 +416,11 @@ end
     @test_throws DimensionMismatch NoisyConstrainedLinearContinuousSystem(A, hcat(1.0), X, W)
     s = NoisyConstrainedLinearContinuousSystem(A, D, X, W)
     @test state_matrix(s) == A
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
     @test noise_matrix(s) == D
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == nd
     @test stateset(s) == X
-    @test isnothing(inputset(s))
     @test noiseset(s) == W
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
@@ -534,14 +436,10 @@ end
     s = NoisyLinearControlContinuousSystem(A, B, D)
     @test state_matrix(s) == A
     @test input_matrix(s) == B
-    @test isnothing(affine_term(s))
     @test noise_matrix(s) == D
     @test statedim(s) == sd
     @test inputdim(s) == id
     @test noisedim(s) == nd
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && !isconstrained(s) && !isparametric(s)
@@ -557,7 +455,6 @@ end
     s = NoisyConstrainedLinearControlContinuousSystem(A, B, D, X, U, W)
     @test state_matrix(s) == A
     @test input_matrix(s) == B
-    @test isnothing(affine_term(s))
     @test noise_matrix(s) == D
     @test statedim(s) == sd
     @test inputdim(s) == id
@@ -584,9 +481,6 @@ end
     @test statedim(s) == sd
     @test inputdim(s) == id
     @test noisedim(s) == nd
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test isaffine(s) && !islinear(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && !isconstrained(s) && !isparametric(s)
@@ -621,17 +515,10 @@ end
 
 @testset "Noisy continuous control black-box system" begin
     s = NoisyBlackBoxControlContinuousSystem(add_one, sd, id, nd)
-    @test isnothing(state_matrix(s))
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test s.f(state, input, noise) ≈ stateInputNoisePlusOne
     @test statedim(s) == sd
     @test inputdim(s) == id
     @test noisedim(s) == nd
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     @test mapping(s) == add_one
     for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
@@ -641,10 +528,6 @@ end
 
 @testset "Noisy continuous constrained control blackbox system" begin
     s = NoisyConstrainedBlackBoxControlContinuousSystem(add_one, sd, id, nd, X, U, W)
-    @test isnothing(state_matrix(s))
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test s.f(state, input, noise) ≈ stateInputNoisePlusOne
     @test statedim(s) == sd
     @test inputdim(s) == id
@@ -772,9 +655,7 @@ end
     s = SecondOrderContinuousSystem(M, C, fi, fe)
     @test mass_matrix(s) == M && viscosity_matrix(s) == C
     @test statedim(s) == 2
-    @test isnothing(inputdim(s))
     @test noisedim(s) == 0
-    @test isnothing(affine_term(s))
     @test !islinear(s)
     @test !isaffine(s)
     @test !ispolynomial(s)
@@ -796,9 +677,7 @@ end
     @test mass_matrix(s) == M && viscosity_matrix(s) == C
     @test stateset(s) === X && inputset(s) === U
     @test statedim(s) == 2
-    @test isnothing(inputdim(s))
     @test noisedim(s) == 0
-    @test isnothing(affine_term(s))
     @test !islinear(s)
     @test !isaffine(s)
     @test !ispolynomial(s)

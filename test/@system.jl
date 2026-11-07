@@ -46,27 +46,22 @@ f1(x, u, w) = x' * x + u' * u + w' * w
     end
 
     @testset "@system for incorrect variable handling" begin
-        @test_throws ArgumentError("state and input variables have the same name `a`") @system(a⁺ = Aa +
-                                                                                                    Bw,
-                                                                                               input:a)
-        @test_throws ArgumentError("state and input variables have the same name `x`") @system(x⁺ = Ax +
-                                                                                                    Bx,
-                                                                                               input:x)
-        @test_throws ArgumentError("input and noise variables have the same name `u`") @system(x⁺ = Ax +
-                                                                                                    Bu +
-                                                                                                    Bw,
-                                                                                               input:u,
-                                                                                               noise:u)
-        @test_throws ArgumentError("there is more than one input term `w`") @system(x⁺ = Ax + Bw +
-                                                                                         Dw,
-                                                                                    input:w)
-        @test_throws ArgumentError("there is more than one input term `u`") @system(x⁺ = Ax + Bu +
-                                                                                         Bu,
-                                                                                    noise:u)
+        @test_throws(ArgumentError("state and input variables have the same name `a`"),
+                     @system(a⁺ = Aa + Bw, input:a))
+        @test_throws(ArgumentError("state and input variables have the same name `x`"),
+                     @system(x⁺ = Ax + Bx, input:x))
+        @test_throws(ArgumentError("input and noise variables have the same name `u`"),
+                     @system(x⁺ = Ax + Bu + Bw, input:u, noise:u))
+        @test_throws(ArgumentError("there is more than one input term `w`"),
+                     @system(x⁺ = Ax + Bw + Dw, input:w))
+        @test_throws(ArgumentError("there is more than one input term `u`"),
+                     @system(x⁺ = Ax + Bu + Bu, noise:u))
         @test_throws ArgumentError("there is more than one state term `x`") @system(x⁺ = Ax + Bx)
         @test_throws ArgumentError("there is more than one constant term") @system(x⁺ = Ax + c + c)
-        # @test_throws ArgumentError("input and noise variables have the same name `u`") @system(x⁺= Ax + Bu + Bw,  noise:u)
-        # @test_throws ArgumentError("input and noise variables have the same name `w`") @system(x⁺= Ax + Bu + Bw,  input:w)
+#         @test_throws(ArgumentError("input and noise variables have the same name `u`"),
+#                      @system(x⁺= Ax + Bu + Bw,  noise:u))
+#         @test_throws(ArgumentError("input and noise variables have the same name `w`"),
+#                      @system(x⁺= Ax + Bu + Bw,  input:w))
     end
 end
 
@@ -296,8 +291,8 @@ end
     @test sys == NoisyConstrainedAffineControlDiscreteSystem(A, B, c, D, X, U1, W1)
 
     # check error handling for repeated variable names
-    @test_throws ArgumentError @system(x⁺ = Ax + Bw + Dw, x ∈ X, w ∈ U1, w ∈ W1, noise = w,
-                                       input = w)
+    @test_throws(ArgumentError,
+                 @system(x⁺ = Ax + Bw + Dw, x ∈ X, w ∈ U1, w ∈ W1, noise = w, input = w))
 end
 
 @testset "@system for black-box discrete systems" begin

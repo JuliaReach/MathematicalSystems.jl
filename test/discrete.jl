@@ -42,15 +42,9 @@ Es = [e][:, :];
 @testset "Discrete identity system" begin
     s = DiscreteIdentitySystem(sd)
     @test state_matrix(s) == Id(sd)
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == 0
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
@@ -60,15 +54,10 @@ end
 @testset "Discrete constrained identity system" begin
     s = ConstrainedDiscreteIdentitySystem(sd, X)
     @test state_matrix(s) == Id(sd)
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == 0
     @test stateset(s) == X
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s) && !isparametric(s)
@@ -78,15 +67,9 @@ end
 @testset "Discrete linear system" begin
     s = LinearDiscreteSystem(A)
     @test state_matrix(s) == A
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == 0
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
@@ -100,15 +83,10 @@ end
     @test_throws DimensionMismatch AffineDiscreteSystem(A, [1.0])
     s = AffineDiscreteSystem(A, C)
     @test state_matrix(s) == A
-    @test isnothing(input_matrix(s))
     @test affine_term(s) == C
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == 0
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
@@ -123,14 +101,9 @@ end
     s = LinearControlDiscreteSystem(A, B)
     @test state_matrix(s) == A
     @test input_matrix(s) == B
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == sd
     @test inputdim(s) == id
     @test noisedim(s) == 0
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s) && !isparametric(s)
@@ -143,15 +116,10 @@ end
 @testset "Discrete constrained linear system" begin
     s = ConstrainedLinearDiscreteSystem(A, X)
     @test state_matrix(s) == A
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == 0
     @test stateset(s) == X
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s) && !isparametric(s)
@@ -165,15 +133,11 @@ end
     @test_throws DimensionMismatch ConstrainedAffineDiscreteSystem(A, [1.0], X)
     s = ConstrainedAffineDiscreteSystem(A, C, X)
     @test state_matrix(s) == A
-    @test isnothing(input_matrix(s))
     @test affine_term(s) == C
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == 0
     @test stateset(s) == X
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test !islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s) && !isparametric(s)
@@ -188,14 +152,11 @@ end
     s = ConstrainedLinearControlDiscreteSystem(A, B, X, U)
     @test state_matrix(s) == A
     @test input_matrix(s) == B
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test statedim(s) == sd
     @test inputdim(s) == id
     @test noisedim(s) == 0
     @test stateset(s) == X
     @test inputset(s) == U
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s) && !ispolynomial(s)
         @test !isnoisy(s) && iscontrolled(s) && isconstrained(s) && !isparametric(s)
@@ -209,16 +170,10 @@ end
     @test_throws DimensionMismatch LinearDescriptorDiscreteSystem(A, hcat(1.0))
     s = LinearDescriptorDiscreteSystem(A, E)
     @test state_matrix(s) == A
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test s.E == E
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == 0
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
@@ -232,16 +187,11 @@ end
     @test_throws DimensionMismatch ConstrainedLinearDescriptorDiscreteSystem(A, hcat(1.0), X)
     s = ConstrainedLinearDescriptorDiscreteSystem(A, E, X)
     @test state_matrix(s) == A
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test s.E == E
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == 0
     @test stateset(s) == X
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s) && !isparametric(s)
@@ -254,17 +204,10 @@ end
 @testset "Polynomial system in discrete time" begin
     @test_throws DimensionMismatch PolynomialDiscreteSystem([p], 1)
     s = PolynomialDiscreteSystem(p)
-    @test isnothing(state_matrix(s))
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     # @test s.p == p
     @test statedim(s) == sdp
     @test inputdim(s) == 0
     @test noisedim(s) == 0
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
@@ -274,17 +217,11 @@ end
 @testset "Polynomial system in discrete time with state constraints" begin
     @test_throws DimensionMismatch ConstrainedPolynomialDiscreteSystem([p], 1, X)
     s = ConstrainedPolynomialDiscreteSystem(p, X)
-    @test isnothing(state_matrix(s))
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     # @test s.p == p
     @test statedim(s) == sdp
     @test inputdim(s) == 0
     @test noisedim(s) == 0
     @test stateset(s) == X
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s) && !isparametric(s)
@@ -293,17 +230,10 @@ end
 
 @testset "Implicit discrete system" begin
     s = BlackBoxDiscreteSystem(add_one, sd)
-    @test isnothing(state_matrix(s))
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test s.f(state) ≈ statePlusOne
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == 0
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
@@ -312,17 +242,10 @@ end
 
 @testset "Discrete control black-box system" begin
     s = BlackBoxControlDiscreteSystem(add_one, sd, id)
-    @test isnothing(state_matrix(s))
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test s.f(state, input) ≈ stateInputPlusOne
     @test statedim(s) == sd
     @test inputdim(s) == id
     @test noisedim(s) == 0
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s) && !isparametric(s)
@@ -337,15 +260,10 @@ end
     @test_throws DimensionMismatch NoisyLinearDiscreteSystem(A, hcat(1.0))
     s = NoisyLinearDiscreteSystem(A, D)
     @test state_matrix(s) == A
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
     @test noise_matrix(s) == D
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == nd
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
@@ -359,14 +277,11 @@ end
     @test_throws DimensionMismatch NoisyConstrainedLinearDiscreteSystem(A, hcat(1.0), X, W)
     s = NoisyConstrainedLinearDiscreteSystem(A, D, X, W)
     @test state_matrix(s) == A
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
     @test noise_matrix(s) == D
     @test statedim(s) == sd
     @test inputdim(s) == 0
     @test noisedim(s) == nd
     @test stateset(s) == X
-    @test isnothing(inputset(s))
     @test noiseset(s) == W
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
@@ -382,14 +297,10 @@ end
     s = NoisyLinearControlDiscreteSystem(A, B, D)
     @test state_matrix(s) == A
     @test input_matrix(s) == B
-    @test isnothing(affine_term(s))
     @test noise_matrix(s) == D
     @test statedim(s) == sd
     @test inputdim(s) == id
     @test noisedim(s) == nd
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && !isconstrained(s) && !isparametric(s)
@@ -405,7 +316,6 @@ end
     s = NoisyConstrainedLinearControlDiscreteSystem(A, B, D, X, U, W)
     @test state_matrix(s) == A
     @test input_matrix(s) == B
-    @test isnothing(affine_term(s))
     @test noise_matrix(s) == D
     @test statedim(s) == sd
     @test inputdim(s) == id
@@ -432,9 +342,6 @@ end
     @test statedim(s) == sd
     @test inputdim(s) == id
     @test noisedim(s) == nd
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test isaffine(s) && !islinear(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && !isconstrained(s) && !isparametric(s)
@@ -469,17 +376,10 @@ end
 
 @testset "Noisy discrete control black-box system" begin
     s = NoisyBlackBoxControlDiscreteSystem(add_one, sd, id, nd)
-    @test isnothing(state_matrix(s))
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test s.f(state, input, noise) ≈ stateInputNoisePlusOne
     @test statedim(s) == sd
     @test inputdim(s) == id
     @test noisedim(s) == nd
-    @test isnothing(stateset(s))
-    @test isnothing(inputset(s))
-    @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
         @test !islinear(s) && !isaffine(s) && !ispolynomial(s) && isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && !isconstrained(s) && !isparametric(s)
@@ -488,10 +388,6 @@ end
 
 @testset "Noisy Discrete constrained control blackbox system" begin
     s = NoisyConstrainedBlackBoxControlDiscreteSystem(add_one, sd, id, nd, X, U, W)
-    @test isnothing(state_matrix(s))
-    @test isnothing(input_matrix(s))
-    @test isnothing(affine_term(s))
-    @test isnothing(noise_matrix(s))
     @test s.f(state, input, noise) ≈ stateInputNoisePlusOne
     @test statedim(s) == sd
     @test inputdim(s) == id

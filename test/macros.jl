@@ -19,7 +19,7 @@ end
         @test_throws ArgumentError @macroexpand @map(x -> x, dimX:2)
     end
     n = 3
-    identitymap1 = @map(x -> x, dim = n)
+    identitymap1 = @map(x -> x, dim=n)
     identitymap2 = @map(x -> x, dim:3)
     @test identitymap1 == identitymap2 == IdentityMap(n)
     X = BallInf(zeros(3), 1.0)

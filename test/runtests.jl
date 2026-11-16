@@ -24,6 +24,7 @@ end
 @testset "Discrete systems" begin
     include("discrete.jl")
 end
+include("polynomial.jl")
 @testset "Identity multiple" begin
     include("identity.jl")
 end

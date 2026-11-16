@@ -23,7 +23,7 @@ Pkg = "<0.0.1, 1"
 RecipesBase = "1"
 SparseArrays = "<0.0.1, 1"
 Test = "<0.0.1, 1"
-TypedPolynomials = "0.3 - 0.4"
+TypedPolynomials = "0.3 - 0.5"
 
 [extras]
 JET = "c3a54625-cd67-489e-a8e7-0a5a0ff4e31b"

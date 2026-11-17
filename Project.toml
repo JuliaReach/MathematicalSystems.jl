@@ -22,8 +22,8 @@ SparseArrays = "<0.0.1, 1.6"
 julia = "1.6"
 
 [extensions]
-LazySetsExt = "LazySets"
-RecipesBaseExt = "RecipesBase"
+MathematicalSystemsLazySetsExt = "LazySets"
+MathematicalSystemsRecipesBaseExt = "RecipesBase"
 
 [extras]
 LazySets = "b4f0291d-fe17-52bc-9479-3d1a343d9043"

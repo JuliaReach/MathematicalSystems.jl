@@ -1,4 +1,4 @@
-module RecipesBaseExt
+module MathematicalSystemsRecipesBaseExt
 
 using MathematicalSystems: VectorField
 

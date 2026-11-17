@@ -1,3 +1,12 @@
+using MathematicalSystems, Test
+using LazySets: BallInf
+
+@testset "Implicit multiplication" begin
+    @test MathematicalSystems.add_asterisk(:Ax, :x, :u, :w) == :(A * x)
+    @test MathematicalSystems.add_asterisk(:Bu, :x, :u, :w) == :(B * u)
+    @test MathematicalSystems.add_asterisk(:Dw, :x, :u, :w) == :(D * w)
+end
+
 @testset "@map macro(ex)" begin
     @static if VERSION >= v"1.10"
         @test_throws ArgumentError @macroexpand @map(x -> x)
@@ -19,7 +28,7 @@ end
         @test_throws ArgumentError @macroexpand @map(x -> x, dimX:2)
     end
     n = 3
-    identitymap1 = @map(x -> x, dim = n)
+    identitymap1 = @map(x -> x, dim=n)
     identitymap2 = @map(x -> x, dim:3)
     @test identitymap1 == identitymap2 == IdentityMap(n)
     X = BallInf(zeros(3), 1.0)

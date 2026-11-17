@@ -631,13 +631,13 @@ function add_asterisk(summand, state::Symbol, input::Symbol, noise::Symbol)
     # one or more additional characters (i.e. length(str) > length(state) for the state)
     # a `*` is added in between
     if lenstate < length(str) && str[(end - lenstate + 1):end] == statestr
-        return Meta.parse(str[1:(end - length(statestr))] * "*$state")
+        return Meta.parse(string(str[1:(end - length(statestr))], "*", state))
 
     elseif leninput < length(str) && str[(end - leninput + 1):end] == inputstr
-        return Meta.parse(str[1:(end - length(inputstr))] * "*$input")
+        return Meta.parse(string(str[1:(end - length(inputstr))], "*", input))
 
     elseif lennoise < length(str) && str[(end - lennoise + 1):end] == noisestr
-        return Meta.parse(str[1:(end - length(noisestr))] * "*$noise")
+        return Meta.parse(string(str[1:(end - length(noisestr))], "*", noise))
 
     else # summand is returned which is either a constant term or the state, input or noise variable
         return summand

@@ -1161,11 +1161,12 @@ for (Z, AZ) in ((:PolynomialContinuousSystem, :AbstractContinuousSystem),
             p::VPT
             statedim::Int
             function $(Z)(p::VPT,
-                          statedim::Int) where {T,PT<:AbstractPolynomialLike{T},
+                          statedim::Int) where {PT<:AbstractPolynomialLike,
                                                 VPT<:AbstractVector{PT}}
                 if statedim != MultivariatePolynomials.nvariables(p)
                     throw(DimensionMismatch("the state dimension $(statedim) does not match the number of state variables"))
                 end
+                T = MultivariatePolynomials.coefficient_type(PT)
                 return new{T,PT,VPT}(p, statedim)
             end
         end
@@ -1260,11 +1261,12 @@ for (Z, AZ) in ((:ConstrainedPolynomialContinuousSystem, :AbstractContinuousSyst
             statedim::Int
             X::ST
             function $(Z)(p::VPT, statedim::Int,
-                          X::ST) where {T,PT<:AbstractPolynomialLike{T},VPT<:AbstractVector{PT},
+                          X::ST) where {PT<:AbstractPolynomialLike,VPT<:AbstractVector{PT},
                                         ST}
                 if statedim != MultivariatePolynomials.nvariables(p)
                     throw(DimensionMismatch("the state dimension $(statedim) does not match the number of state variables"))
                 end
+                T = MultivariatePolynomials.coefficient_type(PT)
                 return new{T,PT,VPT,ST}(p, statedim, X)
             end
         end

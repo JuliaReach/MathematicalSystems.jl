@@ -1,3 +1,4 @@
+# COV_EXCL_START
 """
     AbstractSystem
 
@@ -5,55 +6,49 @@ Abstract supertype for all system types.
 """
 abstract type AbstractSystem end
 
-@doc """
+"""
     statedim(s::AbstractSystem)
 
 Returns the dimension of the state space of system `s`.
 """
-statedim(::AbstractSystem)
-function statedim end
+function statedim(::AbstractSystem) end
 
-@doc """
+"""
     stateset(s::AbstractSystem)
 
 Returns the set of allowed states of system `s`.
 """
-stateset(::AbstractSystem)
-function stateset end
+function stateset(::AbstractSystem) end
 
-@doc """
+"""
     inputdim(s::AbstractSystem)
 
 Returns the dimension of the input space of system `s`.
 """
-inputdim(::AbstractSystem)
-function inputdim end
+function inputdim(::AbstractSystem) end
 
-@doc """
+"""
     inputset(s::AbstractSystem)
 
 Returns the set of allowed inputs of system `s`.
 """
-inputset(::AbstractSystem)
-function inputset end
+function inputset(::AbstractSystem) end
 
-@doc """
+"""
     noisedim(s::AbstractSystem)
 
 Returns the dimension of the noise space of system `s`.
 """
-noisedim(::AbstractSystem)
-function noisedim end
+function noisedim(::AbstractSystem) end
 
-@doc """
+"""
     noiseset(s::AbstractSystem)
 
 Returns the set of allowed noises of system `s`.
 """
-noiseset(::AbstractSystem)
-function noiseset end
+function noiseset(::AbstractSystem) end
 
-@doc """
+"""
     state_matrix(s::AbstractSystem)
 
 Returns the state matrix of an affine system.
@@ -63,10 +58,9 @@ Returns the state matrix of an affine system.
 The state matrix is the matrix proportional to the state, e.g. the matrix `A`
 in the linear continuous system ``x' = Ax``.
 """
-state_matrix(::AbstractSystem)
-function state_matrix end
+function state_matrix(::AbstractSystem) end
 
-@doc """
+"""
     input_matrix(s::AbstractSystem)
 
 Returns the input matrix of a system with linear input.
@@ -76,10 +70,9 @@ Returns the input matrix of a system with linear input.
 The input matrix is the matrix proportional to the input, e.g. the matrix `B`
 in the linear continuous system with input, ``x' = Ax + Bu``.
 """
-input_matrix(::AbstractSystem)
-function input_matrix end
+function input_matrix(::AbstractSystem) end
 
-@doc """
+"""
     noise_matrix(s::AbstractSystem)
 
 Returns the noise matrix of a system with linear noise.
@@ -89,10 +82,9 @@ Returns the noise matrix of a system with linear noise.
 The noise matrix is the matrix proportional to the noise, e.g. the matrix `D`
 in the linear system with noise, ``x' = Ax + Dw``.
 """
-noise_matrix(::AbstractSystem)
-function noise_matrix end
+function noise_matrix(::AbstractSystem) end
 
-@doc """
+"""
     affine_term(s::AbstractSystem)
 
 Returns the affine term in an affine system.
@@ -101,24 +93,21 @@ Returns the affine term in an affine system.
 
 The affine term is e.g. the vector ``c`` in the affine system ``x' = Ax + c``.
 """
-affine_term(::AbstractSystem)
-function affine_term end
+function affine_term(::AbstractSystem) end
 
-@doc """
+"""
     mapping(s::AbstractSystem)
 
 Returns the mapping of a black-box system.
 """
-mapping(::AbstractSystem)
-function mapping end
+function mapping(::AbstractSystem) end
 
-@doc """
+"""
     outputmap(s::AbstractSystem)
 
 Returns the output map of a system with output.
 """
-outputmap(::AbstractSystem)
-function outputmap end
+function outputmap(::AbstractSystem) end
 
 """
     AbstractDiscreteSystem
@@ -134,7 +123,7 @@ Abstract supertype for all continuous system types.
 """
 abstract type AbstractContinuousSystem <: AbstractSystem end
 
-@doc """
+"""
     islinear(s::AbstractSystem)
 
 Determines whether the dynamics of system `s` is specified by linear equations.
@@ -152,10 +141,9 @@ can also be applied to `typeof(s)`. So, if a system type allows an instance that
 is not linear, it returns `false` by default. For example, polynomial systems
 can be nonlinear; hence `islinear` returns `false`.
 """
-islinear(::AbstractSystem)
-function islinear end
+function islinear(::AbstractSystem) end
 
-@doc """
+"""
     isaffine(s::AbstractSystem)
 
 Determines whether the dynamics of system `s` is specified by affine equations.
@@ -171,10 +159,9 @@ can also be applied to `typeof(s)`. So, if a system type allows an instance that
 is not affine, it returns `false` by default. For example, polynomial systems
 can be nonlinear; hence `isaffine` is `false`.
 """
-isaffine(::AbstractSystem)
-function isaffine end
+function isaffine(::AbstractSystem) end
 
-@doc """
+"""
     ispolynomial(s::AbstractSystem)
 
 Determines whether the dynamics of system `s` is specified by polynomial equations.
@@ -183,10 +170,9 @@ The result of this function only depends on the system type, not the value, and
 can also be applied to `typeof(s)`. Hence, e.g. a `LinearContinuousSystem` is not
 considered to be of polynomial type.
 """
-ispolynomial(::AbstractSystem)
-function ispolynomial end
+function ispolynomial(::AbstractSystem) end
 
-@doc """
+"""
     isblackbox(s::AbstractSystem)
 
 Determines whether no specific structure is assumed for the dynamics of system `s`.
@@ -194,10 +180,9 @@ Determines whether no specific structure is assumed for the dynamics of system `
 The result of this function only depends on the system type, not the value, and
 can also be applied to `typeof(s)`.
 """
-isblackbox(::AbstractSystem)
-function isblackbox end
+function isblackbox(::AbstractSystem) end
 
-@doc """
+"""
     isnoisy(s::AbstractSystem)
 
 Determines if the dynamics of system `s` contains a noise term `w`.
@@ -205,10 +190,9 @@ Determines if the dynamics of system `s` contains a noise term `w`.
 The result of this function only depends on the system type, not the value, and
 can also be applied to `typeof(s)`.
 """
-isnoisy(::AbstractSystem)
-function isnoisy end
+function isnoisy(::AbstractSystem) end
 
-@doc """
+"""
     iscontrolled(s::AbstractSystem)
 
 Determines if the dynamics of system `s` contains a control input `u`.
@@ -216,10 +200,9 @@ Determines if the dynamics of system `s` contains a control input `u`.
 The result of this function only depends on the system type, not the value, and
 can also be applied to `typeof(s)`.
 """
-iscontrolled(::AbstractSystem)
-function iscontrolled end
+function iscontrolled(::AbstractSystem) end
 
-@doc """
+"""
     isconstrained(s::AbstractSystem)
 
 Determines if the system `s` has constraints on the state, input and noise,
@@ -228,10 +211,9 @@ respectively (those that are available).
 The result of this function only depends on the system type, not the value, and
 can also be applied to `typeof(s)`.
 """
-isconstrained(::AbstractSystem)
-function isconstrained end
+function isconstrained(::AbstractSystem) end
 
-@doc """
+"""
     isparametric(s::AbstractSystem)
 
 Determines if the system `s` contains one or more symbolic parameters in its
@@ -241,8 +223,7 @@ specified set).
 The result of this function only depends on the
 system type, not the value, and can also be applied to `typeof(s)`.
 """
-isparametric(::AbstractSystem)
-function isparametric end
+function isparametric(::AbstractSystem) end
 
 """
     AbstractMap
@@ -251,15 +232,14 @@ Abstract supertype for all map types.
 """
 abstract type AbstractMap end
 
-@doc """
+"""
     outputdim(m::AbstractMap)
 
 Returns the dimension of the output space of the map `m`.
 """
-outputdim(::AbstractMap)
-function outputdim end
+function outputdim(::AbstractMap) end
 
-@doc """
+"""
     islinear(m::AbstractMap)
 
 Determines whether the map `m` is linear or not.
@@ -269,10 +249,9 @@ Determines whether the map `m` is linear or not.
 A map is *linear* if it preserves the operations of scalar multiplication and
 vector addition.
 """
-islinear(::AbstractMap)
-function islinear end
+function islinear(::AbstractMap) end
 
-@doc """
+"""
     isaffine(m::AbstractMap)
 
 Determines whether the map `m` is affine or not.
@@ -282,13 +261,12 @@ Determines whether the map `m` is affine or not.
 An affine map is the composition of a linear map and a translation.
 See also [`islinear(::AbstractMap)`](@ref).
 """
-isaffine(::AbstractMap)
-function isaffine end
+function isaffine(::AbstractMap) end
 
-@doc """
+"""
     apply(m::AbstractMap, args...)
 
 Apply the rule specified by the map to the given arguments.
 """
-apply(::AbstractMap)
-function apply end
+function apply(::AbstractMap) end
+# COV_EXCL_STOP

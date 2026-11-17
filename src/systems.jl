@@ -2668,9 +2668,6 @@ for (Z, AZ) in ((:SecondOrderLinearContinuousSystem, :AbstractContinuousSystem),
         function stiffness_matrix(s::$Z)
             return s.K
         end
-        function affine_term(s::$Z)
-            return zeros(eltype(s.C), size(s.C, 1))
-        end
     end
     for T in [Z, Type{<:eval(Z)}]
         @eval begin
@@ -2678,7 +2675,7 @@ for (Z, AZ) in ((:SecondOrderLinearContinuousSystem, :AbstractContinuousSystem),
                 return true
             end
             function isaffine(::$T)
-                return true
+                return false
             end
             function ispolynomial(::$T)
                 return false
@@ -2901,9 +2898,6 @@ for (Z, AZ) in
         function stiffness_matrix(s::$Z)
             return s.K
         end
-        function affine_term(s::$Z)
-            return zeros(eltype(s.C), size(s.C, 1))
-        end
         function input_matrix(s::$Z)
             return s.B
         end
@@ -2920,7 +2914,7 @@ for (Z, AZ) in
                 return true
             end
             function isaffine(::$T)
-                return true
+                return false
             end
             function ispolynomial(::$T)
                 return false

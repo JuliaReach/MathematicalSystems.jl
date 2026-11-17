@@ -676,9 +676,8 @@ end
     @test statedim(s) == 2
     @test inputdim(s) == 0
     @test noisedim(s) == 0
-    @test affine_term(s) == zeros(2)
     @test islinear(s)
-    @test isaffine(s)
+    @test !isaffine(s)
     @test !ispolynomial(s)
     @test !isnoisy(s)
     @test !iscontrolled(s)
@@ -719,9 +718,8 @@ end
     @test statedim(s) == 2
     @test inputdim(s) == 1
     @test noisedim(s) == 0
-    @test affine_term(s) == zeros(2)
     @test islinear(s)
-    @test isaffine(s)
+    @test !isaffine(s)
     @test !ispolynomial(s)
     @test !isnoisy(s)
     @test iscontrolled(s)

@@ -101,7 +101,7 @@ Returns a discretization of the input system `system` with discretization method
 function discretize(system::AbstractContinuousSystem, ΔT::Real,
                     algorithm::AbstractDiscretizationAlgorithm=ExactDiscretization(),
                     constructor=_default_complementary_constructor(system))
-    (!isaffine(system)) && throw(ArgumentError("system needs to be affine"))
+    !(islinear(system) || isaffine(system)) && throw(ArgumentError("system needs to be affine"))
 
     sets(x) = x ∈ [:X, :U, :W]
     matrices(x) = x ∈ [:A, :B, :b, :c, :D]

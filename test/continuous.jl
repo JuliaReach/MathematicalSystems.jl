@@ -54,7 +54,7 @@ Es = [e][:, :];
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
-        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
+        @test islinear(s) && !isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
     end
 end
@@ -72,7 +72,7 @@ end
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
-        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
+        @test islinear(s) && !isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s) && !isparametric(s)
     end
 end
@@ -90,7 +90,7 @@ end
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
-        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
+        @test islinear(s) && !isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
     end
     # Scalar System
@@ -134,7 +134,7 @@ end
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
-        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
+        @test islinear(s) && !isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && iscontrolled(s) && !isconstrained(s) && !isparametric(s)
     end
     # Scalar System
@@ -155,7 +155,7 @@ end
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
-        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
+        @test islinear(s) && !isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s) && !isparametric(s)
     end
     # Scalar System
@@ -248,7 +248,7 @@ end
     @test inputset(s) == U
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
-        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s) && !ispolynomial(s)
+        @test islinear(s) && !isaffine(s) && !ispolynomial(s) && !isblackbox(s) && !ispolynomial(s)
         @test !isnoisy(s) && iscontrolled(s) && isconstrained(s) && !isparametric(s)
     end
 
@@ -307,7 +307,7 @@ end
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
-        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
+        @test islinear(s) && !isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test !isnoisy(s) && !iscontrolled(s) && isconstrained(s) && !isparametric(s)
     end
     # Scalar System
@@ -499,7 +499,7 @@ end
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
-        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
+        @test islinear(s) && !isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && !iscontrolled(s) && !isconstrained(s) && !isparametric(s)
     end
     # Scalar System
@@ -521,7 +521,7 @@ end
     @test isnothing(inputset(s))
     @test noiseset(s) == W
     for s in [s, typeof(s)]
-        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
+        @test islinear(s) && !isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && !iscontrolled(s) && isconstrained(s) && !isparametric(s)
     end
     # Scalar System
@@ -543,7 +543,7 @@ end
     @test isnothing(inputset(s))
     @test isnothing(noiseset(s))
     for s in [s, typeof(s)]
-        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
+        @test islinear(s) && !isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && !isconstrained(s) && !isparametric(s)
     end
     # Scalar System
@@ -566,7 +566,7 @@ end
     @test inputset(s) == U
     @test noiseset(s) == W
     for s in [s, typeof(s)]
-        @test islinear(s) && isaffine(s) && !ispolynomial(s) && !isblackbox(s)
+        @test islinear(s) && !isaffine(s) && !ispolynomial(s) && !isblackbox(s)
         @test isnoisy(s) && iscontrolled(s) && isconstrained(s) && !isparametric(s)
     end
     # Scalar System
@@ -676,9 +676,8 @@ end
     @test statedim(s) == 2
     @test inputdim(s) == 0
     @test noisedim(s) == 0
-    @test affine_term(s) == zeros(2)
     @test islinear(s)
-    @test isaffine(s)
+    @test !isaffine(s)
     @test !ispolynomial(s)
     @test !isnoisy(s)
     @test !iscontrolled(s)
@@ -719,9 +718,8 @@ end
     @test statedim(s) == 2
     @test inputdim(s) == 1
     @test noisedim(s) == 0
-    @test affine_term(s) == zeros(2)
     @test islinear(s)
-    @test isaffine(s)
+    @test !isaffine(s)
     @test !ispolynomial(s)
     @test !isnoisy(s)
     @test iscontrolled(s)
@@ -840,7 +838,7 @@ end
         @test state_matrix(s) === A
         @test islinear(s)
         @test isparametric(s)
-        @test isaffine(s)
+        @test !isaffine(s)
         @test !isnoisy(s)
         @test !iscontrolled(s)
         @test !isconstrained(s)
@@ -868,7 +866,7 @@ end
         @test input_matrix(sc) === B
         @test islinear(sc)
         @test isparametric(sc)
-        @test isaffine(sc)
+        @test !isaffine(sc)
         @test iscontrolled(sc)
         @test !isnoisy(sc)
         @test !isconstrained(sc)
@@ -892,7 +890,7 @@ end
         @test inputset(scc) === U
         @test islinear(scc)
         @test isparametric(scc)
-        @test isaffine(scc)
+        @test !isaffine(scc)
         @test !ispolynomial(scc)
         @test iscontrolled(scc)
         @test isconstrained(scc)

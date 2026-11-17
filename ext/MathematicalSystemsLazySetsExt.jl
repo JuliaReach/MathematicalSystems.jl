@@ -1,4 +1,4 @@
-module LazySetsExt
+module MathematicalSystemsLazySetsExt
 
 import MathematicalSystems
 using MathematicalSystems: LinearParametricContinuousSystem,

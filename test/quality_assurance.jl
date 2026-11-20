@@ -36,3 +36,9 @@ end
 @testset "Aqua tests" begin
     Aqua.test_all(MathematicalSystems)
 end
+
+@testset "No boxed closure captures" begin
+    if isdefined(Test, :detect_closure_boxes)  # Julia >= v"1.14"
+        @test isempty(Test.detect_closure_boxes(MathematicalSystems))
+    end
+end
